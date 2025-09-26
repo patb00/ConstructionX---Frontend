@@ -15,7 +15,7 @@ export type Tenant = {
 export type NewTenantRequest = {
   identifier: string;
   name: string;
-  connectionString: string;
+  connectionString: string | null;
   email: string;
   firstName: string;
   lastName: string;

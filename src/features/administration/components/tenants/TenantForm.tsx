@@ -7,21 +7,11 @@ import {
   Checkbox,
   Button,
 } from "@mui/material";
-
-export type TenantFormValues = {
-  identifier: string;
-  name: string;
-  connectionString: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  validUpToDate: string;
-  isActive: boolean;
-};
+import type { NewTenantRequest } from "../../types";
 
 type Props = {
-  defaultValues?: Partial<TenantFormValues>;
-  onSubmit: (values: TenantFormValues) => void;
+  defaultValues?: Partial<NewTenantRequest>;
+  onSubmit: (values: NewTenantRequest) => void;
   busy?: boolean;
 };
 
@@ -33,11 +23,27 @@ function formatForDateTimeLocal(iso?: string) {
   return local.toISOString().slice(0, 16);
 }
 
+function toIsoUtc(localValue?: string) {
+  if (!localValue) return new Date().toISOString();
+  const d = new Date(localValue);
+  return isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
+}
+
+function normalizeBackslashes(s: string) {
+  return s.replace(/\\+/g, "\\");
+}
+
+function sanitizeConnectionString(s?: string | null): string | null {
+  const trimmed = (s ?? "").trim();
+  if (!trimmed) return null;
+  return normalizeBackslashes(trimmed);
+}
+
 export default function TenantForm({ defaultValues, onSubmit, busy }: Props) {
-  const [values, setValues] = React.useState<TenantFormValues>({
+  const [values, setValues] = React.useState<NewTenantRequest>({
     identifier: "",
     name: "",
-    connectionString: "",
+    connectionString: defaultValues?.connectionString ?? "",
     email: "",
     firstName: "",
     lastName: "",
@@ -47,10 +53,13 @@ export default function TenantForm({ defaultValues, onSubmit, busy }: Props) {
   });
 
   const update =
-    (k: keyof TenantFormValues) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    (k: keyof NewTenantRequest) => (e: React.ChangeEvent<HTMLInputElement>) =>
       setValues((v) => ({
         ...v,
-        [k]: e.target.type === "checkbox" ? e.target.checked : e.target.value,
+        [k]:
+          e.target.type === "checkbox"
+            ? (e.target as any).checked
+            : e.target.value,
       }));
 
   return (
@@ -58,7 +67,11 @@ export default function TenantForm({ defaultValues, onSubmit, busy }: Props) {
       component="form"
       onSubmit={(e) => {
         e.preventDefault();
-        onSubmit(values);
+        onSubmit({
+          ...values,
+          connectionString: sanitizeConnectionString(values.connectionString),
+          validUpToDate: toIsoUtc(values.validUpToDate),
+        });
       }}
       p={2}
     >
@@ -81,14 +94,21 @@ export default function TenantForm({ defaultValues, onSubmit, busy }: Props) {
             onChange={update("name")}
           />
         </Stack>
+
         <TextField
           label="Connection String"
           size="small"
           fullWidth
-          //required
-          value={values.connectionString}
+          value={values.connectionString ?? ""}
           onChange={update("connectionString")}
+          inputProps={{
+            maxLength: 500,
+            spellCheck: false,
+            autoCapitalize: "off",
+            autoCorrect: "off",
+          }}
         />
+
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
           <TextField
             label="Email"
@@ -108,6 +128,7 @@ export default function TenantForm({ defaultValues, onSubmit, busy }: Props) {
             InputLabelProps={{ shrink: true }}
           />
         </Stack>
+
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
           <TextField
             label="First name"
@@ -124,12 +145,14 @@ export default function TenantForm({ defaultValues, onSubmit, busy }: Props) {
             onChange={update("lastName")}
           />
         </Stack>
+
         <FormControlLabel
           control={
             <Checkbox checked={values.isActive} onChange={update("isActive")} />
           }
           label="Active"
         />
+
         <Button type="submit" variant="contained" disabled={busy} size="small">
           {busy ? "Spremanje" : "Spremi"}
         </Button>

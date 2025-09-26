@@ -36,12 +36,12 @@ type Props = {
 
 const MANAGEMENT = [
   { label: "Nadzorna ploča", to: "/app/dashboard", icon: <FaTachometerAlt /> },
-  { label: "Gradilište", to: "/app/gradiliste", icon: <FaHardHat /> },
+  /*   { label: "Gradilište", to: "/app/gradiliste", icon: <FaHardHat /> },
   { label: "Alat i oprema", to: "/app/alat", icon: <FaTools /> },
   { label: "Vozila", to: "/app/vozila", icon: <FaTruck /> },
   { label: "Ljudski resursi", to: "/app/ljudski", icon: <FaUsers /> },
   { label: "Stanovi", to: "/app/stanovi", icon: <FaHome /> },
-  { label: "Izvješća", to: "/app/izvjestaji", icon: <FaChartBar /> },
+  { label: "Izvješća", to: "/app/izvjestaji", icon: <FaChartBar /> }, */
 ];
 
 const SYSTEM = [

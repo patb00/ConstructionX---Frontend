@@ -1,4 +1,5 @@
 import { httpGet, httpPost, httpPut, httpDelete } from "../../../../lib/http";
+import type { ApiEnvelope } from "../../types";
 
 export type CompanyId = number;
 
@@ -50,7 +51,7 @@ export const CompaniesApi = {
   },
 
   getAll: async (): Promise<Company[]> => {
-    const res = await httpGet<Company[]>(`${base}/get-all`);
-    return res;
+    const res = await httpGet<ApiEnvelope<Company[]>>(`${base}/get-all`);
+    return res.data;
   },
 };

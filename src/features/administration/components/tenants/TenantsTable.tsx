@@ -12,12 +12,13 @@ import { useTenants } from "../../hooks/tenants/useTenants";
 import { useActivateTenant } from "../../hooks/tenants/useActivateTenant";
 import { useDeactivateTenant } from "../../hooks/tenants/useDeactivateTenant";
 import { useUpdateSubscription } from "../../hooks/tenants/useUpdateSubscription";
+import { useMemo } from "react";
 
 type Tenant = {
   identifier: string;
   name: string | null;
   email: string | null;
-  validUpToDate: string | null; // ISO
+  validUpToDate: string | null;
   isActive: boolean;
 };
 
@@ -30,7 +31,6 @@ function extractRows(data: unknown): Tenant[] {
   return isTenantArray(items) ? items : [];
 }
 
-// ISO <-> input[type=datetime-local]
 const pad = (n: number) => String(n).padStart(2, "0");
 function isoToLocalInput(iso: string | null): string {
   if (!iso) return "";
@@ -40,7 +40,7 @@ function isoToLocalInput(iso: string | null): string {
   )}:${pad(d.getMinutes())}`;
 }
 function localInputToIso(local: string): string {
-  return new Date(local).toISOString(); // send UTC ISO to backend
+  return new Date(local).toISOString();
 }
 
 export default function TenantsTable() {
@@ -51,7 +51,6 @@ export default function TenantsTable() {
 
   const rows = React.useMemo(() => extractRows(data), [data]);
 
-  // which row is editing + the input value
   const [editing, setEditing] = React.useState<{
     id: string;
     input: string;
@@ -72,7 +71,7 @@ export default function TenantsTable() {
     );
   };
 
-  const columns = React.useMemo<GridColDef<Tenant>[]>(
+  const columns = useMemo<GridColDef<Tenant>[]>(
     () => [
       {
         field: "identifier",
@@ -106,7 +105,6 @@ export default function TenantsTable() {
           row.validUpToDate ? new Date(row.validUpToDate) : null,
         sortComparator: (a, b) =>
           new Date(a as any).getTime() - new Date(b as any).getTime(),
-        // 🔸 Center the input while editing; plain text when not editing
         renderCell: (params) => {
           const t = params.row;
           const isThisEditing = editing?.id === t.identifier;
@@ -206,10 +204,6 @@ export default function TenantsTable() {
 
           const isThisEditing = editing?.id === t.identifier;
           const busy = isActivating || isDeactivating || isUpdating;
-
-          // 🔸 Keep EXACT positions:
-          //  - Left slot: Edit  -> Save (when editing)
-          //  - Right slot: Toggle Active/Inactive -> Close (when editing)
 
           const leftSlot = !isThisEditing ? (
             <GridActionsCellItem

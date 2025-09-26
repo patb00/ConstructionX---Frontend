@@ -5,6 +5,6 @@ import { CompaniesApi } from "../../api/companies/companies.api";
 export function useCompanies() {
   return useQuery({
     queryKey: companiesKeys.list(),
-    queryFn: CompaniesApi.getAll,
+    queryFn: () => CompaniesApi.getAll(),
   });
 }

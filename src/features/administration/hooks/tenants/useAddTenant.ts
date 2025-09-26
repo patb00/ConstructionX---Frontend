@@ -3,8 +3,10 @@ import { useSnackbar } from "notistack";
 import { TenantsApi } from "../../api/tenants/tenants.api";
 import { tenantsKeys } from "../../api/tenants/tenants.keys";
 import type { NewTenantRequest } from "../../types";
+import { useNavigate } from "react-router-dom";
 
 export function useAddTenant() {
+  const navigate = useNavigate();
   const qc = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -16,6 +18,8 @@ export function useAddTenant() {
       enqueueSnackbar(data.messages[0] || data?.messages, {
         variant: "success",
       });
+
+      navigate("/app/administration/tenants");
     },
 
     onError: (error: any) => {
