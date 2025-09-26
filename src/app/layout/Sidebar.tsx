@@ -15,12 +15,13 @@ import CloseIcon from "@mui/icons-material/Close";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   FaHardHat,
-  FaTools,
+  /*   FaTools,
   FaTruck,
   FaUsers,
   FaHome,
   FaChartBar,
-  FaCog,
+  FaCog, */
+  FaUserShield,
   FaTachometerAlt,
   FaKey,
 } from "react-icons/fa";
@@ -54,6 +55,11 @@ const SYSTEM = [
     label: "Tvrtke",
     to: "/app/administration/companies",
     icon: <IoIosBusiness />,
+  },
+  {
+    label: "Uloge",
+    to: "/app/administration/roles",
+    icon: <FaUserShield />,
   },
 ];
 

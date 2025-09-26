@@ -5,6 +5,7 @@ import DashboardRoute from "../../features/dashboard/routes/DashboardRoute";
 import RequireAuth from "./RequireAuth";
 import { companiesRoutes } from "../../features/administration/companies/routes";
 import { tenantsRoutes } from "../../features/administration/tenants/routes";
+import { rolesRoutes } from "../../features/administration/roles/routes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <LoginRoute /> },
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
         path: "administration/companies",
       },
       companiesRoutes,
+      {
+        path: "administration/roles",
+      },
+      rolesRoutes,
     ],
   },
 ]);

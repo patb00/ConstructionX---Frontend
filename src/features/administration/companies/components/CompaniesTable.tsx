@@ -1,12 +1,10 @@
-import * as React from "react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Box, CircularProgress, TextField } from "@mui/material";
 import { GridActionsCellItem, type GridColDef } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
-
 import { useCompanies } from "../hooks/useCompanies";
 import { useDeleteCompany } from "../hooks/useDeleteCompany";
 import { useUpdateCompany } from "../hooks/useUpdateCompany";
@@ -34,8 +32,7 @@ export default function CompaniesTable() {
 
   const rows = useMemo(() => extractRows<Company>(data, isCompany), [data]);
 
-  // track editing state
-  const [editing, setEditing] = React.useState<{
+  const [editing, setEditing] = useState<{
     id: number | string;
     name: string;
     dateOfCreation: string;
