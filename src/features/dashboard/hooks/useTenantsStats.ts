@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { getMonthIndex, monthLabelsHR } from "../../../lib/date";
-import type { Tenant } from "../../administration/types";
+import type { Tenant } from "../../administration/tenants";
 
 export function useTenantStats(tenants: Tenant[], now = new Date()) {
   const currentYear = now.getFullYear();
