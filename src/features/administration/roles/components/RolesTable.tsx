@@ -13,9 +13,10 @@ import { useUpdateRole } from "../hooks/useUpdateRole";
 import { isRole } from "../../utils/isRole";
 import type { Role } from "..";
 import SecurityIcon from "@mui/icons-material/Security";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 
 export default function RolesTable() {
+  const navigate = useNavigate();
   const { data } = useRoles();
   const deleteRole = useDeleteRole();
   const updateRole = useUpdateRole();
@@ -176,7 +177,9 @@ export default function RolesTable() {
                 icon={<SecurityIcon fontSize="small" color="primary" />}
                 label="Permissions"
                 component={RouterLink}
-                to={`${r.id}/permissions`}
+                onClick={() =>
+                  navigate(`/administration/roles/${params.id}/edit`)
+                }
               />,
             ];
           }
