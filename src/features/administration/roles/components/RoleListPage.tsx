@@ -1,8 +1,12 @@
 import { Button, Stack, Typography, Paper } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import RolesTable from "./RolesTable";
+import { useRolesFull } from "../hooks/useRolesFull";
 
 const RoleslListPage = () => {
+  const { data } = useRolesFull("93ecb76b-5d55-4bd4-af7f-a03ef6954f00");
+  console.log("data", data);
+
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">

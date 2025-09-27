@@ -12,6 +12,8 @@ import { useDeleteRole } from "../hooks/useDeleteRole";
 import { useUpdateRole } from "../hooks/useUpdateRole";
 import { isRole } from "../../utils/isRole";
 import type { Role } from "..";
+import SecurityIcon from "@mui/icons-material/Security";
+import { Link as RouterLink } from "react-router-dom";
 
 export default function RolesTable() {
   const { data } = useRoles();
@@ -147,7 +149,6 @@ export default function RolesTable() {
           const r = params.row;
           const isThisEditing = editing?.id === r.id;
 
-          // per-row busy flags
           const isUpdating =
             updateRole.isPending && (updateRole.variables as any)?.id === r.id;
           const isDeleting =
@@ -169,6 +170,13 @@ export default function RolesTable() {
                 label="Delete"
                 disabled={busy}
                 onClick={() => handleDelete(r)}
+              />,
+              <GridActionsCellItem
+                key="permissions"
+                icon={<SecurityIcon fontSize="small" color="primary" />}
+                label="Permissions"
+                component={RouterLink}
+                to={`${r.id}/permissions`}
               />,
             ];
           }

@@ -1,6 +1,7 @@
 import { Outlet, type RouteObject } from "react-router-dom";
 import RoleslListPage from "../components/RoleListPage";
 import RoleCreatePage from "../components/RolesCreatePage";
+import RolePermissionsPage from "../components/RolePermissionsPage";
 
 function RolesLayout() {
   return (
@@ -16,5 +17,6 @@ export const rolesRoutes: RouteObject = {
   children: [
     { index: true, element: <RoleslListPage /> },
     { path: "create", element: <RoleCreatePage /> },
+    { path: ":roleId/permissions", element: <RolePermissionsPage /> },
   ],
 };
