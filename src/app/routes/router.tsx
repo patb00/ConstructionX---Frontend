@@ -2,9 +2,10 @@ import { createBrowserRouter } from "react-router-dom";
 import LoginRoute from "../../features/auth/routes/LoginRoute";
 import AppShell from "../layout/AppShell";
 import DashboardRoute from "../../features/dashboard/routes/DashboardRoute";
-import CompaniesListPage from "../../features/administration/components/companies/CompaniesListPage";
-import { tenantsRoutes } from "../../features/administration/routes/tenants";
 import RequireAuth from "./RequireAuth";
+import { companiesRoutes } from "../../features/administration/companies/routes";
+import { tenantsRoutes } from "../../features/administration/tenants/routes";
+import { rolesRoutes } from "../../features/administration/roles/routes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <LoginRoute /> },
@@ -20,8 +21,12 @@ export const router = createBrowserRouter([
       tenantsRoutes,
       {
         path: "administration/companies",
-        children: [{ index: true, element: <CompaniesListPage /> }],
       },
+      companiesRoutes,
+      {
+        path: "administration/roles",
+      },
+      rolesRoutes,
     ],
   },
 ]);

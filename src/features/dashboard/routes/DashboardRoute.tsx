@@ -2,8 +2,8 @@
 
 import { Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import { useTenants } from "../../administration/hooks/tenants/useTenants";
-import type { Tenant } from "../../administration/types";
+import { useTenants } from "../../administration/tenants/hooks/useTenants";
+import type { Tenant } from "../../administration/tenants";
 import { StatsRow } from "../components/StatsRows";
 import { TenantsYearChart } from "../components/TenantsYearChart";
 import { useTenantStats } from "../hooks/useTenantsStats";

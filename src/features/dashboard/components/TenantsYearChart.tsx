@@ -24,7 +24,7 @@ export function TenantsYearChart({
   const theme = useTheme();
 
   const fullSeries = [
-    { dataKey: "total", label: "Ukupno", color: theme.palette.grey[500] },
+    //{ dataKey: "total", label: "Ukupno", color: theme.palette.grey[500] },
     { dataKey: "active", label: "Aktivni", color: theme.palette.success.main },
     {
       dataKey: "inactive",
