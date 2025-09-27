@@ -8,8 +8,7 @@ export default defineConfig({
       "/api": {
         target: "http://fradotovic-001-site1.jtempurl.com",
         changeOrigin: true,
-        secure: false, // allow self-signed HTTPS
-        // rewrite: (path) => path, // keep /api prefix
+        secure: false,
       },
     },
   },
