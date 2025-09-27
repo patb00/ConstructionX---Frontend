@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "http://fradotovic-001-site1.jtempurl.com/api/:path*"
-    }
-  ]
-}

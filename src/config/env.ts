@@ -1,4 +1,6 @@
 export const env = {
-  apiBaseUrl: import.meta.env.PROD ? "/api" : "http://localhost:5173/api", // dev overridden by Vite proxy below
-  authMode: "header",
+  apiBaseUrl: import.meta.env.DEV
+    ? ""
+    : import.meta.env.VITE_API_BASE_URL ?? "",
+  authMode: (import.meta.env.VITE_AUTH_MODE ?? "header") as "header" | "cookie",
 };
