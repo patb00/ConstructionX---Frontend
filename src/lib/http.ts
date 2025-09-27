@@ -90,7 +90,6 @@ export async function http<T = any>(
     throw err;
   }
 
-  // 401 handling only for header mode (since tokens are client-side there)
   if (res.status === 401 && env.authMode === "header") {
     if (!refreshInFlight) {
       refreshInFlight = (async () => {
