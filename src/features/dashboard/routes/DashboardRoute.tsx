@@ -1,7 +1,7 @@
 "use client";
 
 import { Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTenants } from "../../administration/tenants/hooks/useTenants";
 import type { Tenant } from "../../administration/tenants";
 import { StatsRow } from "../components/StatsRows";
