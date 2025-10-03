@@ -23,3 +23,7 @@ export type UpdatePermissionsRequest = {
   roleId: string;
   newPermissions: string[];
 };
+
+export type AllPermissionsResponse = {
+  permissions: string[];
+};

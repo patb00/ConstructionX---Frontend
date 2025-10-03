@@ -1,4 +1,5 @@
 import type {
+  AllPermissionsResponse,
   NewRoleRequest,
   Role,
   RoleBase,
@@ -51,6 +52,13 @@ export const RolesApi = {
   getFull: async (roleId: string): Promise<Role> => {
     const res = await httpGet<ApiEnvelope<Role>>(
       `${base}/full/${encodeURIComponent(roleId)}`
+    );
+    return res.data;
+  },
+
+  getAllPermissions: async (): Promise<AllPermissionsResponse> => {
+    const res = await httpGet<ApiEnvelope<AllPermissionsResponse>>(
+      `${base}/all-permissions`
     );
     return res.data;
   },

@@ -1,13 +1,13 @@
 import { Button, Stack, Typography, Paper } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import RolesTable from "./RolesTable";
+import UsersTable from "./UsersTable";
 
-const RoleslListPage = () => {
+const UsersListPage = () => {
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h5" fontWeight={600}>
-          Uloge
+          Korisnici
         </Typography>
         <Button
           size="small"
@@ -15,7 +15,7 @@ const RoleslListPage = () => {
           to="create"
           variant="contained"
         >
-          Kreiraj ulogu
+          Kreiraj korisnika
         </Button>
       </Stack>
       <Paper
@@ -26,10 +26,10 @@ const RoleslListPage = () => {
           p: 0,
         }}
       >
-        <RolesTable />
+        <UsersTable />
       </Paper>
     </Stack>
   );
 };
 
-export default RoleslListPage;
+export default UsersListPage;

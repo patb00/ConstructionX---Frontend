@@ -6,6 +6,7 @@ import RequireAuth from "./RequireAuth";
 import { companiesRoutes } from "../../features/administration/companies/routes";
 import { tenantsRoutes } from "../../features/administration/tenants/routes";
 import { rolesRoutes } from "../../features/administration/roles/routes";
+import { usersRoles } from "../../features/administration/users/routes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <LoginRoute /> },
@@ -27,6 +28,10 @@ export const router = createBrowserRouter([
         path: "administration/roles",
       },
       rolesRoutes,
+      {
+        path: "administration/users",
+      },
+      usersRoles,
     ],
   },
 ]);

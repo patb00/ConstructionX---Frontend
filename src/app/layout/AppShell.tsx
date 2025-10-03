@@ -17,14 +17,14 @@ import { useState } from "react";
 import Sidebar, { SIDEBAR_WIDTH } from "./Sidebar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { MdConstruction } from "react-icons/md";
-import { logout } from "../../lib/auth";
 import { useSnackbar } from "notistack";
+import { useAuthStore } from "../../features/auth/model/auth.store";
 
 export default function AppShell() {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
-
+  const signOut = useAuthStore((s) => s.signOut);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -35,7 +35,7 @@ export default function AppShell() {
 
   const handleLogout = () => {
     handleMenuClose();
-    logout();
+    signOut();
     enqueueSnackbar("Odjavljeni ste.", { variant: "info" });
     navigate("/");
   };

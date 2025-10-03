@@ -25,8 +25,10 @@ import {
   FaTachometerAlt,
   FaKey,
 } from "react-icons/fa";
+import { HiUsers } from "react-icons/hi";
 import { useTheme } from "@mui/material/styles";
 import { IoIosBusiness } from "react-icons/io";
+import { useAuthStore } from "../../features/auth/model/auth.store";
 
 export const SIDEBAR_WIDTH = 250;
 
@@ -35,38 +37,44 @@ type Props = {
   onClose: () => void;
 };
 
-const MANAGEMENT = [
-  { label: "Nadzorna ploča", to: "/app/dashboard", icon: <FaTachometerAlt /> },
-  /*   { label: "Gradilište", to: "/app/gradiliste", icon: <FaHardHat /> },
+export default function Sidebar({ mobileOpen, onClose }: Props) {
+  const { pathname } = useLocation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const user = useAuthStore((s) => s.user);
+
+  const MANAGEMENT = [
+    {
+      label: "Nadzorna ploča",
+      to: "/app/dashboard",
+      icon: <FaTachometerAlt />,
+    },
+    /*   { label: "Gradilište", to: "/app/gradiliste", icon: <FaHardHat /> },
   { label: "Alat i oprema", to: "/app/alat", icon: <FaTools /> },
   { label: "Vozila", to: "/app/vozila", icon: <FaTruck /> },
   { label: "Ljudski resursi", to: "/app/ljudski", icon: <FaUsers /> },
   { label: "Stanovi", to: "/app/stanovi", icon: <FaHome /> },
   { label: "Izvješća", to: "/app/izvjestaji", icon: <FaChartBar /> }, */
-];
+  ];
 
-const SYSTEM = [
-  {
-    label: "Tenanti",
-    to: "/app/administration/tenants",
-    icon: <FaKey />,
-  },
-  {
-    label: "Tvrtke",
-    to: "/app/administration/companies",
-    icon: <IoIosBusiness />,
-  },
-  {
-    label: "Uloge",
-    to: "/app/administration/roles",
-    icon: <FaUserShield />,
-  },
-];
+  const SYSTEM_BASE = [
+    { label: "Tenanti", to: "/app/administration/tenants", icon: <FaKey /> },
+    {
+      label: "Tvrtke",
+      to: "/app/administration/companies",
+      icon: <IoIosBusiness />,
+    },
+    { label: "Uloge", to: "/app/administration/roles", icon: <FaUserShield /> },
+    {
+      label: "Korisnici",
+      to: "/app/administration/users",
+      icon: <HiUsers />,
+    },
+  ];
 
-export default function Sidebar({ mobileOpen, onClose }: Props) {
-  const { pathname } = useLocation();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const SYSTEM = SYSTEM_BASE.filter((item) =>
+    item.to === "/app/administration/tenants" ? user?.tenant === "root" : true
+  );
 
   const renderSectionLabel = (text: string) => (
     <Typography

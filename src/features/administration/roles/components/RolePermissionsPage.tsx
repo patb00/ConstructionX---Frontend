@@ -10,8 +10,9 @@ import {
   Button,
   Paper,
 } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useUpdateRolePermissions } from "../hooks/useUpdateRolePermission";
+import { usePermissions } from "../hooks/usePermissions";
 
 function groupPermissions(perms: string[] = []) {
   const groups: Record<string, string[]> = {};
@@ -25,23 +26,28 @@ function groupPermissions(perms: string[] = []) {
 
 export default function RolePermissionsPage() {
   const { roleId } = useParams<{ roleId: string }>();
-  const { data, isLoading } = useRolesFull(roleId!);
+  const { data: role, isLoading: roleLoading } = useRolesFull(roleId!);
+  const { data: permissionsData, isLoading: permsLoading } = usePermissions();
   const updatePermissions = useUpdateRolePermissions();
 
   const [tab, setTab] = useState(0);
   const [selected, setSelected] = useState<string[]>([]);
 
+  const allPermissions: string[] = useMemo(() => {
+    if (!permissionsData) return [];
+    if (Array.isArray(permissionsData)) return permissionsData;
+    return permissionsData.permissions ?? [];
+  }, [permissionsData]);
+
   useEffect(() => {
-    if (data?.permissions) {
-      setSelected(data.permissions);
-    }
-  }, [data]);
+    if (role?.permissions) setSelected(role.permissions);
+  }, [role]);
 
-  if (isLoading) return <Typography>Loading...</Typography>;
-  if (!data) return <Typography>No role found.</Typography>;
-
-  const groups = groupPermissions([...data.permissions]);
-  const categories = Object.keys(groups);
+  const groups = useMemo(
+    () => groupPermissions(allPermissions),
+    [allPermissions]
+  );
+  const categories = useMemo(() => Object.keys(groups).sort(), [groups]);
 
   const activeCategory = categories[tab] ?? categories[0];
   const activePermissions = activeCategory ? groups[activeCategory] : [];
@@ -53,15 +59,22 @@ export default function RolePermissionsPage() {
   };
 
   const handleUpdate = () => {
+    if (!role) return;
     updatePermissions.mutate({
-      roleId: data.id,
+      roleId: role.id,
       newPermissions: selected,
     });
   };
 
+  if (roleLoading || permsLoading)
+    return <Typography>Učitavanje...</Typography>;
+  if (!role) return <Typography>Uloga nije pronađena.</Typography>;
+  if (allPermissions.length === 0)
+    return <Typography>Nema dostupnih dozvola.</Typography>;
+
   return (
     <Stack spacing={2}>
-      <Typography variant="h5">{data.name} – Permissions</Typography>
+      <Typography variant="h5">{role.name} – Dozvole</Typography>
 
       <Tabs
         value={tab}
@@ -98,7 +111,7 @@ export default function RolePermissionsPage() {
           onClick={handleUpdate}
           disabled={updatePermissions.isPending}
         >
-          {updatePermissions.isPending ? "Saving..." : "Update Permissions"}
+          {updatePermissions.isPending ? "Spremanje..." : "Ažuriraj dozvole"}
         </Button>
       </Box>
     </Stack>
