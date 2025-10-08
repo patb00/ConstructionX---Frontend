@@ -5,20 +5,16 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
-import SecurityIcon from "@mui/icons-material/Security";
-import { useNavigate } from "react-router-dom";
-
+import type { JobPosition } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
-import { useRoles } from "../hooks/useRoles";
-import { useDeleteRole } from "../hooks/useDeleteRole";
-import { useUpdateRole } from "../hooks/useUpdateRole";
-import type { Role } from "..";
+import { useJobPositions } from "../hooks/useJobPositions";
+import { useDeleteJobPosition } from "../hooks/useDeleteJobPosition";
+import { useUpdateJobPosition } from "../hooks/useUpdateJobPosition";
 
-export default function RolesTable() {
-  const navigate = useNavigate();
-  const { rolesColumns, rolesRows, error } = useRoles();
-  const deleteRole = useDeleteRole();
-  const updateRole = useUpdateRole();
+export default function JobPositionsTable() {
+  const { jobPositionsRows, jobPositionsColumns, error } = useJobPositions();
+  const deleteJobPosition = useDeleteJobPosition();
+  const updateJobPosition = useUpdateJobPosition();
 
   const [editing, setEditing] = useState<{
     id: string;
@@ -26,26 +22,48 @@ export default function RolesTable() {
     description: string;
   } | null>(null);
 
-  const startEdit = (r: Role) =>
-    setEditing({ id: r.id, name: r.name, description: r.description });
+  const startEdit = (r: JobPosition) =>
+    setEditing({
+      id: String((r as any).id),
+      name: (r as any).name ?? "",
+      description: (r as any).description ?? "",
+    });
+
   const cancelEdit = () => setEditing(null);
-  const saveEdit = (r: Role) => {
+
+  const saveEdit = (r: JobPosition) => {
     if (!editing) return;
-    updateRole.mutate(
-      { id: r.id, name: editing.name, description: editing.description },
+
+    const originalId = (r as any).id;
+    updateJobPosition.mutate(
+      {
+        id: originalId,
+        name: editing.name,
+        description: editing.description,
+      } as any,
       { onSuccess: () => setEditing(null) }
     );
   };
-  const handleDelete = (r: Role) => deleteRole.mutate(r.id);
 
-  const columnsWithActions = useMemo<GridColDef<Role>[]>(() => {
-    const base = rolesColumns.map((c) => {
-      if (c.field === "name") {
+  const handleDelete = (r: JobPosition) => {
+    const originalId = (r as any).id;
+    deleteJobPosition.mutate(originalId as any);
+  };
+
+  const columnsWithActions = useMemo<GridColDef<JobPosition>[]>(() => {
+    const base = jobPositionsColumns.map((c) => {
+      if (c.field === "name" || c.field === "description") {
+        const field = c.field as "name" | "description";
         return {
           ...c,
           renderCell: (params) => {
-            const r = params.row;
-            const isThisEditing = editing?.id === r.id;
+            const r = params.row as JobPosition;
+            const rid = String((r as any).id);
+            const isThisEditing = editing?.id === rid;
+            const value = isThisEditing
+              ? (editing as any)[field]
+              : (r as any)[field];
+
             return (
               <Box
                 sx={{
@@ -56,14 +74,14 @@ export default function RolesTable() {
                 }}
               >
                 {!isThisEditing ? (
-                  <span>{r.name}</span>
+                  <span>{value}</span>
                 ) : (
                   <TextField
                     size="small"
-                    value={editing.name}
+                    value={value ?? ""}
                     onChange={(e) =>
                       setEditing((prev) =>
-                        prev ? { ...prev, name: e.target.value } : prev
+                        prev ? { ...prev, [field]: e.target.value } : prev
                       )
                     }
                     fullWidth
@@ -72,60 +90,31 @@ export default function RolesTable() {
               </Box>
             );
           },
-        } as GridColDef<Role>;
-      }
-      if (c.field === "description") {
-        return {
-          ...c,
-          renderCell: (params) => {
-            const r = params.row;
-            const isThisEditing = editing?.id === r.id;
-            return (
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                {!isThisEditing ? (
-                  <span>{r.description}</span>
-                ) : (
-                  <TextField
-                    size="small"
-                    value={editing.description}
-                    onChange={(e) =>
-                      setEditing((prev) =>
-                        prev ? { ...prev, description: e.target.value } : prev
-                      )
-                    }
-                    fullWidth
-                  />
-                )}
-              </Box>
-            );
-          },
-        } as GridColDef<Role>;
+        } as GridColDef<JobPosition>;
       }
       return c;
     });
 
     if (base.some((c) => c.field === "actions")) return base;
 
-    const actionsCol: GridColDef<Role> = {
+    const actionsCol: GridColDef<JobPosition> = {
       field: "actions",
       type: "actions",
       headerName: "Actions",
-      width: 140,
+      width: 120,
       getActions: (params) => {
-        const r = params.row;
-        const isThisEditing = editing?.id === r.id;
+        const r = params.row as JobPosition;
+        const rid = String((r as any).id);
+        const isThisEditing = editing?.id === rid;
 
         const isUpdating =
-          updateRole.isPending && (updateRole.variables as any)?.id === r.id;
+          updateJobPosition.isPending &&
+          String((updateJobPosition.variables as any)?.id) === rid;
+
         const isDeleting =
-          deleteRole.isPending && (deleteRole.variables as any) === r.id;
+          deleteJobPosition.isPending &&
+          String(deleteJobPosition.variables as any) === rid;
+
         const busy = isUpdating || isDeleting;
 
         if (!isThisEditing) {
@@ -144,15 +133,6 @@ export default function RolesTable() {
               label="Delete"
               disabled={busy}
               onClick={() => handleDelete(r)}
-              showInMenu={false}
-            />,
-            <GridActionsCellItem
-              key="permissions"
-              icon={<SecurityIcon fontSize="small" color="primary" />}
-              label="Permissions"
-              onClick={() =>
-                navigate(`/app/administration/roles/${params.id}/permissions`)
-              }
               showInMenu={false}
             />,
           ];
@@ -187,22 +167,22 @@ export default function RolesTable() {
 
     return [...base, actionsCol];
   }, [
-    rolesColumns,
+    jobPositionsColumns,
     editing,
-    updateRole.isPending,
-    updateRole.variables,
-    deleteRole.isPending,
-    deleteRole.variables,
-    navigate,
+    updateJobPosition.isPending,
+    updateJobPosition.variables,
+    deleteJobPosition.isPending,
+    deleteJobPosition.variables,
   ]);
 
-  if (error) return <div>Failed to load roles</div>;
+  if (error) return <div>Failed to load job positions</div>;
 
+  console.log(jobPositionsRows, jobPositionsColumns);
   return (
-    <ReusableDataGrid<Role>
-      rows={rolesRows}
+    <ReusableDataGrid<JobPosition>
+      rows={jobPositionsRows}
       columns={columnsWithActions}
-      getRowId={(r) => r.id}
+      getRowId={(r) => String((r as any).id)}
     />
   );
 }

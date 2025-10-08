@@ -24,6 +24,8 @@ import {
   FaUserShield,
   FaTachometerAlt,
   FaKey,
+  FaIdBadge,
+  FaBriefcase,
 } from "react-icons/fa";
 import { HiUsers } from "react-icons/hi";
 import { useTheme } from "@mui/material/styles";
@@ -69,6 +71,16 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
       label: "Korisnici",
       to: "/app/administration/users",
       icon: <HiUsers />,
+    },
+    {
+      label: "Zaposlenici",
+      to: "/app/administration/employees",
+      icon: <FaIdBadge />,
+    },
+    {
+      label: "Radna mjesta",
+      to: "/app/administration/jobPositions",
+      icon: <FaBriefcase />,
     },
   ];
 

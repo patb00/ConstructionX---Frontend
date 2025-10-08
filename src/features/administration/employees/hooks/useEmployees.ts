@@ -1,23 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
-import { usersKeys } from "../api/users.keys";
-import { UsersApi } from "../api/users.api";
-import type { User } from "..";
+import { employeesKeys } from "../api/employees.keys";
+import { EmployeesApi } from "../api/employees.api";
+import type { Employee } from "..";
 import type { GridColDef } from "@mui/x-data-grid";
 
-interface TranformedUsersData {
-  columnDefs: GridColDef<User>[];
-  rowDefs: User[];
+interface TransformedEmployeesData {
+  columnDefs: GridColDef<Employee>[];
+  rowDefs: Employee[];
 }
 
-export const useUsers = () => {
+export const useEmployees = () => {
   const { data, error, isLoading } = useQuery<
-    User[],
+    Employee[],
     Error,
-    TranformedUsersData
+    TransformedEmployeesData
   >({
-    queryKey: usersKeys.list(),
-    queryFn: () => UsersApi.getAll(),
-    select: (rows): TranformedUsersData => {
+    queryKey: employeesKeys.list(),
+    queryFn: EmployeesApi.getAll,
+    select: (rows): TransformedEmployeesData => {
       if (!rows?.length) return { columnDefs: [], rowDefs: [] };
 
       const allKeys = Array.from(new Set(rows.flatMap(Object.keys)));
@@ -39,8 +39,8 @@ export const useUsers = () => {
   });
 
   return {
-    usersRows: data?.rowDefs ?? [],
-    usersColumns: data?.columnDefs ?? [],
+    employeeRows: data?.rowDefs ?? [],
+    employeeColumns: data?.columnDefs ?? [],
     error,
     isLoading,
   };

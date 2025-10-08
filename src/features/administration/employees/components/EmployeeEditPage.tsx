@@ -1,0 +1,61 @@
+import { Paper, Stack, Typography } from "@mui/material";
+import { useParams } from "react-router-dom";
+import EmployeeForm from "./EmployeeForm";
+import { useUpdateEmployee } from "../hooks/useUpdateEmployee";
+import { useEmployee } from "../hooks/useEmployee";
+
+export default function EmployeeEditPage() {
+  const { id } = useParams<{ id: string }>();
+  const employeeId = Number(id);
+  if (!Number.isFinite(employeeId)) return <div>Neispravan URL (id)</div>;
+
+  const { data: emp, isLoading, error } = useEmployee(employeeId);
+  const { mutateAsync, isPending } = useUpdateEmployee();
+
+  const toYMD = (s?: string | null) => (s ? s.slice(0, 10) : undefined);
+
+  const defaultValues = emp && {
+    firstName: emp.firstName,
+    lastName: emp.lastName,
+    oib: emp.oib,
+    dateOfBirth: toYMD(emp.dateOfBirth),
+    employmentDate: toYMD(emp.employmentDate),
+    terminationDate: toYMD(emp.terminationDate),
+    hasMachineryLicense: !!emp.hasMachineryLicense,
+    clothingSize: emp.clothingSize ?? "",
+    gloveSize: emp.gloveSize ?? "",
+    shoeSize:
+      typeof emp.shoeSize === "number"
+        ? emp.shoeSize
+        : ("" as unknown as number),
+  };
+
+  const handleSubmit = async (values: any) => {
+    await mutateAsync({ id: employeeId, ...values });
+  };
+
+  if (error) return <div>Failed to load employee.</div>;
+
+  return (
+    <Stack spacing={2}>
+      <Typography variant="h5" fontWeight={600} sx={{ mb: 2 }}>
+        Uredi zaposlenika
+      </Typography>
+      <Paper
+        elevation={0}
+        sx={{
+          border: (t) => `1px solid ${t.palette.divider}`,
+          height: "100%",
+          width: "100%",
+        }}
+      >
+        <EmployeeForm
+          key={employeeId}
+          defaultValues={defaultValues}
+          onSubmit={handleSubmit}
+          busy={isPending || isLoading}
+        />
+      </Paper>
+    </Stack>
+  );
+}

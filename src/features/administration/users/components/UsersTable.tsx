@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { CircularProgress, TextField, Chip, Box } from "@mui/material";
+import { Box, CircularProgress, TextField, Chip } from "@mui/material";
 import { GridActionsCellItem, type GridColDef } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
@@ -10,19 +10,15 @@ import BlockIcon from "@mui/icons-material/Block";
 import SecurityIcon from "@mui/icons-material/Security";
 
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
-import { extractRows } from "../../../../utilis/dataGrid";
 import type { User } from "..";
 import { useUsers } from "../hooks/useUsers";
-import { isUser } from "../../utils/isUser";
 import { useDeleteUser } from "../hooks/useDeleteUser";
 import { useUpdateUser } from "../hooks/useUpdateUser";
 import { useActivateUser } from "../hooks/useActivateUser";
 import UserRolesDialog from "./UserRolesDialog";
 
 export default function UsersTable() {
-  const { data } = useUsers();
-  const rows = useMemo(() => extractRows<User>(data, isUser), [data]);
-
+  const { usersColumns, usersRows, error } = useUsers();
   const deleteUser = useDeleteUser();
   const updateUser = useUpdateUser();
   const updateStatus = useActivateUser();
@@ -34,7 +30,7 @@ export default function UsersTable() {
     phoneNumber: string;
   } | null>(null);
 
-  const [rolesDialogUser, setRolesDialogUser] = useState<string | null>(null); // 👈 which user is in the roles dialog
+  const [rolesDialogUser, setRolesDialogUser] = useState<string | null>(null);
 
   const startEdit = (u: User) =>
     setEditing({
@@ -59,258 +55,268 @@ export default function UsersTable() {
     );
   };
 
-  const handleDelete = (u: User) => {
-    deleteUser.mutate(u.id);
-  };
-
-  const toggleStatus = (u: User) => {
+  const handleDelete = (u: User) => deleteUser.mutate(u.id);
+  const toggleStatus = (u: User) =>
     updateStatus.mutate({ userId: u.id, activation: !u.isActive });
-  };
 
-  const columns = useMemo<GridColDef<User>[]>(
-    () => [
-      { field: "email", headerName: "Email", flex: 1.5, minWidth: 230 },
-      {
-        field: "firstName",
-        headerName: "First Name",
-        flex: 1.2,
-        minWidth: 140,
-        renderCell: (params) => {
-          const u = params.row;
-          const isThisEditing = editing?.id === u.id;
-          return !isThisEditing ? (
-            <span>{u.firstName}</span>
-          ) : (
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <TextField
-                size="small"
-                value={editing.firstName}
-                onChange={(e) =>
-                  setEditing((prev) =>
-                    prev ? { ...prev, firstName: e.target.value } : prev
-                  )
-                }
-                fullWidth
-              />
-            </Box>
-          );
-        },
-      },
-      {
-        field: "lastName",
-        headerName: "Last Name",
-        flex: 1.2,
-        minWidth: 140,
-        renderCell: (params) => {
-          const u = params.row;
-          const isThisEditing = editing?.id === u.id;
-          return !isThisEditing ? (
-            <span>{u.lastName}</span>
-          ) : (
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <TextField
-                size="small"
-                value={editing.lastName}
-                onChange={(e) =>
-                  setEditing((prev) =>
-                    prev ? { ...prev, lastName: e.target.value } : prev
-                  )
-                }
-                fullWidth
-              />
-            </Box>
-          );
-        },
-      },
-      {
-        field: "phoneNumber",
-        headerName: "Phone Number",
-        flex: 1.2,
-        minWidth: 160,
-        renderCell: (params) => {
-          const u = params.row;
-          const isThisEditing = editing?.id === u.id;
-          return !isThisEditing ? (
-            <span>{u.phoneNumber ?? ""}</span>
-          ) : (
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <TextField
-                size="small"
-                value={editing.phoneNumber}
-                onChange={(e) =>
-                  setEditing((prev) =>
-                    prev ? { ...prev, phoneNumber: e.target.value } : prev
-                  )
-                }
-                fullWidth
-              />
-            </Box>
-          );
-        },
-      },
-      {
-        field: "isActive",
-        headerName: "Status",
-        flex: 1,
-        minWidth: 140,
-        align: "center",
-        headerAlign: "center",
-        renderCell: (params) => (
-          <Box
-            sx={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <Chip
-              size="small"
-              label={params.row.isActive ? "Active" : "Inactive"}
-              color={params.row.isActive ? "success" : "default"}
-              variant={params.row.isActive ? "filled" : "outlined"}
-            />
-          </Box>
-        ),
-      },
-      {
-        field: "actions",
-        type: "actions",
-        headerName: "Actions",
-        flex: 1,
-        minWidth: 260,
-        getActions: (params) => {
-          const u = params.row;
-          const isThisEditing = editing?.id === u.id;
-
-          const isUpdating =
-            updateUser.isPending && (updateUser.variables as any)?.id === u.id;
-          const isToggling =
-            updateStatus.isPending &&
-            (updateStatus.variables as any)?.userId === u.id;
-          const isDeleting =
-            deleteUser.isPending && (deleteUser.variables as any) === u.id;
-
-          const busy = isUpdating || isToggling || isDeleting;
-
-          if (!isThisEditing) {
-            return [
-              <GridActionsCellItem
-                key="edit"
-                icon={<EditIcon fontSize="small" />}
-                label="Edit"
-                disabled={busy}
-                onClick={() => startEdit(u)}
-              />,
-              <GridActionsCellItem
-                key="delete"
-                icon={<DeleteIcon fontSize="small" color="error" />}
-                label="Delete"
-                disabled={busy}
-                onClick={() => handleDelete(u)}
-              />,
-              u.isActive ? (
-                <GridActionsCellItem
-                  key="deactivate"
-                  icon={
-                    isToggling ? (
-                      <CircularProgress size={16} />
-                    ) : (
-                      <BlockIcon fontSize="small" />
+  const columnsWithActions = useMemo<GridColDef<User>[]>(() => {
+    const base = usersColumns.map((c) => {
+      if (c.field === "firstName") {
+        return {
+          ...c,
+          renderCell: (params) => {
+            const u = params.row;
+            const isThisEditing = editing?.id === u.id;
+            return !isThisEditing ? (
+              <span>{u.firstName}</span>
+            ) : (
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <TextField
+                  size="small"
+                  value={editing.firstName}
+                  onChange={(e) =>
+                    setEditing((p) =>
+                      p ? { ...p, firstName: e.target.value } : p
                     )
                   }
-                  label="Deactivate"
-                  disabled={busy}
-                  onClick={() => toggleStatus(u)}
+                  fullWidth
                 />
-              ) : (
-                <GridActionsCellItem
-                  key="activate"
-                  icon={
-                    isToggling ? (
-                      <CircularProgress size={16} />
-                    ) : (
-                      <CheckIcon fontSize="small" />
+              </Box>
+            );
+          },
+        } as GridColDef<User>;
+      }
+
+      if (c.field === "lastName") {
+        return {
+          ...c,
+          renderCell: (params) => {
+            const u = params.row;
+            const isThisEditing = editing?.id === u.id;
+            return !isThisEditing ? (
+              <span>{u.lastName}</span>
+            ) : (
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <TextField
+                  size="small"
+                  value={editing.lastName}
+                  onChange={(e) =>
+                    setEditing((p) =>
+                      p ? { ...p, lastName: e.target.value } : p
                     )
                   }
-                  label="Activate"
-                  disabled={busy}
-                  onClick={() => toggleStatus(u)}
+                  fullWidth
                 />
-              ),
-              <GridActionsCellItem
-                key="roles"
-                icon={<SecurityIcon fontSize="small" color="primary" />}
-                label="Manage Roles"
-                onClick={() => setRolesDialogUser(u.id)} // 👈 open dialog
-              />,
-            ];
-          }
+              </Box>
+            );
+          },
+        } as GridColDef<User>;
+      }
 
+      if (c.field === "phoneNumber") {
+        return {
+          ...c,
+          renderCell: (params) => {
+            const u = params.row;
+            const isThisEditing = editing?.id === u.id;
+            return !isThisEditing ? (
+              <span>{u.phoneNumber ?? ""}</span>
+            ) : (
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <TextField
+                  size="small"
+                  value={editing.phoneNumber}
+                  onChange={(e) =>
+                    setEditing((p) =>
+                      p ? { ...p, phoneNumber: e.target.value } : p
+                    )
+                  }
+                  fullWidth
+                />
+              </Box>
+            );
+          },
+        } as GridColDef<User>;
+      }
+
+      if (c.field === "isActive") {
+        return {
+          ...c,
+          align: "center",
+          headerAlign: "center",
+          renderCell: (params) => (
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Chip
+                size="small"
+                label={params.row.isActive ? "Active" : "Inactive"}
+                color={params.row.isActive ? "success" : "default"}
+                variant={params.row.isActive ? "filled" : "outlined"}
+              />
+            </Box>
+          ),
+        } as GridColDef<User>;
+      }
+
+      return c;
+    });
+
+    if (base.some((c) => c.field === "actions")) return base;
+
+    const actionsCol: GridColDef<User> = {
+      field: "actions",
+      type: "actions",
+      headerName: "Actions",
+      width: 260,
+      getActions: (params) => {
+        const u = params.row;
+        const isThisEditing = editing?.id === u.id;
+
+        const isUpdating =
+          updateUser.isPending && (updateUser.variables as any)?.id === u.id;
+        const isToggling =
+          updateStatus.isPending &&
+          (updateStatus.variables as any)?.userId === u.id;
+        const isDeleting =
+          deleteUser.isPending && (deleteUser.variables as any) === u.id;
+        const busy = isUpdating || isToggling || isDeleting;
+
+        if (!isThisEditing) {
           return [
             <GridActionsCellItem
-              key="save"
-              icon={
-                isUpdating ? (
-                  <CircularProgress size={16} />
-                ) : (
-                  <SaveIcon fontSize="small" />
-                )
-              }
-              label={isUpdating ? "Saving..." : "Save"}
-              disabled={isUpdating}
-              onClick={() => saveEdit(u)}
+              key="edit"
+              icon={<EditIcon fontSize="small" />}
+              label="Edit"
+              disabled={busy}
+              onClick={() => startEdit(u)}
+              showInMenu={false}
             />,
             <GridActionsCellItem
-              key="cancel"
-              icon={<CloseIcon fontSize="small" />}
-              label="Cancel"
-              disabled={isUpdating}
-              onClick={cancelEdit}
+              key="delete"
+              icon={<DeleteIcon fontSize="small" color="error" />}
+              label="Delete"
+              disabled={isDeleting}
+              onClick={() => handleDelete(u)}
+              showInMenu={false}
+            />,
+            u.isActive ? (
+              <GridActionsCellItem
+                key="deactivate"
+                icon={
+                  isToggling ? (
+                    <CircularProgress size={16} />
+                  ) : (
+                    <BlockIcon fontSize="small" />
+                  )
+                }
+                label="Deactivate"
+                disabled={busy}
+                onClick={() => toggleStatus(u)}
+                showInMenu={false}
+              />
+            ) : (
+              <GridActionsCellItem
+                key="activate"
+                icon={
+                  isToggling ? (
+                    <CircularProgress size={16} />
+                  ) : (
+                    <CheckIcon fontSize="small" />
+                  )
+                }
+                label="Activate"
+                disabled={busy}
+                onClick={() => toggleStatus(u)}
+                showInMenu={false}
+              />
+            ),
+            <GridActionsCellItem
+              key="roles"
+              icon={<SecurityIcon fontSize="small" color="primary" />}
+              label="Manage Roles"
+              onClick={() => setRolesDialogUser(u.id)}
+              showInMenu={false}
             />,
           ];
-        },
+        }
+
+        return [
+          <GridActionsCellItem
+            key="save"
+            icon={
+              isUpdating ? (
+                <CircularProgress size={16} />
+              ) : (
+                <SaveIcon fontSize="small" />
+              )
+            }
+            label={isUpdating ? "Saving..." : "Save"}
+            disabled={isUpdating}
+            onClick={() => saveEdit(u)}
+            showInMenu={false}
+          />,
+          <GridActionsCellItem
+            key="cancel"
+            icon={<CloseIcon fontSize="small" />}
+            label="Cancel"
+            disabled={isUpdating}
+            onClick={cancelEdit}
+            showInMenu={false}
+          />,
+        ];
       },
-    ],
-    [
-      editing,
-      updateUser.isPending,
-      updateUser.variables,
-      updateStatus.isPending,
-      updateStatus.variables,
-      deleteUser.isPending,
-      deleteUser.variables,
-    ]
-  );
+    };
+
+    return [...base, actionsCol];
+  }, [
+    usersColumns,
+    editing,
+    updateUser.isPending,
+    updateUser.variables,
+    updateStatus.isPending,
+    updateStatus.variables,
+    deleteUser.isPending,
+    deleteUser.variables,
+  ]);
+
+  if (error) return <div>Failed to load users</div>;
 
   return (
     <>
       <ReusableDataGrid<User>
-        rows={rows}
-        columns={columns}
+        rows={usersRows}
+        columns={columnsWithActions}
         getRowId={(r) => r.id}
         pageSize={10}
+        stickyRightField="actions"
       />
       {rolesDialogUser && (
         <UserRolesDialog

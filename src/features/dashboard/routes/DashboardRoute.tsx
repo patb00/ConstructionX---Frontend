@@ -12,8 +12,9 @@ import { getCurrentUser } from "../../auth/model/currentUser";
 type Filter = "all" | "active" | "inactive" | "expired";
 
 export default function DashboardRoute() {
-  const { data } = useTenants() as { data?: Tenant[] };
-  const tenants = Array.isArray(data) ? data : [];
+  const { tenantsRows, error } = useTenants();
+  const tenants: Tenant[] = Array.isArray(tenantsRows) ? tenantsRows : [];
+
   const { totals, dataset, currentYear } = useTenantStats(tenants);
 
   const user = getCurrentUser();
@@ -23,6 +24,10 @@ export default function DashboardRoute() {
       : user?.name || user?.email) ?? "Korisnik";
 
   const [filter, setFilter] = useState<Filter>("all");
+
+  if (error) {
+    return <div>Neuspjelo učitavanje stanara.</div>;
+  }
 
   return (
     <Stack spacing={3} sx={{ height: "100%", width: "100%" }}>

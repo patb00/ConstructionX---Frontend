@@ -18,8 +18,8 @@ export type ReusableDataGridProps<
   getRowId?: GridRowIdGetter<T>;
   pageSize?: number;
   exportFileName?: string;
-
   toolbarColor?: string;
+  stickyRightField?: string;
 };
 
 export default function ReusableDataGrid<
@@ -28,9 +28,10 @@ export default function ReusableDataGrid<
   rows,
   columns,
   getRowId,
-  pageSize = 10,
+  pageSize = 50,
   exportFileName = "export",
   toolbarColor = "#646464",
+  stickyRightField,
 }: ReusableDataGridProps<T>) {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -57,7 +58,6 @@ export default function ReusableDataGrid<
         }}
       >
         <DataGrid
-          showToolbar
           rows={rows}
           columns={columnsForScreen}
           getRowId={getRowId}
@@ -72,7 +72,6 @@ export default function ReusableDataGrid<
           slotProps={{
             toolbar: {
               color: toolbarColor,
-
               csvOptions: {
                 fileName: exportFileName,
                 delimiter: ",",
@@ -84,6 +83,63 @@ export default function ReusableDataGrid<
           sortingOrder={["asc", "desc"]}
           disableColumnMenu={isSmall}
           checkboxSelection={false}
+          disableVirtualization={Boolean(stickyRightField)}
+          sx={
+            stickyRightField
+              ? {
+                  [`& .MuiDataGrid-cell[data-field="${stickyRightField}"]`]: {
+                    position: "sticky",
+                    right: 0,
+                    zIndex: 1112,
+                    backgroundColor: (t) => t.palette.background.paper,
+                    borderLeft: (t) => `1px solid ${t.palette.divider}`,
+                    boxShadow: (t) =>
+                      t.palette.mode === "dark"
+                        ? "-2px 0 4px rgba(0,0,0,.18)"
+                        : "-2px 0 4px rgba(0,0,0,.05)",
+                    "&::after": {
+                      content: '""',
+                      position: "absolute",
+                      left: -4,
+                      top: 0,
+                      bottom: 0,
+                      width: 4,
+                      pointerEvents: "none",
+                      background: (t) =>
+                        t.palette.mode === "dark"
+                          ? "linear-gradient(to left, rgba(0,0,0,.10), rgba(0,0,0,0))"
+                          : "linear-gradient(to left, rgba(0,0,0,.03), rgba(0,0,0,0))",
+                    },
+                  },
+
+                  [`& .MuiDataGrid-columnHeaders .MuiDataGrid-columnHeader[data-field="${stickyRightField}"]`]:
+                    {
+                      position: "sticky",
+                      right: 0,
+                      zIndex: 1113,
+                      backgroundColor: (t) => t.palette.background.paper,
+                      borderLeft: (t) => `1px solid ${t.palette.divider}`,
+                      boxShadow: (t) =>
+                        t.palette.mode === "dark"
+                          ? "-2px 0 4px rgba(0,0,0,.20)"
+                          : "-2px 0 4px rgba(0,0,0,.06)",
+                      "&::after": {
+                        content: '""',
+                        position: "absolute",
+                        left: -4,
+                        top: 0,
+                        bottom: 0,
+                        width: 4,
+                        pointerEvents: "none",
+                        background: (t) =>
+                          t.palette.mode === "dark"
+                            ? "linear-gradient(to left, rgba(0,0,0,.12), rgba(0,0,0,0))"
+                            : "linear-gradient(to left, rgba(0,0,0,.04), rgba(0,0,0,0))",
+                      },
+                    },
+                }
+              : undefined
+          }
         />
       </Box>
     </Box>

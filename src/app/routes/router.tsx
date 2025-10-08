@@ -7,6 +7,8 @@ import { companiesRoutes } from "../../features/administration/companies/routes"
 import { tenantsRoutes } from "../../features/administration/tenants/routes";
 import { rolesRoutes } from "../../features/administration/roles/routes";
 import { usersRoles } from "../../features/administration/users/routes";
+import { employeesRoutes } from "../../features/administration/employees/routes";
+import { jobPostionRoutes } from "../../features/administration/job_positions/routes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <LoginRoute /> },
@@ -32,6 +34,14 @@ export const router = createBrowserRouter([
         path: "administration/users",
       },
       usersRoles,
+      {
+        path: "administration/employees",
+      },
+      employeesRoutes,
+      {
+        path: "administration/jobPositions",
+      },
+      jobPostionRoutes,
     ],
   },
 ]);
