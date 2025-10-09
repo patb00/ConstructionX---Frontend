@@ -1,14 +1,34 @@
-import { Paper, Stack, Typography } from "@mui/material";
+import { Button, Paper, Stack, Typography } from "@mui/material";
 import { useAddEmployee } from "../hooks/useAddEmployee";
 import EmployeeForm from "./EmployeeForm";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
 export default function EmployeeCreatePage() {
   const { mutateAsync, isPending } = useAddEmployee();
+  const navigate = useNavigate();
+
   return (
     <Stack spacing={2}>
-      <Typography variant="h5" fontWeight={600} sx={{ mb: 2 }}>
-        Kreiraj zaposlenika
-      </Typography>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ mb: 2 }}
+      >
+        <Typography variant="h5" fontWeight={600}>
+          Kreiraj zaposlenika
+        </Typography>
+        <Button
+          size="small"
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate("/app/administration/employees")}
+          sx={{ color: "primary.main" }}
+        >
+          Natrag
+        </Button>
+      </Stack>
       <Paper
         elevation={0}
         sx={{

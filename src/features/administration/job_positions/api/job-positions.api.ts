@@ -26,7 +26,6 @@ export const JobPositionsApi = {
   },
 
   delete: async (jobPositionId: number) => {
-    // The spec shows a string body on 200 for DELETE; type accordingly.
     const res = await httpDelete<ApiEnvelope<string>>(
       `${base}/${jobPositionId}`
     );

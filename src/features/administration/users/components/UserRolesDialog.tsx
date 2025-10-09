@@ -1,4 +1,3 @@
-// UserRolesDialog.tsx
 import {
   Dialog,
   DialogTitle,
@@ -20,15 +19,12 @@ import type { UserRoleAssignment, UserRolesResponse } from "..";
 type Props = { userId: string; open: boolean; onClose: () => void };
 
 export default function UserRolesDialog({ userId, open, onClose }: Props) {
-  const { data, isLoading, isError } = useUserRoles(userId); // data can be UserRoleAssignment[] OR UserRolesResponse
-
+  const { data, isLoading, isError } = useUserRoles(userId);
   const updateRoles = useUpdateRoles();
 
-  // Normalize the shape to a pure array
   const rolesList: UserRoleAssignment[] = React.useMemo(() => {
     if (!data) return [];
     if (Array.isArray(data)) return data as UserRoleAssignment[];
-    // else assume { userRoles: [...] }
     return (data as UserRolesResponse).userRoles ?? [];
   }, [data]);
 
@@ -63,8 +59,19 @@ export default function UserRolesDialog({ userId, open, onClose }: Props) {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Manage Roles</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="sm"
+      PaperProps={{
+        sx: {
+          border: (t) => `1px solid ${t.palette.primary.main}`,
+        },
+      }}
+    >
+      <DialogTitle>Upravljanje ulogama</DialogTitle>
+
       <DialogContent dividers>
         {isLoading ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
@@ -72,11 +79,11 @@ export default function UserRolesDialog({ userId, open, onClose }: Props) {
           </Box>
         ) : isError ? (
           <Typography color="error" sx={{ py: 1 }}>
-            Failed to load roles.
+            Neuspjelo učitavanje uloga.
           </Typography>
         ) : rolesList.length === 0 ? (
           <Typography color="text.secondary" sx={{ py: 1 }}>
-            No roles available.
+            Nema dostupnih uloga.
           </Typography>
         ) : (
           <Stack spacing={1}>
@@ -110,16 +117,30 @@ export default function UserRolesDialog({ userId, open, onClose }: Props) {
           </Stack>
         )}
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} disabled={updateRoles.isPending}>
-          Cancel
+
+      <DialogActions sx={{ p: 2 }}>
+        <Button
+          onClick={onClose}
+          disabled={updateRoles.isPending}
+          variant="outlined"
+          sx={{
+            color: (t) => t.palette.grey[700],
+            borderColor: (t) => t.palette.grey[400],
+            "&:hover": {
+              backgroundColor: (t) => t.palette.grey[100],
+              borderColor: (t) => t.palette.grey[500],
+            },
+          }}
+        >
+          Odustani
         </Button>
+
         <Button
           onClick={handleSave}
           variant="contained"
           disabled={updateRoles.isPending || rolesList.length === 0}
         >
-          {updateRoles.isPending ? "Saving..." : "Save"}
+          {updateRoles.isPending ? "Spremanje..." : "Spremi"}
         </Button>
       </DialogActions>
     </Dialog>

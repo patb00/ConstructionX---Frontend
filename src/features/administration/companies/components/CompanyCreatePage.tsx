@@ -1,14 +1,34 @@
-import { Paper, Stack, Typography } from "@mui/material";
+import { Button, Paper, Stack, Typography } from "@mui/material";
 import { useAddCompany } from "../hooks/useAddCompany";
 import CompanyForm from "./CompanyForm";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
 export default function CompanyCreatePage() {
   const { mutateAsync, isPending } = useAddCompany();
+  const navigate = useNavigate();
+
   return (
     <Stack spacing={2}>
-      <Typography variant="h5" fontWeight={600} sx={{ mb: 2 }}>
-        Kreiraj tvrtku
-      </Typography>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ mb: 2 }}
+      >
+        <Typography variant="h5" fontWeight={600}>
+          Kreiraj tvrtku
+        </Typography>
+        <Button
+          size="small"
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate("/app/administration/companies")}
+          sx={{ color: "primary.main" }}
+        >
+          Natrag
+        </Button>
+      </Stack>
       <Paper
         elevation={0}
         sx={{

@@ -10,6 +10,5 @@ export function useTenant(id?: string) {
       return TenantsApi.getById(id);
     },
     enabled: !!id,
-    staleTime: 60_000,
   });
 }

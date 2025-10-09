@@ -1,111 +1,62 @@
-import { useMemo, useState } from "react";
-import { Box, CircularProgress, TextField } from "@mui/material";
+import { useMemo, useState, useCallback } from "react";
+import { Box, Tooltip } from "@mui/material";
 import { GridActionsCellItem, type GridColDef } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
-import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SecurityIcon from "@mui/icons-material/Security";
 import { useNavigate } from "react-router-dom";
-
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import { useRoles } from "../hooks/useRoles";
 import { useDeleteRole } from "../hooks/useDeleteRole";
-import { useUpdateRole } from "../hooks/useUpdateRole";
 import type { Role } from "..";
+import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 
 export default function RolesTable() {
   const navigate = useNavigate();
   const { rolesColumns, rolesRows, error } = useRoles();
   const deleteRole = useDeleteRole();
-  const updateRole = useUpdateRole();
 
-  const [editing, setEditing] = useState<{
-    id: string;
-    name: string;
-    description: string;
-  } | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingRole, setPendingRole] = useState<Role | null>(null);
 
-  const startEdit = (r: Role) =>
-    setEditing({ id: r.id, name: r.name, description: r.description });
-  const cancelEdit = () => setEditing(null);
-  const saveEdit = (r: Role) => {
-    if (!editing) return;
-    updateRole.mutate(
-      { id: r.id, name: editing.name, description: editing.description },
-      { onSuccess: () => setEditing(null) }
-    );
-  };
-  const handleDelete = (r: Role) => deleteRole.mutate(r.id);
+  const requestDelete = useCallback((r: Role) => {
+    setPendingRole(r);
+    setConfirmOpen(true);
+  }, []);
+
+  const handleCancel = useCallback(() => {
+    if (deleteRole.isPending) return;
+    setConfirmOpen(false);
+    setPendingRole(null);
+  }, [deleteRole.isPending]);
+
+  const handleConfirm = useCallback(() => {
+    if (!pendingRole) return;
+    deleteRole.mutate(pendingRole.id, {
+      onSuccess: () => {
+        setConfirmOpen(false);
+        setPendingRole(null);
+      },
+    });
+  }, [deleteRole, pendingRole]);
 
   const columnsWithActions = useMemo<GridColDef<Role>[]>(() => {
     const base = rolesColumns.map((c) => {
-      if (c.field === "name") {
+      if (c.field === "name" || c.field === "description") {
         return {
           ...c,
-          renderCell: (params) => {
-            const r = params.row;
-            const isThisEditing = editing?.id === r.id;
-            return (
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                {!isThisEditing ? (
-                  <span>{r.name}</span>
-                ) : (
-                  <TextField
-                    size="small"
-                    value={editing.name}
-                    onChange={(e) =>
-                      setEditing((prev) =>
-                        prev ? { ...prev, name: e.target.value } : prev
-                      )
-                    }
-                    fullWidth
-                  />
-                )}
-              </Box>
-            );
-          },
-        } as GridColDef<Role>;
-      }
-      if (c.field === "description") {
-        return {
-          ...c,
-          renderCell: (params) => {
-            const r = params.row;
-            const isThisEditing = editing?.id === r.id;
-            return (
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                {!isThisEditing ? (
-                  <span>{r.description}</span>
-                ) : (
-                  <TextField
-                    size="small"
-                    value={editing.description}
-                    onChange={(e) =>
-                      setEditing((prev) =>
-                        prev ? { ...prev, description: e.target.value } : prev
-                      )
-                    }
-                    fullWidth
-                  />
-                )}
-              </Box>
-            );
-          },
+          renderCell: (params) => (
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <span>{(params.value as string) ?? ""}</span>
+            </Box>
+          ),
         } as GridColDef<Role>;
       }
       return c;
@@ -117,68 +68,47 @@ export default function RolesTable() {
       field: "actions",
       type: "actions",
       headerName: "Actions",
-      width: 140,
+      width: 180,
       getActions: (params) => {
         const r = params.row;
-        const isThisEditing = editing?.id === r.id;
-
-        const isUpdating =
-          updateRole.isPending && (updateRole.variables as any)?.id === r.id;
-        const isDeleting =
-          deleteRole.isPending && (deleteRole.variables as any) === r.id;
-        const busy = isUpdating || isDeleting;
-
-        if (!isThisEditing) {
-          return [
-            <GridActionsCellItem
-              key="edit"
-              icon={<EditIcon fontSize="small" />}
-              label="Edit"
-              disabled={busy}
-              onClick={() => startEdit(r)}
-              showInMenu={false}
-            />,
-            <GridActionsCellItem
-              key="delete"
-              icon={<DeleteIcon fontSize="small" color="error" />}
-              label="Delete"
-              disabled={busy}
-              onClick={() => handleDelete(r)}
-              showInMenu={false}
-            />,
-            <GridActionsCellItem
-              key="permissions"
-              icon={<SecurityIcon fontSize="small" color="primary" />}
-              label="Permissions"
-              onClick={() =>
-                navigate(`/app/administration/roles/${params.id}/permissions`)
-              }
-              showInMenu={false}
-            />,
-          ];
-        }
+        const busy = deleteRole.isPending;
 
         return [
           <GridActionsCellItem
-            key="save"
+            key="edit"
             icon={
-              isUpdating ? (
-                <CircularProgress size={16} />
-              ) : (
-                <SaveIcon fontSize="small" />
-              )
+              <Tooltip title="Uredi ulogu">
+                <EditIcon fontSize="small" />
+              </Tooltip>
             }
-            label={isUpdating ? "Saving..." : "Save"}
-            disabled={isUpdating}
-            onClick={() => saveEdit(r)}
+            label="Uredi ulogu"
+            disabled={busy}
+            onClick={() => navigate(`${r.id}/edit`)}
             showInMenu={false}
           />,
           <GridActionsCellItem
-            key="cancel"
-            icon={<CloseIcon fontSize="small" />}
-            label="Cancel"
-            disabled={isUpdating}
-            onClick={cancelEdit}
+            key="delete"
+            icon={
+              <Tooltip title="Izbriši ulogu">
+                <DeleteIcon fontSize="small" color="error" />
+              </Tooltip>
+            }
+            label="Obriši"
+            disabled={busy}
+            onClick={() => requestDelete(r)}
+            showInMenu={false}
+          />,
+          <GridActionsCellItem
+            key="permissions"
+            icon={
+              <Tooltip title="Dozvole (Permissions)">
+                <SecurityIcon fontSize="small" color="primary" />
+              </Tooltip>
+            }
+            label="Permissions"
+            onClick={() =>
+              navigate(`/app/administration/roles/${params.id}/permissions`)
+            }
             showInMenu={false}
           />,
         ];
@@ -186,23 +116,29 @@ export default function RolesTable() {
     };
 
     return [...base, actionsCol];
-  }, [
-    rolesColumns,
-    editing,
-    updateRole.isPending,
-    updateRole.variables,
-    deleteRole.isPending,
-    deleteRole.variables,
-    navigate,
-  ]);
+  }, [rolesColumns, deleteRole.isPending, navigate, requestDelete]);
 
   if (error) return <div>Failed to load roles</div>;
 
   return (
-    <ReusableDataGrid<Role>
-      rows={rolesRows}
-      columns={columnsWithActions}
-      getRowId={(r) => r.id}
-    />
+    <>
+      <ReusableDataGrid<Role>
+        rows={rolesRows}
+        columns={columnsWithActions}
+        getRowId={(r) => r.id}
+      />
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Obriši ulogu?"
+        description={`Jeste li sigurni da želite obrisati ulogu ?`}
+        confirmText="Obriši"
+        cancelText="Odustani"
+        loading={deleteRole.isPending}
+        disableBackdropClose
+        onClose={handleCancel}
+        onConfirm={handleConfirm}
+      />
+    </>
   );
 }

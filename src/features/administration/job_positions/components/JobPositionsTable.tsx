@@ -1,95 +1,62 @@
-import { useMemo, useState } from "react";
-import { Box, CircularProgress, TextField } from "@mui/material";
+import { useMemo, useState, useCallback } from "react";
+import { Box, Tooltip } from "@mui/material";
 import { GridActionsCellItem, type GridColDef } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
-import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { JobPosition } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import { useJobPositions } from "../hooks/useJobPositions";
 import { useDeleteJobPosition } from "../hooks/useDeleteJobPosition";
-import { useUpdateJobPosition } from "../hooks/useUpdateJobPosition";
+import { useNavigate } from "react-router-dom";
+import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 
 export default function JobPositionsTable() {
   const { jobPositionsRows, jobPositionsColumns, error } = useJobPositions();
   const deleteJobPosition = useDeleteJobPosition();
-  const updateJobPosition = useUpdateJobPosition();
+  const navigate = useNavigate();
 
-  const [editing, setEditing] = useState<{
-    id: string;
-    name: string;
-    description: string;
-  } | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingRow, setPendingRow] = useState<JobPosition | null>(null);
 
-  const startEdit = (r: JobPosition) =>
-    setEditing({
-      id: String((r as any).id),
-      name: (r as any).name ?? "",
-      description: (r as any).description ?? "",
+  const requestDelete = useCallback((row: JobPosition) => {
+    setPendingRow(row);
+    setConfirmOpen(true);
+  }, []);
+
+  const handleCancel = useCallback(() => {
+    if (deleteJobPosition.isPending) return;
+    setConfirmOpen(false);
+    setPendingRow(null);
+  }, [deleteJobPosition.isPending]);
+
+  const handleConfirm = useCallback(() => {
+    if (!pendingRow) return;
+    const id = (pendingRow as any).id;
+    deleteJobPosition.mutate(id, {
+      onSuccess: () => {
+        setConfirmOpen(false);
+        setPendingRow(null);
+      },
     });
-
-  const cancelEdit = () => setEditing(null);
-
-  const saveEdit = (r: JobPosition) => {
-    if (!editing) return;
-
-    const originalId = (r as any).id;
-    updateJobPosition.mutate(
-      {
-        id: originalId,
-        name: editing.name,
-        description: editing.description,
-      } as any,
-      { onSuccess: () => setEditing(null) }
-    );
-  };
-
-  const handleDelete = (r: JobPosition) => {
-    const originalId = (r as any).id;
-    deleteJobPosition.mutate(originalId as any);
-  };
+  }, [deleteJobPosition, pendingRow]);
 
   const columnsWithActions = useMemo<GridColDef<JobPosition>[]>(() => {
     const base = jobPositionsColumns.map((c) => {
       if (c.field === "name" || c.field === "description") {
-        const field = c.field as "name" | "description";
         return {
           ...c,
-          renderCell: (params) => {
-            const r = params.row as JobPosition;
-            const rid = String((r as any).id);
-            const isThisEditing = editing?.id === rid;
-            const value = isThisEditing
-              ? (editing as any)[field]
-              : (r as any)[field];
-
-            return (
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                {!isThisEditing ? (
-                  <span>{value}</span>
-                ) : (
-                  <TextField
-                    size="small"
-                    value={value ?? ""}
-                    onChange={(e) =>
-                      setEditing((prev) =>
-                        prev ? { ...prev, [field]: e.target.value } : prev
-                      )
-                    }
-                    fullWidth
-                  />
-                )}
-              </Box>
-            );
-          },
+          renderCell: (params) => (
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <span>{(params.value as string) ?? ""}</span>
+            </Box>
+          ),
         } as GridColDef<JobPosition>;
       }
       return c;
@@ -100,65 +67,36 @@ export default function JobPositionsTable() {
     const actionsCol: GridColDef<JobPosition> = {
       field: "actions",
       type: "actions",
-      headerName: "Actions",
-      width: 120,
+      headerName: "Akcije",
+      width: 140,
       getActions: (params) => {
-        const r = params.row as JobPosition;
-        const rid = String((r as any).id);
-        const isThisEditing = editing?.id === rid;
-
-        const isUpdating =
-          updateJobPosition.isPending &&
-          String((updateJobPosition.variables as any)?.id) === rid;
-
-        const isDeleting =
-          deleteJobPosition.isPending &&
-          String(deleteJobPosition.variables as any) === rid;
-
-        const busy = isUpdating || isDeleting;
-
-        if (!isThisEditing) {
-          return [
-            <GridActionsCellItem
-              key="edit"
-              icon={<EditIcon fontSize="small" />}
-              label="Edit"
-              disabled={busy}
-              onClick={() => startEdit(r)}
-              showInMenu={false}
-            />,
-            <GridActionsCellItem
-              key="delete"
-              icon={<DeleteIcon fontSize="small" color="error" />}
-              label="Delete"
-              disabled={busy}
-              onClick={() => handleDelete(r)}
-              showInMenu={false}
-            />,
-          ];
-        }
+        const row = params.row as JobPosition;
+        const id = (row as any).id;
+        const busy = deleteJobPosition.isPending;
 
         return [
           <GridActionsCellItem
-            key="save"
+            key="edit"
             icon={
-              isUpdating ? (
-                <CircularProgress size={16} />
-              ) : (
-                <SaveIcon fontSize="small" />
-              )
+              <Tooltip title="Uredi radno mjesto">
+                <EditIcon fontSize="small" />
+              </Tooltip>
             }
-            label={isUpdating ? "Saving..." : "Save"}
-            disabled={isUpdating}
-            onClick={() => saveEdit(r)}
+            label="Uredi"
+            disabled={busy}
+            onClick={() => navigate(`${id}/edit`)}
             showInMenu={false}
           />,
           <GridActionsCellItem
-            key="cancel"
-            icon={<CloseIcon fontSize="small" />}
-            label="Cancel"
-            disabled={isUpdating}
-            onClick={cancelEdit}
+            key="delete"
+            icon={
+              <Tooltip title="Izbriši radno mjesto">
+                <DeleteIcon fontSize="small" color="error" />
+              </Tooltip>
+            }
+            label="Izbriši"
+            disabled={busy}
+            onClick={() => requestDelete(row)}
             showInMenu={false}
           />,
         ];
@@ -168,21 +106,32 @@ export default function JobPositionsTable() {
     return [...base, actionsCol];
   }, [
     jobPositionsColumns,
-    editing,
-    updateJobPosition.isPending,
-    updateJobPosition.variables,
     deleteJobPosition.isPending,
-    deleteJobPosition.variables,
+    navigate,
+    requestDelete,
   ]);
 
-  if (error) return <div>Failed to load job positions</div>;
+  if (error) return <div>Neuspjelo učitavanje radnih mjesta.</div>;
 
-  console.log(jobPositionsRows, jobPositionsColumns);
   return (
-    <ReusableDataGrid<JobPosition>
-      rows={jobPositionsRows}
-      columns={columnsWithActions}
-      getRowId={(r) => String((r as any).id)}
-    />
+    <>
+      <ReusableDataGrid<JobPosition>
+        rows={jobPositionsRows}
+        columns={columnsWithActions}
+        getRowId={(r) => String((r as any).id)}
+      />
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Izbrisati radno mjesto?"
+        description={`Jeste li sigurni da želite izbrisati radno mjesto ?`}
+        confirmText="Obriši"
+        cancelText="Odustani"
+        loading={deleteJobPosition.isPending}
+        disableBackdropClose
+        onClose={handleCancel}
+        onConfirm={handleConfirm}
+      />
+    </>
   );
 }

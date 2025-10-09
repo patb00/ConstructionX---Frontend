@@ -1,56 +1,22 @@
 import * as React from "react";
-import { Box, Chip, CircularProgress, TextField } from "@mui/material";
+import { Box, Chip, CircularProgress, Tooltip } from "@mui/material";
 import { type GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
 import CheckIcon from "@mui/icons-material/Check";
 import BlockIcon from "@mui/icons-material/Block";
 import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
-import CloseIcon from "@mui/icons-material/Close";
+import { useNavigate } from "react-router-dom";
 
 import { useTenants } from "../hooks/useTenants";
 import { useActivateTenant } from "../hooks/useActivateTenant";
 import { useDeactivateTenant } from "../hooks/useDeactivateTenant";
-import { useUpdateSubscription } from "../hooks/useUpdateSubscription";
-
 import type { Tenant } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
-
-const pad = (n: number) => String(n).padStart(2, "0");
-function isoToLocalInput(iso: string | null): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
-    d.getHours()
-  )}:${pad(d.getMinutes())}`;
-}
-function localInputToIso(local: string): string {
-  return new Date(local).toISOString();
-}
 
 export default function TenantsTable() {
   const { tenantsColumns, tenantsRows, error } = useTenants();
   const activate = useActivateTenant();
   const deactivate = useDeactivateTenant();
-  const updateSub = useUpdateSubscription();
-
-  const [editing, setEditing] = React.useState<{
-    id: string;
-    input: string;
-  } | null>(null);
-
-  const startEdit = (t: Tenant) =>
-    setEditing({ id: t.identifier, input: isoToLocalInput(t.validUpToDate) });
-  const cancelEdit = () => setEditing(null);
-  const saveEdit = (t: Tenant) => {
-    if (!editing?.input) return;
-    updateSub.mutate(
-      {
-        tenantId: t.identifier,
-        newExpirationDate: localInputToIso(editing.input),
-      },
-      { onSuccess: () => setEditing(null) }
-    );
-  };
+  const navigate = useNavigate();
 
   const columnsWithActions = React.useMemo<GridColDef<Tenant>[]>(() => {
     const base = tenantsColumns.map((c) => {
@@ -68,47 +34,18 @@ export default function TenantsTable() {
             new Date(a as any).getTime() - new Date(b as any).getTime(),
           renderCell: (params) => {
             const t = params.row;
-            const isThisEditing = editing?.id === t.identifier;
-            if (!isThisEditing) {
-              const val = t.validUpToDate
-                ? new Date(t.validUpToDate).toLocaleString()
-                : "";
-              return (
-                <Box
-                  sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <span>{val}</span>
-                </Box>
-              );
-            }
-            const saving =
-              updateSub.isPending &&
-              (updateSub.variables as any)?.tenantId === t.identifier;
+            const val = t.validUpToDate
+              ? new Date(t.validUpToDate).toLocaleString()
+              : "";
             return (
               <Box
                 sx={{
                   width: "100%",
-                  height: "100%",
                   display: "flex",
                   justifyContent: "center",
-                  alignItems: "center",
                 }}
               >
-                <TextField
-                  type="datetime-local"
-                  size="small"
-                  value={editing.input}
-                  onChange={(e) =>
-                    setEditing({ id: t.identifier, input: e.target.value })
-                  }
-                  sx={{ width: 260, "& input": { textAlign: "center" } }}
-                  inputProps={{ "aria-label": "Valid until" }}
-                  disabled={saving}
-                />
+                <span>{val}</span>
               </Box>
             );
           },
@@ -171,52 +108,34 @@ export default function TenantsTable() {
         const isDeactivating =
           deactivate.isPending &&
           (deactivate.variables as any) === t.identifier;
-        const isUpdating =
-          updateSub.isPending &&
-          (updateSub.variables as any)?.tenantId === t.identifier;
 
-        const isThisEditing = editing?.id === t.identifier;
-        const busy = isActivating || isDeactivating || isUpdating;
-
-        const left = !isThisEditing ? (
+        return [
           <GridActionsCellItem
             key="edit"
-            icon={<EditIcon fontSize="small" />}
-            label="Edit Valid Until"
-            disabled={busy}
-            onClick={() => startEdit(t)}
-            showInMenu={false}
-          />
-        ) : (
-          <GridActionsCellItem
-            key="save"
             icon={
-              isUpdating ? (
-                <CircularProgress size={16} />
-              ) : (
-                <SaveIcon fontSize="small" />
-              )
+              <Tooltip title="Uredi tenanta">
+                <EditIcon fontSize="small" />
+              </Tooltip>
             }
-            label={isUpdating ? "Saving..." : "Save"}
-            disabled={isUpdating || !editing?.input}
-            onClick={() => saveEdit(t)}
+            label="Uredi tenanta"
+            onClick={() => navigate(`${t.identifier}/edit`)}
             showInMenu={false}
-          />
-        );
+          />,
 
-        const right = !isThisEditing ? (
           t.isActive ? (
             <GridActionsCellItem
               key="deactivate"
               icon={
-                isDeactivating ? (
-                  <CircularProgress size={16} />
-                ) : (
-                  <BlockIcon fontSize="small" />
-                )
+                <Tooltip title="Deaktiviraj tenanta">
+                  {isDeactivating ? (
+                    <CircularProgress size={16} />
+                  ) : (
+                    <BlockIcon fontSize="small" />
+                  )}
+                </Tooltip>
               }
-              label={isDeactivating ? "Deactivating..." : "Deactivate"}
-              disabled={busy}
+              label="Deaktiviraj tenanta"
+              disabled={isDeactivating}
               onClick={() => deactivate.mutate(t.identifier)}
               showInMenu={false}
             />
@@ -224,43 +143,32 @@ export default function TenantsTable() {
             <GridActionsCellItem
               key="activate"
               icon={
-                isActivating ? (
-                  <CircularProgress size={16} />
-                ) : (
-                  <CheckIcon fontSize="small" />
-                )
+                <Tooltip title="Aktiviraj tenanta">
+                  {isActivating ? (
+                    <CircularProgress size={16} />
+                  ) : (
+                    <CheckIcon fontSize="small" />
+                  )}
+                </Tooltip>
               }
-              label={isActivating ? "Activating..." : "Activate"}
-              disabled={busy}
+              label="Aktiviraj tenanta"
+              disabled={isActivating}
               onClick={() => activate.mutate(t.identifier)}
               showInMenu={false}
             />
-          )
-        ) : (
-          <GridActionsCellItem
-            key="cancel"
-            icon={<CloseIcon fontSize="small" />}
-            label="Cancel"
-            disabled={isUpdating}
-            onClick={cancelEdit}
-            showInMenu={false}
-          />
-        );
-
-        return [left, right];
+          ),
+        ];
       },
     };
 
     return [...base, actionsCol];
   }, [
     tenantsColumns,
-    editing,
     activate.isPending,
     activate.variables,
     deactivate.isPending,
     deactivate.variables,
-    updateSub.isPending,
-    updateSub.variables,
+    navigate,
   ]);
 
   if (error) return <div>Failed to load tenants</div>;

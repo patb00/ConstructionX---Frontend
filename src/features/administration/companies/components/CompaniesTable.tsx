@@ -1,154 +1,70 @@
-import { useMemo, useState } from "react";
-import { Box, CircularProgress, TextField } from "@mui/material";
+import { useMemo, useState, useCallback } from "react";
+import { Box, Tooltip } from "@mui/material";
 import { GridActionsCellItem, type GridColDef } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
-import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useCompanies } from "../hooks/useCompanies";
 import { useDeleteCompany } from "../hooks/useDeleteCompany";
-import { useUpdateCompany } from "../hooks/useUpdateCompany";
 import type { Company } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
-
-const pad = (n: number) => String(n).padStart(2, "0");
-function isoToLocalInput(iso: string | null): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
-    d.getHours()
-  )}:${pad(d.getMinutes())}`;
-}
-function localInputToIso(local: string): string {
-  return new Date(local).toISOString();
-}
+import { useNavigate } from "react-router-dom";
+import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 
 export default function CompaniesTable() {
   const { companiesColumns, companiesRows, error } = useCompanies();
   const deleteCompany = useDeleteCompany();
-  const updateCompany = useUpdateCompany();
+  const navigate = useNavigate();
 
-  const [editing, setEditing] = useState<{
-    id: number | string;
-    name: string;
-    dateOfCreation: string;
-  } | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingCompany, setPendingCompany] = useState<Company | null>(null);
 
-  const startEdit = (c: Company) =>
-    setEditing({
-      id: c.id,
-      name: c.name,
-      dateOfCreation: isoToLocalInput(c.dateOfCreation),
-    });
+  const requestDelete = useCallback((c: Company) => {
+    setPendingCompany(c);
+    setConfirmOpen(true);
+  }, []);
 
-  const cancelEdit = () => setEditing(null);
+  const handleCancel = useCallback(() => {
+    if (deleteCompany.isPending) return;
+    setConfirmOpen(false);
+    setPendingCompany(null);
+  }, [deleteCompany.isPending]);
 
-  const saveEdit = (c: Company) => {
-    if (!editing) return;
-    updateCompany.mutate(
-      {
-        id: c.id as number,
-        name: editing.name,
-        dateOfCreation: localInputToIso(editing.dateOfCreation),
+  const handleConfirm = useCallback(() => {
+    if (!pendingCompany) return;
+    deleteCompany.mutate(pendingCompany.id as number, {
+      onSuccess: () => {
+        setConfirmOpen(false);
+        setPendingCompany(null);
       },
-      { onSuccess: () => setEditing(null) }
-    );
-  };
-
-  const handleDelete = (c: Company) => {
-    deleteCompany.mutate(c.id as number);
-  };
+      onError: () => {},
+    });
+  }, [deleteCompany, pendingCompany]);
 
   const columnsWithActions = useMemo<GridColDef<Company>[]>(() => {
     const base = companiesColumns.map((c) => {
-      if (c.field === "name") {
-        return {
-          ...c,
-          renderCell: (params) => {
-            const row = params.row;
-            const isThisEditing = editing?.id === row.id;
-            if (!isThisEditing) return <span>{row.name}</span>;
-            return (
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <TextField
-                  size="small"
-                  value={editing.name}
-                  onChange={(e) =>
-                    setEditing((prev) =>
-                      prev ? { ...prev, name: e.target.value } : prev
-                    )
-                  }
-                  fullWidth
-                />
-              </Box>
-            );
-          },
-        } as GridColDef<Company>;
-      }
-
       if (c.field === "dateOfCreation") {
         return {
           ...c,
           type: "dateTime",
           valueGetter: (_v, row) =>
             row.dateOfCreation ? new Date(row.dateOfCreation) : null,
-          renderCell: (params) => {
-            const row = params.row;
-            const isThisEditing = editing?.id === row.id;
-            if (!isThisEditing) {
-              return (
-                <Box
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  {row.dateOfCreation
-                    ? new Date(row.dateOfCreation).toLocaleString()
-                    : ""}
-                </Box>
-              );
-            }
-            const saving =
-              updateCompany.isPending &&
-              (updateCompany.variables as any)?.id === row.id;
-            return (
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <TextField
-                  type="datetime-local"
-                  size="small"
-                  value={editing.dateOfCreation}
-                  onChange={(e) =>
-                    setEditing((prev) =>
-                      prev ? { ...prev, dateOfCreation: e.target.value } : prev
-                    )
-                  }
-                  disabled={saving}
-                  fullWidth
-                />
-              </Box>
-            );
-          },
+          renderCell: (params) => (
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {params.row.dateOfCreation
+                ? new Date(params.row.dateOfCreation).toLocaleString()
+                : ""}
+            </Box>
+          ),
         } as GridColDef<Company>;
       }
-
       return c;
     });
 
@@ -158,57 +74,34 @@ export default function CompaniesTable() {
       field: "actions",
       type: "actions",
       headerName: "Actions",
-      width: 180,
+      width: 160,
       getActions: (params) => {
         const row = params.row;
-        const isThisEditing = editing?.id === row.id;
-        const isUpdating =
-          updateCompany.isPending &&
-          (updateCompany.variables as any)?.id === row.id;
-        const busy = isUpdating || deleteCompany.isPending;
-
-        if (!isThisEditing) {
-          return [
-            <GridActionsCellItem
-              key="edit"
-              icon={<EditIcon fontSize="small" />}
-              label="Edit"
-              disabled={busy}
-              onClick={() => startEdit(row)}
-              showInMenu={false}
-            />,
-            <GridActionsCellItem
-              key="delete"
-              icon={<DeleteIcon fontSize="small" color="error" />}
-              label="Delete"
-              disabled={busy}
-              onClick={() => handleDelete(row)}
-              showInMenu={false}
-            />,
-          ];
-        }
+        const busy = deleteCompany.isPending;
 
         return [
           <GridActionsCellItem
-            key="save"
+            key="edit"
             icon={
-              isUpdating ? (
-                <CircularProgress size={16} />
-              ) : (
-                <SaveIcon fontSize="small" />
-              )
+              <Tooltip title="Uredi tvrtku">
+                <EditIcon fontSize="small" />
+              </Tooltip>
             }
-            label={isUpdating ? "Saving..." : "Save"}
-            disabled={isUpdating}
-            onClick={() => saveEdit(row)}
+            label="Uredi tvrtku"
+            disabled={busy}
+            onClick={() => navigate(`${row.id}/edit`)}
             showInMenu={false}
           />,
           <GridActionsCellItem
-            key="cancel"
-            icon={<CloseIcon fontSize="small" />}
-            label="Cancel"
-            disabled={isUpdating}
-            onClick={cancelEdit}
+            key="delete"
+            icon={
+              <Tooltip title="Izbriši tvrtku">
+                <DeleteIcon fontSize="small" color="error" />
+              </Tooltip>
+            }
+            label="Obriši"
+            disabled={busy}
+            onClick={() => requestDelete(row)}
             showInMenu={false}
           />,
         ];
@@ -216,22 +109,30 @@ export default function CompaniesTable() {
     };
 
     return [...base, actionsCol];
-  }, [
-    companiesColumns,
-    editing,
-    updateCompany.isPending,
-    updateCompany.variables,
-    deleteCompany.isPending,
-  ]);
+  }, [companiesColumns, deleteCompany.isPending, navigate, requestDelete]);
 
   if (error) return <div>Failed to load companies</div>;
 
   return (
-    <ReusableDataGrid<Company>
-      rows={companiesRows}
-      columns={columnsWithActions}
-      getRowId={(r) => r.id}
-      stickyRightField="actions"
-    />
+    <>
+      <ReusableDataGrid<Company>
+        rows={companiesRows}
+        columns={columnsWithActions}
+        getRowId={(r) => r.id}
+        stickyRightField="actions"
+      />
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Obriši tvrtku?"
+        description={`Jeste li sigurni da želite obrisati tvrtku ? Ova radnja je nepovratna.`}
+        confirmText="Obriši"
+        cancelText="Odustani"
+        loading={deleteCompany.isPending}
+        disableBackdropClose
+        onClose={handleCancel}
+        onConfirm={handleConfirm}
+      />
+    </>
   );
 }

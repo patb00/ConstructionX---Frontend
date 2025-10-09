@@ -1,7 +1,8 @@
 import TenantsListPage from "../components/TenantsListPage";
 import TenantDetailsPage from "../components/TenantDetailsPage";
-import { Outlet, type RouteObject } from "react-router-dom";
 import TenantCreatePage from "../components/TenantCreatePage";
+import TenantEditPage from "../components/TenantEditPage";
+import { Outlet, type RouteObject } from "react-router-dom";
 
 function TenantsLayout() {
   return (
@@ -18,5 +19,6 @@ export const tenantsRoutes: RouteObject = {
     { index: true, element: <TenantsListPage /> },
     { path: "create", element: <TenantCreatePage /> },
     { path: ":tenantId", element: <TenantDetailsPage /> },
+    { path: ":tenantId/edit", element: <TenantEditPage /> },
   ],
 };

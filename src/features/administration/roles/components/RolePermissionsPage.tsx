@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useRolesFull } from "../hooks/useRolesFull";
 import {
   Tabs,
@@ -13,6 +13,7 @@ import {
 import { useState, useEffect, useMemo } from "react";
 import { useUpdateRolePermissions } from "../hooks/useUpdateRolePermission";
 import { usePermissions } from "../hooks/usePermissions";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 function groupPermissions(perms: string[] = []) {
   const groups: Record<string, string[]> = {};
@@ -29,7 +30,7 @@ export default function RolePermissionsPage() {
   const { data: role, isLoading: roleLoading } = useRolesFull(roleId!);
   const { data: permissionsData, isLoading: permsLoading } = usePermissions();
   const updatePermissions = useUpdateRolePermissions();
-
+  const navigate = useNavigate();
   const [tab, setTab] = useState(0);
   const [selected, setSelected] = useState<string[]>([]);
 
@@ -74,7 +75,25 @@ export default function RolePermissionsPage() {
 
   return (
     <Stack spacing={2}>
-      <Typography variant="h5">{role.name} – Dozvole</Typography>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ mb: 2 }}
+      >
+        <Typography variant="h5">{role.name} – Dozvole</Typography>{" "}
+        <Button
+          size="small"
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate("/app/administration/roles")}
+          sx={{
+            color: "primary.main",
+          }}
+        >
+          Natrag
+        </Button>
+      </Stack>
 
       <Tabs
         value={tab}

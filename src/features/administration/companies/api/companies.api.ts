@@ -20,9 +20,9 @@ export const CompaniesApi = {
     return res;
   },
 
-  getById: async (companyId: number): Promise<Company> => {
-    const res = await httpGet<Company>(`${base}/${companyId}`);
-    return res;
+  getById: async (companyId: number) => {
+    const res = await httpGet<ApiEnvelope<Company>>(`${base}/${companyId}`);
+    return res.data;
   },
 
   getByName: async (name: string): Promise<Company> => {

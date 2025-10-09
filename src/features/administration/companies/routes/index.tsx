@@ -1,6 +1,7 @@
 import { Outlet, type RouteObject } from "react-router-dom";
 import CompaniesListPage from "../components/CompaniesListPage";
 import CompanyCreatePage from "../components/CompanyCreatePage";
+import CompanyEditPage from "../components/CompanyEditPage";
 
 function CompaniesLayout() {
   return (
@@ -16,5 +17,6 @@ export const companiesRoutes: RouteObject = {
   children: [
     { index: true, element: <CompaniesListPage /> },
     { path: "create", element: <CompanyCreatePage /> },
+    { path: ":id/edit", element: <CompanyEditPage /> },
   ],
 };

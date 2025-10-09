@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-
 import type { JobPosition } from "..";
 import type { GridColDef } from "@mui/x-data-grid";
 import { jobPositionsKeys } from "../api/job-positions.keys";

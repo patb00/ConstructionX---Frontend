@@ -1,10 +1,13 @@
-import { Paper, Stack, Typography } from "@mui/material";
+import { Button, Paper, Stack, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import EmployeeForm from "./EmployeeForm";
 import { useUpdateEmployee } from "../hooks/useUpdateEmployee";
 import { useEmployee } from "../hooks/useEmployee";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
 export default function EmployeeEditPage() {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const employeeId = Number(id);
   if (!Number.isFinite(employeeId)) return <div>Neispravan URL (id)</div>;
@@ -38,9 +41,20 @@ export default function EmployeeEditPage() {
 
   return (
     <Stack spacing={2}>
-      <Typography variant="h5" fontWeight={600} sx={{ mb: 2 }}>
-        Uredi zaposlenika
-      </Typography>
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
+        <Typography variant="h5" fontWeight={600}>
+          Uredi zaposlenika
+        </Typography>
+        <Button
+          size="small"
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate("/app/administration/employees")}
+          sx={{ color: "primary.main" }}
+        >
+          Natrag
+        </Button>
+      </Stack>
       <Paper
         elevation={0}
         sx={{
