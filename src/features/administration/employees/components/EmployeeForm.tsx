@@ -2,16 +2,19 @@ import {
   SmartForm,
   type FieldConfig,
 } from "../../../../components/ui/smartform/SmartForm";
-import type { NewEmployeeRequest } from "..";
+import type { EmployeeFormValues } from "..";
+import { useJobPositionOptions } from "../hooks/useJobPositionOptions";
 
 type Props = {
-  defaultValues?: Partial<NewEmployeeRequest>;
-  onSubmit: (values: NewEmployeeRequest) => void;
+  defaultValues?: Partial<EmployeeFormValues>;
+  onSubmit: (values: EmployeeFormValues) => void | Promise<void>;
   busy?: boolean;
 };
 
 export default function EmployeeForm({ defaultValues, onSubmit, busy }: Props) {
-  const fields: FieldConfig<NewEmployeeRequest>[] = [
+  const { options: jobPositionOptions } = useJobPositionOptions();
+
+  const fields: FieldConfig<EmployeeFormValues>[] = [
     { name: "firstName", label: "First name", required: true },
     { name: "lastName", label: "Last name", required: true },
     {
@@ -35,11 +38,7 @@ export default function EmployeeForm({ defaultValues, onSubmit, busy }: Props) {
       type: "date",
       required: true,
     },
-    {
-      name: "terminationDate",
-      label: "Termination date",
-      type: "date",
-    },
+    { name: "terminationDate", label: "Termination date", type: "date" },
     {
       name: "hasMachineryLicense",
       label: "Has machinery license",
@@ -77,10 +76,17 @@ export default function EmployeeForm({ defaultValues, onSubmit, busy }: Props) {
       type: "number",
       props: { inputProps: { min: 20, max: 55 } },
     },
+
+    {
+      name: "jobPositionId",
+      label: "Job position",
+      type: "select",
+      options: [{ label: "— None —", value: "" }, ...jobPositionOptions],
+    },
   ];
 
   return (
-    <SmartForm<NewEmployeeRequest>
+    <SmartForm<EmployeeFormValues>
       fields={fields}
       rows={[
         ["firstName", "lastName"],
@@ -88,6 +94,7 @@ export default function EmployeeForm({ defaultValues, onSubmit, busy }: Props) {
         ["dateOfBirth", "employmentDate", "terminationDate"],
         ["hasMachineryLicense"],
         ["clothingSize", "gloveSize", "shoeSize"],
+        ["jobPositionId"],
       ]}
       defaultValues={{
         firstName: "",
@@ -103,6 +110,10 @@ export default function EmployeeForm({ defaultValues, onSubmit, busy }: Props) {
           typeof defaultValues?.shoeSize === "number"
             ? defaultValues.shoeSize
             : ("" as unknown as number),
+        jobPositionId:
+          typeof defaultValues?.jobPositionId === "number"
+            ? defaultValues.jobPositionId
+            : "",
         ...defaultValues,
       }}
       busy={busy}

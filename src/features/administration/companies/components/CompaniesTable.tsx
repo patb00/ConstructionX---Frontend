@@ -73,7 +73,7 @@ export default function CompaniesTable() {
     const actionsCol: GridColDef<Company> = {
       field: "actions",
       type: "actions",
-      headerName: "Actions",
+      headerName: "Akcije",
       width: 160,
       getActions: (params) => {
         const row = params.row;

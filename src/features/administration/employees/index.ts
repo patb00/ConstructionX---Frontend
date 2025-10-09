@@ -12,6 +12,15 @@ export interface Employee {
   shoeSize: number;
 }
 
+export type AssignJobPositionRequest = {
+  employeeId: number;
+  jobPositionId: number;
+};
+
 export type NewEmployeeRequest = Omit<Employee, "id">;
+
+export type EmployeeFormValues = NewEmployeeRequest & {
+  jobPositionId?: number | "";
+};
 
 export type UpdateEmployeeRequest = Employee;

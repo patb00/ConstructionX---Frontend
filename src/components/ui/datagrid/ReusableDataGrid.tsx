@@ -7,6 +7,7 @@ import {
   type GridRowsProp,
   type GridRowIdGetter,
   type GridValidRowModel,
+  useGridApiRef,
 } from "@mui/x-data-grid";
 import { DataGridToolbar } from "./DatagridToolbar";
 
@@ -36,6 +37,14 @@ export default function ReusableDataGrid<
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const apiRef = useGridApiRef();
+
+  React.useEffect(() => {
+    const api = apiRef.current;
+    if (!api) return;
+    api.setDensity(isSmall ? "compact" : "standard");
+  }, [isSmall]);
+
   const columnsForScreen = React.useMemo<GridColDef<T>[]>(() => {
     if (!isSmall) return columns;
     return columns.map((c) => ({
@@ -58,12 +67,13 @@ export default function ReusableDataGrid<
         }}
       >
         <DataGrid
+          apiRef={apiRef}
+          showToolbar
           rows={rows}
           columns={columnsForScreen}
           getRowId={getRowId}
           disableRowSelectionOnClick
           autoHeight={isSmall}
-          density={isSmall ? "compact" : "standard"}
           initialState={{
             pagination: { paginationModel: { page: 0, pageSize } },
           }}
@@ -111,7 +121,6 @@ export default function ReusableDataGrid<
                           : "linear-gradient(to left, rgba(0,0,0,.03), rgba(0,0,0,0))",
                     },
                   },
-
                   [`& .MuiDataGrid-columnHeaders .MuiDataGrid-columnHeader[data-field="${stickyRightField}"]`]:
                     {
                       position: "sticky",

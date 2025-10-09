@@ -88,7 +88,7 @@ export default function UsersTable() {
     const actionsCol: GridColDef<User> = {
       field: "actions",
       type: "actions",
-      headerName: "Actions",
+      headerName: "Akcije",
       width: 280,
       getActions: (params) => {
         const u = params.row;

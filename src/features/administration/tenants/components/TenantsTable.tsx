@@ -96,7 +96,7 @@ export default function TenantsTable() {
     const actionsCol: GridColDef<Tenant> = {
       field: "actions",
       type: "actions",
-      headerName: "Actions",
+      headerName: "Akcije",
       width: 220,
       sortable: false,
       filterable: false,

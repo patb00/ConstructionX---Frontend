@@ -123,7 +123,7 @@ export default function JobPositionsTable() {
 
       <ConfirmDialog
         open={confirmOpen}
-        title="Izbrisati radno mjesto?"
+        title="Izbriši radno mjesto?"
         description={`Jeste li sigurni da želite izbrisati radno mjesto ?`}
         confirmText="Obriši"
         cancelText="Odustani"

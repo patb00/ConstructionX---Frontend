@@ -23,17 +23,30 @@ export const useEmployees = () => {
       const allKeys = Array.from(new Set(rows.flatMap(Object.keys)));
 
       const columnDefs: GridColDef[] = allKeys.map((key) => {
+        const headerName = key
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (l) => l.toUpperCase());
+
+        if (key === "jobPosition") {
+          return {
+            field: key,
+            headerName,
+            width: 200,
+            renderCell: (params) => params?.value?.name ?? "",
+          };
+        }
+
         return {
           field: key,
-          headerName: key
-            .replace(/_/g, " ")
-            .replace(/\b\w/g, (l) => l.toUpperCase()),
+          headerName,
           width: 180,
         };
       });
 
-      const rowDefs = rows.map((r) => ({ ...r, id: r.id }));
-
+      const rowDefs = rows.map((item) => ({
+        ...item,
+        id: item.id,
+      }));
       return { columnDefs, rowDefs };
     },
   });

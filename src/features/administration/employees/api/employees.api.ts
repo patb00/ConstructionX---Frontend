@@ -1,17 +1,30 @@
 import { httpGet, httpPost, httpPut, httpDelete } from "../../../../lib/http";
-import type { Employee, NewEmployeeRequest, UpdateEmployeeRequest } from "..";
+import type {
+  AssignJobPositionRequest,
+  Employee,
+  NewEmployeeRequest,
+  UpdateEmployeeRequest,
+} from "..";
 import type { ApiEnvelope } from "../../tenants";
 
 const base = "/api/Employees";
 
 export const EmployeesApi = {
   add: async (payload: NewEmployeeRequest) => {
-    const res = await httpPost<ApiEnvelope<Employee>>(`${base}/add`, payload);
+    const res = await httpPost<ApiEnvelope<number>>(`${base}/add`, payload);
     return res;
   },
 
   update: async (payload: UpdateEmployeeRequest) => {
     const res = await httpPut<ApiEnvelope<Employee>>(`${base}/update`, payload);
+    return res;
+  },
+
+  assignJobPosition: async (payload: AssignJobPositionRequest) => {
+    const res = await httpPut<ApiEnvelope<Employee>>(
+      `${base}/assign-job-position`,
+      payload
+    );
     return res;
   },
 

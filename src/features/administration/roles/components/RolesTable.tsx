@@ -67,7 +67,7 @@ export default function RolesTable() {
     const actionsCol: GridColDef<Role> = {
       field: "actions",
       type: "actions",
-      headerName: "Actions",
+      headerName: "Akcije",
       width: 180,
       getActions: (params) => {
         const r = params.row;

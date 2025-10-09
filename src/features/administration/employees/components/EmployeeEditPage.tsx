@@ -1,10 +1,11 @@
 import { Button, Paper, Stack, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import EmployeeForm from "./EmployeeForm";
 import { useUpdateEmployee } from "../hooks/useUpdateEmployee";
 import { useEmployee } from "../hooks/useEmployee";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useNavigate } from "react-router-dom";
+import type { EmployeeFormValues } from "..";
+import { useAssignJobPosition } from "../hooks/useAssignJobPosition";
 
 export default function EmployeeEditPage() {
   const navigate = useNavigate();
@@ -13,9 +14,23 @@ export default function EmployeeEditPage() {
   if (!Number.isFinite(employeeId)) return <div>Neispravan URL (id)</div>;
 
   const { data: emp, isLoading, error } = useEmployee(employeeId);
-  const { mutateAsync, isPending } = useUpdateEmployee();
+  const update = useUpdateEmployee();
+  const assign = useAssignJobPosition();
 
   const toYMD = (s?: string | null) => (s ? s.slice(0, 10) : undefined);
+
+  const initialJobPositionId =
+    (emp as any)?.jobPositionId ?? (emp as any)?.jobPosition?.id ?? "";
+
+  const rawJobPositionId =
+    (emp as any)?.jobPositionId ?? (emp as any)?.jobPosition?.id ?? undefined;
+
+  const normalizedJobPositionId: number | "" =
+    rawJobPositionId == null || rawJobPositionId === ""
+      ? ""
+      : typeof rawJobPositionId === "number"
+      ? rawJobPositionId
+      : Number(rawJobPositionId);
 
   const defaultValues = emp && {
     firstName: emp.firstName,
@@ -31,10 +46,26 @@ export default function EmployeeEditPage() {
       typeof emp.shoeSize === "number"
         ? emp.shoeSize
         : ("" as unknown as number),
+
+    jobPositionId: normalizedJobPositionId,
   };
 
-  const handleSubmit = async (values: any) => {
-    await mutateAsync({ id: employeeId, ...values });
+  const handleSubmit = async (values: EmployeeFormValues) => {
+    const { jobPositionId, ...employeeFields } = values;
+
+    await update.mutateAsync({ id: employeeId, ...employeeFields });
+
+    if (
+      jobPositionId &&
+      Number(jobPositionId) !== Number(initialJobPositionId || 0)
+    ) {
+      await assign.mutateAsync({
+        employeeId,
+        jobPositionId: Number(jobPositionId),
+      });
+    }
+
+    navigate("/app/administration/employees");
   };
 
   if (error) return <div>Failed to load employee.</div>;
@@ -67,7 +98,7 @@ export default function EmployeeEditPage() {
           key={employeeId}
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
-          busy={isPending || isLoading}
+          busy={update.isPending || isLoading || assign.isPending}
         />
       </Paper>
     </Stack>

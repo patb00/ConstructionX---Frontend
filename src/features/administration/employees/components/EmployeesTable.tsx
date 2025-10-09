@@ -86,6 +86,8 @@ export default function EmployeesTable() {
 
   if (error) return <div>Neuspjelo učitavanje zaposlenika.</div>;
 
+  console.log("employeeRows", employeeRows);
+
   return (
     <>
       <ReusableDataGrid<Employee>
