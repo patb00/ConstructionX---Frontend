@@ -1,4 +1,25 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* Use viewport height to avoid relying on parent heights */
+.container {
+  min-height: 100vh; /* was 100% */
+}
+
+/* Put the big gradient circle *behind* everything and make it click-through */
+.container:before {
+  z-index: 1; /* was 6 */
+  pointer-events: none; /* so it never blocks clicks */
+}
+
+/* Keep panels and forms above the circle */
+.signin-signup,
+.panel {
+  z-index: 2; /* form was 5; this just needs to be > :before */
+}
 
 * {
   margin: 0;
