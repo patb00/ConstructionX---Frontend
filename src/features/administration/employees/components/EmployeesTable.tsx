@@ -1,33 +1,20 @@
 import { useMemo, useState, useCallback } from "react";
 import { Tooltip } from "@mui/material";
-import {
-  GridActionsCellItem,
-  type GridColDef,
-  type GridActionsColDef,
-  type GridActionsCellItemProps,
-} from "@mui/x-data-grid";
+import type { GridColDef } from "@mui/x-data-grid";
+import { GridActionsCellItem } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
 import type { Employee } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
+import { useEmployees } from "../hooks/useEmployees";
 import { useDeleteEmployee } from "../hooks/useDeleteEmployee";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
-import { useCan, PermissionGate } from "../../../../lib/permissions";
 
-type Props = {
-  rows: Employee[];
-  columns: GridColDef<Employee>[];
-};
-
-export default function EmployeesTable({ rows, columns }: Props) {
-  const {
-    mutate: deleteEmployee,
-    isPending: busy,
-    variables,
-  } = useDeleteEmployee();
+export default function EmployeesTable() {
+  const { employeeColumns, employeeRows, error } = useEmployees();
+  const { mutate: deleteEmployee, isPending: busy } = useDeleteEmployee();
   const navigate = useNavigate();
-  const can = useCan();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingEmployee, setPendingEmployee] = useState<Employee | null>(null);
@@ -38,10 +25,9 @@ export default function EmployeesTable({ rows, columns }: Props) {
   }, []);
 
   const handleCancel = useCallback(() => {
-    if (busy) return;
     setConfirmOpen(false);
     setPendingEmployee(null);
-  }, [busy]);
+  }, []);
 
   const handleConfirm = useCallback(() => {
     if (!pendingEmployee) return;
@@ -59,94 +45,69 @@ export default function EmployeesTable({ rows, columns }: Props) {
   );
 
   const columnsWithActions = useMemo<GridColDef<Employee>[]>(() => {
-    const base = columns.slice(); // keep originals
+    if (employeeColumns.some((c) => c.field === "actions"))
+      return employeeColumns;
 
-    const canEdit = can({ permission: "Permission.Employees.Update" });
-    const canDelete = can({ permission: "Permission.Employees.Delete" });
-
-    // if no actions permitted, return base columns
-    if (!(canEdit || canDelete)) return base;
-
-    // avoid duplicating actions column if already present
-    if (base.some((c) => c.field === "actions")) return base;
-
-    const actionsCol: GridActionsColDef<Employee> = {
-      field: "actions",
-      type: "actions",
-      headerName: "Akcije",
-      width: 120,
-      getActions: (
-        params
-      ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
-        const e = params.row;
-        const isDeletingThis = busy && (variables as any) === e.id;
-
-        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
-
-        if (canEdit) {
-          items.push(
-            <GridActionsCellItem
-              key="edit"
-              icon={
-                <Tooltip title="Uredi zaposlenika">
-                  <EditIcon fontSize="small" />
-                </Tooltip>
-              }
-              label="Uredi"
-              onClick={() => handleEdit(e.id)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        if (canDelete) {
-          items.push(
-            <GridActionsCellItem
-              key="delete"
-              icon={
-                <Tooltip title="Izbriši zaposlenika">
-                  <DeleteIcon fontSize="small" color="error" />
-                </Tooltip>
-              }
-              label="Izbriši"
-              disabled={isDeletingThis}
-              onClick={() => requestDelete(e)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        return items;
+    return [
+      ...employeeColumns,
+      {
+        field: "actions",
+        type: "actions",
+        headerName: "Akcije",
+        width: 110,
+        getActions: (params) => [
+          <GridActionsCellItem
+            key="edit"
+            icon={
+              <Tooltip title="Uredi zaposlenika">
+                <EditIcon fontSize="small" />
+              </Tooltip>
+            }
+            label="Uredi"
+            onClick={() => handleEdit(params.row.id)}
+            showInMenu={false}
+          />,
+          <GridActionsCellItem
+            key="delete"
+            icon={
+              <Tooltip title="Izbriši zaposlenika">
+                <DeleteIcon fontSize="small" color="error" />
+              </Tooltip>
+            }
+            label="Izbriši"
+            disabled={busy}
+            onClick={() => requestDelete(params.row)}
+            showInMenu={false}
+          />,
+        ],
       },
-    };
+    ];
+  }, [employeeColumns, handleEdit, requestDelete, busy]);
 
-    return [...base, actionsCol];
-  }, [columns, can, busy, variables, handleEdit, requestDelete]);
+  if (error) return <div>Neuspjelo učitavanje zaposlenika.</div>;
 
-  const hasActions = columnsWithActions.some((c) => c.field === "actions");
+  console.log("employeeRows", employeeRows);
 
   return (
     <>
       <ReusableDataGrid<Employee>
-        rows={rows}
+        rows={employeeRows}
         columns={columnsWithActions}
         getRowId={(r) => r.id}
-        stickyRightField={hasActions ? "actions" : undefined}
+        stickyRightField="actions"
       />
 
-      <PermissionGate guard={{ permission: "Permission.Employees.Delete" }}>
-        <ConfirmDialog
-          open={confirmOpen}
-          title="Izbriši zaposlenika?"
-          description="Jeste li sigurni da želite izbrisati zaposlenika ?"
-          confirmText="Obriši"
-          cancelText="Odustani"
-          loading={busy}
-          disableBackdropClose
-          onClose={handleCancel}
-          onConfirm={handleConfirm}
-        />
-      </PermissionGate>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Izbriši zaposlenika?"
+        description={`Jeste li sigurni da želite izbrisati zaposlenika ?`}
+        confirmText="Obriši"
+        cancelText="Odustani"
+        loading={busy}
+        disableBackdropClose
+        onClose={handleCancel}
+        onConfirm={handleConfirm}
+      />
     </>
   );
 }
