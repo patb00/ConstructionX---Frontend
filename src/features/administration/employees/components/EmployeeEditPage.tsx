@@ -68,7 +68,7 @@ export default function EmployeeEditPage() {
     navigate("/app/administration/employees");
   };
 
-  if (error) return <div>Failed to load employee.</div>;
+  if (error) return <div>Neuspjelo učitavanje zaposlenika.</div>;
 
   return (
     <Stack spacing={2}>

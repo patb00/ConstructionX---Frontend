@@ -1,25 +1,35 @@
 import * as React from "react";
 import { Box, Chip, CircularProgress, Tooltip } from "@mui/material";
-import { type GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
+import {
+  type GridColDef,
+  GridActionsCellItem,
+  type GridActionsColDef,
+  type GridActionsCellItemProps,
+} from "@mui/x-data-grid";
 import CheckIcon from "@mui/icons-material/Check";
 import BlockIcon from "@mui/icons-material/Block";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
 
-import { useTenants } from "../hooks/useTenants";
 import { useActivateTenant } from "../hooks/useActivateTenant";
 import { useDeactivateTenant } from "../hooks/useDeactivateTenant";
 import type { Tenant } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
+import { useCan } from "../../../../lib/permissions";
 
-export default function TenantsTable() {
-  const { tenantsColumns, tenantsRows, error } = useTenants();
+type Props = {
+  rows: Tenant[];
+  columns: GridColDef<Tenant>[];
+};
+
+export default function TenantsTable({ rows, columns }: Props) {
   const activate = useActivateTenant();
   const deactivate = useDeactivateTenant();
   const navigate = useNavigate();
+  const can = useCan();
 
   const columnsWithActions = React.useMemo<GridColDef<Tenant>[]>(() => {
-    const base = tenantsColumns.map((c) => {
+    const base = columns.map((c) => {
       if (c.field === "validUpToDate") {
         return {
           ...c,
@@ -91,17 +101,22 @@ export default function TenantsTable() {
       return c;
     });
 
-    if (base.some((c) => c.field === "actions")) return base;
+    const canEdit = can({ permission: "Permission.Tenants.Update" });
+    const canToggleActive = can({ permission: "Permission.Tenants.Update" });
 
-    const actionsCol: GridColDef<Tenant> = {
+    if (!(canEdit || canToggleActive)) return base;
+
+    const actionsCol: GridActionsColDef<Tenant> = {
       field: "actions",
       type: "actions",
       headerName: "Akcije",
       width: 220,
       sortable: false,
       filterable: false,
-      getActions: (params) => {
-        const t = params.row;
+      getActions: ({
+        row,
+      }): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+        const t = row;
 
         const isActivating =
           activate.isPending && (activate.variables as any) === t.identifier;
@@ -109,61 +124,72 @@ export default function TenantsTable() {
           deactivate.isPending &&
           (deactivate.variables as any) === t.identifier;
 
-        return [
-          <GridActionsCellItem
-            key="edit"
-            icon={
-              <Tooltip title="Uredi tenanta">
-                <EditIcon fontSize="small" />
-              </Tooltip>
-            }
-            label="Uredi tenanta"
-            onClick={() => navigate(`${t.identifier}/edit`)}
-            showInMenu={false}
-          />,
+        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
 
-          t.isActive ? (
+        if (canEdit) {
+          items.push(
             <GridActionsCellItem
-              key="deactivate"
+              key="edit"
               icon={
-                <Tooltip title="Deaktiviraj tenanta">
-                  {isDeactivating ? (
-                    <CircularProgress size={16} />
-                  ) : (
-                    <BlockIcon fontSize="small" />
-                  )}
+                <Tooltip title="Uredi tenanta">
+                  <EditIcon fontSize="small" />
                 </Tooltip>
               }
-              label="Deaktiviraj tenanta"
-              disabled={isDeactivating}
-              onClick={() => deactivate.mutate(t.identifier)}
+              label="Uredi tenanta"
+              onClick={() => navigate(`${t.identifier}/edit`)}
               showInMenu={false}
             />
-          ) : (
-            <GridActionsCellItem
-              key="activate"
-              icon={
-                <Tooltip title="Aktiviraj tenanta">
-                  {isActivating ? (
-                    <CircularProgress size={16} />
-                  ) : (
-                    <CheckIcon fontSize="small" />
-                  )}
-                </Tooltip>
-              }
-              label="Aktiviraj tenanta"
-              disabled={isActivating}
-              onClick={() => activate.mutate(t.identifier)}
-              showInMenu={false}
-            />
-          ),
-        ];
+          );
+        }
+
+        if (canToggleActive) {
+          items.push(
+            t.isActive ? (
+              <GridActionsCellItem
+                key="deactivate"
+                icon={
+                  <Tooltip title="Deaktiviraj tenanta">
+                    {isDeactivating ? (
+                      <CircularProgress size={16} />
+                    ) : (
+                      <BlockIcon fontSize="small" />
+                    )}
+                  </Tooltip>
+                }
+                label="Deaktiviraj tenanta"
+                disabled={isDeactivating}
+                onClick={() => deactivate.mutate(t.identifier)}
+                showInMenu={false}
+              />
+            ) : (
+              <GridActionsCellItem
+                key="activate"
+                icon={
+                  <Tooltip title="Aktiviraj tenanta">
+                    {isActivating ? (
+                      <CircularProgress size={16} />
+                    ) : (
+                      <CheckIcon fontSize="small" />
+                    )}
+                  </Tooltip>
+                }
+                label="Aktiviraj tenanta"
+                disabled={isActivating}
+                onClick={() => activate.mutate(t.identifier)}
+                showInMenu={false}
+              />
+            )
+          );
+        }
+
+        return items;
       },
     };
 
     return [...base, actionsCol];
   }, [
-    tenantsColumns,
+    columns,
+    can,
     activate.isPending,
     activate.variables,
     deactivate.isPending,
@@ -171,14 +197,16 @@ export default function TenantsTable() {
     navigate,
   ]);
 
-  if (error) return <div>Failed to load tenants</div>;
+  const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   return (
-    <ReusableDataGrid<Tenant>
-      rows={tenantsRows}
-      columns={columnsWithActions}
-      getRowId={(r) => r.identifier}
-      stickyRightField="actions"
-    />
+    <>
+      <ReusableDataGrid<Tenant>
+        rows={rows}
+        columns={columnsWithActions}
+        getRowId={(r) => r.identifier}
+        stickyRightField={hasActions ? "actions" : undefined}
+      />
+    </>
   );
 }

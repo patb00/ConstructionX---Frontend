@@ -1,14 +1,21 @@
-export function decodeJwt<T = any>(token: string): T | null {
+export type JwtClaims = {
+  exp?: number;
+  [key: string]: any;
+};
+
+export function decodeJwt(token: string): JwtClaims | null {
   try {
-    const payload = token.split(".")[1];
-    if (!payload) return null;
-
-    const b64 = payload.replace(/-/g, "+").replace(/_/g, "/");
-    const padded = b64 + "=".repeat((4 - (b64.length % 4)) % 4);
-
-    const json = atob(padded);
-    return JSON.parse(json) as T;
+    const [, payload] = token.split(".");
+    const json = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
+    return JSON.parse(decodeURIComponent(escape(json)));
   } catch {
     return null;
   }
+}
+
+export function isExpired(token: string, skewSeconds = 15): boolean {
+  const claims = decodeJwt(token);
+  if (!claims?.exp) return false;
+  const now = Math.floor(Date.now() / 1000);
+  return now >= claims.exp - skewSeconds;
 }

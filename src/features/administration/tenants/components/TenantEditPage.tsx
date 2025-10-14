@@ -43,7 +43,7 @@ export default function TenantEditPage() {
     });
   };
 
-  if (error) return <div>Failed to load tenant.</div>;
+  if (error) return <div>Neuspjelo učitavanje tenanta.</div>;
 
   return (
     <Stack spacing={2}>

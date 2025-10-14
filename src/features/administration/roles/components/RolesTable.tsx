@@ -1,20 +1,30 @@
 import { useMemo, useState, useCallback } from "react";
 import { Box, Tooltip } from "@mui/material";
-import { GridActionsCellItem, type GridColDef } from "@mui/x-data-grid";
+import {
+  GridActionsCellItem,
+  type GridColDef,
+  type GridActionsCellItemProps,
+  type GridActionsColDef,
+} from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SecurityIcon from "@mui/icons-material/Security";
 import { useNavigate } from "react-router-dom";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
-import { useRoles } from "../hooks/useRoles";
 import { useDeleteRole } from "../hooks/useDeleteRole";
 import type { Role } from "..";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
+import { PermissionGate, useCan } from "../../../../lib/permissions";
 
-export default function RolesTable() {
+type Props = {
+  rows: Role[];
+  columns: GridColDef<Role>[];
+};
+
+export default function RolesTable({ rows, columns }: Props) {
   const navigate = useNavigate();
-  const { rolesColumns, rolesRows, error } = useRoles();
   const deleteRole = useDeleteRole();
+  const can = useCan();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingRole, setPendingRole] = useState<Role | null>(null);
@@ -41,7 +51,7 @@ export default function RolesTable() {
   }, [deleteRole, pendingRole]);
 
   const columnsWithActions = useMemo<GridColDef<Role>[]>(() => {
-    const base = rolesColumns.map((c) => {
+    const base = columns.map((c) => {
       if (c.field === "name" || c.field === "description") {
         return {
           ...c,
@@ -62,83 +72,108 @@ export default function RolesTable() {
       return c;
     });
 
-    if (base.some((c) => c.field === "actions")) return base;
+    const canEdit = can({ permission: "Permission.Roles.Update" });
+    const canDelete = can({ permission: "Permission.Roles.Delete" });
+    const canManageClaims =
+      can({ permission: "Permission.RoleClaims.Update" }) ||
+      can({ permission: "Permission.RoleClaims.Read" });
 
-    const actionsCol: GridColDef<Role> = {
+    if (!(canEdit || canDelete || canManageClaims)) return base;
+
+    const actionsCol: GridActionsColDef<Role> = {
       field: "actions",
       type: "actions",
       headerName: "Akcije",
-      width: 180,
-      getActions: (params) => {
-        const r = params.row;
+      width: 200,
+      getActions: ({
+        row,
+      }): readonly React.ReactElement<GridActionsCellItemProps>[] => {
         const busy = deleteRole.isPending;
+        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
 
-        return [
-          <GridActionsCellItem
-            key="edit"
-            icon={
-              <Tooltip title="Uredi ulogu">
-                <EditIcon fontSize="small" />
-              </Tooltip>
-            }
-            label="Uredi ulogu"
-            disabled={busy}
-            onClick={() => navigate(`${r.id}/edit`)}
-            showInMenu={false}
-          />,
-          <GridActionsCellItem
-            key="delete"
-            icon={
-              <Tooltip title="Izbriši ulogu">
-                <DeleteIcon fontSize="small" color="error" />
-              </Tooltip>
-            }
-            label="Obriši"
-            disabled={busy}
-            onClick={() => requestDelete(r)}
-            showInMenu={false}
-          />,
-          <GridActionsCellItem
-            key="permissions"
-            icon={
-              <Tooltip title="Dozvole (Permissions)">
-                <SecurityIcon fontSize="small" color="primary" />
-              </Tooltip>
-            }
-            label="Permissions"
-            onClick={() =>
-              navigate(`/app/administration/roles/${params.id}/permissions`)
-            }
-            showInMenu={false}
-          />,
-        ];
+        if (canEdit) {
+          items.push(
+            <GridActionsCellItem
+              key="edit"
+              icon={
+                <Tooltip title="Uredi ulogu">
+                  <EditIcon fontSize="small" />
+                </Tooltip>
+              }
+              label="Uredi ulogu"
+              disabled={busy}
+              onClick={() => navigate(`${row.id}/edit`)}
+              showInMenu={false}
+            />
+          );
+        }
+
+        if (canDelete) {
+          items.push(
+            <GridActionsCellItem
+              key="delete"
+              icon={
+                <Tooltip title="Izbriši ulogu">
+                  <DeleteIcon fontSize="small" color="error" />
+                </Tooltip>
+              }
+              label="Obriši"
+              disabled={busy}
+              onClick={() => requestDelete(row)}
+              showInMenu={false}
+            />
+          );
+        }
+
+        if (canManageClaims) {
+          items.push(
+            <GridActionsCellItem
+              key="permissions"
+              icon={
+                <Tooltip title="Dozvole (Permissions)">
+                  <SecurityIcon fontSize="small" color="primary" />
+                </Tooltip>
+              }
+              label="Permissions"
+              onClick={() =>
+                navigate(`/app/administration/roles/${row.id}/permissions`)
+              }
+              showInMenu={false}
+            />
+          );
+        }
+
+        return items;
       },
     };
 
     return [...base, actionsCol];
-  }, [rolesColumns, deleteRole.isPending, navigate, requestDelete]);
+  }, [columns, can, deleteRole.isPending, navigate, requestDelete]);
 
-  if (error) return <div>Failed to load roles</div>;
+  const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   return (
     <>
       <ReusableDataGrid<Role>
-        rows={rolesRows}
+        rows={rows}
         columns={columnsWithActions}
         getRowId={(r) => r.id}
+        stickyRightField={hasActions ? "actions" : undefined}
       />
 
-      <ConfirmDialog
-        open={confirmOpen}
-        title="Obriši ulogu?"
-        description={`Jeste li sigurni da želite obrisati ulogu ?`}
-        confirmText="Obriši"
-        cancelText="Odustani"
-        loading={deleteRole.isPending}
-        disableBackdropClose
-        onClose={handleCancel}
-        onConfirm={handleConfirm}
-      />
+      <PermissionGate guard={{ permission: "Permission.Roles.Delete" }}>
+        <ConfirmDialog
+          open={confirmOpen}
+          title="Obriši ulogu?"
+          description={`Jeste li sigurni da želite obrisati ulogu ?`}
+          confirmText="Obriši"
+          cancelText="Odustani"
+          loading={deleteRole.isPending}
+          disableBackdropClose
+          onClose={handleCancel}
+          onConfirm={handleConfirm}
+        />
+      </PermissionGate>
     </>
   );
 }

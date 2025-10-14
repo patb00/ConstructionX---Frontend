@@ -18,7 +18,7 @@ export default function TenantDetailsPage() {
         sx={{ p: 2, border: (t) => `1px solid ${t.palette.divider}` }}
       >
         {isLoading && <Typography>Loading…</Typography>}
-        {error && <Typography color="error">Failed to load.</Typography>}
+        {error && <Typography color="error">Neuspjelo učitavanje.</Typography>}
         {data && (
           <>
             <pre style={{ margin: 0 }}>{JSON.stringify(data, null, 2)}</pre>

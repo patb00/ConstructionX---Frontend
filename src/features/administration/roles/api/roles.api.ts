@@ -1,3 +1,4 @@
+import { authFetch } from "../../../../lib/authFetch";
 import type {
   AllPermissionsResponse,
   NewRoleRequest,
@@ -6,58 +7,60 @@ import type {
   UpdatePermissionsRequest,
   UpdateRoleRequest,
 } from "..";
-import { httpGet, httpPost, httpPut, httpDelete } from "../../../../lib/http";
 import type { ApiEnvelope } from "../../tenants";
 
 const base = "/api/Roles";
 
 export const RolesApi = {
   add: async (payload: NewRoleRequest) => {
-    const res = await httpPost<ApiEnvelope<Role>>(`${base}/add`, payload);
-    return res;
+    return authFetch<ApiEnvelope<Role>>(`${base}/add`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
   },
 
   update: async (payload: UpdateRoleRequest) => {
-    const res = await httpPut<ApiEnvelope<Role>>(`${base}/update`, payload);
-    return res;
+    return authFetch<ApiEnvelope<Role>>(`${base}/update`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
   },
 
   updatePermissions: async (payload: UpdatePermissionsRequest) => {
-    const res = await httpPut<ApiEnvelope<Role>>(
-      `${base}/update-permissions`,
-      payload
-    );
-    return res;
+    return authFetch<ApiEnvelope<Role>>(`${base}/update-permissions`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
   },
 
   delete: async (roleId: string) => {
-    const res = await httpDelete<ApiEnvelope<string>>(
-      `${base}/delete/${encodeURIComponent(roleId)}`
+    return authFetch<ApiEnvelope<string>>(
+      `${base}/delete/${encodeURIComponent(roleId)}`,
+      { method: "DELETE" }
     );
-    return res;
   },
 
   getAll: async (): Promise<Role[]> => {
-    const res = await httpGet<ApiEnvelope<Role[]>>(`${base}/all`);
+    const res = await authFetch<ApiEnvelope<Role[]>>(`${base}/all`);
     return res.data;
   },
 
   getPartial: async (roleId: string): Promise<RoleBase> => {
-    const res = await httpGet<ApiEnvelope<RoleBase>>(
+    const res = await authFetch<ApiEnvelope<RoleBase>>(
       `${base}/partial/${encodeURIComponent(roleId)}`
     );
     return res.data;
   },
 
   getFull: async (roleId: string): Promise<Role> => {
-    const res = await httpGet<ApiEnvelope<Role>>(
+    const res = await authFetch<ApiEnvelope<Role>>(
       `${base}/full/${encodeURIComponent(roleId)}`
     );
     return res.data;
   },
 
   getAllPermissions: async (): Promise<AllPermissionsResponse> => {
-    const res = await httpGet<ApiEnvelope<AllPermissionsResponse>>(
+    const res = await authFetch<ApiEnvelope<AllPermissionsResponse>>(
       `${base}/all-permissions`
     );
     return res.data;

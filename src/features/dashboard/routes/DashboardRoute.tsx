@@ -7,48 +7,39 @@ import type { Tenant } from "../../administration/tenants";
 import { StatsRow } from "../components/StatsRows";
 import { TenantsYearChart } from "../components/TenantsYearChart";
 import { useTenantStats } from "../hooks/useTenantsStats";
-import { getCurrentUser } from "../../auth/model/currentUser";
+import { QueryBoundary } from "../../../components/ui/feedback/QueryBoundary";
+import { FullScreenError } from "../../../components/ui/feedback/PageStates";
 
 type Filter = "all" | "active" | "inactive" | "expired";
 
 export default function DashboardRoute() {
-  const { tenantsRows, error } = useTenants();
+  const { tenantsRows, error, isLoading } = useTenants();
   const tenants: Tenant[] = Array.isArray(tenantsRows) ? tenantsRows : [];
-
   const { totals, dataset, currentYear } = useTenantStats(tenants);
-
-  const user = getCurrentUser();
-  const displayName =
-    (user?.name && user?.surname
-      ? `${user.name} ${user.surname}`
-      : user?.name || user?.email) ?? "Korisnik";
-
   const [filter, setFilter] = useState<Filter>("all");
 
-  if (error) {
-    return <div>Neuspjelo učitavanje stanara.</div>;
-  }
-
   return (
-    <Stack spacing={3} sx={{ height: "100%", width: "100%" }}>
-      <Typography variant="h5" sx={{ fontWeight: 500, mb: 2 }}>
-        Dobrodošli,<strong> {displayName}</strong>
-      </Typography>
-
-      <StatsRow
-        totals={totals}
-        onSelectTotal={() => setFilter("all")}
-        onSelectActive={() => setFilter("active")}
-        onSelectInactive={() => setFilter("inactive")}
-        onSelectExpired={() => setFilter("expired")}
-        selected={filter}
-      />
-
-      <TenantsYearChart
-        dataset={dataset}
-        currentYear={currentYear}
-        filter={filter}
-      />
-    </Stack>
+    <QueryBoundary
+      isLoading={isLoading}
+      error={error}
+      fallbackError={<FullScreenError title="Nadzorna ploča" />}
+    >
+      <Stack spacing={3} sx={{ height: "100%", width: "100%" }}>
+        <Typography variant="h5" sx={{ fontWeight: 500, mb: 2 }} />
+        <StatsRow
+          totals={totals}
+          onSelectTotal={() => setFilter("all")}
+          onSelectActive={() => setFilter("active")}
+          onSelectInactive={() => setFilter("inactive")}
+          onSelectExpired={() => setFilter("expired")}
+          selected={filter}
+        />
+        <TenantsYearChart
+          dataset={dataset}
+          currentYear={currentYear}
+          filter={filter}
+        />
+      </Stack>
+    </QueryBoundary>
   );
 }

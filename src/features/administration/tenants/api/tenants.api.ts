@@ -1,4 +1,4 @@
-import { httpGet, httpPost, httpPut } from "../../../../lib/http";
+import { authFetch } from "../../../../lib/authFetch";
 import type { ApiEnvelope, NewTenantRequest, Tenant } from "..";
 
 export type TenantId = string;
@@ -12,30 +12,38 @@ const base = "/api/Tenants";
 
 export const TenantsApi = {
   add: async (payload: NewTenantRequest) => {
-    const res = await httpPost<ApiEnvelope<Tenant>>(`${base}/add`, payload);
-    return res;
+    return authFetch<ApiEnvelope<Tenant>>(`${base}/add`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
   },
+
   activate: async (id: TenantId) => {
-    const res = await httpPut<ApiEnvelope<Tenant>>(`${base}/${id}/activate`);
-    return res;
+    return authFetch<ApiEnvelope<Tenant>>(`${base}/${id}/activate`, {
+      method: "PUT",
+    });
   },
+
   deactivate: async (id: TenantId) => {
-    const res = await httpPut<ApiEnvelope<Tenant>>(`${base}/${id}/deactivate`);
-    return res;
+    return authFetch<ApiEnvelope<Tenant>>(`${base}/${id}/deactivate`, {
+      method: "PUT",
+    });
   },
+
   updateSubscription: async (p: UpdateSubscriptionRequest) => {
-    const res = await httpPut<ApiEnvelope<Tenant>>(
-      `${base}/update-subscription`,
-      p
-    );
-    return res;
+    return authFetch<ApiEnvelope<Tenant>>(`${base}/update-subscription`, {
+      method: "PUT",
+      body: JSON.stringify(p),
+    });
   },
+
   getById: async (id: TenantId) => {
-    const res = await httpGet<ApiEnvelope<Tenant>>(`${base}/${id}`);
+    const res = await authFetch<ApiEnvelope<Tenant>>(`${base}/${id}`);
     return res.data;
   },
+
   getAll: async () => {
-    const res = await httpGet<ApiEnvelope<Tenant[]>>(`${base}/get-all`);
+    const res = await authFetch<ApiEnvelope<Tenant[]>>(`${base}/get-all`);
     return res.data;
   },
 };

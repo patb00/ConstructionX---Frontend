@@ -1,19 +1,29 @@
 import { useMemo, useState, useCallback } from "react";
 import { Box, Tooltip } from "@mui/material";
-import { GridActionsCellItem, type GridColDef } from "@mui/x-data-grid";
+import {
+  GridActionsCellItem,
+  type GridColDef,
+  type GridActionsColDef,
+  type GridActionsCellItemProps,
+} from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { JobPosition } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
-import { useJobPositions } from "../hooks/useJobPositions";
 import { useDeleteJobPosition } from "../hooks/useDeleteJobPosition";
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
+import { useCan, PermissionGate } from "../../../../lib/permissions";
 
-export default function JobPositionsTable() {
-  const { jobPositionsRows, jobPositionsColumns, error } = useJobPositions();
+type Props = {
+  rows: JobPosition[];
+  columns: GridColDef<JobPosition>[];
+};
+
+export default function JobPositionsTable({ rows, columns }: Props) {
   const deleteJobPosition = useDeleteJobPosition();
   const navigate = useNavigate();
+  const can = useCan();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingRow, setPendingRow] = useState<JobPosition | null>(null);
@@ -41,7 +51,7 @@ export default function JobPositionsTable() {
   }, [deleteJobPosition, pendingRow]);
 
   const columnsWithActions = useMemo<GridColDef<JobPosition>[]>(() => {
-    const base = jobPositionsColumns.map((c) => {
+    const base = columns.map((c) => {
       if (c.field === "name" || c.field === "description") {
         return {
           ...c,
@@ -62,76 +72,99 @@ export default function JobPositionsTable() {
       return c;
     });
 
+    const canEdit = can({ permission: "Permission.JobPositions.Update" });
+    const canDelete = can({ permission: "Permission.JobPositions.Delete" });
+
+    if (!(canEdit || canDelete)) return base;
     if (base.some((c) => c.field === "actions")) return base;
 
-    const actionsCol: GridColDef<JobPosition> = {
+    const actionsCol: GridActionsColDef<JobPosition> = {
       field: "actions",
       type: "actions",
       headerName: "Akcije",
       width: 140,
-      getActions: (params) => {
-        const row = params.row as JobPosition;
+      getActions: ({
+        row,
+      }): readonly React.ReactElement<GridActionsCellItemProps>[] => {
         const id = (row as any).id;
-        const busy = deleteJobPosition.isPending;
+        const busy =
+          deleteJobPosition.isPending &&
+          (deleteJobPosition.variables as any) === id;
 
-        return [
-          <GridActionsCellItem
-            key="edit"
-            icon={
-              <Tooltip title="Uredi radno mjesto">
-                <EditIcon fontSize="small" />
-              </Tooltip>
-            }
-            label="Uredi"
-            disabled={busy}
-            onClick={() => navigate(`${id}/edit`)}
-            showInMenu={false}
-          />,
-          <GridActionsCellItem
-            key="delete"
-            icon={
-              <Tooltip title="Izbriši radno mjesto">
-                <DeleteIcon fontSize="small" color="error" />
-              </Tooltip>
-            }
-            label="Izbriši"
-            disabled={busy}
-            onClick={() => requestDelete(row)}
-            showInMenu={false}
-          />,
-        ];
+        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
+
+        if (canEdit) {
+          items.push(
+            <GridActionsCellItem
+              key="edit"
+              icon={
+                <Tooltip title="Uredi radno mjesto">
+                  <EditIcon fontSize="small" />
+                </Tooltip>
+              }
+              label="Uredi"
+              disabled={busy}
+              onClick={() => navigate(`${id}/edit`)}
+              showInMenu={false}
+            />
+          );
+        }
+
+        if (canDelete) {
+          items.push(
+            <GridActionsCellItem
+              key="delete"
+              icon={
+                <Tooltip title="Izbriši radno mjesto">
+                  <DeleteIcon fontSize="small" color="error" />
+                </Tooltip>
+              }
+              label="Izbriši"
+              disabled={busy}
+              onClick={() => requestDelete(row)}
+              showInMenu={false}
+            />
+          );
+        }
+
+        return items;
       },
     };
 
     return [...base, actionsCol];
   }, [
-    jobPositionsColumns,
+    columns,
+    can,
     deleteJobPosition.isPending,
+    deleteJobPosition.variables,
     navigate,
     requestDelete,
   ]);
 
-  if (error) return <div>Neuspjelo učitavanje radnih mjesta.</div>;
+  const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   return (
     <>
       <ReusableDataGrid<JobPosition>
-        rows={jobPositionsRows}
+        rows={rows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}
+        stickyRightField={hasActions ? "actions" : undefined}
       />
 
-      <ConfirmDialog
-        open={confirmOpen}
-        title="Izbriši radno mjesto?"
-        description={`Jeste li sigurni da želite izbrisati radno mjesto ?`}
-        confirmText="Obriši"
-        cancelText="Odustani"
-        loading={deleteJobPosition.isPending}
-        disableBackdropClose
-        onClose={handleCancel}
-        onConfirm={handleConfirm}
-      />
+      <PermissionGate guard={{ permission: "Permission.JobPositions.Delete" }}>
+        <ConfirmDialog
+          open={confirmOpen}
+          title="Izbriši radno mjesto?"
+          description={`Jeste li sigurni da želite izbrisati radno mjesto ?`}
+          confirmText="Obriši"
+          cancelText="Odustani"
+          loading={deleteJobPosition.isPending}
+          disableBackdropClose
+          onClose={handleCancel}
+          onConfirm={handleConfirm}
+        />
+      </PermissionGate>
     </>
   );
 }

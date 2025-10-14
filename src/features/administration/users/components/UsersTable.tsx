@@ -1,6 +1,11 @@
 import { useMemo, useState, useCallback } from "react";
-import { Box, Chip, Tooltip } from "@mui/material";
-import { GridActionsCellItem, type GridColDef } from "@mui/x-data-grid";
+import { Box, Chip, Tooltip, CircularProgress } from "@mui/material";
+import {
+  GridActionsCellItem,
+  type GridColDef,
+  type GridActionsColDef,
+  type GridActionsCellItemProps,
+} from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
@@ -9,24 +14,27 @@ import SecurityIcon from "@mui/icons-material/Security";
 import { useNavigate } from "react-router-dom";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import type { User } from "..";
-import { useUsers } from "../hooks/useUsers";
 import { useDeleteUser } from "../hooks/useDeleteUser";
 import { useUpdateUser } from "../hooks/useUpdateUser";
 import { useActivateUser } from "../hooks/useActivateUser";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 import UserRolesDialog from "./UserRolesDialog";
-import { CircularProgress } from "@mui/material";
+import { useCan, PermissionGate } from "../../../../lib/permissions";
 
-export default function UsersTable() {
+type Props = {
+  rows: User[];
+  columns: GridColDef<User>[];
+};
+
+export default function UsersTable({ rows, columns }: Props) {
   const navigate = useNavigate();
-  const { usersColumns, usersRows, error } = useUsers();
   const deleteUser = useDeleteUser();
   const updateUser = useUpdateUser();
   const updateStatus = useActivateUser();
+  const can = useCan();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingUser, setPendingUser] = useState<User | null>(null);
-
   const [rolesDialogUser, setRolesDialogUser] = useState<string | null>(null);
 
   const requestDelete = useCallback((u: User) => {
@@ -54,7 +62,7 @@ export default function UsersTable() {
     updateStatus.mutate({ userId: u.id, activation: !u.isActive });
 
   const columnsWithActions = useMemo<GridColDef<User>[]>(() => {
-    const base = usersColumns.map((c) => {
+    const base = columns.map((c) => {
       if (c.field === "isActive") {
         return {
           ...c,
@@ -83,15 +91,24 @@ export default function UsersTable() {
       return c;
     });
 
-    if (base.some((c) => c.field === "actions")) return base;
+    const canEdit = can({ permission: "Permission.Users.Update" });
+    const canDelete = can({ permission: "Permission.Users.Delete" });
+    const canToggle = can({ permission: "Permission.Users.Update" });
+    const canSeeRoles =
+      can({ permission: "Permission.UserRoles.Read" }) ||
+      can({ permission: "Permission.UserRoles.Update" });
 
-    const actionsCol: GridColDef<User> = {
+    if (!(canEdit || canDelete || canToggle || canSeeRoles)) return base;
+
+    const actionsCol: GridActionsColDef<User> = {
       field: "actions",
       type: "actions",
       headerName: "Akcije",
-      width: 280,
-      getActions: (params) => {
-        const u = params.row;
+      width: 300,
+      getActions: ({
+        row,
+      }): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+        const u = row;
 
         const isUpdating =
           updateUser.isPending && (updateUser.variables as any)?.id === u.id;
@@ -102,84 +119,106 @@ export default function UsersTable() {
           deleteUser.isPending && (deleteUser.variables as any) === u.id;
         const busy = isUpdating || isToggling || isDeleting;
 
-        return [
-          <GridActionsCellItem
-            key="edit"
-            icon={
-              <Tooltip title="Uredi korisnika">
-                <EditIcon fontSize="small" />
-              </Tooltip>
-            }
-            label="Uredi"
-            disabled={busy}
-            onClick={() => navigate(`${u.id}/edit`)}
-            showInMenu={false}
-          />,
-          <GridActionsCellItem
-            key="delete"
-            icon={
-              <Tooltip title="Izbriši korisnika">
-                <DeleteIcon fontSize="small" color="error" />
-              </Tooltip>
-            }
-            label="Obriši"
-            disabled={isDeleting}
-            onClick={() => requestDelete(u)}
-            showInMenu={false}
-          />,
-          u.isActive ? (
+        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
+
+        if (canEdit) {
+          items.push(
             <GridActionsCellItem
-              key="deactivate"
+              key="edit"
               icon={
-                <Tooltip title="Deaktiviraj korisnika">
-                  {isToggling ? (
-                    <CircularProgress size={16} />
-                  ) : (
-                    <BlockIcon fontSize="small" />
-                  )}
+                <Tooltip title="Uredi korisnika">
+                  <EditIcon fontSize="small" />
                 </Tooltip>
               }
-              label="Deaktiviraj"
+              label="Uredi"
               disabled={busy}
-              onClick={() => toggleStatus(u)}
+              onClick={() => navigate(`${u.id}/edit`)}
               showInMenu={false}
             />
-          ) : (
+          );
+        }
+
+        if (canDelete) {
+          items.push(
             <GridActionsCellItem
-              key="activate"
+              key="delete"
               icon={
-                <Tooltip title="Aktiviraj korisnika">
-                  {isToggling ? (
-                    <CircularProgress size={16} />
-                  ) : (
-                    <CheckIcon fontSize="small" />
-                  )}
+                <Tooltip title="Izbriši korisnika">
+                  <DeleteIcon fontSize="small" color="error" />
                 </Tooltip>
               }
-              label="Aktiviraj"
-              disabled={busy}
-              onClick={() => toggleStatus(u)}
+              label="Obriši"
+              disabled={isDeleting}
+              onClick={() => requestDelete(u)}
               showInMenu={false}
             />
-          ),
-          <GridActionsCellItem
-            key="roles"
-            icon={
-              <Tooltip title="Uloge korisnika">
-                <SecurityIcon fontSize="small" color="primary" />
-              </Tooltip>
-            }
-            label="Uloge"
-            onClick={() => setRolesDialogUser(u.id)}
-            showInMenu={false}
-          />,
-        ];
+          );
+        }
+
+        if (canToggle) {
+          items.push(
+            u.isActive ? (
+              <GridActionsCellItem
+                key="deactivate"
+                icon={
+                  <Tooltip title="Deaktiviraj korisnika">
+                    {isToggling ? (
+                      <CircularProgress size={16} />
+                    ) : (
+                      <BlockIcon fontSize="small" />
+                    )}
+                  </Tooltip>
+                }
+                label="Deaktiviraj"
+                disabled={busy}
+                onClick={() => toggleStatus(u)}
+                showInMenu={false}
+              />
+            ) : (
+              <GridActionsCellItem
+                key="activate"
+                icon={
+                  <Tooltip title="Aktiviraj korisnika">
+                    {isToggling ? (
+                      <CircularProgress size={16} />
+                    ) : (
+                      <CheckIcon fontSize="small" />
+                    )}
+                  </Tooltip>
+                }
+                label="Aktiviraj"
+                disabled={busy}
+                onClick={() => toggleStatus(u)}
+                showInMenu={false}
+              />
+            )
+          );
+        }
+
+        if (canSeeRoles) {
+          items.push(
+            <GridActionsCellItem
+              key="roles"
+              icon={
+                <Tooltip title="Uloge korisnika">
+                  <SecurityIcon fontSize="small" color="primary" />
+                </Tooltip>
+              }
+              label="Uloge"
+              onClick={() => setRolesDialogUser(u.id)}
+              showInMenu={false}
+            />
+          );
+        }
+
+        return items;
       },
     };
 
     return [...base, actionsCol];
   }, [
-    usersColumns,
+    columns,
+    can,
     deleteUser.isPending,
     deleteUser.variables,
     updateUser.isPending,
@@ -187,39 +226,43 @@ export default function UsersTable() {
     updateStatus.isPending,
     updateStatus.variables,
     navigate,
+    requestDelete,
   ]);
 
-  if (error) return <div>Failed to load users</div>;
+  const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   return (
     <>
       <ReusableDataGrid<User>
-        rows={usersRows}
+        rows={rows}
         columns={columnsWithActions}
         getRowId={(r) => r.id}
         pageSize={10}
-        stickyRightField="actions"
+        stickyRightField={hasActions ? "actions" : undefined}
       />
 
-      <ConfirmDialog
-        open={confirmOpen}
-        title="Izbriši korisnika?"
-        description={`Jeste li sigurni da želite izbrisati korisnika ?`}
-        confirmText="Obriši"
-        cancelText="Odustani"
-        loading={deleteUser.isPending}
-        disableBackdropClose
-        onClose={handleCancel}
-        onConfirm={handleConfirm}
-      />
+      <PermissionGate guard={{ permission: "Permission.Users.Delete" }}>
+        <ConfirmDialog
+          open={confirmOpen}
+          title="Izbriši korisnika?"
+          description={`Jeste li sigurni da želite izbrisati korisnika ?`}
+          confirmText="Obriši"
+          cancelText="Odustani"
+          loading={deleteUser.isPending}
+          disableBackdropClose
+          onClose={handleCancel}
+          onConfirm={handleConfirm}
+        />
+      </PermissionGate>
 
-      {rolesDialogUser && (
+      {(rolesDialogUser && can({ permission: "Permission.UserRoles.Read" })) ||
+      can({ permission: "Permission.UserRoles.Update" }) ? (
         <UserRolesDialog
-          userId={rolesDialogUser}
+          userId={rolesDialogUser as string}
           open
           onClose={() => setRolesDialogUser(null)}
         />
-      )}
+      ) : null}
     </>
   );
 }

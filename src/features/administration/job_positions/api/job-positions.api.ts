@@ -1,4 +1,4 @@
-import { httpGet, httpPost, httpPut, httpDelete } from "../../../../lib/http";
+import { authFetch } from "../../../../lib/authFetch";
 import type {
   JobPosition,
   NewJobPositionRequest,
@@ -10,37 +10,34 @@ const base = "/api/JobPositions";
 
 export const JobPositionsApi = {
   add: async (payload: NewJobPositionRequest) => {
-    const res = await httpPost<ApiEnvelope<JobPosition>>(
-      `${base}/add`,
-      payload
-    );
-    return res;
+    return authFetch<ApiEnvelope<JobPosition>>(`${base}/add`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
   },
 
   update: async (payload: UpdateJobPositionRequest) => {
-    const res = await httpPut<ApiEnvelope<JobPosition>>(
-      `${base}/update`,
-      payload
-    );
-    return res;
+    return authFetch<ApiEnvelope<JobPosition>>(`${base}/update`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
   },
 
   delete: async (jobPositionId: number) => {
-    const res = await httpDelete<ApiEnvelope<string>>(
-      `${base}/${jobPositionId}`
-    );
-    return res;
+    return authFetch<ApiEnvelope<string>>(`${base}/${jobPositionId}`, {
+      method: "DELETE",
+    });
   },
 
   getById: async (jobPositionId: number): Promise<JobPosition> => {
-    const res = await httpGet<ApiEnvelope<JobPosition>>(
+    const res = await authFetch<ApiEnvelope<JobPosition>>(
       `${base}/${jobPositionId}`
     );
     return res.data;
   },
 
   getAll: async (): Promise<JobPosition[]> => {
-    const res = await httpGet<ApiEnvelope<JobPosition[]>>(`${base}/get-all`);
+    const res = await authFetch<ApiEnvelope<JobPosition[]>>(`${base}/get-all`);
     return res.data;
   },
 };

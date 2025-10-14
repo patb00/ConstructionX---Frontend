@@ -1,19 +1,20 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuthStore } from "../../features/auth/model/auth.store";
-import { getTokens } from "../../lib/auth";
+import type { ReactNode } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuthStore } from "../../features/auth/store/useAuthStore";
 
-type RequireAuthProps = {
-  children?: React.ReactNode;
-};
-
-export default function RequireAuth({ children }: RequireAuthProps) {
-  const isAuthed = useAuthStore((s) => s.isAuthed);
+export function RequireAuth({
+  children,
+  fallbackPath = "/",
+}: {
+  children: ReactNode;
+  fallbackPath?: string;
+}) {
+  const isAuthed = useAuthStore((s) => s.isAuthenticated);
   const location = useLocation();
 
-  const hasTokens = !!getTokens();
-  if (!isAuthed && !hasTokens) {
-    return <Navigate to="/" replace state={{ from: location }} />;
+  if (!isAuthed) {
+    return <Navigate to={fallbackPath} replace state={{ from: location }} />;
   }
 
-  return children ? <>{children}</> : <Outlet />;
+  return <>{children}</>;
 }

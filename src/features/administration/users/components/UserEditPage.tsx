@@ -33,7 +33,7 @@ export default function UserEditPage() {
     navigate("/app/administration/users");
   };
 
-  if (error) return <div>Failed to load user.</div>;
+  if (error) return <div>Neuspjelo učitavanje korisnika.</div>;
 
   return (
     <Stack spacing={2}>

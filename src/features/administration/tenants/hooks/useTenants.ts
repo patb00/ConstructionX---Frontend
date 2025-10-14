@@ -17,6 +17,7 @@ export const useTenants = () => {
   >({
     queryKey: tenantsKeys.list(),
     queryFn: () => TenantsApi.getAll(),
+    retry: 0,
     select: (rows): TransformedTenantsData => {
       if (!rows?.length) return { columnDefs: [], rowDefs: [] };
 

@@ -23,7 +23,7 @@ export default function RoleEditPage() {
     navigate("/app/administration/roles");
   };
 
-  if (error) return <div>Failed to load role.</div>;
+  if (error) return <div>Neuspjelo učitavanje uloga.</div>;
 
   return (
     <Stack spacing={2}>

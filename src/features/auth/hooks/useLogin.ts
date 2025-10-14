@@ -1,20 +1,19 @@
-import { useMutation } from "@tanstack/react-query";
-import { login as loginApi } from "../api/login";
-import { setTokens } from "../../../lib/auth";
-import { getCurrentUser } from "../model/currentUser";
-import { useAuthStore } from "../model/auth.store";
-import { env } from "../../../config/env";
+import { useMutation, type UseMutationResult } from "@tanstack/react-query";
+import { login, type LoginBody, type LoginResponse } from "../api/authApi";
+import { useAuthStore } from "../store/useAuthStore";
 
-export function useLogin() {
-  return useMutation({
-    mutationFn: loginApi,
-    onSuccess: (res) => {
-      if (env.authMode === "header") {
-        setTokens(res.data);
-      }
-      const user = getCurrentUser();
-      useAuthStore.getState().setUser(user);
-      useAuthStore.getState().setAuthed(!!user);
+export function useLogin(
+  tenant?: string
+): UseMutationResult<LoginResponse, Error, LoginBody> {
+  const setTokens = useAuthStore((s) => s.setTokens);
+
+  return useMutation<LoginResponse, Error, LoginBody>({
+    mutationFn: (body) => login(body, tenant),
+    onSuccess: (data) => {
+      if (!data.isSuccessfull)
+        throw new Error(data.messages?.[0] || "Login failed");
+      const { jwt, refreshToken, refreshTokenExpirationDate } = data.data;
+      setTokens(jwt, refreshToken, refreshTokenExpirationDate);
     },
   });
 }

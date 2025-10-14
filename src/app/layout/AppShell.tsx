@@ -18,15 +18,17 @@ import Sidebar, { SIDEBAR_WIDTH } from "./Sidebar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { MdConstruction } from "react-icons/md";
 import { useSnackbar } from "notistack";
-import { useAuthStore } from "../../features/auth/model/auth.store";
+import { useAuthStore } from "../../features/auth/store/useAuthStore";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function AppShell() {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
-  const signOut = useAuthStore((s) => s.signOut);
+  const signOut = useAuthStore((s) => s.clear);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const handleAvatarClick = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);
@@ -36,6 +38,7 @@ export default function AppShell() {
   const handleLogout = () => {
     handleMenuClose();
     signOut();
+    queryClient.clear();
     enqueueSnackbar("Odjavljeni ste.", { variant: "info" });
     navigate("/");
   };

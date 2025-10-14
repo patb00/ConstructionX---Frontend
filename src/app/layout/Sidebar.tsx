@@ -13,24 +13,10 @@ import {
 import { alpha } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import { NavLink, useLocation } from "react-router-dom";
-import {
-  FaHardHat,
-  /*   FaTools,
-  FaTruck,
-  FaUsers,
-  FaHome,
-  FaChartBar,
-  FaCog, */
-  FaUserShield,
-  FaTachometerAlt,
-  FaKey,
-  FaIdBadge,
-  FaBriefcase,
-} from "react-icons/fa";
-import { HiUsers } from "react-icons/hi";
+import { FaHardHat } from "react-icons/fa";
 import { useTheme } from "@mui/material/styles";
-import { IoIosBusiness } from "react-icons/io";
-import { useAuthStore } from "../../features/auth/model/auth.store";
+import { useAuthStore } from "../../features/auth/store/useAuthStore";
+import { NAV_ITEMS } from "../routes/config";
 
 export const SIDEBAR_WIDTH = 250;
 
@@ -43,49 +29,24 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
   const { pathname } = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const user = useAuthStore((s) => s.user);
+  const tenant = useAuthStore((s) => s.tenant);
+  const permissions = useAuthStore((s) => s.permissions || []);
 
-  const MANAGEMENT = [
-    {
-      label: "Nadzorna ploča",
-      to: "/app/dashboard",
-      icon: <FaTachometerAlt />,
-    },
-    /*   { label: "Gradilište", to: "/app/gradiliste", icon: <FaHardHat /> },
-  { label: "Alat i oprema", to: "/app/alat", icon: <FaTools /> },
-  { label: "Vozila", to: "/app/vozila", icon: <FaTruck /> },
-  { label: "Ljudski resursi", to: "/app/ljudski", icon: <FaUsers /> },
-  { label: "Stanovi", to: "/app/stanovi", icon: <FaHome /> },
-  { label: "Izvješća", to: "/app/izvjestaji", icon: <FaChartBar /> }, */
-  ];
+  const canSee = (guard?: { tenant?: "root" | "any"; permission?: string }) => {
+    if (!guard) return true;
+    if (guard.tenant === "root" && tenant !== "root") return false;
+    if (guard.permission && !permissions.includes(guard.permission))
+      return false;
+    return true;
+  };
 
-  const SYSTEM_BASE = [
-    { label: "Tenanti", to: "/app/administration/tenants", icon: <FaKey /> },
-    {
-      label: "Tvrtke",
-      to: "/app/administration/companies",
-      icon: <IoIosBusiness />,
-    },
-    { label: "Uloge", to: "/app/administration/roles", icon: <FaUserShield /> },
-    {
-      label: "Korisnici",
-      to: "/app/administration/users",
-      icon: <HiUsers />,
-    },
-    {
-      label: "Zaposlenici",
-      to: "/app/administration/employees",
-      icon: <FaIdBadge />,
-    },
-    {
-      label: "Radna mjesta",
-      to: "/app/administration/jobPositions",
-      icon: <FaBriefcase />,
-    },
-  ];
+  console.log("permissions", permissions);
 
-  const SYSTEM = SYSTEM_BASE.filter((item) =>
-    item.to === "/app/administration/tenants" ? user?.tenant === "root" : true
+  const MANAGEMENT = NAV_ITEMS.filter(
+    (i) => i.section === "MANAGEMENT" && canSee(i.guard)
+  );
+  const SYSTEM = NAV_ITEMS.filter(
+    (i) => i.section === "SYSTEM" && canSee(i.guard)
   );
 
   const renderSectionLabel = (text: string) => (

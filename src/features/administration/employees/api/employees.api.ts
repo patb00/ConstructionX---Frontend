@@ -1,4 +1,4 @@
-import { httpGet, httpPost, httpPut, httpDelete } from "../../../../lib/http";
+import { authFetch } from "../../../../lib/authFetch";
 import type {
   AssignJobPositionRequest,
   Employee,
@@ -11,42 +11,44 @@ const base = "/api/Employees";
 
 export const EmployeesApi = {
   add: async (payload: NewEmployeeRequest) => {
-    const res = await httpPost<ApiEnvelope<number>>(`${base}/add`, payload);
-    return res;
+    return authFetch<ApiEnvelope<number>>(`${base}/add`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
   },
 
   update: async (payload: UpdateEmployeeRequest) => {
-    const res = await httpPut<ApiEnvelope<Employee>>(`${base}/update`, payload);
-    return res;
+    return authFetch<ApiEnvelope<Employee>>(`${base}/update`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
   },
 
   assignJobPosition: async (payload: AssignJobPositionRequest) => {
-    const res = await httpPut<ApiEnvelope<Employee>>(
-      `${base}/assign-job-position`,
-      payload
-    );
-    return res;
+    return authFetch<ApiEnvelope<Employee>>(`${base}/assign-job-position`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
   },
 
   delete: async (employeeId: number) => {
-    const res = await httpDelete<ApiEnvelope<Employee>>(
-      `${base}/${employeeId}`
-    );
-    return res;
+    return authFetch<ApiEnvelope<Employee>>(`${base}/${employeeId}`, {
+      method: "DELETE",
+    });
   },
 
   getById: async (employeeId: number): Promise<Employee> => {
-    const res = await httpGet<ApiEnvelope<Employee>>(`${base}/${employeeId}`);
+    const res = await authFetch<ApiEnvelope<Employee>>(`${base}/${employeeId}`);
     return res.data;
   },
 
   getAll: async (): Promise<Employee[]> => {
-    const res = await httpGet<ApiEnvelope<Employee[]>>(`${base}/get-all`);
+    const res = await authFetch<ApiEnvelope<Employee[]>>(`${base}/get-all`);
     return res.data;
   },
 
   getByMachineryLicense: async (hasLicense: boolean): Promise<Employee[]> => {
-    const res = await httpGet<ApiEnvelope<Employee[]>>(
+    const res = await authFetch<ApiEnvelope<Employee[]>>(
       `${base}/all-machinery-license?hasLicense=${encodeURIComponent(
         hasLicense
       )}`

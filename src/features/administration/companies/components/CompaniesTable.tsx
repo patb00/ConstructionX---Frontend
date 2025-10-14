@@ -1,19 +1,29 @@
 import { useMemo, useState, useCallback } from "react";
 import { Box, Tooltip } from "@mui/material";
-import { GridActionsCellItem, type GridColDef } from "@mui/x-data-grid";
+import {
+  GridActionsCellItem,
+  type GridActionsCellItemProps,
+  type GridActionsColDef,
+  type GridColDef,
+} from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useCompanies } from "../hooks/useCompanies";
 import { useDeleteCompany } from "../hooks/useDeleteCompany";
 import type { Company } from "..";
-import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import { useNavigate } from "react-router-dom";
+import { PermissionGate, useCan } from "../../../../lib/permissions";
+import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 
-export default function CompaniesTable() {
-  const { companiesColumns, companiesRows, error } = useCompanies();
+type Props = {
+  rows: Company[];
+  columns: GridColDef<Company>[];
+};
+
+export default function CompaniesTable({ rows, columns }: Props) {
   const deleteCompany = useDeleteCompany();
   const navigate = useNavigate();
+  const can = useCan();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingCompany, setPendingCompany] = useState<Company | null>(null);
@@ -36,12 +46,11 @@ export default function CompaniesTable() {
         setConfirmOpen(false);
         setPendingCompany(null);
       },
-      onError: () => {},
     });
   }, [deleteCompany, pendingCompany]);
 
   const columnsWithActions = useMemo<GridColDef<Company>[]>(() => {
-    const base = companiesColumns.map((c) => {
+    const base = columns.map((c) => {
       if (c.field === "dateOfCreation") {
         return {
           ...c,
@@ -68,71 +77,87 @@ export default function CompaniesTable() {
       return c;
     });
 
-    if (base.some((c) => c.field === "actions")) return base;
+    const canEdit = can({ permission: "Permission.Companies.Update" });
+    const canDelete = can({ permission: "Permission.Companies.Delete" });
+    if (!(canEdit || canDelete)) return base;
 
-    const actionsCol: GridColDef<Company> = {
+    const actionsCol: GridActionsColDef<Company> = {
       field: "actions",
       type: "actions",
       headerName: "Akcije",
       width: 160,
-      getActions: (params) => {
-        const row = params.row;
+      getActions: ({
+        row,
+      }): readonly React.ReactElement<GridActionsCellItemProps>[] => {
         const busy = deleteCompany.isPending;
 
-        return [
-          <GridActionsCellItem
-            key="edit"
-            icon={
-              <Tooltip title="Uredi tvrtku">
-                <EditIcon fontSize="small" />
-              </Tooltip>
-            }
-            label="Uredi tvrtku"
-            disabled={busy}
-            onClick={() => navigate(`${row.id}/edit`)}
-            showInMenu={false}
-          />,
-          <GridActionsCellItem
-            key="delete"
-            icon={
-              <Tooltip title="Izbriši tvrtku">
-                <DeleteIcon fontSize="small" color="error" />
-              </Tooltip>
-            }
-            label="Obriši"
-            disabled={busy}
-            onClick={() => requestDelete(row)}
-            showInMenu={false}
-          />,
-        ];
+        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
+
+        if (canEdit) {
+          items.push(
+            <GridActionsCellItem
+              key="edit"
+              icon={
+                <Tooltip title="Uredi tvrtku">
+                  <EditIcon fontSize="small" />
+                </Tooltip>
+              }
+              label="Uredi tvrtku"
+              disabled={busy}
+              onClick={() => navigate(`${row.id}/edit`)}
+              showInMenu={false}
+            />
+          );
+        }
+
+        if (canDelete) {
+          items.push(
+            <GridActionsCellItem
+              key="delete"
+              icon={
+                <Tooltip title="Izbriši tvrtku">
+                  <DeleteIcon fontSize="small" color="error" />
+                </Tooltip>
+              }
+              label="Obriši tvrtku"
+              disabled={busy}
+              onClick={() => requestDelete(row)}
+              showInMenu={false}
+            />
+          );
+        }
+
+        return items;
       },
     };
 
     return [...base, actionsCol];
-  }, [companiesColumns, deleteCompany.isPending, navigate, requestDelete]);
+  }, [columns, can, deleteCompany.isPending, navigate, requestDelete]);
 
-  if (error) return <div>Failed to load companies</div>;
+  const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   return (
     <>
       <ReusableDataGrid<Company>
-        rows={companiesRows}
+        rows={rows}
         columns={columnsWithActions}
         getRowId={(r) => r.id}
-        stickyRightField="actions"
+        stickyRightField={hasActions ? "actions" : undefined}
       />
 
-      <ConfirmDialog
-        open={confirmOpen}
-        title="Obriši tvrtku?"
-        description={`Jeste li sigurni da želite obrisati tvrtku ? Ova radnja je nepovratna.`}
-        confirmText="Obriši"
-        cancelText="Odustani"
-        loading={deleteCompany.isPending}
-        disableBackdropClose
-        onClose={handleCancel}
-        onConfirm={handleConfirm}
-      />
+      <PermissionGate guard={{ permission: "Permission.Companies.Delete" }}>
+        <ConfirmDialog
+          open={confirmOpen}
+          title="Obriši tvrtku?"
+          description="Jeste li sigurni da želite obrisati tvrtku? Ova radnja je nepovratna."
+          confirmText="Obriši"
+          cancelText="Odustani"
+          loading={deleteCompany.isPending}
+          disableBackdropClose
+          onClose={handleCancel}
+          onConfirm={handleConfirm}
+        />
+      </PermissionGate>
     </>
   );
 }

@@ -12,6 +12,8 @@ type Props = {
   onSubmit: (e: FormEvent<HTMLFormElement>) => void;
   isPending?: boolean;
   serverError?: string;
+  tenantValue?: string;
+  onTenantChange?: (v: string) => void;
 };
 
 export function SignInForm({
@@ -19,6 +21,8 @@ export function SignInForm({
   onSubmit,
   isPending,
   serverError,
+  tenantValue = "",
+  onTenantChange,
 }: Props) {
   const hasError = Boolean(serverError);
 
@@ -27,6 +31,7 @@ export function SignInForm({
       <Typography variant="h4" sx={{ mb: 1 }}>
         Prijava
       </Typography>
+
       <TextField
         size="small"
         fullWidth
@@ -36,7 +41,10 @@ export function SignInForm({
         autoComplete="organization"
         required
         disabled={isPending}
+        value={tenantValue}
+        onChange={(e) => onTenantChange?.(e.target.value)}
       />
+
       <TextField
         size="small"
         fullWidth
@@ -48,6 +56,7 @@ export function SignInForm({
         disabled={isPending}
         error={hasError}
       />
+
       <TextField
         size="small"
         fullWidth
@@ -61,6 +70,7 @@ export function SignInForm({
         error={hasError}
         helperText={hasError ? serverError : undefined}
       />
+
       <Button
         type="submit"
         variant="contained"

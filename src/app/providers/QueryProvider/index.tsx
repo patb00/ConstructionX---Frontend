@@ -4,7 +4,10 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      retry: (fails, err: any) => (err?.status === 401 ? false : fails < 2),
+      retry: false,
+    },
+    mutations: {
+      retry: false,
     },
   },
 });
