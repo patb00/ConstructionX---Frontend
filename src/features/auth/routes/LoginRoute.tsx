@@ -2,26 +2,29 @@ import { useState, type FormEvent } from "react";
 import { Box } from "@mui/material";
 import "../styles/auth-landing.css";
 import { SignInForm } from "../components/SignInForm";
-import { SignUpForm } from "../components/SignUpForm";
+import { ForgotPasswordForm } from "../components/ForgotPasswordForm";
 import { AuthPanels } from "../components/AuthPanels";
 import { useLogin } from "../hooks/useLogin";
+
 import { useAuthStore } from "../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import { useForgotPassword } from "../../administration/users/hooks/useForgotPassword";
 
-type AuthMode = "sign-in" | "sign-up";
+type AuthMode = "sign-in" | "forgot-password";
 
 export default function LoginRoute() {
   const [mode, setMode] = useState<AuthMode>("sign-in");
-  const isSignUp = mode === "sign-up";
+  const isForgot = mode === "forgot-password";
 
   const [tenant, setTenantState] = useState("");
-
   const setTenant = useAuthStore((s) => s.setTenant);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
   const { mutateAsync: doLogin, isPending } = useLogin(tenant || undefined);
+  const { mutateAsync: doForgot, isPending: isForgotPending } =
+    useForgotPassword();
 
   const onSignIn = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,18 +42,12 @@ export default function LoginRoute() {
 
     try {
       setTenant(formTenant);
-      if (tenant !== formTenant) {
-        setTenantState(formTenant);
-      }
-
-      console.log("[login] Attempting login", { tenant: formTenant, username });
+      if (tenant !== formTenant) setTenantState(formTenant);
 
       await doLogin({ username, password });
-
       enqueueSnackbar("Prijava uspješna!", { variant: "success" });
       navigate("/app/dashboard");
     } catch (err: any) {
-      console.error("[login] Login failed:", err);
       const msg =
         err?.message ||
         err?.Messages?.[0] ||
@@ -60,23 +57,49 @@ export default function LoginRoute() {
     }
   };
 
-  const onSignUp = (e: FormEvent<HTMLFormElement>) => {
+  const onForgotPassword = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isForgotPending) return;
+
+    const form = new FormData(e.currentTarget);
+    const formTenant = String(form.get("tenant") ?? "").trim();
+    const email = String(form.get("email") ?? "").trim();
+
+    if (!formTenant || !email) {
+      enqueueSnackbar("Molimo unesite tenant i email.", { variant: "warning" });
+      return;
+    }
+
+    try {
+      setTenant(formTenant);
+      if (tenant !== formTenant) setTenantState(formTenant);
+
+      await doForgot({
+        tenant: formTenant,
+        payload: { email },
+      });
+
+      setMode("sign-in");
+    } catch {}
   };
 
   return (
-    <Box className={`container ${isSignUp ? "sign-up-mode" : ""}`}>
+    <Box className={`container ${isForgot ? "sign-up-mode" : ""}`}>
       <Box className="forms-container">
         <Box className="signin-signup">
           <SignInForm
             className="sign-in-form"
             onSubmit={onSignIn}
             isPending={isPending}
-            // make tenant input controlled so the hook gets the current value
             tenantValue={tenant}
             onTenantChange={setTenantState}
           />
-          <SignUpForm className="sign-up-form" onSubmit={onSignUp} />
+          <ForgotPasswordForm
+            className="sign-up-form"
+            onSubmit={onForgotPassword}
+            tenantValue={tenant}
+            onTenantChange={setTenantState}
+          />
         </Box>
       </Box>
 
@@ -84,7 +107,7 @@ export default function LoginRoute() {
         <AuthPanels
           mode={mode}
           onSignIn={() => setMode("sign-in")}
-          onSignUp={() => setMode("sign-up")}
+          onForgotPassword={() => setMode("forgot-password")}
         />
       </Box>
     </Box>

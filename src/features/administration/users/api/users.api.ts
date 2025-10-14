@@ -1,7 +1,9 @@
 import { authFetch } from "../../../../lib/authFetch";
 import type {
   ChangePasswordRequest,
+  ForgotPasswordRequest,
   RegisterUserRequest,
+  ResetPasswordRequest,
   UpdateUserRequest,
   UpdateUserRolesRequest,
   UpdateUserStatusRequest,
@@ -79,9 +81,32 @@ export const UsersApi = {
     return res.data;
   },
 
+  // ✅ Change password (existing)
   changePassword: async (payload: ChangePasswordRequest) => {
     return authFetch<ApiEnvelope<string>>(`${base}/change-password`, {
       method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  // ✅ Forgot password (new)
+  forgotPassword: async (tenant: string, payload: ForgotPasswordRequest) => {
+    return authFetch<ApiEnvelope<string>>(`${base}/forgot-password`, {
+      method: "POST",
+      headers: {
+        tenant,
+      },
+      body: JSON.stringify(payload),
+    });
+  },
+
+  // ✅ Reset password (new)
+  resetPassword: async (tenant: string, payload: ResetPasswordRequest) => {
+    return authFetch<ApiEnvelope<string>>(`${base}/reset-password`, {
+      method: "POST",
+      headers: {
+        tenant,
+      },
       body: JSON.stringify(payload),
     });
   },

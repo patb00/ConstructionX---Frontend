@@ -1,22 +1,36 @@
+// src/components/ForgotPasswordForm.tsx
 import { Box, Button, TextField, Typography } from "@mui/material";
 import type { FormEvent } from "react";
 
 type Props = {
   className?: string;
   onSubmit: (e: FormEvent<HTMLFormElement>) => void;
+  tenantValue?: string;
+  onTenantChange?: (v: string) => void;
 };
 
-export function SignUpForm({ className, onSubmit }: Props) {
+export function ForgotPasswordForm({
+  className,
+  onSubmit,
+  tenantValue,
+  onTenantChange,
+}: Props) {
   return (
     <Box component="form" className={className} onSubmit={onSubmit}>
       <Typography variant="h4" sx={{ mb: 1 }}>
         Zaboravljena lozinka?
       </Typography>
 
-      {/*       <Typography variant="body2" sx={{ mb: 2 }}>
-        Unesite svoju e-poštu i poslat ćemo vam upute za ponovno postavljanje
-        lozinke.
-      </Typography> */}
+      <TextField
+        size="small"
+        fullWidth
+        margin="normal"
+        label="Tenant"
+        name="tenant"
+        required
+        value={tenantValue ?? ""}
+        onChange={(e) => onTenantChange?.(e.target.value)}
+      />
 
       <TextField
         size="small"

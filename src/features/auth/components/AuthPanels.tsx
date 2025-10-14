@@ -2,15 +2,15 @@ import { Box, Button, Typography } from "@mui/material";
 import logSvg from "../assets/log.svg";
 import registerSvg from "../assets/register.svg";
 
-type AuthMode = "sign-in" | "sign-up";
+type AuthMode = "sign-in" | "forgot-password";
 
 type Props = {
   mode: AuthMode;
   onSignIn: () => void;
-  onSignUp: () => void;
+  onForgotPassword: () => void;
 };
 
-export function AuthPanels({ onSignIn, onSignUp }: Props) {
+export function AuthPanels({ onSignIn, onForgotPassword }: Props) {
   return (
     <>
       <Box className="panel left-panel">
@@ -23,7 +23,7 @@ export function AuthPanels({ onSignIn, onSignUp }: Props) {
             size="small"
             variant="outlined"
             sx={{ borderColor: "white", mt: 1 }}
-            onClick={onSignUp}
+            onClick={onForgotPassword}
           >
             Obnovi lozinku
           </Button>

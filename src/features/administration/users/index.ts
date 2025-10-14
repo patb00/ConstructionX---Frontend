@@ -39,6 +39,28 @@ export type ChangePasswordRequest = {
   confirmNewPassword: string;
 };
 
+// ✅ New request types
+export type ForgotPasswordRequest = {
+  email: string;
+};
+
+export type ForgotPasswordVariables = {
+  tenant: string;
+  payload: ForgotPasswordRequest;
+};
+
+export type ResetPasswordVariables = {
+  tenant: string;
+  payload: ResetPasswordRequest;
+};
+
+export type ResetPasswordRequest = {
+  email: string;
+  token: string;
+  newPassword: string;
+  confirmNewPassword: string;
+};
+
 export type UserRoleAssignment = {
   roleId: string;
   name: string;

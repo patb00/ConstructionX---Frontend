@@ -10,9 +10,11 @@ import { usersRoles } from "../../features/administration/users/routes";
 import { employeesRoutes } from "../../features/administration/employees/routes";
 import { jobPostionRoutes } from "../../features/administration/job_positions/routes";
 import { RequireAuth } from "./RequireAuth";
+import ResetPasswordRoute from "../../features/auth/routes/ResetPasswordRoute";
 
 export const router = createBrowserRouter([
   { path: "/", element: <LoginRoute /> },
+  { path: "/reset-password", element: <ResetPasswordRoute /> },
   {
     path: "/app",
     element: (
