@@ -39,7 +39,7 @@ export default function ResetPasswordRoute() {
     e.preventDefault();
     if (isPending) return;
 
-    if (!hasRequiredParams) {
+    if (!tenant || !email || !token) {
       enqueueSnackbar("Nedostaju parametri u poveznici (tenant/email/token).", {
         variant: "error",
       });
@@ -65,19 +65,24 @@ export default function ResetPasswordRoute() {
       return;
     }
 
-    try {
-      await resetPassword({
-        tenant,
-        payload: {
-          token,
-          email,
-          newPassword: password,
-          confirmNewPassword: confirm,
-        },
-      });
+    // 👇 Add this to see exactly what will be sent
+    const payload = {
+      token: encodeURIComponent(token),
+      email,
+      newPassword: password,
+      confirmNewPassword: confirm,
+    };
+    console.log("[ResetPassword] Sending payload:", {
+      tenant,
+      payload,
+    });
 
+    try {
+      await resetPassword({ tenant, payload });
       navigate("/");
-    } catch {}
+    } catch {
+      // handled in hook
+    }
   };
 
   return (
