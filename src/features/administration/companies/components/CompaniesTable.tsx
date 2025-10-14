@@ -5,22 +5,20 @@ import {
   type GridActionsCellItemProps,
   type GridActionsColDef,
   type GridColDef,
+  type GridRowParams,
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
+import { useCompanies } from "../hooks/useCompanies";
 import { useDeleteCompany } from "../hooks/useDeleteCompany";
 import type { Company } from "..";
-import { useNavigate } from "react-router-dom";
 import { PermissionGate, useCan } from "../../../../lib/permissions";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 
-type Props = {
-  rows: Company[];
-  columns: GridColDef<Company>[];
-};
-
-export default function CompaniesTable({ rows, columns }: Props) {
+export default function CompaniesTable() {
+  const { companiesColumns, companiesRows, error, isLoading } = useCompanies();
   const deleteCompany = useDeleteCompany();
   const navigate = useNavigate();
   const can = useCan();
@@ -50,7 +48,7 @@ export default function CompaniesTable({ rows, columns }: Props) {
   }, [deleteCompany, pendingCompany]);
 
   const columnsWithActions = useMemo<GridColDef<Company>[]>(() => {
-    const base = columns.map((c) => {
+    const base = companiesColumns.map((c) => {
       if (c.field === "dateOfCreation") {
         return {
           ...c,
@@ -79,18 +77,23 @@ export default function CompaniesTable({ rows, columns }: Props) {
 
     const canEdit = can({ permission: "Permission.Companies.Update" });
     const canDelete = can({ permission: "Permission.Companies.Delete" });
+
+    // If user has no action permissions
     if (!(canEdit || canDelete)) return base;
+
+    // Avoid duplicate column
+    if (base.some((c) => c.field === "actions")) return base;
 
     const actionsCol: GridActionsColDef<Company> = {
       field: "actions",
       type: "actions",
       headerName: "Akcije",
       width: 160,
-      getActions: ({
-        row,
-      }): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+      getActions: (
+        params: GridRowParams<Company>
+      ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+        const { row } = params;
         const busy = deleteCompany.isPending;
-
         const items: React.ReactElement<GridActionsCellItemProps>[] = [];
 
         if (canEdit) {
@@ -132,17 +135,20 @@ export default function CompaniesTable({ rows, columns }: Props) {
     };
 
     return [...base, actionsCol];
-  }, [columns, can, deleteCompany.isPending, navigate, requestDelete]);
+  }, [companiesColumns, can, deleteCompany.isPending, navigate, requestDelete]);
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
+
+  if (error) return <div>Tvrtke.</div>;
 
   return (
     <>
       <ReusableDataGrid<Company>
-        rows={rows}
+        rows={companiesRows}
         columns={columnsWithActions}
         getRowId={(r) => r.id}
         stickyRightField={hasActions ? "actions" : undefined}
+        loading={!!isLoading}
       />
 
       <PermissionGate guard={{ permission: "Permission.Companies.Delete" }}>

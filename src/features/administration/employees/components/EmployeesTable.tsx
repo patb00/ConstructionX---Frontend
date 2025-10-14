@@ -5,22 +5,20 @@ import {
   type GridColDef,
   type GridActionsColDef,
   type GridActionsCellItemProps,
+  type GridRowParams,
 } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
 import type { Employee } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
+import { useEmployees } from "../hooks/useEmployees";
 import { useDeleteEmployee } from "../hooks/useDeleteEmployee";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 import { useCan, PermissionGate } from "../../../../lib/permissions";
 
-type Props = {
-  rows: Employee[];
-  columns: GridColDef<Employee>[];
-};
-
-export default function EmployeesTable({ rows, columns }: Props) {
+export default function EmployeesTable() {
+  const { employeeColumns, employeeRows, error, isLoading } = useEmployees();
   const {
     mutate: deleteEmployee,
     isPending: busy,
@@ -59,15 +57,12 @@ export default function EmployeesTable({ rows, columns }: Props) {
   );
 
   const columnsWithActions = useMemo<GridColDef<Employee>[]>(() => {
-    const base = columns.slice(); // keep originals
+    const base = employeeColumns.slice();
 
     const canEdit = can({ permission: "Permission.Employees.Update" });
     const canDelete = can({ permission: "Permission.Employees.Delete" });
 
-    // if no actions permitted, return base columns
     if (!(canEdit || canDelete)) return base;
-
-    // avoid duplicating actions column if already present
     if (base.some((c) => c.field === "actions")) return base;
 
     const actionsCol: GridActionsColDef<Employee> = {
@@ -76,7 +71,7 @@ export default function EmployeesTable({ rows, columns }: Props) {
       headerName: "Akcije",
       width: 120,
       getActions: (
-        params
+        params: GridRowParams<Employee>
       ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
         const e = params.row;
         const isDeletingThis = busy && (variables as any) === e.id;
@@ -121,24 +116,27 @@ export default function EmployeesTable({ rows, columns }: Props) {
     };
 
     return [...base, actionsCol];
-  }, [columns, can, busy, variables, handleEdit, requestDelete]);
+  }, [employeeColumns, can, busy, variables, handleEdit, requestDelete]);
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
+
+  if (error) return <div>Zaposlenici.</div>;
 
   return (
     <>
       <ReusableDataGrid<Employee>
-        rows={rows}
+        rows={employeeRows}
         columns={columnsWithActions}
         getRowId={(r) => r.id}
         stickyRightField={hasActions ? "actions" : undefined}
+        loading={!!isLoading} // ✅ added loading state
       />
 
       <PermissionGate guard={{ permission: "Permission.Employees.Delete" }}>
         <ConfirmDialog
           open={confirmOpen}
           title="Izbriši zaposlenika?"
-          description="Jeste li sigurni da želite izbrisati zaposlenika ?"
+          description="Jeste li sigurni da želite izbrisati zaposlenika?"
           confirmText="Obriši"
           cancelText="Odustani"
           loading={busy}

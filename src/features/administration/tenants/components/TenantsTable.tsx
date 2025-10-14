@@ -5,6 +5,7 @@ import {
   GridActionsCellItem,
   type GridActionsColDef,
   type GridActionsCellItemProps,
+  type GridRowParams,
 } from "@mui/x-data-grid";
 import CheckIcon from "@mui/icons-material/Check";
 import BlockIcon from "@mui/icons-material/Block";
@@ -13,27 +14,25 @@ import { useNavigate } from "react-router-dom";
 
 import { useActivateTenant } from "../hooks/useActivateTenant";
 import { useDeactivateTenant } from "../hooks/useDeactivateTenant";
+import { useTenants } from "../hooks/useTenants";
 import type { Tenant } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import { useCan } from "../../../../lib/permissions";
 
-type Props = {
-  rows: Tenant[];
-  columns: GridColDef<Tenant>[];
-};
-
-export default function TenantsTable({ rows, columns }: Props) {
+export default function TenantsTable() {
+  const { tenantsRows, tenantsColumns, error, isLoading } = useTenants();
   const activate = useActivateTenant();
   const deactivate = useDeactivateTenant();
   const navigate = useNavigate();
   const can = useCan();
 
   const columnsWithActions = React.useMemo<GridColDef<Tenant>[]>(() => {
-    const base = columns.map((c) => {
+    const base = tenantsColumns.map((c) => {
+      // Format the "validUpToDate" field
       if (c.field === "validUpToDate") {
         return {
           ...c,
-          headerName: c.headerName ?? "Valid Until",
+          headerName: c.headerName ?? "Vrijedi do",
           flex: c.flex ?? 1.6,
           minWidth: c.minWidth ?? 220,
           sortable: true,
@@ -62,16 +61,17 @@ export default function TenantsTable({ rows, columns }: Props) {
         } as GridColDef<Tenant>;
       }
 
+      // Format the "isActive" field
       if (c.field === "isActive") {
         return {
           ...c,
           headerName: c.headerName ?? "Status",
           flex: c.flex ?? 1,
           minWidth: c.minWidth ?? 140,
-          type: "singleSelect",
-          valueOptions: ["Active", "Inactive"],
           align: "center",
           headerAlign: "center",
+          type: "singleSelect",
+          valueOptions: ["Active", "Inactive"],
           valueGetter: (_value, row) => (row.isActive ? "Active" : "Inactive"),
           renderCell: (params) => {
             const active = params.row.isActive;
@@ -105,6 +105,7 @@ export default function TenantsTable({ rows, columns }: Props) {
     const canToggleActive = can({ permission: "Permission.Tenants.Update" });
 
     if (!(canEdit || canToggleActive)) return base;
+    if (base.some((c) => c.field === "actions")) return base;
 
     const actionsCol: GridActionsColDef<Tenant> = {
       field: "actions",
@@ -113,10 +114,10 @@ export default function TenantsTable({ rows, columns }: Props) {
       width: 220,
       sortable: false,
       filterable: false,
-      getActions: ({
-        row,
-      }): readonly React.ReactElement<GridActionsCellItemProps>[] => {
-        const t = row;
+      getActions: (
+        params: GridRowParams<Tenant>
+      ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+        const t = params.row;
 
         const isActivating =
           activate.isPending && (activate.variables as any) === t.identifier;
@@ -143,8 +144,8 @@ export default function TenantsTable({ rows, columns }: Props) {
         }
 
         if (canToggleActive) {
-          items.push(
-            t.isActive ? (
+          if (t.isActive) {
+            items.push(
               <GridActionsCellItem
                 key="deactivate"
                 icon={
@@ -161,7 +162,9 @@ export default function TenantsTable({ rows, columns }: Props) {
                 onClick={() => deactivate.mutate(t.identifier)}
                 showInMenu={false}
               />
-            ) : (
+            );
+          } else {
+            items.push(
               <GridActionsCellItem
                 key="activate"
                 icon={
@@ -178,8 +181,8 @@ export default function TenantsTable({ rows, columns }: Props) {
                 onClick={() => activate.mutate(t.identifier)}
                 showInMenu={false}
               />
-            )
-          );
+            );
+          }
         }
 
         return items;
@@ -188,7 +191,7 @@ export default function TenantsTable({ rows, columns }: Props) {
 
     return [...base, actionsCol];
   }, [
-    columns,
+    tenantsColumns,
     can,
     activate.isPending,
     activate.variables,
@@ -199,14 +202,15 @@ export default function TenantsTable({ rows, columns }: Props) {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
+  if (error) return <div>Tenanti.</div>;
+
   return (
-    <>
-      <ReusableDataGrid<Tenant>
-        rows={rows}
-        columns={columnsWithActions}
-        getRowId={(r) => r.identifier}
-        stickyRightField={hasActions ? "actions" : undefined}
-      />
-    </>
+    <ReusableDataGrid<Tenant>
+      rows={tenantsRows}
+      columns={columnsWithActions}
+      getRowId={(r) => r.identifier}
+      stickyRightField={hasActions ? "actions" : undefined}
+      loading={!!isLoading}
+    />
   );
 }

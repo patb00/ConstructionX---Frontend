@@ -1,15 +1,9 @@
 import { Button, Stack, Typography, Paper } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import EmployeesTable from "./EmployeesTable";
-import { useEmployees } from "../hooks/useEmployees";
-//import { QueryBoundary } from "../../../../components/ui/feedback/QueryBoundary";
-//import { FullScreenError } from "../../../../components/ui/feedback/PageStates";
 import { PermissionGate } from "../../../../lib/permissions";
 
 const EmployeesListPage = () => {
-  const { employeeColumns, employeeRows /* error, isLoading */ } =
-    useEmployees();
-
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -30,7 +24,7 @@ const EmployeesListPage = () => {
       </Stack>
 
       <Paper elevation={0} sx={{ flexGrow: 1, mt: 1, p: 0 }}>
-        <EmployeesTable rows={employeeRows} columns={employeeColumns} />
+        <EmployeesTable />
       </Paper>
     </Stack>
   );

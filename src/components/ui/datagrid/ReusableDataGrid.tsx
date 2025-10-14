@@ -21,6 +21,7 @@ export type ReusableDataGridProps<
   exportFileName?: string;
   toolbarColor?: string;
   stickyRightField?: string;
+  loading?: boolean;
 };
 
 export default function ReusableDataGrid<
@@ -33,6 +34,7 @@ export default function ReusableDataGrid<
   exportFileName = "export",
   toolbarColor = "#646464",
   stickyRightField,
+  loading,
 }: ReusableDataGridProps<T>) {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -67,6 +69,7 @@ export default function ReusableDataGrid<
         }}
       >
         <DataGrid
+          loading={loading}
           apiRef={apiRef}
           showToolbar
           rows={rows}
@@ -88,6 +91,10 @@ export default function ReusableDataGrid<
                 utf8WithBom: true,
               },
               printOptions: { hideFooter: false, hideToolbar: false },
+            },
+            loadingOverlay: {
+              variant: "skeleton",
+              noRowsVariant: "skeleton",
             },
           }}
           sortingOrder={["asc", "desc"]}

@@ -4,23 +4,22 @@ import {
   GridActionsCellItem,
   type GridColDef,
   type GridActionsColDef,
+  type GridRowParams,
   type GridActionsCellItemProps,
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { JobPosition } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
+import { useJobPositions } from "../hooks/useJobPositions";
 import { useDeleteJobPosition } from "../hooks/useDeleteJobPosition";
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
-import { useCan, PermissionGate } from "../../../../lib/permissions";
+import { PermissionGate, useCan } from "../../../../lib/permissions";
 
-type Props = {
-  rows: JobPosition[];
-  columns: GridColDef<JobPosition>[];
-};
-
-export default function JobPositionsTable({ rows, columns }: Props) {
+export default function JobPositionsTable() {
+  const { jobPositionsRows, jobPositionsColumns, error, isLoading } =
+    useJobPositions();
   const deleteJobPosition = useDeleteJobPosition();
   const navigate = useNavigate();
   const can = useCan();
@@ -51,7 +50,7 @@ export default function JobPositionsTable({ rows, columns }: Props) {
   }, [deleteJobPosition, pendingRow]);
 
   const columnsWithActions = useMemo<GridColDef<JobPosition>[]>(() => {
-    const base = columns.map((c) => {
+    const base = jobPositionsColumns.map((c) => {
       if (c.field === "name" || c.field === "description") {
         return {
           ...c,
@@ -83,13 +82,12 @@ export default function JobPositionsTable({ rows, columns }: Props) {
       type: "actions",
       headerName: "Akcije",
       width: 140,
-      getActions: ({
-        row,
-      }): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+      getActions: (
+        params: GridRowParams<JobPosition>
+      ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+        const row = params.row;
         const id = (row as any).id;
-        const busy =
-          deleteJobPosition.isPending &&
-          (deleteJobPosition.variables as any) === id;
+        const busy = deleteJobPosition.isPending;
 
         const items: React.ReactElement<GridActionsCellItemProps>[] = [];
 
@@ -133,30 +131,32 @@ export default function JobPositionsTable({ rows, columns }: Props) {
 
     return [...base, actionsCol];
   }, [
-    columns,
+    jobPositionsColumns,
     can,
     deleteJobPosition.isPending,
-    deleteJobPosition.variables,
     navigate,
     requestDelete,
   ]);
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
+  if (error) return <div>Radna mjesta.</div>;
+
   return (
     <>
       <ReusableDataGrid<JobPosition>
-        rows={rows}
+        rows={jobPositionsRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}
         stickyRightField={hasActions ? "actions" : undefined}
+        loading={!!isLoading}
       />
 
       <PermissionGate guard={{ permission: "Permission.JobPositions.Delete" }}>
         <ConfirmDialog
           open={confirmOpen}
           title="Izbriši radno mjesto?"
-          description={`Jeste li sigurni da želite izbrisati radno mjesto ?`}
+          description="Jeste li sigurni da želite izbrisati radno mjesto ?"
           confirmText="Obriši"
           cancelText="Odustani"
           loading={deleteJobPosition.isPending}

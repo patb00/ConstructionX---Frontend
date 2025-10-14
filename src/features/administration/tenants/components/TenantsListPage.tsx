@@ -1,13 +1,9 @@
 import { Button, Stack, Typography, Paper } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-
-import { PermissionGate } from "../../../../lib/permissions";
-import { useTenants } from "../hooks/useTenants";
 import TenantsTable from "./TenantsTable";
+import { PermissionGate } from "../../../../lib/permissions";
 
 export default function TenantsListPage() {
-  const { tenantsRows, tenantsColumns } = useTenants();
-
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -28,7 +24,7 @@ export default function TenantsListPage() {
       </Stack>
 
       <Paper elevation={0} sx={{ flexGrow: 1, mt: 1, p: 0 }}>
-        <TenantsTable rows={tenantsRows} columns={tenantsColumns} />
+        <TenantsTable />
       </Paper>
     </Stack>
   );
