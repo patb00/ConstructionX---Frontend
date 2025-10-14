@@ -71,7 +71,10 @@ export async function authFetch<T = any>(
   return res.text() as unknown as T;
 }
 
-async function refreshTokens(currentJwt: string, currentRefreshToken: string) {
+export async function refreshTokens(
+  currentJwt: string,
+  currentRefreshToken: string
+) {
   try {
     console.log("[authFetch] 🔁 Refreshing token…");
     const res = await fetch("/api/Token/refresh-token", {

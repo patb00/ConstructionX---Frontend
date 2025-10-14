@@ -10,7 +10,9 @@ export function setCookie(
   value: string,
   opts: CookieOptions = {}
 ) {
-  const { days = 7, path = "/", secure = true, sameSite = "Lax" } = opts;
+  const isHttps =
+    typeof window !== "undefined" && window.location.protocol === "https:";
+  const { days = 7, path = "/", secure = isHttps, sameSite = "Lax" } = opts;
 
   const date = new Date();
   date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);

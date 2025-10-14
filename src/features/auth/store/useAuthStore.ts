@@ -14,6 +14,7 @@ export type AuthState = {
   isAuthenticated: boolean;
   tenant: string | null;
   permissions: string[];
+  hasHydrated: boolean; // 👈 NEW
   setTenant: (tenant: string) => void;
   setPermissions: (perms: string[]) => void;
   loadFromCookies: () => void;
@@ -29,7 +30,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isAuthenticated: false,
   tenant: null,
   permissions: [],
-
+  hasHydrated: false,
   setTenant: (tenant) => {
     console.log("[authStore] 🏢 Tenant set to:", tenant);
     setCookie(TENANT_COOKIE, tenant, { days: 30 });
@@ -59,13 +60,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
     }
 
+    const ok = !!jwt && !isExpired(jwt); // 👈 consider expiry
+
     set({
       jwt: jwt || null,
       refreshToken: rt || null,
       refreshTokenExpirationDate: exp || null,
       tenant,
       permissions,
-      isAuthenticated: Boolean(jwt),
+      isAuthenticated: ok,
+      hasHydrated: true, // 👈 signal done
     });
   },
 
@@ -82,7 +86,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       refreshToken,
       refreshTokenExpirationDate: refreshExpISO,
       permissions: perms,
-      isAuthenticated: true,
+      isAuthenticated: !isExpired(jwt), // 👈 consider expiry
     });
   },
 
