@@ -11,6 +11,7 @@ import { employeesRoutes } from "../../features/administration/employees/routes"
 import { jobPostionRoutes } from "../../features/administration/job_positions/routes";
 import { RequireAuth } from "./RequireAuth";
 import ResetPasswordRoute from "../../features/auth/routes/ResetPasswordRoute";
+import { constructionSitesRoutes } from "../../features/construction_site/routes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <LoginRoute /> },
@@ -25,26 +26,19 @@ export const router = createBrowserRouter([
     children: [
       { path: "dashboard", element: <DashboardRoute /> },
       tenantsRoutes,
-      {
-        path: "administration/companies",
-      },
+      { path: "administration/companies" },
       companiesRoutes,
-      {
-        path: "administration/roles",
-      },
+      { path: "administration/roles" },
       rolesRoutes,
-      {
-        path: "administration/users",
-      },
+      { path: "administration/users" },
       usersRoles,
-      {
-        path: "administration/employees",
-      },
+      { path: "administration/employees" },
       employeesRoutes,
-      {
-        path: "administration/jobPositions",
-      },
+      { path: "administration/jobPositions" },
       jobPostionRoutes,
+
+      { path: "constructionSites" },
+      constructionSitesRoutes,
     ],
   },
 ]);

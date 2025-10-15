@@ -4,6 +4,7 @@ import {
   FaUserShield,
   FaIdBadge,
   FaBriefcase,
+  FaHardHat,
 } from "react-icons/fa";
 import { IoIosBusiness } from "react-icons/io";
 import { HiUsers } from "react-icons/hi";
@@ -26,6 +27,14 @@ export const NAV_ITEMS: NavItem[] = [
     to: "/app/dashboard",
     icon: <FaTachometerAlt />,
     section: "MANAGEMENT",
+  },
+
+  {
+    label: "Gradilišta",
+    to: "/app/constructionSites",
+    icon: <FaHardHat />,
+    section: "MANAGEMENT",
+    guard: { permission: "Permission.ConstructionSites.Read" },
   },
 
   {

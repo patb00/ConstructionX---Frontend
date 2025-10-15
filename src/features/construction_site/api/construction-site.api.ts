@@ -1,0 +1,45 @@
+import type {
+  ConstructionSite,
+  NewConstructionSiteRequest,
+  UpdateConstructionSiteRequest,
+} from "..";
+import { authFetch } from "../../../lib/authFetch";
+import type { ApiEnvelope } from "../../administration/tenants";
+
+const base = "/api/ConstructionSite";
+
+export const ConstructionSiteApi = {
+  add: async (payload: NewConstructionSiteRequest) => {
+    return authFetch<ApiEnvelope<ConstructionSite>>(`${base}/add`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  update: async (payload: UpdateConstructionSiteRequest) => {
+    return authFetch<ApiEnvelope<ConstructionSite>>(`${base}/update`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  delete: async (constructionSiteId: number) => {
+    return authFetch<ApiEnvelope<string>>(`${base}/${constructionSiteId}`, {
+      method: "DELETE",
+    });
+  },
+
+  getById: async (constructionSiteId: number): Promise<ConstructionSite> => {
+    const res = await authFetch<ApiEnvelope<ConstructionSite>>(
+      `${base}/${constructionSiteId}`
+    );
+    return res.data;
+  },
+
+  getAll: async (): Promise<ConstructionSite[]> => {
+    const res = await authFetch<ApiEnvelope<ConstructionSite[]>>(
+      `${base}/get-all`
+    );
+    return res.data;
+  },
+};
