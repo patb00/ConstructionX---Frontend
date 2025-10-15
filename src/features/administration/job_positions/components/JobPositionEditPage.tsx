@@ -59,7 +59,6 @@ export default function JobPositionEditPage() {
         sx={{ border: (t) => `1px solid ${t.palette.divider}`, p: 2 }}
       >
         <JobPositionForm
-          key={String(job?.id ?? jobId)}
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           busy={isLoading || isPending}

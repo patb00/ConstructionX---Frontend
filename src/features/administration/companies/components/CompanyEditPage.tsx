@@ -60,7 +60,6 @@ export default function CompanyEditPage() {
         }}
       >
         <CompanyForm
-          key={companyId}
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           busy={isPending || isLoading}

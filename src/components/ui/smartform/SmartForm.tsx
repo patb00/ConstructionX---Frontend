@@ -121,6 +121,11 @@ export function SmartForm<TValues extends Record<string, any>>({
 
   const [values, setValues] = React.useState<TValues>(initial);
 
+  const defaultsKey = React.useMemo(
+    () => JSON.stringify(defaultValues ?? {}),
+    [defaultValues]
+  );
+
   const update =
     (name: keyof TValues & string) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -229,6 +234,10 @@ export function SmartForm<TValues extends Record<string, any>>({
     }
     onSubmit(out as TValues);
   };
+
+  React.useEffect(() => {
+    setValues(initial);
+  }, [defaultsKey]);
 
   return (
     <Box

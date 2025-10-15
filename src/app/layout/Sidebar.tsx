@@ -40,8 +40,6 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
     return true;
   };
 
-  console.log("permissions", permissions);
-
   const MANAGEMENT = NAV_ITEMS.filter(
     (i) => i.section === "MANAGEMENT" && canSee(i.guard)
   );

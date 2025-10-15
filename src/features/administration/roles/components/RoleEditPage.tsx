@@ -54,7 +54,6 @@ export default function RoleEditPage() {
         sx={{ border: (t) => `1px solid ${t.palette.divider}`, width: "100%" }}
       >
         <RoleForm
-          key={roleId}
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           busy={isLoading || isPending}

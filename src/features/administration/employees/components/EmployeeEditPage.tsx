@@ -95,7 +95,6 @@ export default function EmployeeEditPage() {
         }}
       >
         <EmployeeForm
-          key={employeeId}
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           busy={update.isPending || isLoading || assign.isPending}
