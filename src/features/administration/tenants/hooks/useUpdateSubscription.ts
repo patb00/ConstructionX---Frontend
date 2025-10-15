@@ -31,15 +31,6 @@ export function useUpdateSubscription() {
       navigate("/app/administration/tenants");
     },
 
-    onError: (error: any) => {
-      enqueueSnackbar(
-        error.messages?.[0] ||
-          error?.messages ||
-          "Greška pri ažuriranju pretplate",
-        {
-          variant: "error",
-        }
-      );
-    },
+    onError: (err: any) => enqueueSnackbar(err.message, { variant: "error" }),
   });
 }

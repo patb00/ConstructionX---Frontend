@@ -23,13 +23,6 @@ export function useChangePassword() {
       );
     },
 
-    onError: (error: any) => {
-      enqueueSnackbar(
-        error?.messages?.[0] || error?.messages || "Failed to change password.",
-        {
-          variant: "error",
-        }
-      );
-    },
+    onError: (err: any) => enqueueSnackbar(err.message, { variant: "error" }),
   });
 }

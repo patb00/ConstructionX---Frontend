@@ -7,9 +7,16 @@ import { useEffect } from "react";
 
 export function App() {
   const loadFromCookies = useAuthStore((s) => s.loadFromCookies);
+  const hasHydrated = useAuthStore((s) => s.hasHydrated);
+
   useEffect(() => {
     loadFromCookies();
   }, [loadFromCookies]);
+
+  if (!hasHydrated) {
+    return <div style={{ padding: 24 }}>Loading…</div>;
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />

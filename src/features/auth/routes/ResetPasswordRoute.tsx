@@ -1,12 +1,10 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import {
-  useNavigate,
-  useSearchParams,
-  Link as RouterLink,
-} from "react-router-dom";
-import { Box, Button, TextField, Typography, Link } from "@mui/material";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Box } from "@mui/material";
 import { useSnackbar } from "notistack";
-
+import "../styles/auth-landing.css";
+import { AuthPanels } from "../components/AuthPanels";
+import { ResetPasswordForm } from "../components/ResetPasswordForm";
 import { useAuthStore } from "../store/useAuthStore";
 import { useResetPassword } from "../../administration/users/hooks/useResetPassword";
 
@@ -34,10 +32,13 @@ export default function ResetPasswordRoute() {
 
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [serverError, setServerError] = useState<string | undefined>(undefined);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isPending) return;
+
+    setServerError(undefined);
 
     if (!tenant || !email || !token) {
       enqueueSnackbar("Nedostaju parametri u poveznici (tenant/email/token).", {
@@ -45,19 +46,16 @@ export default function ResetPasswordRoute() {
       });
       return;
     }
-
     if (!password || !confirm) {
       enqueueSnackbar("Unesite i potvrdite novu lozinku.", {
         variant: "warning",
       });
       return;
     }
-
     if (password !== confirm) {
       enqueueSnackbar("Lozinke se ne podudaraju.", { variant: "warning" });
       return;
     }
-
     if (password.length < 8) {
       enqueueSnackbar("Lozinka mora imati najmanje 8 znakova.", {
         variant: "warning",
@@ -65,117 +63,52 @@ export default function ResetPasswordRoute() {
       return;
     }
 
-    // 👇 Add this to see exactly what will be sent
     const payload = {
       token: encodeURIComponent(token),
       email,
       newPassword: password,
       confirmNewPassword: confirm,
     };
-    console.log("[ResetPassword] Sending payload:", {
-      tenant,
-      payload,
-    });
 
     try {
       await resetPassword({ tenant, payload });
       navigate("/");
-    } catch {
-      // handled in hook
+    } catch (err: any) {
+      const msg =
+        err?.message ||
+        err?.Messages?.[0] ||
+        err?.Message ||
+        "Neuspješan pokušaj promjene lozinke.";
+      setServerError(String(msg));
     }
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        display: "grid",
-        placeItems: "center",
-        p: 2,
-      }}
-    >
-      <Box
-        component="form"
-        onSubmit={onSubmit}
-        sx={{
-          width: "100%",
-          maxWidth: 420,
-          p: 3,
-          borderRadius: 2,
-          boxShadow: 2,
-          backgroundColor: "background.paper",
-        }}
-      >
-        <Typography variant="h5" sx={{ mb: 1 }}>
-          Postavi novu lozinku
-        </Typography>
+    <Box className="container sign-up-mode">
+      <Box className="forms-container">
+        <Box className="signin-signup">
+          <ResetPasswordForm
+            className="sign-up-form"
+            onSubmit={onSubmit}
+            isPending={isPending}
+            hasRequiredParams={hasRequiredParams}
+            tenant={tenant}
+            email={email}
+            password={password}
+            confirm={confirm}
+            onPasswordChange={setPassword}
+            onConfirmChange={setConfirm}
+            serverError={serverError}
+          />
+        </Box>
+      </Box>
 
-        {!hasRequiredParams && (
-          <Typography variant="body2" color="error" sx={{ mb: 2 }}>
-            Poveznica je nevažeća ili nepotpuna. Zatražite novu poveznicu za
-            reset lozinke.
-          </Typography>
-        )}
-
-        <TextField
-          label="Tenant"
-          value={tenant}
-          InputProps={{ readOnly: true }}
-          fullWidth
-          size="small"
-          margin="normal"
+      <Box className="panels-container">
+        <AuthPanels
+          mode="forgot-password"
+          onSignIn={() => navigate("/")}
+          onForgotPassword={() => {}}
         />
-        <TextField
-          label="Email"
-          value={email}
-          InputProps={{ readOnly: true }}
-          fullWidth
-          size="small"
-          margin="normal"
-        />
-
-        <TextField
-          label="Nova lozinka"
-          type="password"
-          name="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          fullWidth
-          size="small"
-          margin="normal"
-          required
-        />
-
-        <TextField
-          label="Potvrda lozinke"
-          type="password"
-          name="confirm"
-          value={confirm}
-          onChange={(e) => setConfirm(e.target.value)}
-          fullWidth
-          size="small"
-          margin="normal"
-          required
-        />
-
-        <Button
-          type="submit"
-          variant="contained"
-          fullWidth
-          sx={{ mt: 2 }}
-          disabled={isPending || !hasRequiredParams}
-        >
-          {isPending ? "Spremanje…" : "Spremi novu lozinku"}
-        </Button>
-
-        <Link
-          component={RouterLink}
-          to="/"
-          underline="hover"
-          sx={{ mt: 1, display: "block", textAlign: "center" }}
-        >
-          Povratak na prijavu
-        </Link>
       </Box>
     </Box>
   );

@@ -22,10 +22,6 @@ export function useRegisterUser() {
       navigate("/app/administration/users");
     },
 
-    onError: (error: any) => {
-      enqueueSnackbar(error.messages[0] || error?.messages, {
-        variant: "error",
-      });
-    },
+    onError: (err: any) => enqueueSnackbar(err.message, { variant: "error" }),
   });
 }

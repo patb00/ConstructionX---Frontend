@@ -21,12 +21,23 @@ export async function login(
     headers: {
       "Content-Type": "application/json",
       accept: "application/json",
-      tenant: tenant,
+      tenant,
     },
     body: JSON.stringify({ username, password }),
   });
-  if (!res.ok) throw new Error(`Login failed (${res.status})`);
-  return res.json();
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    const message = data?.Messages?.[0];
+    throw new Error(message);
+  }
+
+  return {
+    data: data.data ?? data.Data,
+    messages: data.messages ?? data.Messages ?? [],
+    isSuccessfull: data.isSuccessfull ?? data.IsSuccessfull ?? false,
+  };
 }
 
 export type RefreshBody = {

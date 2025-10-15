@@ -24,11 +24,6 @@ export function useResetPassword() {
       );
     },
 
-    onError: (error: any) => {
-      enqueueSnackbar(
-        error?.messages?.[0] || error?.messages || "Failed to reset password.",
-        { variant: "error" }
-      );
-    },
+    onError: (err: any) => enqueueSnackbar(err.message, { variant: "error" }),
   });
 }

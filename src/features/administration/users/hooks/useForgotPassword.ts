@@ -21,13 +21,6 @@ export function useForgotPassword() {
       );
     },
 
-    onError: (error: any) => {
-      enqueueSnackbar(
-        error?.messages?.[0] ||
-          error?.messages ||
-          "Failed to send reset email.",
-        { variant: "error" }
-      );
-    },
+    onError: (err: any) => enqueueSnackbar(err.message, { variant: "error" }),
   });
 }

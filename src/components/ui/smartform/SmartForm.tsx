@@ -18,14 +18,12 @@ function formatForDateTimeLocal(iso?: string) {
   return local.toISOString().slice(0, 16);
 }
 
-// Return ISO UTC for datetime-local, or undefined if blank
 function toIsoUtc(localValue?: string) {
   if (!localValue) return undefined;
   const d = new Date(localValue);
   return isNaN(d.getTime()) ? undefined : d.toISOString();
 }
 
-// Normalize anything (Date | ISO string | yyyy-mm-dd) to 'YYYY-MM-DD' for DateOnly
 function toDateOnly(v?: string | Date | null) {
   if (!v) return "";
   if (v instanceof Date && !isNaN(v.getTime())) {
@@ -35,7 +33,7 @@ function toDateOnly(v?: string | Date | null) {
     return `${y}-${m}-${d}`;
   }
   const s = String(v);
-  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s; // already good
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
   const datePart = s.split("T")[0];
   return /^\d{4}-\d{2}-\d{2}$/.test(datePart) ? datePart : "";
 }
@@ -46,7 +44,7 @@ export type FieldType =
   | "password"
   | "number"
   | "datetime-local"
-  | "date" // <-- NEW
+  | "date"
   | "checkbox"
   | "textarea"
   | "select";
@@ -61,7 +59,6 @@ export type FieldConfig<TValues extends Record<string, any>> = {
   transformIn?: (value: any, allDefaults: Partial<TValues>) => any;
   transformOut?: (value: any, allValues: TValues) => any;
 
-  /** For select fields */
   options?: Array<{ label: string; value: any }>;
 
   props?: Omit<
@@ -83,7 +80,6 @@ export type FieldConfig<TValues extends Record<string, any>> = {
 
 export type SmartFormProps<TValues extends Record<string, any>> = {
   fields: FieldConfig<TValues>[];
-  /** Rows of field names to render side-by-side on larger screens */
   rows?: Array<(keyof TValues & string)[]>;
   defaultValues?: Partial<TValues>;
   onSubmit: (values: TValues) => void;
@@ -124,8 +120,6 @@ export function SmartForm<TValues extends Record<string, any>>({
   }, [fields, defaultValues]);
 
   const [values, setValues] = React.useState<TValues>(initial);
-
-  React.useEffect(() => setValues(initial), [initial]);
 
   const update =
     (name: keyof TValues & string) =>
@@ -176,7 +170,6 @@ export function SmartForm<TValues extends Record<string, any>>({
       );
     }
 
-    // For "date", use native date input; for "datetime-local" keep as-is
     const tfType =
       type === "textarea" ? undefined : type === "date" ? "date" : type;
 
@@ -227,10 +220,9 @@ export function SmartForm<TValues extends Record<string, any>>({
       if (f.transformOut) {
         out[f.name] = f.transformOut(raw, values);
       } else if (f.type === "datetime-local") {
-        out[f.name] = toIsoUtc(raw); // ISO string or undefined
+        out[f.name] = toIsoUtc(raw);
       } else if (f.type === "date") {
-        out[f.name] = raw ? toDateOnly(raw) : null; // 'YYYY-MM-DD' or null
-        // 'YYYY-MM-DD' or undefined
+        out[f.name] = raw ? toDateOnly(raw) : null;
       } else {
         out[f.name] = raw;
       }
