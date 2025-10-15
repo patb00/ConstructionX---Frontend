@@ -4,11 +4,11 @@ import {
   FaUserShield,
   FaIdBadge,
   FaBriefcase,
-  FaHardHat,
 } from "react-icons/fa";
 import { IoIosBusiness } from "react-icons/io";
 import { HiUsers } from "react-icons/hi";
 import type { ReactNode } from "react";
+import { LuConstruction } from "react-icons/lu";
 
 export type NavItem = {
   label: string;
@@ -32,7 +32,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     label: "Gradilišta",
     to: "/app/constructionSites",
-    icon: <FaHardHat />,
+    icon: <LuConstruction />,
     section: "MANAGEMENT",
     guard: { permission: "Permission.ConstructionSites.Read" },
   },
