@@ -46,13 +46,13 @@ export function TenantsYearChart({
   return (
     <Card elevation={3} sx={{ mt: 2, p: 2 }}>
       <Typography variant="subtitle1" sx={{ mb: 2 }}>
-        Status tenanata po mjesecima ({currentYear})
+        Status tenanta po mjesecima ({currentYear})
       </Typography>
       <BarChart
         dataset={dataset}
         xAxis={[{ dataKey: "month" }]}
         series={series as any}
-        yAxis={[{ min: 0, label: "Broj tenanata" }]}
+        yAxis={[{ min: 0, label: "Broj tenanta" }]}
         margin={{ left: 60, right: 20, top: 20, bottom: 40 }}
       />
     </Card>

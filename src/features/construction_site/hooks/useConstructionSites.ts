@@ -22,13 +22,40 @@ export const useConstructionSites = () => {
 
       const allKeys = Array.from(new Set(rows.flatMap(Object.keys)));
 
-      const columnDefs: GridColDef[] = allKeys.map((key) => ({
-        field: key,
-        headerName: key
+      const columnDefs: GridColDef[] = allKeys.map((key) => {
+        const headerName = key
           .replace(/_/g, " ")
-          .replace(/\b\w/g, (l) => l.toUpperCase()),
-        width: 180,
-      }));
+          .replace(/\b\w/g, (l) => l.toUpperCase());
+
+        if (key === "constructionSiteEmployees") {
+          return {
+            field: key,
+            headerName: "Zaposlenici",
+            width: 350,
+            renderCell: (params) => {
+              const employees = params.value;
+              if (!Array.isArray(employees) || employees.length === 0)
+                return "";
+              return employees
+                .map((e: any) => {
+                  const name = `${e.firstName ?? ""} ${
+                    e.lastName ?? ""
+                  }`.trim();
+                  const range =
+                    e.dateFrom && e.dateTo ? `(${e.dateFrom}–${e.dateTo})` : "";
+                  return `${name} ${range}`.trim();
+                })
+                .join(", ");
+            },
+          };
+        }
+
+        return {
+          field: key,
+          headerName,
+          width: 180,
+        };
+      });
 
       const rowDefs = rows.map((r) => ({ ...r, id: r.id }));
 

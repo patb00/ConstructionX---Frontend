@@ -3,10 +3,22 @@ import ConstructionSiteForm from "./ConstructionSiteForm";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useAddConstructionSite } from "../hooks/useAddConstructionSite";
+import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 
 export default function ConstructionSiteCreatePage() {
   const { mutateAsync, isPending } = useAddConstructionSite();
   const navigate = useNavigate();
+  const { employeeRows } = useEmployees();
+
+  const managerOptions = [
+    { value: null, label: "— Bez voditelja —" },
+    ...(employeeRows ?? []).map((e: any) => ({
+      value: e.id,
+      label: `${e.firstName ?? ""} ${e.lastName ?? ""}`.trim(),
+    })),
+  ];
+
+  console.log(employeeRows);
   return (
     <Stack spacing={2}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -32,7 +44,11 @@ export default function ConstructionSiteCreatePage() {
           p: 2,
         }}
       >
-        <ConstructionSiteForm onSubmit={mutateAsync} busy={isPending} />
+        <ConstructionSiteForm
+          onSubmit={mutateAsync}
+          busy={isPending}
+          managerOptions={managerOptions}
+        />
       </Paper>
     </Stack>
   );

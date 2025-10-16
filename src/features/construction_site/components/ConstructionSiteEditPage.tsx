@@ -3,8 +3,10 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
 import ConstructionSiteForm from "./ConstructionSiteForm";
 import type { NewConstructionSiteRequest } from "..";
-import { useUpdateConstructionSite } from "../hooks/useUpdateConstructionSite";
+
+import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { useConstructionSite } from "../hooks/useConstructionSite";
+import { useUpdateConstructionSite } from "../hooks/useUpdateConstructionSite";
 
 export default function ConstructionSiteEditPage() {
   const { id } = useParams<{ id: string }>();
@@ -12,8 +14,21 @@ export default function ConstructionSiteEditPage() {
   if (!Number.isFinite(siteId)) return <div>Neispravan URL (id)</div>;
 
   const navigate = useNavigate();
-  const { data: site, isLoading, error } = useConstructionSite(siteId);
+  const {
+    data: site,
+    isLoading: siteLoading,
+    error,
+  } = useConstructionSite(siteId);
   const { mutate: updateSite, isPending } = useUpdateConstructionSite();
+
+  const { employeeRows = [], isLoading: employeesLoading } = useEmployees();
+  const managerOptions = [
+    { value: null, label: "— Bez voditelja —" },
+    ...(employeeRows ?? []).map((e: any) => ({
+      value: e.id,
+      label: `${e.firstName ?? ""} ${e.lastName ?? ""}`.trim(),
+    })),
+  ];
 
   const defaultValues: NewConstructionSiteRequest | undefined = site && {
     name: site.name ?? "",
@@ -62,7 +77,8 @@ export default function ConstructionSiteEditPage() {
         <ConstructionSiteForm
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
-          busy={isLoading || isPending}
+          busy={siteLoading || isPending || employeesLoading}
+          managerOptions={managerOptions}
         />
       </Paper>
     </Stack>

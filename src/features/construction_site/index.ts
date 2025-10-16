@@ -5,7 +5,7 @@ export interface ConstructionSite {
   startDate: string;
   plannedEndDate: string;
   description: string | null;
-  siteManagerId: number;
+  siteManagerId: number | null;
 }
 
 export interface NewConstructionSiteRequest {
@@ -14,7 +14,7 @@ export interface NewConstructionSiteRequest {
   startDate: string;
   plannedEndDate: string;
   description?: string | null;
-  siteManagerId: number;
+  siteManagerId: number | null;
 }
 
 export interface UpdateConstructionSiteRequest {
@@ -24,5 +24,16 @@ export interface UpdateConstructionSiteRequest {
   startDate: string;
   plannedEndDate: string;
   description?: string | null;
-  siteManagerId: number;
+  siteManagerId: number | null;
+}
+
+export interface AssignEmployeeItem {
+  employeeId: number;
+  dateFrom: string;
+  dateTo: string;
+}
+
+export interface AssignEmployeesRequest {
+  constructionSiteId: number;
+  employees: AssignEmployeeItem[];
 }

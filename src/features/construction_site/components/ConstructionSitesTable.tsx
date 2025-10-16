@@ -1,4 +1,3 @@
-// pages/ConstructionSitesTable.tsx
 import { useMemo, useState, useCallback } from "react";
 import { Box, Tooltip } from "@mui/material";
 import {
@@ -10,6 +9,7 @@ import {
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import type { ConstructionSite } from "..";
 import { useNavigate } from "react-router-dom";
 import { useConstructionSites } from "../hooks/useConstructionSites";
@@ -17,6 +17,7 @@ import { useDeleteConstructionSite } from "../hooks/useDeleteConstructionSite";
 import { PermissionGate, useCan } from "../../../lib/permissions";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
+import AssignEmployeesDialog from "./AssignEmployeesDialog";
 
 export default function ConstructionSitesTable() {
   const { constructionSitesRows, constructionSitesColumns, error, isLoading } =
@@ -27,6 +28,9 @@ export default function ConstructionSitesTable() {
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingRow, setPendingRow] = useState<ConstructionSite | null>(null);
+
+  const [assignOpen, setAssignOpen] = useState(false);
+  const [assignSiteId, setAssignSiteId] = useState<number | null>(null);
 
   const requestDelete = useCallback((row: ConstructionSite) => {
     setPendingRow(row);
@@ -49,6 +53,16 @@ export default function ConstructionSitesTable() {
       },
     });
   }, [deleteConstructionSite, pendingRow]);
+
+  const openAssign = useCallback((siteId: number) => {
+    setAssignSiteId(siteId);
+    setAssignOpen(true);
+  }, []);
+
+  const closeAssign = useCallback(() => {
+    setAssignOpen(false);
+    setAssignSiteId(null);
+  }, []);
 
   const columnsWithActions = useMemo<GridColDef<ConstructionSite>[]>(() => {
     const base = constructionSitesColumns.map((c) => {
@@ -80,15 +94,18 @@ export default function ConstructionSitesTable() {
     const canDelete = can({
       permission: "Permission.ConstructionSites.Delete",
     });
+    const canAssign = can({
+      permission: "Permission.ConstructionSites.Update",
+    });
 
-    if (!(canEdit || canDelete)) return base;
+    if (!(canEdit || canDelete || canAssign)) return base;
     if (base.some((c) => c.field === "actions")) return base;
 
     const actionsCol: GridActionsColDef<ConstructionSite> = {
       field: "actions",
       type: "actions",
       headerName: "Akcije",
-      width: 140,
+      width: 180,
       getActions: (
         params: GridRowParams<ConstructionSite>
       ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
@@ -110,6 +127,23 @@ export default function ConstructionSitesTable() {
               label="Uredi"
               disabled={busy}
               onClick={() => navigate(`${id}/edit`)}
+              showInMenu={false}
+            />
+          );
+        }
+
+        if (canAssign) {
+          items.push(
+            <GridActionsCellItem
+              key="assign"
+              icon={
+                <Tooltip title="Dodijeli zaposlenike">
+                  <GroupAddIcon fontSize="small" />
+                </Tooltip>
+              }
+              label="Dodijeli zaposlenike"
+              disabled={busy}
+              onClick={() => openAssign(id)}
               showInMenu={false}
             />
           );
@@ -143,11 +177,14 @@ export default function ConstructionSitesTable() {
     deleteConstructionSite.isPending,
     navigate,
     requestDelete,
+    openAssign,
   ]);
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
-  if (error) return <div>Neuspjelo učitavanje gradilišta.</div>;
+  if (error) return <div>Gradilišta.</div>;
+
+  console.log("constructionSitesRows", constructionSitesRows);
 
   return (
     <>
@@ -174,6 +211,18 @@ export default function ConstructionSitesTable() {
           onConfirm={handleConfirm}
         />
       </PermissionGate>
+
+      {assignSiteId !== null && (
+        <PermissionGate
+          guard={{ permission: "Permission.ConstructionSites.Update" }}
+        >
+          <AssignEmployeesDialog
+            constructionSiteId={assignSiteId}
+            open={assignOpen}
+            onClose={closeAssign}
+          />
+        </PermissionGate>
+      )}
     </>
   );
 }

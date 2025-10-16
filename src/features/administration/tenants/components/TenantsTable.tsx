@@ -28,7 +28,6 @@ export default function TenantsTable() {
 
   const columnsWithActions = React.useMemo<GridColDef<Tenant>[]>(() => {
     const base = tenantsColumns.map((c) => {
-      // Format the "validUpToDate" field
       if (c.field === "validUpToDate") {
         return {
           ...c,
@@ -61,7 +60,6 @@ export default function TenantsTable() {
         } as GridColDef<Tenant>;
       }
 
-      // Format the "isActive" field
       if (c.field === "isActive") {
         return {
           ...c,

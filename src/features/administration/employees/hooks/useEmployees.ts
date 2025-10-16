@@ -10,7 +10,7 @@ interface TransformedEmployeesData {
 }
 
 export const useEmployees = () => {
-  const { data, error, isLoading } = useQuery<
+  const { data, error, isLoading, isError } = useQuery<
     Employee[],
     Error,
     TransformedEmployeesData
@@ -56,5 +56,6 @@ export const useEmployees = () => {
     employeeColumns: data?.columnDefs ?? [],
     error,
     isLoading,
+    isError,
   };
 };
