@@ -184,8 +184,6 @@ export default function ConstructionSitesTable() {
 
   if (error) return <div>Gradilišta.</div>;
 
-  console.log("constructionSitesRows", constructionSitesRows);
-
   return (
     <>
       <ReusableDataGrid<ConstructionSite>

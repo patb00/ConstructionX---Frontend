@@ -19,6 +19,13 @@ import {
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { useAssignEmployeesToConstructionSite } from "../hooks/useAssignEmployeesToConstructionSite";
+import { useConstructionSite } from "../hooks/useConstructionSite";
+import { isValidRange, todayStr } from "../utils/dates";
+
+import { fullName } from "../utils/name";
+import { getCommonRange } from "../utils/ranges";
+
+type EmpRange = { from: string; to: string; custom: boolean };
 
 type Props = {
   constructionSiteId: number;
@@ -26,33 +33,20 @@ type Props = {
   onClose: () => void;
 };
 
-type EmpRange = { from: string; to: string; custom: boolean };
-
-function todayStr() {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${dd}`;
-}
-
-function isValidRange(from: string, to: string) {
-  if (!from || !to) return false;
-  return new Date(from) <= new Date(to);
-}
-
 export default function AssignEmployeesDialog({
   constructionSiteId,
   open,
   onClose,
 }: Props) {
   const { employeeRows = [], isLoading, isError } = useEmployees();
+  const { data: site } = useConstructionSite(constructionSiteId);
   const assign = useAssignEmployeesToConstructionSite();
 
   const [selected, setSelected] = React.useState<number[]>([]);
   const [globalFrom, setGlobalFrom] = React.useState<string>(todayStr());
   const [globalTo, setGlobalTo] = React.useState<string>(todayStr());
   const [ranges, setRanges] = React.useState<Record<number, EmpRange>>({});
+  const [touched, setTouched] = React.useState(false);
 
   React.useEffect(() => {
     if (!open) {
@@ -60,15 +54,98 @@ export default function AssignEmployeesDialog({
       setGlobalFrom(todayStr());
       setGlobalTo(todayStr());
       setRanges({});
+      setTouched(false);
     }
   }, [open]);
 
+  const preselected = React.useMemo(() => {
+    type Prior = {
+      firstName?: string;
+      lastName?: string;
+      dateFrom?: string;
+      dateTo?: string;
+    };
+    const prior = (site as any)?.constructionSiteEmployees as
+      | Prior[]
+      | undefined;
+
+    const resultIds: number[] = [];
+    const resultMap: Record<number, EmpRange> = {};
+
+    if (!prior?.length || !employeeRows.length) {
+      return { ids: resultIds, map: resultMap };
+    }
+
+    const bucket = new Map<string, Array<{ from: string; to: string }>>();
+    for (const p of prior) {
+      const key = fullName(p.firstName, p.lastName);
+      if (!bucket.has(key)) bucket.set(key, []);
+      bucket.get(key)!.push({
+        from: p.dateFrom ?? todayStr(),
+        to: p.dateTo ?? todayStr(),
+      });
+    }
+
+    for (const e of employeeRows) {
+      const id = Number(e?.id);
+      if (!Number.isFinite(id)) continue;
+      const key = fullName(e?.firstName, e?.lastName);
+      const list = bucket.get(key);
+      if (list?.length) {
+        const { from, to } = list.shift()!;
+        resultIds.push(id);
+
+        resultMap[id] = { from, to, custom: false };
+      }
+    }
+
+    return { ids: resultIds, map: resultMap };
+  }, [site, employeeRows]);
+
+  React.useEffect(() => {
+    if (!open) return;
+    if (!touched) {
+      // hydrate selection & ranges from server
+      setSelected(preselected.ids);
+      setRanges(preselected.map);
+
+      // ⬇️ also hydrate globals from hydrated rows
+      const common = getCommonRange(preselected.ids, preselected.map);
+      if (common) {
+        setGlobalFrom(common.from);
+        setGlobalTo(common.to);
+      } else {
+        // optional: leave existing globals as-is or reset to today
+        setGlobalFrom(todayStr());
+        setGlobalTo(todayStr());
+      }
+    }
+  }, [open, preselected, touched]);
+
+  React.useEffect(() => {
+    if (!open || selected.length === 0) return;
+    const existing = new Set(employeeRows.map((e: any) => Number(e.id)));
+    const filtered = selected.filter((id) => existing.has(id));
+    if (filtered.length !== selected.length) {
+      setSelected(filtered);
+      setRanges((old) => {
+        const next: Record<number, EmpRange> = {};
+        filtered.forEach((id) => {
+          if (old[id]) next[id] = old[id];
+        });
+        return next;
+      });
+    }
+  }, [employeeRows, open, selected]);
+
+  const markTouched = () => setTouched(true);
+
   const toggleEmp = (id: number) => {
+    markTouched();
     setSelected((prev) => {
       const next = prev.includes(id)
         ? prev.filter((x) => x !== id)
         : [...prev, id];
-
       setRanges((old) => {
         const has = old[id];
         if (next.includes(id) && !has) {
@@ -79,7 +156,6 @@ export default function AssignEmployeesDialog({
         }
         return old;
       });
-
       return next;
     });
   };
@@ -102,28 +178,32 @@ export default function AssignEmployeesDialog({
   };
 
   const onChangeGlobalFrom = (v: string) => {
+    markTouched();
     setGlobalFrom(v);
     applyGlobal(v, globalTo);
   };
   const onChangeGlobalTo = (v: string) => {
+    markTouched();
     setGlobalTo(v);
     applyGlobal(globalFrom, v);
   };
 
   const setEmpFrom = (id: number, v: string) => {
+    markTouched();
     setRanges((old) => {
       const prev = old[id] ?? { from: globalFrom, to: globalTo, custom: false };
       return { ...old, [id]: { ...prev, from: v, custom: true } };
     });
   };
   const setEmpTo = (id: number, v: string) => {
+    markTouched();
     setRanges((old) => {
       const prev = old[id] ?? { from: globalFrom, to: globalTo, custom: false };
       return { ...old, [id]: { ...prev, to: v, custom: true } };
     });
   };
-
   const resetEmpToGlobal = (id: number) => {
+    markTouched();
     setRanges((old) => {
       const r = old[id] ?? { from: globalFrom, to: globalTo, custom: false };
       return {
@@ -133,10 +213,13 @@ export default function AssignEmployeesDialog({
     });
   };
 
-  const isCustom = React.useMemo(
-    () => selected.some((id) => ranges[id]?.custom),
-    [selected, ranges]
-  );
+  const isCustom = React.useMemo(() => {
+    if (selected.length === 0) return false;
+    return selected.some((id) => {
+      const r = ranges[id] ?? { from: globalFrom, to: globalTo };
+      return r.from !== globalFrom || r.to !== globalTo;
+    });
+  }, [selected, ranges, globalFrom, globalTo]);
 
   const allRangesValid = React.useMemo(() => {
     if (!isValidRange(globalFrom, globalTo)) return false;
@@ -161,11 +244,7 @@ export default function AssignEmployeesDialog({
                 to: globalTo,
                 custom: false,
               };
-              return {
-                employeeId,
-                dateFrom: r.from,
-                dateTo: r.to,
-              };
+              return { employeeId, dateFrom: r.from, dateTo: r.to };
             }),
     };
 
@@ -213,9 +292,7 @@ export default function AssignEmployeesDialog({
           >
             <Box
               sx={{
-                borderRight: (t) => ({
-                  md: `1px solid ${t.palette.divider}`,
-                }),
+                borderRight: (t) => ({ md: `1px solid ${t.palette.divider}` }),
                 p: 2,
                 overflowY: "auto",
                 maxHeight: 560,
@@ -363,6 +440,9 @@ export default function AssignEmployeesDialog({
                       custom: false,
                     };
 
+                    const isRowGloballySynced =
+                      r.from === globalFrom && r.to === globalTo;
+
                     return (
                       <Box
                         key={id}
@@ -379,6 +459,7 @@ export default function AssignEmployeesDialog({
                           alignItems: "center",
                         }}
                       >
+                        {/* Name */}
                         <Box sx={{ minWidth: 0 }}>
                           <Typography
                             variant="body2"
@@ -429,7 +510,7 @@ export default function AssignEmployeesDialog({
                               <IconButton
                                 size="small"
                                 onClick={() => resetEmpToGlobal(id)}
-                                disabled={!r.custom}
+                                disabled={isRowGloballySynced} // <— compare dates, not r.custom
                               >
                                 <RestartAltIcon fontSize="small" />
                               </IconButton>
@@ -447,7 +528,7 @@ export default function AssignEmployeesDialog({
       </DialogContent>
 
       <DialogActions sx={{ p: 2 }}>
-        {!allRangesValid && selected.length > 0 && (
+        {selected.length > 0 && !allRangesValid && (
           <Typography
             variant="caption"
             color="error"
