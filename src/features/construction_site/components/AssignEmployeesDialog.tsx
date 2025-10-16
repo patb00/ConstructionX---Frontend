@@ -379,7 +379,6 @@ export default function AssignEmployeesDialog({
                           alignItems: "center",
                         }}
                       >
-                        {/* Name */}
                         <Box sx={{ minWidth: 0 }}>
                           <Typography
                             variant="body2"
@@ -404,7 +403,6 @@ export default function AssignEmployeesDialog({
                           )}
                         </Box>
 
-                        {/* From */}
                         <TextField
                           label="Početak"
                           type="date"

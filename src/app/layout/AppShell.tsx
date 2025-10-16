@@ -44,7 +44,7 @@ export default function AppShell() {
   };
 
   return (
-    <Box sx={{ display: "flex", height: "100vh", width: "100vw" }}>
+    <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
       <AppBar
         position="fixed"
         elevation={0}

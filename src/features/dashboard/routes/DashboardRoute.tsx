@@ -21,7 +21,7 @@ export default function DashboardRoute() {
   const clearAuth = useAuthStore((s) => s.clear);
 
   return (
-    <Stack spacing={3} sx={{ height: "100%", width: "100%" }}>
+    <Stack sx={{ width: "100%", height: "100%" }}>
       <Typography variant="h5" sx={{ fontWeight: 500, mb: 2 }} />
       <StatsRow
         totals={totals}
@@ -31,6 +31,7 @@ export default function DashboardRoute() {
         onSelectExpired={() => setFilter("expired")}
         selected={filter}
       />
+
       <TenantsYearChart
         dataset={dataset}
         currentYear={currentYear}
@@ -39,12 +40,9 @@ export default function DashboardRoute() {
 
       <ForceChangePasswordDialog
         open={mustChangePassword}
-        onDone={() => {
-          // nothing else needed; dialog closes itself via store flag
-        }}
+        onDone={() => {}}
         onLogout={() => {
           clearAuth();
-          // optionally hard redirect to /login
           window.location.href = "/login";
         }}
       />

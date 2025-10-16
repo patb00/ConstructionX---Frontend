@@ -129,7 +129,7 @@ export default function EmployeesTable() {
         columns={columnsWithActions}
         getRowId={(r) => r.id}
         stickyRightField={hasActions ? "actions" : undefined}
-        loading={!!isLoading} // ✅ added loading state
+        loading={!!isLoading}
       />
 
       <PermissionGate guard={{ permission: "Permission.Employees.Delete" }}>
