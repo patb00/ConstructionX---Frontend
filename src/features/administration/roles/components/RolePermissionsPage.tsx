@@ -100,6 +100,7 @@ export default function RolePermissionsPage() {
         onChange={(_, v) => setTab(v)}
         variant="scrollable"
         scrollButtons="auto"
+        allowScrollButtonsMobile
       >
         {categories.map((cat) => (
           <Tab key={cat} label={`${cat} (${groups[cat].length})`} />

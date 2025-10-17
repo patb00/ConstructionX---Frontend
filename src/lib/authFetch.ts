@@ -8,7 +8,6 @@ const TENANT_COOKIE = "auth_tenant";
 
 let refreshInFlight: Promise<string | null> | null = null;
 
-// tiny helper to pick the best message from various API shapes
 function pickMessage(data: any, fallback: string) {
   if (!data) return fallback;
   if (typeof data === "string") return data || fallback;

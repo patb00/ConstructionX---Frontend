@@ -131,10 +131,12 @@ export default function AppShell() {
         component="main"
         sx={{
           flexGrow: 1,
-
+          minWidth: 0,
           mt: "64px",
-          width: { md: `calc(100% - ${SIDEBAR_WIDTH}px)` },
           ml: { md: `${SIDEBAR_WIDTH}px` },
+          width: "100%",
+          maxWidth: "100%",
+          overflowX: "clip",
           p: 2,
         }}
       >
