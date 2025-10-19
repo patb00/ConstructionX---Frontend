@@ -16,8 +16,10 @@ import type { Company } from "..";
 import { PermissionGate, useCan } from "../../../../lib/permissions";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
+import { useTranslation } from "react-i18next";
 
 export default function CompaniesTable() {
+  const { t } = useTranslation();
   const { companiesColumns, companiesRows, error, isLoading } = useCompanies();
   const deleteCompany = useDeleteCompany();
   const navigate = useNavigate();
@@ -52,6 +54,7 @@ export default function CompaniesTable() {
       if (c.field === "dateOfCreation") {
         return {
           ...c,
+          headerName: c.headerName ?? t("companies.table.dateOfCreation"),
           type: "dateTime",
           valueGetter: (_v, row) =>
             row.dateOfCreation ? new Date(row.dateOfCreation) : null,
@@ -78,16 +81,13 @@ export default function CompaniesTable() {
     const canEdit = can({ permission: "Permission.Companies.Update" });
     const canDelete = can({ permission: "Permission.Companies.Delete" });
 
-    // If user has no action permissions
     if (!(canEdit || canDelete)) return base;
-
-    // Avoid duplicate column
     if (base.some((c) => c.field === "actions")) return base;
 
     const actionsCol: GridActionsColDef<Company> = {
       field: "actions",
       type: "actions",
-      headerName: "Akcije",
+      headerName: t("companies.actions"),
       width: 160,
       getActions: (
         params: GridRowParams<Company>
@@ -101,11 +101,11 @@ export default function CompaniesTable() {
             <GridActionsCellItem
               key="edit"
               icon={
-                <Tooltip title="Uredi tvrtku">
+                <Tooltip title={t("companies.table.edit")}>
                   <EditIcon fontSize="small" />
                 </Tooltip>
               }
-              label="Uredi tvrtku"
+              label={t("companies.table.edit")}
               disabled={busy}
               onClick={() => navigate(`${row.id}/edit`)}
               showInMenu={false}
@@ -118,11 +118,11 @@ export default function CompaniesTable() {
             <GridActionsCellItem
               key="delete"
               icon={
-                <Tooltip title="Izbriši tvrtku">
+                <Tooltip title={t("companies.table.delete")}>
                   <DeleteIcon fontSize="small" color="error" />
                 </Tooltip>
               }
-              label="Obriši tvrtku"
+              label={t("companies.table.delete")}
               disabled={busy}
               onClick={() => requestDelete(row)}
               showInMenu={false}
@@ -135,11 +135,20 @@ export default function CompaniesTable() {
     };
 
     return [...base, actionsCol];
-  }, [companiesColumns, can, deleteCompany.isPending, navigate, requestDelete]);
+  }, [
+    companiesColumns,
+    can,
+    deleteCompany.isPending,
+    navigate,
+    requestDelete,
+    t,
+  ]);
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
-  if (error) return <div>Tvrtke.</div>;
+  if (error) return <div>{t("companies.list.error")}</div>;
+
+  console.log("companiesColumns", companiesColumns);
 
   return (
     <>
@@ -154,10 +163,10 @@ export default function CompaniesTable() {
       <PermissionGate guard={{ permission: "Permission.Companies.Delete" }}>
         <ConfirmDialog
           open={confirmOpen}
-          title="Obriši tvrtku?"
-          description="Jeste li sigurni da želite obrisati tvrtku? Ova radnja je nepovratna."
-          confirmText="Obriši"
-          cancelText="Odustani"
+          title={t("companies.delete.title")}
+          description={t("companies.delete.description")}
+          confirmText={t("companies.delete.confirm")}
+          cancelText={t("companies.delete.cancel")}
           loading={deleteCompany.isPending}
           disableBackdropClose
           onClose={handleCancel}

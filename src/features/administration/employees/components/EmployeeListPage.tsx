@@ -2,13 +2,16 @@ import { Button, Stack, Typography, Paper } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import EmployeesTable from "./EmployeesTable";
 import { PermissionGate } from "../../../../lib/permissions";
+import { useTranslation } from "react-i18next";
 
 const EmployeesListPage = () => {
+  const { t } = useTranslation();
+
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h5" fontWeight={600}>
-          Zaposlenici
+          {t("employees.list.title")}
         </Typography>
 
         <PermissionGate guard={{ permission: "Permission.Employees.Create" }}>
@@ -18,7 +21,7 @@ const EmployeesListPage = () => {
             to="create"
             variant="contained"
           >
-            Kreiraj zaposlenika
+            {t("employees.create.title")}
           </Button>
         </PermissionGate>
       </Stack>

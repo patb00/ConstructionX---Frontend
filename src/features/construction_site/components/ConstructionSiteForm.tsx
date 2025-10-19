@@ -3,6 +3,7 @@ import {
   SmartForm,
   type FieldConfig,
 } from "../../../components/ui/smartform/SmartForm";
+import { useTranslation } from "react-i18next";
 
 type Option = { label: string; value: any };
 
@@ -19,24 +20,42 @@ export default function ConstructionSiteForm({
   busy,
   managerOptions,
 }: Props) {
+  const { t } = useTranslation();
+
   const fields: FieldConfig<NewConstructionSiteRequest>[] = [
-    { name: "name", label: "Naziv", required: true },
-    { name: "location", label: "Lokacija", required: true },
-    { name: "startDate", label: "Početak", type: "date", required: true },
+    {
+      name: "name",
+      label: t("constructionSites.form.field.name"),
+      required: true,
+    },
+    {
+      name: "location",
+      label: t("constructionSites.form.field.location"),
+      required: true,
+    },
+    {
+      name: "startDate",
+      label: t("constructionSites.form.field.startDate"),
+      type: "date",
+      required: true,
+    },
     {
       name: "plannedEndDate",
-      label: "Planirani završetak",
+      label: t("constructionSites.form.field.plannedEndDate"),
       type: "date",
       required: true,
     },
     {
       name: "siteManagerId",
-      label: "Voditelj gradilišta",
+      label: t("constructionSites.form.field.siteManagerId"),
       type: "select",
       required: false,
       options: managerOptions,
     },
-    { name: "description", label: "Opis" },
+    {
+      name: "description",
+      label: t("constructionSites.form.field.description"),
+    },
   ];
 
   return (
@@ -57,7 +76,7 @@ export default function ConstructionSiteForm({
         ...defaultValues,
       }}
       busy={busy}
-      submitLabel="Spremi"
+      submitLabel={t("constructionSites.form.submit")}
       onSubmit={onSubmit}
     />
   );

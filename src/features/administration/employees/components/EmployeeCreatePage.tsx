@@ -5,8 +5,10 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import type { EmployeeFormValues } from "..";
 import { useAssignJobPosition } from "../hooks/useAssignJobPosition";
+import { useTranslation } from "react-i18next";
 
 export default function EmployeeCreatePage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const add = useAddEmployee();
@@ -37,7 +39,7 @@ export default function EmployeeCreatePage() {
         sx={{ mb: 2 }}
       >
         <Typography variant="h5" fontWeight={600}>
-          Kreiraj zaposlenika
+          {t("employees.create.title")}
         </Typography>
         <Button
           size="small"
@@ -46,7 +48,7 @@ export default function EmployeeCreatePage() {
           onClick={() => navigate("/app/administration/employees")}
           sx={{ color: "primary.main" }}
         >
-          Natrag
+          {t("employees.create.back")}
         </Button>
       </Stack>
       <Paper

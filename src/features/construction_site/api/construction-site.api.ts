@@ -1,5 +1,6 @@
 import type {
   AssignEmployeesRequest,
+  AssignToolsRequest,
   ConstructionSite,
   NewConstructionSiteRequest,
   UpdateConstructionSiteRequest,
@@ -46,6 +47,13 @@ export const ConstructionSiteApi = {
 
   assignEmployees: async (payload: AssignEmployeesRequest) => {
     return authFetch<ApiEnvelope<number[]>>(`${base}/assign-employees`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  assignTools: async (payload: AssignToolsRequest) => {
+    return authFetch<ApiEnvelope<number[]>>(`${base}/assign-tools`, {
       method: "PUT",
       body: JSON.stringify(payload),
     });

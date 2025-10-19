@@ -9,7 +9,10 @@ import {
   type GridValidRowModel,
   useGridApiRef,
 } from "@mui/x-data-grid";
+import { useTranslation } from "react-i18next";
 import { DataGridToolbar } from "./DatagridToolbar";
+import useColumnHeaderMappings from "./useColumnHeaderMappings";
+import { getGridLocaleText } from "./gridLocaleText";
 
 export type ReusableDataGridProps<
   T extends GridValidRowModel = GridValidRowModel
@@ -23,6 +26,27 @@ export type ReusableDataGridProps<
   stickyRightField?: string;
   loading?: boolean;
 };
+
+function applyHeaderMappings<T extends GridValidRowModel>(
+  columns: GridColDef<T>[],
+  mappings: Array<{ original: string; translated: string }>
+): GridColDef<T>[] {
+  if (!mappings.length) return columns;
+
+  const map = new Map<string, string>();
+  for (const { original, translated } of mappings) {
+    map.set(original, translated);
+  }
+
+  return columns.map((c) => {
+    const current = (c.headerName ?? c.field) as string;
+    const translated = map.get(current);
+    if (translated) {
+      return { ...c, headerName: translated };
+    }
+    return c;
+  });
+}
 
 export default function ReusableDataGrid<
   T extends GridValidRowModel = GridValidRowModel
@@ -38,16 +62,17 @@ export default function ReusableDataGrid<
 }: ReusableDataGridProps<T>) {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-
   const apiRef = useGridApiRef();
+  const { t, i18n } = useTranslation();
+  const headerMappings = useColumnHeaderMappings();
 
   React.useEffect(() => {
     const api = apiRef.current;
     if (!api) return;
     api.setDensity(isSmall ? "compact" : "standard");
-  }, [isSmall]);
+  }, [isSmall, apiRef]);
 
-  const columnsForScreen = React.useMemo<GridColDef<T>[]>(() => {
+  const baseForScreen = React.useMemo<GridColDef<T>[]>(() => {
     if (!isSmall) return columns;
     return columns.map((c) => ({
       ...c,
@@ -56,6 +81,15 @@ export default function ReusableDataGrid<
       flex: c.flex ?? 1,
     }));
   }, [columns, isSmall]);
+
+  const columnsForScreen = React.useMemo<GridColDef<T>[]>(() => {
+    return applyHeaderMappings(baseForScreen, headerMappings);
+  }, [baseForScreen, headerMappings, i18n.language]);
+
+  const localeText = React.useMemo(
+    () => getGridLocaleText(t),
+    [t, i18n.language]
+  );
 
   return (
     <Box sx={{ flex: 1, position: "relative", height: "100%", width: "100%" }}>
@@ -101,6 +135,7 @@ export default function ReusableDataGrid<
           disableColumnMenu={isSmall}
           checkboxSelection={false}
           disableVirtualization={Boolean(stickyRightField)}
+          localeText={localeText}
           sx={
             stickyRightField
               ? {

@@ -15,10 +15,12 @@ import * as React from "react";
 import { useUserRoles } from "../hooks/useUserRoles";
 import { useUpdateRoles } from "../hooks/useUpdateRoles";
 import type { UserRoleAssignment, UserRolesResponse } from "..";
+import { useTranslation } from "react-i18next";
 
 type Props = { userId: string; open: boolean; onClose: () => void };
 
 export default function UserRolesDialog({ userId, open, onClose }: Props) {
+  const { t } = useTranslation();
   const { data, isLoading, isError } = useUserRoles(userId);
   const updateRoles = useUpdateRoles();
 
@@ -70,7 +72,7 @@ export default function UserRolesDialog({ userId, open, onClose }: Props) {
         },
       }}
     >
-      <DialogTitle>Upravljanje ulogama</DialogTitle>
+      <DialogTitle>{t("users.rolesDialog.title")}</DialogTitle>
 
       <DialogContent dividers>
         {isLoading ? (
@@ -79,11 +81,11 @@ export default function UserRolesDialog({ userId, open, onClose }: Props) {
           </Box>
         ) : isError ? (
           <Typography color="error" sx={{ py: 1 }}>
-            Neuspjelo učitavanje uloga.
+            {t("users.rolesDialog.error")}
           </Typography>
         ) : rolesList.length === 0 ? (
           <Typography color="text.secondary" sx={{ py: 1 }}>
-            Nema dostupnih uloga.
+            {t("users.rolesDialog.empty")}
           </Typography>
         ) : (
           <Stack spacing={1}>
@@ -132,7 +134,7 @@ export default function UserRolesDialog({ userId, open, onClose }: Props) {
             },
           }}
         >
-          Odustani
+          {t("users.rolesDialog.cancel")}
         </Button>
 
         <Button
@@ -140,7 +142,9 @@ export default function UserRolesDialog({ userId, open, onClose }: Props) {
           variant="contained"
           disabled={updateRoles.isPending || rolesList.length === 0}
         >
-          {updateRoles.isPending ? "Spremanje..." : "Spremi"}
+          {updateRoles.isPending
+            ? t("users.rolesDialog.saving")
+            : t("users.rolesDialog.save")}
         </Button>
       </DialogActions>
     </Dialog>

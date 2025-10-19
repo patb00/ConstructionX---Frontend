@@ -1,0 +1,776 @@
+{
+  "sidebar": {
+    "management": "Verwaltung",
+    "system": "System"
+  },
+  "nav": {
+    "dashboard": "Übersicht",
+    "constructionSites": "Baustellen",
+    "tenants": "Mandanten",
+    "companies": "Unternehmen",
+    "roles": "Rollen",
+    "users": "Benutzer",
+    "employees": "Mitarbeiter",
+    "jobPositions": "Arbeitsstellen",
+    "tools": "Werkzeuge",
+    "toolCategories": "Werkzeugkategorien"
+  },
+  "constructionSites": {
+    "list": {
+      "title": "Baustellen",
+      "error": "Fehler beim Laden der Baustellen."
+    },
+    "create": {
+      "title": "Baustelle erstellen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Baustelle bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (ID)",
+      "loadError": "Baustelle konnte nicht geladen werden."
+    },
+    "assign": {
+      "title": "Mitarbeiter zuweisen",
+      "loading": "Wird geladen…",
+      "loadError": "Mitarbeiter konnten nicht geladen werden.",
+      "empty": "Keine Mitarbeiter verfügbar.",
+      "left": {
+        "employeesCount": "Mitarbeiter ({{count}})",
+        "selectedCount": "Ausgewählt: {{count}}"
+      },
+      "global": {
+        "startLabel": "Beginn (global)",
+        "endLabel": "Ende (global)"
+      },
+      "chip": {
+        "custom": "Bereich: Benutzerdefiniert",
+        "global": "Bereich: Global"
+      },
+      "grid": {
+        "employee": "Mitarbeiter",
+        "start": "Beginn",
+        "end": "Ende",
+        "reset": "Zurücksetzen"
+      },
+      "pickHint": "Wählen Sie Mitarbeiter links aus.",
+      "tooltip": {
+        "resetToGlobal": "Auf globalen Bereich zurücksetzen"
+      },
+      "validation": {
+        "invalidRange": "Bitte Daten prüfen (Beginn ≤ Ende)."
+      },
+      "actions": {
+        "cancel": "Abbrechen",
+        "save": "Speichern",
+        "saving": "Wird gespeichert..."
+      }
+    },
+    "form": {
+      "field": {
+        "name": "Name",
+        "location": "Ort",
+        "startDate": "Beginn",
+        "plannedEndDate": "Geplantes Ende",
+        "siteManagerId": "Bauleiter",
+        "description": "Beschreibung"
+      },
+      "manager": {
+        "none": "— Kein Leiter —"
+      },
+      "submit": "Speichern"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "assignEmployees": "Mitarbeiter zuweisen",
+      "delete": "Löschen"
+    },
+    "delete": {
+      "title": "Baustelle löschen?",
+      "description": "Sind Sie sicher, dass Sie diese Baustelle löschen möchten?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    }
+  },
+  "common": {
+    "loading": "Wird geladen…",
+    "datagrid": {
+      "columnsButton": "Spalten",
+      "filterButton": "Filter",
+      "densitySelector": "Dichte",
+      "exportButton": "Export",
+      "csv": "CSV exportieren",
+      "print": "Drucken",
+      "quickFilterPlaceholder": "Suchen…",
+      "noRowsLabel": "Keine Zeilen",
+      "noResultsOverlayLabel": "Keine Ergebnisse gefunden.",
+      "noColumnsOverlayLabel": "Keine Spalten",
+      "noColumnsOverlayManageColumns": "Spalten verwalten",
+      "emptyPivotOverlayLabel": "Fügen Sie Felder zu Zeilen, Spalten und Werten hinzu, um eine Pivot-Tabelle zu erstellen",
+
+      "toolbarDensity": "Dichte",
+      "toolbarDensityLabel": "Dichte",
+      "toolbarDensityCompact": "Kompakt",
+      "toolbarDensityStandard": "Standard",
+      "toolbarDensityComfortable": "Bequem",
+
+      "toolbarColumns": "Spalten",
+      "toolbarColumnsLabel": "Spalten auswählen",
+
+      "toolbarFilters": "Filter",
+      "toolbarFiltersLabel": "Filter anzeigen",
+      "toolbarFiltersTooltipHide": "Filter ausblenden",
+      "toolbarFiltersTooltipShow": "Filter anzeigen",
+      "toolbarFiltersTooltipActive": "{{count}} aktiver Filter{{count, plural, one {} other {}}}",
+
+      "toolbarQuickFilterPlaceholder": "Suchen…",
+      "toolbarQuickFilterLabel": "Suche",
+      "toolbarQuickFilterDeleteIconLabel": "Löschen",
+
+      "toolbarExport": "Export",
+      "toolbarExportLabel": "Export",
+      "toolbarExportCSV": "Als CSV herunterladen",
+      "toolbarExportPrint": "Drucken",
+      "toolbarExportExcel": "Als Excel herunterladen",
+
+      "toolbarPivot": "Pivot",
+      "toolbarCharts": "Diagramme",
+      "toolbarAssistant": "KI-Assistent",
+
+      "columnsManagementSearchTitle": "Suche",
+      "columnsManagementNoColumns": "Keine Spalten",
+      "columnsManagementShowHideAllText": "Alle ein-/ausblenden",
+      "columnsManagementReset": "Zurücksetzen",
+      "columnsManagementDeleteIconLabel": "Löschen",
+
+      "filterPanelAddFilter": "Filter hinzufügen",
+      "filterPanelRemoveAll": "Alle entfernen",
+      "filterPanelDeleteIconLabel": "Löschen",
+      "filterPanelLogicOperator": "Logikoperator",
+      "filterPanelOperator": "Operator",
+      "filterPanelOperatorAnd": "Und",
+      "filterPanelOperatorOr": "Oder",
+      "filterPanelColumns": "Spalten",
+      "filterPanelInputLabel": "Wert",
+      "filterPanelInputPlaceholder": "Filterwert",
+
+      "filterOperatorContains": "enthält",
+      "filterOperatorDoesNotContain": "enthält nicht",
+      "filterOperatorEquals": "ist gleich",
+      "filterOperatorDoesNotEqual": "ist ungleich",
+      "filterOperatorStartsWith": "beginnt mit",
+      "filterOperatorEndsWith": "endet mit",
+      "filterOperatorIs": "ist",
+      "filterOperatorNot": "ist nicht",
+      "filterOperatorAfter": "ist nach",
+      "filterOperatorOnOrAfter": "ist am oder nach",
+      "filterOperatorBefore": "ist vor",
+      "filterOperatorOnOrBefore": "ist am oder vor",
+      "filterOperatorIsEmpty": "ist leer",
+      "filterOperatorIsNotEmpty": "ist nicht leer",
+      "filterOperatorIsAnyOf": "ist einer von",
+      "filterOperatorEqualSymbol": "=",
+      "filterOperatorNotEqualSymbol": "!=",
+      "filterOperatorGreaterThanSymbol": ">",
+      "filterOperatorGreaterOrEqualSymbol": ">=",
+      "filterOperatorLessThanSymbol": "<",
+      "filterOperatorLessOrEqualSymbol": "<=",
+
+      "headerFilterOperatorContains": "Enthält",
+      "headerFilterOperatorDoesNotContain": "Enthält nicht",
+      "headerFilterOperatorEquals": "Gleich",
+      "headerFilterOperatorDoesNotEqual": "Ungleich",
+      "headerFilterOperatorStartsWith": "Beginnt mit",
+      "headerFilterOperatorEndsWith": "Endet mit",
+      "headerFilterOperatorIs": "Ist",
+      "headerFilterOperatorNot": "Ist nicht",
+      "headerFilterOperatorAfter": "Ist nach",
+      "headerFilterOperatorOnOrAfter": "Ist am oder nach",
+      "headerFilterOperatorBefore": "Ist vor",
+      "headerFilterOperatorOnOrBefore": "Ist am oder vor",
+      "headerFilterOperatorIsEmpty": "Ist leer",
+      "headerFilterOperatorIsNotEmpty": "Ist nicht leer",
+      "headerFilterOperatorIsAnyOf": "Ist einer von",
+      "headerFilterOperatorEqualSymbol": "Gleich",
+      "headerFilterOperatorNotEqualSymbol": "Ungleich",
+      "headerFilterOperatorGreaterThanSymbol": "Größer als",
+      "headerFilterOperatorGreaterOrEqualSymbol": "Größer/gleich",
+      "headerFilterOperatorLessThanSymbol": "Kleiner als",
+      "headerFilterOperatorLessOrEqualSymbol": "Kleiner/gleich",
+      "headerFilterClear": "Filter löschen",
+
+      "filterValueAny": "beliebig",
+      "filterValueTrue": "wahr",
+      "filterValueFalse": "falsch",
+
+      "columnMenuLabel": "Menü",
+      "columnMenuAriaLabel": "{{columnName}}-Spaltenmenü",
+      "columnMenuShowColumns": "Spalten anzeigen",
+      "columnMenuManageColumns": "Spalten verwalten",
+      "columnMenuFilter": "Filter",
+      "columnMenuHideColumn": "Spalte ausblenden",
+      "columnMenuUnsort": "Sortierung aufheben",
+      "columnMenuSortAsc": "Aufsteigend sortieren",
+      "columnMenuSortDesc": "Absteigend sortieren",
+      "columnMenuManagePivot": "Pivot verwalten",
+      "columnMenuManageCharts": "Diagramme verwalten",
+
+      "columnHeaderFiltersTooltipActive": "{{count}} aktiver Filter{{count, plural, one {} other {}}}",
+      "columnHeaderFiltersLabel": "Filter anzeigen",
+      "columnHeaderSortIconLabel": "Sortieren",
+
+      "footerRowSelected": "{{count, number}} Zeile{{count, plural, one {} other {n}}} ausgewählt",
+      "footerTotalRows": "Gesamtzeilen:",
+      "footerTotalVisibleRows": "{{visibleCount, number}} von {{totalCount, number}}",
+
+      "checkboxSelectionHeaderName": "Kontrollkästchen-Auswahl",
+      "checkboxSelectionSelectAllRows": "Alle Zeilen auswählen",
+      "checkboxSelectionUnselectAllRows": "Alle Zeilen abwählen",
+      "checkboxSelectionSelectRow": "Zeile auswählen",
+      "checkboxSelectionUnselectRow": "Zeile abwählen",
+
+      "booleanCellTrueLabel": "ja",
+      "booleanCellFalseLabel": "nein",
+
+      "actionsCellMore": "mehr",
+
+      "pinToLeft": "Links anheften",
+      "pinToRight": "Rechts anheften",
+      "unpin": "Lösen",
+
+      "treeDataGroupingHeaderName": "Gruppe",
+      "treeDataExpand": "Kinder anzeigen",
+      "treeDataCollapse": "Kinder ausblenden",
+
+      "groupingColumnHeaderName": "Gruppe",
+      "groupColumn": "Gruppieren nach {{name}}",
+      "unGroupColumn": "Gruppierung nach {{name}} aufheben",
+
+      "detailPanelToggle": "Detailbereich umschalten",
+      "expandDetailPanel": "Erweitern",
+      "collapseDetailPanel": "Reduzieren",
+
+      "paginationRowsPerPage": "Zeilen pro Seite:",
+      "paginationDisplayedRows": "{{from}}–{{to}} von {{countLabel}}",
+      "paginationDisplayedRowsEstimated": "{{from}}–{{to}} von {{estimatedLabel}}",
+      "moreThanX": "mehr als {{to}}",
+      "aroundX": "ungefähr {{estimated}}",
+      "paginationFirst": "Zur ersten Seite",
+      "paginationLast": "Zur letzten Seite",
+      "paginationNext": "Zur nächsten Seite",
+      "paginationPrevious": "Zur vorherigen Seite",
+
+      "rowReorderingHeaderName": "Zeilen neu anordnen",
+
+      "aggregationMenuItemHeader": "Aggregation",
+      "aggregationFunctionLabelNone": "keine",
+      "aggregationFunctionLabelSum": "summe",
+      "aggregationFunctionLabelAvg": "durchschn.",
+      "aggregationFunctionLabelMin": "min",
+      "aggregationFunctionLabelMax": "max",
+      "aggregationFunctionLabelSize": "anzahl",
+
+      "pivotToggleLabel": "Pivot",
+      "pivotRows": "Zeilen",
+      "pivotColumns": "Spalten",
+      "pivotValues": "Werte",
+      "pivotCloseButton": "Pivot-Einstellungen schließen",
+      "pivotSearchButton": "Felder suchen",
+      "pivotSearchControlPlaceholder": "Felder suchen",
+      "pivotSearchControlLabel": "Felder suchen",
+      "pivotSearchControlClear": "Suche löschen",
+      "pivotNoFields": "Keine Felder",
+      "pivotMenuMoveUp": "Nach oben",
+      "pivotMenuMoveDown": "Nach unten",
+      "pivotMenuMoveToTop": "An den Anfang",
+      "pivotMenuMoveToBottom": "An das Ende",
+      "pivotMenuRows": "Zeilen",
+      "pivotMenuColumns": "Spalten",
+      "pivotMenuValues": "Werte",
+      "pivotMenuOptions": "Feldoptionen",
+      "pivotMenuAddToRows": "Zu Zeilen hinzufügen",
+      "pivotMenuAddToColumns": "Zu Spalten hinzufügen",
+      "pivotMenuAddToValues": "Zu Werten hinzufügen",
+      "pivotMenuRemove": "Entfernen",
+      "pivotDragToRows": "Hierher ziehen, um Zeilen zu erstellen",
+      "pivotDragToColumns": "Hierher ziehen, um Spalten zu erstellen",
+      "pivotDragToValues": "Hierher ziehen, um Werte zu erstellen",
+      "pivotYearColumnHeaderName": "(Jahr)",
+      "pivotQuarterColumnHeaderName": "(Quartal)",
+
+      "chartsNoCharts": "Keine Diagramme verfügbar",
+      "chartsChartNotSelected": "Diagrammtyp auswählen, um Optionen zu konfigurieren",
+      "chartsTabChart": "Diagramm",
+      "chartsTabFields": "Felder",
+      "chartsTabCustomize": "Anpassen",
+      "chartsCloseButton": "Diagrammkonfiguration schließen",
+      "chartsSyncButtonLabel": "Diagramm synchronisieren",
+      "chartsSearchPlaceholder": "Felder suchen",
+      "chartsSearchLabel": "Felder suchen",
+      "chartsSearchClear": "Suche löschen",
+      "chartsNoFields": "Keine Felder",
+      "chartsFieldBlocked": "Dieses Feld kann keinem Bereich hinzugefügt werden",
+      "chartsCategories": "Kategorien",
+      "chartsSeries": "Reihen",
+      "chartsMenuAddToDimensions": "Zu {{dimensionLabel}} hinzufügen",
+      "chartsMenuAddToValues": "Zu {{valuesLabel}} hinzufügen",
+      "chartsMenuMoveUp": "Nach oben",
+      "chartsMenuMoveDown": "Nach unten",
+      "chartsMenuMoveToTop": "An den Anfang",
+      "chartsMenuMoveToBottom": "An das Ende",
+      "chartsMenuOptions": "Feldoptionen",
+      "chartsMenuRemove": "Entfernen",
+      "chartsDragToDimensions": "Hierher ziehen, um die Spalte als {{dimensionLabel}} zu verwenden",
+      "chartsDragToValues": "Hierher ziehen, um die Spalte als {{valuesLabel}} zu verwenden",
+
+      "aiAssistantPanelTitle": "KI-Assistent",
+      "aiAssistantPanelClose": "KI-Assistent schließen",
+      "aiAssistantPanelNewConversation": "Neue Unterhaltung",
+      "aiAssistantPanelConversationHistory": "Unterhaltungsverlauf",
+      "aiAssistantPanelEmptyConversation": "Keine Verlaufseinträge",
+      "aiAssistantSuggestions": "Vorschläge",
+
+      "promptFieldLabel": "Eingabe",
+      "promptFieldPlaceholder": "Eingabe tippen…",
+      "promptFieldPlaceholderWithRecording": "Eingabe tippen oder aufnehmen…",
+      "promptFieldPlaceholderListening": "Warten auf Eingabe…",
+      "promptFieldSpeechRecognitionNotSupported": "Spracherkennung wird in diesem Browser nicht unterstützt",
+      "promptFieldSend": "Senden",
+      "promptFieldRecord": "Aufnehmen",
+      "promptFieldStopRecording": "Aufnahme beenden",
+
+      "promptRerun": "Erneut ausführen",
+      "promptProcessing": "Wird verarbeitet…",
+      "promptAppliedChanges": "Änderungen übernommen",
+
+      "promptChangeGroupDescription": "Gruppieren nach {{column}}",
+      "promptChangeAggregationLabel": "{{column}} ({{aggregation}})",
+      "promptChangeAggregationDescription": "{{column}} aggregieren ({{aggregation}})",
+      "promptChangeFilterLabelAnyOf": "{{column}} ist einer von: {{value}}",
+      "promptChangeFilterLabel": "{{column}} {{operator}} {{value}}",
+      "promptChangeFilterDescriptionAnyOf": "Filtern, wo {{column}} einer von {{value}} ist",
+      "promptChangeFilterDescription": "Filtern, wo {{column}} {{operator}} {{value}}",
+      "promptChangeSortDescription": "Sortieren nach {{column}} ({{direction}})",
+      "promptChangePivotEnableLabel": "Pivot",
+      "promptChangePivotEnableDescription": "Pivot aktivieren",
+      "promptChangePivotColumnsLabel": "Spalten ({{count}})",
+      "promptChangePivotColumnsDescription": "{{column}}{{direction ? ` (${direction})` : ''}}",
+      "promptChangePivotRowsLabel": "Zeilen ({{count}})",
+      "promptChangePivotValuesLabel": "Werte ({{count}})",
+      "promptChangePivotValuesDescription": "{{column}} ({{aggregation}})"
+    },
+    "columns": {
+      "id": "Id",
+      "name": "Name",
+      "description": "Beschreibung",
+      "actions": "Aktionen",
+
+      "location": "Ort",
+      "startDate": "Beginn",
+      "plannedEndDate": "Geplantes Ende",
+      "siteManagerId": "Bauleiter-ID",
+      "siteManagerName": "Bauleiter",
+      "constructionSiteTools": "Baustellen-Werkzeuge",
+      "constructionSiteEmployees": "Baustellenmitarbeiter",
+
+      "createdDate": "Erstellt am",
+      "createdBy": "Erstellt von",
+      "modifiedDate": "Geändert am",
+      "modifiedBy": "Geändert von",
+
+      "identifier": "Kennung",
+      "connectionString": "Verbindungszeichenfolge",
+      "email": "E-Mail",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "validUntil": "Gültig bis",
+      "isActive": "Aktiv",
+
+      "dateOfCreation": "Gründungsdatum",
+
+      "permissions": "Berechtigungen",
+      "userName": "Benutzername",
+
+      "oib": "OIB",
+      "dateOfBirth": "Geburtsdatum",
+      "employmentDate": "Beschäftigungsbeginn",
+      "terminationDate": "Beendigungsdatum",
+      "hasMachineryLicense": "Maschinenführerschein vorhanden",
+      "clothingSize": "Kleidergröße",
+      "gloveSize": "Handschuhgröße",
+      "shoeSize": "Schuhgröße",
+      "jobPosition": "Stellenbezeichnung",
+
+      "inventoryNumber": "Inventarnummer",
+      "serialNumber": "Seriennummer",
+      "manufacturer": "Hersteller",
+      "model": "Modell",
+      "purchaseDate": "Kaufdatum",
+      "purchasePrice": "Kaufpreis",
+      "status": "Status",
+      "condition": "Zustand",
+      "toolCategoryId": "Werkzeugkategorie-ID",
+      "toolCategoryName": "Werkzeugkategorie",
+      "responsibleEmployeeId": "Verantwortlicher Mitarbeiter (ID)",
+      "responsibleEmployeeName": "Verantwortlicher Mitarbeiter",
+      "responsibleEmployeeJobPosition": "Stellenbezeichnung"
+    }
+  },
+  "tenants": {
+    "list": {
+      "title": "Mandanten",
+      "error": "Fehler beim Laden der Mandanten."
+    },
+    "create": {
+      "title": "Mandanten erstellen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Mandanten-Abonnement bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (tenantId)",
+      "loadError": "Mandant konnte nicht geladen werden.",
+      "tenantLabel": "Mandant",
+      "validUntil": "Gültig bis",
+      "save": "Speichern"
+    },
+    "details": {
+      "loadError": "Mandant konnte nicht geladen werden."
+    },
+    "form": {
+      "field": {
+        "identifier": "Kennung",
+        "name": "Name",
+        "connectionString": "Connection String",
+        "email": "E-Mail",
+        "validUntil": "Gültig bis",
+        "firstName": "Vorname",
+        "lastName": "Nachname",
+        "isActive": "Aktiv"
+      },
+      "submit": "Speichern"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "validUntil": "Gültig bis",
+      "statusHeader": "Status",
+      "status": {
+        "active": "Aktiv",
+        "inactive": "Inaktiv"
+      },
+      "edit": "Mandanten bearbeiten",
+      "activate": "Mandanten aktivieren",
+      "deactivate": "Mandanten deaktivieren"
+    }
+  },
+  "companies": {
+    "list": {
+      "title": "Unternehmen",
+      "error": "Fehler beim Laden der Unternehmen."
+    },
+    "create": {
+      "title": "Unternehmen erstellen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Unternehmen bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (ID)",
+      "loadError": "Unternehmen konnte nicht geladen werden."
+    },
+    "details": {
+      "loadError": "Unternehmen konnte nicht geladen werden."
+    },
+    "form": {
+      "field": {
+        "name": "Name",
+        "dateOfCreation": "Gründungsdatum"
+      },
+      "submit": "Speichern"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Unternehmen bearbeiten",
+      "delete": "Unternehmen löschen",
+      "dateOfCreation": "Gründungsdatum"
+    },
+    "delete": {
+      "title": "Unternehmen löschen?",
+      "description": "Möchten Sie dieses Unternehmen wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    }
+  },
+  "employees": {
+    "list": {
+      "title": "Mitarbeiter",
+      "error": "Fehler beim Laden der Mitarbeiter."
+    },
+    "create": {
+      "title": "Mitarbeiter erstellen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Mitarbeiter bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (ID)",
+      "loadError": "Mitarbeiter konnte nicht geladen werden."
+    },
+    "form": {
+      "field": {
+        "firstName": "Vorname",
+        "lastName": "Nachname",
+        "oib": "OIB",
+        "dateOfBirth": "Geburtsdatum",
+        "employmentDate": "Beschäftigungsbeginn",
+        "terminationDate": "Beendigungsdatum",
+        "hasMachineryLicense": "Befähigung für Maschinenbedienung",
+        "clothingSize": "Kleidergröße",
+        "gloveSize": "Handschuhgröße",
+        "shoeSize": "Schuhgröße",
+        "jobPositionId": "Stellenbezeichnung"
+      },
+      "jobPosition": {
+        "none": "— Keine Position —"
+      },
+      "helper": {
+        "oibDigits": "11 Ziffern"
+      },
+      "submit": "Speichern"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Mitarbeiter bearbeiten",
+      "delete": "Mitarbeiter löschen"
+    },
+    "delete": {
+      "title": "Mitarbeiter löschen?",
+      "description": "Möchten Sie diesen Mitarbeiter wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    }
+  },
+  "jobPositions": {
+    "list": {
+      "title": "Stellen",
+      "error": "Fehler beim Laden der Stellen."
+    },
+    "create": {
+      "title": "Stelle erstellen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Stelle bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (ID)",
+      "loadError": "Stelle konnte nicht geladen werden."
+    },
+    "form": {
+      "field": {
+        "name": "Bezeichnung",
+        "description": "Beschreibung"
+      },
+      "submit": "Speichern"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "name": "Bezeichnung",
+      "description": "Beschreibung",
+      "edit": "Stelle bearbeiten",
+      "delete": "Stelle löschen"
+    },
+    "delete": {
+      "title": "Stelle löschen?",
+      "description": "Möchten Sie diese Stelle wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    }
+  },
+  "roles": {
+    "list": {
+      "title": "Rollen",
+      "error": "Fehler beim Laden der Rollen."
+    },
+    "create": {
+      "title": "Rolle erstellen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Rolle bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (roleId)",
+      "loadError": "Rolle konnte nicht geladen werden."
+    },
+    "form": {
+      "field": {
+        "name": "Name",
+        "description": "Beschreibung"
+      },
+      "submit": "Speichern"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "name": "Name",
+      "description": "Beschreibung",
+      "edit": "Rolle bearbeiten",
+      "delete": "Rolle löschen",
+      "permissions": "Berechtigungen"
+    },
+    "delete": {
+      "title": "Rolle löschen?",
+      "description": "Möchten Sie diese Rolle wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "permissions": {
+      "title": "{{name}} – Berechtigungen",
+      "back": "Zurück",
+      "tabLabel": "{{category}} ({{count}})",
+      "saving": "Speichern...",
+      "update": "Berechtigungen aktualisieren",
+      "notFound": "Rolle nicht gefunden.",
+      "noneAvailable": "Keine Berechtigungen verfügbar."
+    }
+  },
+  "users": {
+    "list": {
+      "title": "Benutzer",
+      "error": "Fehler beim Laden der Benutzer."
+    },
+    "create": {
+      "title": "Benutzer erstellen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Benutzer bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (ID)",
+      "loadError": "Benutzer konnte nicht geladen werden.",
+      "userLabel": "Benutzer"
+    },
+    "form": {
+      "field": {
+        "firstName": "Vorname",
+        "lastName": "Nachname",
+        "email": "E-Mail",
+        "phoneNumber": "Telefonnummer",
+        "password": "Passwort",
+        "confirmPassword": "Passwort bestätigen",
+        "isActive": "Aktiv"
+      },
+      "submit": "Speichern"
+    },
+    "table": {
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "phoneNumber": "Telefonnummer",
+      "status": "Status",
+      "statusActive": "Aktiv",
+      "statusInactive": "Inaktiv",
+      "actions": "Aktionen",
+      "edit": "Benutzer bearbeiten",
+      "delete": "Benutzer löschen",
+      "activate": "Benutzer aktivieren",
+      "deactivate": "Benutzer deaktivieren",
+      "roles": "Benutzerrollen"
+    },
+    "delete": {
+      "title": "Benutzer löschen?",
+      "description": "Möchten Sie diesen Benutzer wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "rolesDialog": {
+      "title": "Rollen verwalten",
+      "loading": "Laden…",
+      "error": "Rollen konnten nicht geladen werden.",
+      "empty": "Keine Rollen verfügbar.",
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "saving": "Speichern..."
+    }
+  },
+  "tools": {
+    "list": {
+      "title": "Werkzeuge",
+      "error": "Fehler beim Laden der Werkzeuge"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "create": {
+      "title": "Werkzeug erstellen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Werkzeug bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige Werkzeug-ID in der URL",
+      "loadError": "Werkzeugdaten konnten nicht geladen werden"
+    },
+    "delete": {
+      "title": "Werkzeug löschen",
+      "description": "Möchten Sie dieses Werkzeug wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "name": "Name",
+        "inventoryNumber": "Inventarnummer",
+        "serialNumber": "Seriennummer",
+        "manufacturer": "Hersteller",
+        "model": "Modell",
+        "purchaseDate": "Kaufdatum",
+        "purchasePrice": "Kaufpreis",
+        "status": "Status",
+        "condition": "Zustand",
+        "description": "Beschreibung",
+        "toolCategoryId": "Werkzeugkategorie",
+        "responsibleEmployeeId": "Verantwortlicher Mitarbeiter"
+      },
+      "responsible": {
+        "none": "Nicht zugewiesen"
+      }
+    }
+  },
+  "toolCategories": {
+    "list": {
+      "title": "Werkzeugkategorien",
+      "error": "Fehler beim Laden der Kategorien"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "create": {
+      "title": "Werkzeugkategorie erstellen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Werkzeugkategorie bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige Kategorie-ID in der URL",
+      "loadError": "Kategoriedaten konnten nicht geladen werden"
+    },
+    "delete": {
+      "title": "Kategorie löschen",
+      "description": "Möchten Sie diese Kategorie wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "name": "Name",
+        "description": "Beschreibung"
+      }
+    }
+  }
+}

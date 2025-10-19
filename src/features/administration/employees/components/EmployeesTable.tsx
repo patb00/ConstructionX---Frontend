@@ -16,8 +16,10 @@ import { useEmployees } from "../hooks/useEmployees";
 import { useDeleteEmployee } from "../hooks/useDeleteEmployee";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 import { useCan, PermissionGate } from "../../../../lib/permissions";
+import { useTranslation } from "react-i18next";
 
 export default function EmployeesTable() {
+  const { t } = useTranslation();
   const { employeeColumns, employeeRows, error, isLoading } = useEmployees();
   const {
     mutate: deleteEmployee,
@@ -68,7 +70,7 @@ export default function EmployeesTable() {
     const actionsCol: GridActionsColDef<Employee> = {
       field: "actions",
       type: "actions",
-      headerName: "Akcije",
+      headerName: t("employees.actions"),
       width: 120,
       getActions: (
         params: GridRowParams<Employee>
@@ -83,11 +85,11 @@ export default function EmployeesTable() {
             <GridActionsCellItem
               key="edit"
               icon={
-                <Tooltip title="Uredi zaposlenika">
+                <Tooltip title={t("employees.table.edit")}>
                   <EditIcon fontSize="small" />
                 </Tooltip>
               }
-              label="Uredi"
+              label={t("employees.table.edit")}
               onClick={() => handleEdit(e.id)}
               showInMenu={false}
             />
@@ -99,11 +101,11 @@ export default function EmployeesTable() {
             <GridActionsCellItem
               key="delete"
               icon={
-                <Tooltip title="Izbriši zaposlenika">
+                <Tooltip title={t("employees.table.delete")}>
                   <DeleteIcon fontSize="small" color="error" />
                 </Tooltip>
               }
-              label="Izbriši"
+              label={t("employees.table.delete")}
               disabled={isDeletingThis}
               onClick={() => requestDelete(e)}
               showInMenu={false}
@@ -116,12 +118,12 @@ export default function EmployeesTable() {
     };
 
     return [...base, actionsCol];
-  }, [employeeColumns, can, busy, variables, handleEdit, requestDelete]);
+  }, [employeeColumns, can, busy, variables, handleEdit, requestDelete, t]);
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
-  if (error) return <div>Zaposlenici.</div>;
-
+  if (error) return <div>{t("employees.list.error")}</div>;
+  console.log("employeeColumns", employeeColumns);
   return (
     <>
       <ReusableDataGrid<Employee>
@@ -135,10 +137,10 @@ export default function EmployeesTable() {
       <PermissionGate guard={{ permission: "Permission.Employees.Delete" }}>
         <ConfirmDialog
           open={confirmOpen}
-          title="Izbriši zaposlenika?"
-          description="Jeste li sigurni da želite izbrisati zaposlenika?"
-          confirmText="Obriši"
-          cancelText="Odustani"
+          title={t("employees.delete.title")}
+          description={t("employees.delete.description")}
+          confirmText={t("employees.delete.confirm")}
+          cancelText={t("employees.delete.cancel")}
           loading={busy}
           disableBackdropClose
           onClose={handleCancel}

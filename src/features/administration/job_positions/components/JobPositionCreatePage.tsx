@@ -3,15 +3,18 @@ import { useAddJobPosition } from "../hooks/useAddJobPosition";
 import JobPositionForm from "./JobPositionForm";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function JobPositionCreatePage() {
+  const { t } = useTranslation();
   const { mutateAsync, isPending } = useAddJobPosition();
   const navigate = useNavigate();
+
   return (
     <Stack spacing={2}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h5" fontWeight={600}>
-          Kreiraj radno mjesto
+          {t("jobPositions.create.title")}
         </Typography>
         <Button
           size="small"
@@ -20,7 +23,7 @@ export default function JobPositionCreatePage() {
           onClick={() => navigate("/app/administration/jobPositions")}
           sx={{ color: "primary.main" }}
         >
-          Natrag
+          {t("jobPositions.create.back")}
         </Button>
       </Stack>
       <Paper

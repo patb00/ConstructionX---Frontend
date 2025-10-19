@@ -3,6 +3,7 @@ import {
   type FieldConfig,
 } from "../../../../components/ui/smartform/SmartForm";
 import type { NewTenantRequest } from "..";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   defaultValues?: Partial<NewTenantRequest>;
@@ -20,12 +21,18 @@ function sanitizeConnectionString(s?: string | null): string | null {
 }
 
 export default function TenantForm({ defaultValues, onSubmit, busy }: Props) {
+  const { t } = useTranslation();
+
   const fields: FieldConfig<NewTenantRequest>[] = [
-    { name: "identifier", label: "Identifier", required: true },
-    { name: "name", label: "Name", required: true },
+    {
+      name: "identifier",
+      label: t("tenants.form.field.identifier"),
+      required: true,
+    },
+    { name: "name", label: t("tenants.form.field.name"), required: true },
     {
       name: "connectionString",
-      label: "Connection String",
+      label: t("tenants.form.field.connectionString"),
       defaultValue: "",
       props: {
         inputProps: {
@@ -37,11 +44,20 @@ export default function TenantForm({ defaultValues, onSubmit, busy }: Props) {
       },
       transformOut: (v) => sanitizeConnectionString(v),
     },
-    { name: "email", label: "Email", type: "email" },
-    { name: "validUpToDate", label: "Valid Until", type: "datetime-local" },
-    { name: "firstName", label: "First name" },
-    { name: "lastName", label: "Last name" },
-    { name: "isActive", label: "Active", type: "checkbox", defaultValue: true },
+    { name: "email", label: t("tenants.form.field.email"), type: "email" },
+    {
+      name: "validUpToDate",
+      label: t("tenants.form.field.validUntil"),
+      type: "datetime-local",
+    },
+    { name: "firstName", label: t("tenants.form.field.firstName") },
+    { name: "lastName", label: t("tenants.form.field.lastName") },
+    {
+      name: "isActive",
+      label: t("tenants.form.field.isActive"),
+      type: "checkbox",
+      defaultValue: true,
+    },
   ];
 
   return (
@@ -66,7 +82,7 @@ export default function TenantForm({ defaultValues, onSubmit, busy }: Props) {
         ...defaultValues,
       }}
       busy={busy}
-      submitLabel="Spremi"
+      submitLabel={t("tenants.form.submit")}
       onSubmit={onSubmit}
     />
   );

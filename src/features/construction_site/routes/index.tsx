@@ -2,6 +2,7 @@ import { Outlet, type RouteObject } from "react-router-dom";
 import ConstructionSitesListPage from "../components/ConstructionSiteListPage";
 import ConstructionSiteCreatePage from "../components/ConstructionSiteCreatePage";
 import ConstructionSiteEditPage from "../components/ConstructionSiteEditPage";
+import ConstructionSiteDetailsPage from "../components/ConstructionSiteDetailsPage";
 
 function ConstructionSitesLayout() {
   return (
@@ -18,5 +19,6 @@ export const constructionSitesRoutes: RouteObject = {
     { index: true, element: <ConstructionSitesListPage /> },
     { path: "create", element: <ConstructionSiteCreatePage /> },
     { path: ":id/edit", element: <ConstructionSiteEditPage /> },
+    { path: ":id/details", element: <ConstructionSiteDetailsPage /> },
   ],
 };

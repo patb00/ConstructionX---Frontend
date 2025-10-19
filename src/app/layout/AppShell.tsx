@@ -20,6 +20,7 @@ import { MdConstruction } from "react-icons/md";
 import { useSnackbar } from "notistack";
 import { useAuthStore } from "../../features/auth/store/useAuthStore";
 import { useQueryClient } from "@tanstack/react-query";
+import LanguageSwitcher from "../../components/ui/languague-switch/LanguagueSwitcher";
 
 export default function AppShell() {
   const [open, setOpen] = useState(false);
@@ -84,23 +85,25 @@ export default function AppShell() {
               ConstructionX
             </Typography>
           </Box>
-
-          <Avatar
-            alt="Korisnik"
-            src="/avatar-placeholder.png"
-            onClick={handleAvatarClick}
-            sx={{
-              width: 28,
-              height: 28,
-              cursor: "pointer",
-              bgcolor: "primary.main",
-              color: "white",
-              "&:hover": { opacity: 0.85 },
-            }}
-            aria-controls={menuOpen ? "user-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={menuOpen ? "true" : undefined}
-          />
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <LanguageSwitcher />
+            <Avatar
+              alt="Korisnik"
+              src="/avatar-placeholder.png"
+              onClick={handleAvatarClick}
+              sx={{
+                width: 28,
+                height: 28,
+                cursor: "pointer",
+                bgcolor: "primary.main",
+                color: "white",
+                "&:hover": { opacity: 0.85 },
+              }}
+              aria-controls={menuOpen ? "user-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={menuOpen ? "true" : undefined}
+            />
+          </Box>
           <Menu
             id="user-menu"
             anchorEl={anchorEl}

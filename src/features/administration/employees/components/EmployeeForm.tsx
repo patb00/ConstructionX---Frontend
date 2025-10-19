@@ -4,6 +4,7 @@ import {
 } from "../../../../components/ui/smartform/SmartForm";
 import type { EmployeeFormValues } from "..";
 import { useJobPositionOptions } from "../hooks/useJobPositionOptions";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   defaultValues?: Partial<EmployeeFormValues>;
@@ -12,41 +13,54 @@ type Props = {
 };
 
 export default function EmployeeForm({ defaultValues, onSubmit, busy }: Props) {
+  const { t } = useTranslation();
   const { options: jobPositionOptions } = useJobPositionOptions();
 
   const fields: FieldConfig<EmployeeFormValues>[] = [
-    { name: "firstName", label: "First name", required: true },
-    { name: "lastName", label: "Last name", required: true },
+    {
+      name: "firstName",
+      label: t("employees.form.field.firstName"),
+      required: true,
+    },
+    {
+      name: "lastName",
+      label: t("employees.form.field.lastName"),
+      required: true,
+    },
     {
       name: "oib",
-      label: "OIB",
+      label: t("employees.form.field.oib"),
       required: true,
       props: {
         inputProps: { inputMode: "numeric", pattern: "[0-9]*", maxLength: 11 },
-        helperText: "11 digits",
+        helperText: t("employees.form.helper.oibDigits"),
       },
     },
     {
       name: "dateOfBirth",
-      label: "Date of birth",
+      label: t("employees.form.field.dateOfBirth"),
       type: "date",
       required: true,
     },
     {
       name: "employmentDate",
-      label: "Employment date",
+      label: t("employees.form.field.employmentDate"),
       type: "date",
       required: true,
     },
-    { name: "terminationDate", label: "Termination date", type: "date" },
+    {
+      name: "terminationDate",
+      label: t("employees.form.field.terminationDate"),
+      type: "date",
+    },
     {
       name: "hasMachineryLicense",
-      label: "Has machinery license",
+      label: t("employees.form.field.hasMachineryLicense"),
       type: "checkbox",
     },
     {
       name: "clothingSize",
-      label: "Clothing size",
+      label: t("employees.form.field.clothingSize"),
       type: "select",
       options: [
         { label: "XS", value: "XS" },
@@ -59,7 +73,7 @@ export default function EmployeeForm({ defaultValues, onSubmit, busy }: Props) {
     },
     {
       name: "gloveSize",
-      label: "Glove size",
+      label: t("employees.form.field.gloveSize"),
       type: "select",
       options: [
         { label: "6", value: "6" },
@@ -72,16 +86,18 @@ export default function EmployeeForm({ defaultValues, onSubmit, busy }: Props) {
     },
     {
       name: "shoeSize",
-      label: "Shoe size",
+      label: t("employees.form.field.shoeSize"),
       type: "number",
       props: { inputProps: { min: 20, max: 55 } },
     },
-
     {
       name: "jobPositionId",
-      label: "Job position",
+      label: t("employees.form.field.jobPositionId"),
       type: "select",
-      options: [{ label: "— None —", value: "" }, ...jobPositionOptions],
+      options: [
+        { label: t("employees.form.jobPosition.none"), value: "" },
+        ...jobPositionOptions,
+      ],
     },
   ];
 
@@ -117,7 +133,7 @@ export default function EmployeeForm({ defaultValues, onSubmit, busy }: Props) {
         ...defaultValues,
       }}
       busy={busy}
-      submitLabel="Spremi"
+      submitLabel={t("employees.form.submit")}
       onSubmit={onSubmit}
     />
   );

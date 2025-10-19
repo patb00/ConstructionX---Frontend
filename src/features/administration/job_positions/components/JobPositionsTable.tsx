@@ -16,8 +16,10 @@ import { useDeleteJobPosition } from "../hooks/useDeleteJobPosition";
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 import { PermissionGate, useCan } from "../../../../lib/permissions";
+import { useTranslation } from "react-i18next";
 
 export default function JobPositionsTable() {
+  const { t } = useTranslation();
   const { jobPositionsRows, jobPositionsColumns, error, isLoading } =
     useJobPositions();
   const deleteJobPosition = useDeleteJobPosition();
@@ -51,9 +53,28 @@ export default function JobPositionsTable() {
 
   const columnsWithActions = useMemo<GridColDef<JobPosition>[]>(() => {
     const base = jobPositionsColumns.map((c) => {
-      if (c.field === "name" || c.field === "description") {
+      if (c.field === "name") {
         return {
           ...c,
+          headerName: c.headerName ?? t("jobPositions.table.name"),
+          renderCell: (params) => (
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <span>{(params.value as string) ?? ""}</span>
+            </Box>
+          ),
+        } as GridColDef<JobPosition>;
+      }
+      if (c.field === "description") {
+        return {
+          ...c,
+          headerName: c.headerName ?? t("jobPositions.table.description"),
           renderCell: (params) => (
             <Box
               sx={{
@@ -80,7 +101,7 @@ export default function JobPositionsTable() {
     const actionsCol: GridActionsColDef<JobPosition> = {
       field: "actions",
       type: "actions",
-      headerName: "Akcije",
+      headerName: t("jobPositions.actions"),
       width: 140,
       getActions: (
         params: GridRowParams<JobPosition>
@@ -96,11 +117,11 @@ export default function JobPositionsTable() {
             <GridActionsCellItem
               key="edit"
               icon={
-                <Tooltip title="Uredi radno mjesto">
+                <Tooltip title={t("jobPositions.table.edit")}>
                   <EditIcon fontSize="small" />
                 </Tooltip>
               }
-              label="Uredi"
+              label={t("jobPositions.table.edit")}
               disabled={busy}
               onClick={() => navigate(`${id}/edit`)}
               showInMenu={false}
@@ -113,11 +134,11 @@ export default function JobPositionsTable() {
             <GridActionsCellItem
               key="delete"
               icon={
-                <Tooltip title="Izbriši radno mjesto">
+                <Tooltip title={t("jobPositions.table.delete")}>
                   <DeleteIcon fontSize="small" color="error" />
                 </Tooltip>
               }
-              label="Izbriši"
+              label={t("jobPositions.table.delete")}
               disabled={busy}
               onClick={() => requestDelete(row)}
               showInMenu={false}
@@ -136,12 +157,13 @@ export default function JobPositionsTable() {
     deleteJobPosition.isPending,
     navigate,
     requestDelete,
+    t,
   ]);
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
-  if (error) return <div>Radna mjesta.</div>;
-
+  if (error) return <div>{t("jobPositions.list.error")}</div>;
+  console.log("jobPositionsColumns", jobPositionsColumns);
   return (
     <>
       <ReusableDataGrid<JobPosition>
@@ -155,10 +177,10 @@ export default function JobPositionsTable() {
       <PermissionGate guard={{ permission: "Permission.JobPositions.Delete" }}>
         <ConfirmDialog
           open={confirmOpen}
-          title="Izbriši radno mjesto?"
-          description="Jeste li sigurni da želite izbrisati radno mjesto ?"
-          confirmText="Obriši"
-          cancelText="Odustani"
+          title={t("jobPositions.delete.title")}
+          description={t("jobPositions.delete.description")}
+          confirmText={t("jobPositions.delete.confirm")}
+          cancelText={t("jobPositions.delete.cancel")}
           loading={deleteJobPosition.isPending}
           disableBackdropClose
           onClose={handleCancel}

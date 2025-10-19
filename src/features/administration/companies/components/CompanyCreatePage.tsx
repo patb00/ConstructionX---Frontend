@@ -3,8 +3,10 @@ import { useAddCompany } from "../hooks/useAddCompany";
 import CompanyForm from "./CompanyForm";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function CompanyCreatePage() {
+  const { t } = useTranslation();
   const { mutateAsync, isPending } = useAddCompany();
   const navigate = useNavigate();
 
@@ -17,7 +19,7 @@ export default function CompanyCreatePage() {
         sx={{ mb: 2 }}
       >
         <Typography variant="h5" fontWeight={600}>
-          Kreiraj tvrtku
+          {t("companies.create.title")}
         </Typography>
         <Button
           size="small"
@@ -26,7 +28,7 @@ export default function CompanyCreatePage() {
           onClick={() => navigate("/app/administration/companies")}
           sx={{ color: "primary.main" }}
         >
-          Natrag
+          {t("companies.create.back")}
         </Button>
       </Stack>
       <Paper

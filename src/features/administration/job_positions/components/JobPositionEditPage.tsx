@@ -5,12 +5,15 @@ import { useJobPosition } from "../hooks/useJobPosition";
 import { useUpdateJobPosition } from "../hooks/useUpdateJobPosition";
 import JobPositionForm from "./JobPositionForm";
 import type { NewJobPositionRequest } from "..";
+import { useTranslation } from "react-i18next";
 
 export default function JobPositionEditPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
 
   const jobId = Number(id);
-  if (!Number.isFinite(jobId)) return <div>Neispravan URL (id)</div>;
+  if (!Number.isFinite(jobId))
+    return <div>{t("jobPositions.edit.invalidUrlId")}</div>;
 
   const navigate = useNavigate();
   const { data: job, isLoading, error } = useJobPosition(jobId);
@@ -22,13 +25,13 @@ export default function JobPositionEditPage() {
   };
 
   const handleSubmit = (values: NewJobPositionRequest) => {
-    const idForUpdate = typeof job?.id === "number" ? job.id : jobId; // ensure number
+    const idForUpdate = typeof job?.id === "number" ? job.id : jobId;
     updateJob({ id: idForUpdate, ...values } as any, {
       onSuccess: () => navigate("/app/administration/jobPositions"),
     });
   };
 
-  if (error) return <div>Neuspjelo učitavanje radnog mjesta.</div>;
+  if (error) return <div>{t("jobPositions.edit.loadError")}</div>;
 
   return (
     <Stack spacing={2}>
@@ -39,18 +42,16 @@ export default function JobPositionEditPage() {
         sx={{ mb: 2 }}
       >
         <Typography variant="h5" fontWeight={600}>
-          Uredi radno mjesto
+          {t("jobPositions.edit.title")}
         </Typography>
         <Button
           size="small"
           variant="outlined"
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate("/app/administration/jobPositions")}
-          sx={{
-            color: "primary.main",
-          }}
+          sx={{ color: "primary.main" }}
         >
-          Natrag
+          {t("jobPositions.edit.back")}
         </Button>
       </Stack>
 

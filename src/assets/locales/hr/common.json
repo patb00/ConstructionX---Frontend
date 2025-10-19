@@ -1,0 +1,776 @@
+{
+  "sidebar": {
+    "management": "Upravljanje",
+    "system": "Sustav"
+  },
+  "nav": {
+    "dashboard": "Nadzorna ploča",
+    "constructionSites": "Gradilišta",
+    "tenants": "Tenanti",
+    "companies": "Tvrtke",
+    "roles": "Uloge",
+    "users": "Korisnici",
+    "employees": "Zaposlenici",
+    "jobPositions": "Radna mjesta",
+    "tools": "Alati",
+    "toolCategories": "Kategorije alata"
+  },
+  "constructionSites": {
+    "list": {
+      "title": "Gradilišta",
+      "error": "Pogreška pri učitavanju gradilišta."
+    },
+    "create": {
+      "title": "Kreiraj gradilište",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi gradilište",
+      "back": "Natrag",
+      "invalidUrlId": "Neispravan URL (id)",
+      "loadError": "Neuspjelo učitavanje gradilišta."
+    },
+    "assign": {
+      "title": "Dodjela zaposlenika",
+      "loading": "Učitavanje…",
+      "loadError": "Neuspjelo učitavanje zaposlenika.",
+      "empty": "Nema dostupnih zaposlenika.",
+      "left": {
+        "employeesCount": "Zaposlenici ({{count}})",
+        "selectedCount": "Odabrano: {{count}}"
+      },
+      "global": {
+        "startLabel": "Početak (globalno)",
+        "endLabel": "Završetak (globalno)"
+      },
+      "chip": {
+        "custom": "Raspon: Prilagođeno",
+        "global": "Raspon: Globalno"
+      },
+      "grid": {
+        "employee": "Zaposlenik",
+        "start": "Početak",
+        "end": "Završetak",
+        "reset": "Reset"
+      },
+      "pickHint": "Odaberite zaposlenike s lijeve strane.",
+      "tooltip": {
+        "resetToGlobal": "Vrati na globalni raspon"
+      },
+      "validation": {
+        "invalidRange": "Provjerite datume (Početak ≤ Završetak)."
+      },
+      "actions": {
+        "cancel": "Odustani",
+        "save": "Spremi",
+        "saving": "Spremanje..."
+      }
+    },
+    "form": {
+      "field": {
+        "name": "Naziv",
+        "location": "Lokacija",
+        "startDate": "Početak",
+        "plannedEndDate": "Planirani završetak",
+        "siteManagerId": "Voditelj gradilišta",
+        "description": "Opis"
+      },
+      "manager": {
+        "none": "— Bez voditelja —"
+      },
+      "submit": "Spremi"
+    },
+    "actions": "Akcije",
+    "table": {
+      "edit": "Uredi",
+      "assignEmployees": "Dodijeli zaposlenike",
+      "delete": "Izbriši"
+    },
+    "delete": {
+      "title": "Izbriši gradilište?",
+      "description": "Jeste li sigurni da želite izbrisati gradilište?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    }
+  },
+  "common": {
+    "loading": "Učitavanje…",
+    "datagrid": {
+      "columnsButton": "Stupci",
+      "filterButton": "Filteri",
+      "densitySelector": "Gustoća",
+      "exportButton": "Izvoz",
+      "csv": "Izvoz CSV",
+      "print": "Ispis",
+      "quickFilterPlaceholder": "Pretraži…",
+      "noRowsLabel": "Nema redaka",
+      "noResultsOverlayLabel": "Nema pronađenih rezultata.",
+      "noColumnsOverlayLabel": "Nema stupaca",
+      "noColumnsOverlayManageColumns": "Upravljanje stupcima",
+      "emptyPivotOverlayLabel": "Dodajte polja u retke, stupce i vrijednosti za izradu pivot tablice",
+
+      "toolbarDensity": "Gustoća",
+      "toolbarDensityLabel": "Gustoća",
+      "toolbarDensityCompact": "Kompaktna",
+      "toolbarDensityStandard": "Standardna",
+      "toolbarDensityComfortable": "Udobna",
+
+      "toolbarColumns": "Stupci",
+      "toolbarColumnsLabel": "Odaberi stupce",
+
+      "toolbarFilters": "Filteri",
+      "toolbarFiltersLabel": "Prikaži filtere",
+      "toolbarFiltersTooltipHide": "Sakrij filtere",
+      "toolbarFiltersTooltipShow": "Prikaži filtere",
+      "toolbarFiltersTooltipActive": "{{count}} aktivan filter{{count, plural, one {} other {a}}}",
+
+      "toolbarQuickFilterPlaceholder": "Pretraži…",
+      "toolbarQuickFilterLabel": "Pretraga",
+      "toolbarQuickFilterDeleteIconLabel": "Očisti",
+
+      "toolbarExport": "Izvoz",
+      "toolbarExportLabel": "Izvoz",
+      "toolbarExportCSV": "Preuzmi kao CSV",
+      "toolbarExportPrint": "Ispis",
+      "toolbarExportExcel": "Preuzmi kao Excel",
+
+      "toolbarPivot": "Pivot",
+      "toolbarCharts": "Grafikoni",
+      "toolbarAssistant": "AI asistent",
+
+      "columnsManagementSearchTitle": "Pretraga",
+      "columnsManagementNoColumns": "Nema stupaca",
+      "columnsManagementShowHideAllText": "Prikaži/Sakrij sve",
+      "columnsManagementReset": "Poništi",
+      "columnsManagementDeleteIconLabel": "Očisti",
+
+      "filterPanelAddFilter": "Dodaj filter",
+      "filterPanelRemoveAll": "Ukloni sve",
+      "filterPanelDeleteIconLabel": "Izbriši",
+      "filterPanelLogicOperator": "Logički operator",
+      "filterPanelOperator": "Operator",
+      "filterPanelOperatorAnd": "I",
+      "filterPanelOperatorOr": "Ili",
+      "filterPanelColumns": "Stupci",
+      "filterPanelInputLabel": "Vrijednost",
+      "filterPanelInputPlaceholder": "Vrijednost filtra",
+
+      "filterOperatorContains": "sadrži",
+      "filterOperatorDoesNotContain": "ne sadrži",
+      "filterOperatorEquals": "jednako je",
+      "filterOperatorDoesNotEqual": "nije jednako",
+      "filterOperatorStartsWith": "počinje s",
+      "filterOperatorEndsWith": "završava s",
+      "filterOperatorIs": "je",
+      "filterOperatorNot": "nije",
+      "filterOperatorAfter": "je nakon",
+      "filterOperatorOnOrAfter": "je na ili nakon",
+      "filterOperatorBefore": "je prije",
+      "filterOperatorOnOrBefore": "je na ili prije",
+      "filterOperatorIsEmpty": "je prazno",
+      "filterOperatorIsNotEmpty": "nije prazno",
+      "filterOperatorIsAnyOf": "je bilo koji od",
+      "filterOperatorEqualSymbol": "=",
+      "filterOperatorNotEqualSymbol": "!=",
+      "filterOperatorGreaterThanSymbol": ">",
+      "filterOperatorGreaterOrEqualSymbol": ">=",
+      "filterOperatorLessThanSymbol": "<",
+      "filterOperatorLessOrEqualSymbol": "<=",
+
+      "headerFilterOperatorContains": "Sadrži",
+      "headerFilterOperatorDoesNotContain": "Ne sadrži",
+      "headerFilterOperatorEquals": "Jednako",
+      "headerFilterOperatorDoesNotEqual": "Nije jednako",
+      "headerFilterOperatorStartsWith": "Počinje s",
+      "headerFilterOperatorEndsWith": "Završava s",
+      "headerFilterOperatorIs": "Je",
+      "headerFilterOperatorNot": "Nije",
+      "headerFilterOperatorAfter": "Je nakon",
+      "headerFilterOperatorOnOrAfter": "Je na ili nakon",
+      "headerFilterOperatorBefore": "Je prije",
+      "headerFilterOperatorOnOrBefore": "Je na ili prije",
+      "headerFilterOperatorIsEmpty": "Prazno",
+      "headerFilterOperatorIsNotEmpty": "Nije prazno",
+      "headerFilterOperatorIsAnyOf": "Jedan od",
+      "headerFilterOperatorEqualSymbol": "Jednako",
+      "headerFilterOperatorNotEqualSymbol": "Nije jednako",
+      "headerFilterOperatorGreaterThanSymbol": "Veće od",
+      "headerFilterOperatorGreaterOrEqualSymbol": "Veće ili jednako",
+      "headerFilterOperatorLessThanSymbol": "Manje od",
+      "headerFilterOperatorLessOrEqualSymbol": "Manje ili jednako",
+      "headerFilterClear": "Očisti filter",
+
+      "filterValueAny": "bilo koji",
+      "filterValueTrue": "točno",
+      "filterValueFalse": "netočno",
+
+      "columnMenuLabel": "Izbornik",
+      "columnMenuAriaLabel": "Izbornik stupca {{columnName}}",
+      "columnMenuShowColumns": "Prikaži stupce",
+      "columnMenuManageColumns": "Upravljanje stupcima",
+      "columnMenuFilter": "Filter",
+      "columnMenuHideColumn": "Sakrij stupac",
+      "columnMenuUnsort": "Ukloni sortiranje",
+      "columnMenuSortAsc": "Sortiraj uzlazno",
+      "columnMenuSortDesc": "Sortiraj silazno",
+      "columnMenuManagePivot": "Upravljanje pivotom",
+      "columnMenuManageCharts": "Upravljanje grafikonima",
+
+      "columnHeaderFiltersTooltipActive": "{{count}} aktivan filter{{count, plural, one {} other {a}}}",
+      "columnHeaderFiltersLabel": "Prikaži filtere",
+      "columnHeaderSortIconLabel": "Sortiraj",
+
+      "footerRowSelected": "{{count, number}} odabran{{count, plural, one {} other {a}}} redak",
+      "footerTotalRows": "Ukupno redaka:",
+      "footerTotalVisibleRows": "{{visibleCount, number}} od {{totalCount, number}}",
+
+      "checkboxSelectionHeaderName": "Odabir potvrdnim okvirom",
+      "checkboxSelectionSelectAllRows": "Odaberi sve retke",
+      "checkboxSelectionUnselectAllRows": "Poništi odabir svih redaka",
+      "checkboxSelectionSelectRow": "Odaberi redak",
+      "checkboxSelectionUnselectRow": "Poništi odabir retka",
+
+      "booleanCellTrueLabel": "da",
+      "booleanCellFalseLabel": "ne",
+
+      "actionsCellMore": "više",
+
+      "pinToLeft": "Zakači lijevo",
+      "pinToRight": "Zakači desno",
+      "unpin": "Odkvači",
+
+      "treeDataGroupingHeaderName": "Grupa",
+      "treeDataExpand": "prikaži djecu",
+      "treeDataCollapse": "sakrij djecu",
+
+      "groupingColumnHeaderName": "Grupa",
+      "groupColumn": "Grupiraj po {{name}}",
+      "unGroupColumn": "Prestani grupirati po {{name}}",
+
+      "detailPanelToggle": "Prebaci detaljni panel",
+      "expandDetailPanel": "Proširi",
+      "collapseDetailPanel": "Sklopi",
+
+      "paginationRowsPerPage": "Redaka po stranici:",
+      "paginationDisplayedRows": "{{from}}–{{to}} od {{countLabel}}",
+      "paginationDisplayedRowsEstimated": "{{from}}–{{to}} od {{estimatedLabel}}",
+      "moreThanX": "više od {{to}}",
+      "aroundX": "otprilike {{estimated}}",
+      "paginationFirst": "Na prvu stranicu",
+      "paginationLast": "Na zadnju stranicu",
+      "paginationNext": "Na sljedeću stranicu",
+      "paginationPrevious": "Na prethodnu stranicu",
+
+      "rowReorderingHeaderName": "Promjena redoslijeda redaka",
+
+      "aggregationMenuItemHeader": "Agregacija",
+      "aggregationFunctionLabelNone": "nema",
+      "aggregationFunctionLabelSum": "zbroj",
+      "aggregationFunctionLabelAvg": "prosjek",
+      "aggregationFunctionLabelMin": "min",
+      "aggregationFunctionLabelMax": "max",
+      "aggregationFunctionLabelSize": "broj",
+
+      "pivotToggleLabel": "Pivot",
+      "pivotRows": "Redci",
+      "pivotColumns": "Stupci",
+      "pivotValues": "Vrijednosti",
+      "pivotCloseButton": "Zatvori postavke pivota",
+      "pivotSearchButton": "Traži polja",
+      "pivotSearchControlPlaceholder": "Traži polja",
+      "pivotSearchControlLabel": "Traži polja",
+      "pivotSearchControlClear": "Očisti pretragu",
+      "pivotNoFields": "Nema polja",
+      "pivotMenuMoveUp": "Pomakni gore",
+      "pivotMenuMoveDown": "Pomakni dolje",
+      "pivotMenuMoveToTop": "Na vrh",
+      "pivotMenuMoveToBottom": "Na dno",
+      "pivotMenuRows": "Redci",
+      "pivotMenuColumns": "Stupci",
+      "pivotMenuValues": "Vrijednosti",
+      "pivotMenuOptions": "Opcije polja",
+      "pivotMenuAddToRows": "Dodaj u Redke",
+      "pivotMenuAddToColumns": "Dodaj u Stupce",
+      "pivotMenuAddToValues": "Dodaj u Vrijednosti",
+      "pivotMenuRemove": "Ukloni",
+      "pivotDragToRows": "Povuci ovdje za redke",
+      "pivotDragToColumns": "Povuci ovdje za stupce",
+      "pivotDragToValues": "Povuci ovdje za vrijednosti",
+      "pivotYearColumnHeaderName": "(Godina)",
+      "pivotQuarterColumnHeaderName": "(Kvartal)",
+
+      "chartsNoCharts": "Nema dostupnih grafikona",
+      "chartsChartNotSelected": "Odaberite tip grafikona za konfiguraciju",
+      "chartsTabChart": "Grafikon",
+      "chartsTabFields": "Polja",
+      "chartsTabCustomize": "Prilagodi",
+      "chartsCloseButton": "Zatvori konfiguraciju grafikona",
+      "chartsSyncButtonLabel": "Sinkroniziraj grafikon",
+      "chartsSearchPlaceholder": "Traži polja",
+      "chartsSearchLabel": "Traži polja",
+      "chartsSearchClear": "Očisti pretragu",
+      "chartsNoFields": "Nema polja",
+      "chartsFieldBlocked": "Ovo polje se ne može dodati nijednom odjeljku",
+      "chartsCategories": "Kategorije",
+      "chartsSeries": "Serije",
+      "chartsMenuAddToDimensions": "Dodaj u {{dimensionLabel}}",
+      "chartsMenuAddToValues": "Dodaj u {{valuesLabel}}",
+      "chartsMenuMoveUp": "Gore",
+      "chartsMenuMoveDown": "Dolje",
+      "chartsMenuMoveToTop": "Na vrh",
+      "chartsMenuMoveToBottom": "Na dno",
+      "chartsMenuOptions": "Opcije polja",
+      "chartsMenuRemove": "Ukloni",
+      "chartsDragToDimensions": "Povuci ovdje za korištenje stupca kao {{dimensionLabel}}",
+      "chartsDragToValues": "Povuci ovdje za korištenje stupca kao {{valuesLabel}}",
+
+      "aiAssistantPanelTitle": "AI asistent",
+      "aiAssistantPanelClose": "Zatvori AI asistenta",
+      "aiAssistantPanelNewConversation": "Novi razgovor",
+      "aiAssistantPanelConversationHistory": "Povijest razgovora",
+      "aiAssistantPanelEmptyConversation": "Nema unosa",
+      "aiAssistantSuggestions": "Prijedlozi",
+
+      "promptFieldLabel": "Upit",
+      "promptFieldPlaceholder": "Upišite upit…",
+      "promptFieldPlaceholderWithRecording": "Upišite ili snimite upit…",
+      "promptFieldPlaceholderListening": "Slušam upit…",
+      "promptFieldSpeechRecognitionNotSupported": "Prepoznavanje govora nije podržano u ovom pregledniku",
+      "promptFieldSend": "Pošalji",
+      "promptFieldRecord": "Snimi",
+      "promptFieldStopRecording": "Zaustavi snimanje",
+
+      "promptRerun": "Pokreni ponovno",
+      "promptProcessing": "Obrada…",
+      "promptAppliedChanges": "Primijenjene promjene",
+
+      "promptChangeGroupDescription": "Grupiraj po {{column}}",
+      "promptChangeAggregationLabel": "{{column}} ({{aggregation}})",
+      "promptChangeAggregationDescription": "Agregiraj {{column}} ({{aggregation}})",
+      "promptChangeFilterLabelAnyOf": "{{column}} je jedan od: {{value}}",
+      "promptChangeFilterLabel": "{{column}} {{operator}} {{value}}",
+      "promptChangeFilterDescriptionAnyOf": "Filtriraj gdje je {{column}} jedan od: {{value}}",
+      "promptChangeFilterDescription": "Filtriraj gdje {{column}} {{operator}} {{value}}",
+      "promptChangeSortDescription": "Sortiraj po {{column}} ({{direction}})",
+      "promptChangePivotEnableLabel": "Pivot",
+      "promptChangePivotEnableDescription": "Omogući pivot",
+      "promptChangePivotColumnsLabel": "Stupci ({{count}})",
+      "promptChangePivotColumnsDescription": "{{column}}{{direction ? ` (${direction})` : ''}}",
+      "promptChangePivotRowsLabel": "Redci ({{count}})",
+      "promptChangePivotValuesLabel": "Vrijednosti ({{count}})",
+      "promptChangePivotValuesDescription": "{{column}} ({{aggregation}})"
+    },
+    "columns": {
+      "id": "Id",
+      "name": "Naziv",
+      "description": "Opis",
+      "actions": "Akcije",
+
+      "location": "Lokacija",
+      "startDate": "Početak",
+      "plannedEndDate": "Planirani završetak",
+      "siteManagerId": "ID voditelja gradilišta",
+      "siteManagerName": "Voditelj gradilišta",
+      "constructionSiteTools": "Alati gradilišta",
+      "constructionSiteEmployees": "Zaposlenici",
+
+      "createdDate": "Kreirano",
+      "createdBy": "Kreirao",
+      "modifiedDate": "Uređeno",
+      "modifiedBy": "Uredio",
+
+      "identifier": "Identifikator",
+      "connectionString": "Connection String",
+      "email": "Email",
+      "firstName": "Ime",
+      "lastName": "Prezime",
+      "validUntil": "Vrijedi do",
+      "isActive": "Aktivan",
+
+      "dateOfCreation": "Datum osnivanja",
+
+      "permissions": "Dozvole",
+      "userName": "Korisničko ime",
+
+      "oib": "OIB",
+      "dateOfBirth": "Datum rođenja",
+      "employmentDate": "Datum zaposlenja",
+      "terminationDate": "Datum prestanka rada",
+      "hasMachineryLicense": "Posjeduje dozvolu za rukovanje strojevima",
+      "clothingSize": "Veličina odjeće",
+      "gloveSize": "Veličina rukavica",
+      "shoeSize": "Veličina obuće",
+      "jobPosition": "Radno mjesto",
+
+      "inventoryNumber": "Inventarni broj",
+      "serialNumber": "Serijski broj",
+      "manufacturer": "Proizvođač",
+      "model": "Model",
+      "purchaseDate": "Datum nabave",
+      "purchasePrice": "Nabavna cijena",
+      "status": "Status",
+      "condition": "Stanje",
+      "toolCategoryId": "ID kategorije alata",
+      "toolCategoryName": "Kategorija alata",
+      "responsibleEmployeeId": "ID odgovorne osobe",
+      "responsibleEmployeeName": "Odgovorna osoba",
+      "responsibleEmployeeJobPosition": "Radno mjesto"
+    }
+  },
+  "tenants": {
+    "list": {
+      "title": "Tenanti",
+      "error": "Pogreška pri učitavanju tenanata."
+    },
+    "create": {
+      "title": "Kreiraj tenanta",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi pretplatu tenanta",
+      "back": "Natrag",
+      "invalidUrlId": "Neispravan URL (tenantId)",
+      "loadError": "Neuspjelo učitavanje tenanta.",
+      "tenantLabel": "Tenant",
+      "validUntil": "Vrijedi do",
+      "save": "Spremi"
+    },
+    "details": {
+      "loadError": "Neuspjelo učitavanje tenanta."
+    },
+    "form": {
+      "field": {
+        "identifier": "Identifikator",
+        "name": "Naziv",
+        "connectionString": "Connection String",
+        "email": "Email",
+        "validUntil": "Vrijedi do",
+        "firstName": "Ime",
+        "lastName": "Prezime",
+        "isActive": "Aktivan"
+      },
+      "submit": "Spremi"
+    },
+    "actions": "Akcije",
+    "table": {
+      "validUntil": "Vrijedi do",
+      "statusHeader": "Status",
+      "status": {
+        "active": "Aktivan",
+        "inactive": "Neaktivan"
+      },
+      "edit": "Uredi tenanta",
+      "activate": "Aktiviraj tenanta",
+      "deactivate": "Deaktiviraj tenanta"
+    }
+  },
+  "companies": {
+    "list": {
+      "title": "Tvrtke",
+      "error": "Pogreška pri učitavanju tvrtki."
+    },
+    "create": {
+      "title": "Kreiraj tvrtku",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi tvrtku",
+      "back": "Natrag",
+      "invalidUrlId": "Neispravan URL (id)",
+      "loadError": "Neuspjelo učitavanje tvrtke."
+    },
+    "details": {
+      "loadError": "Neuspjelo učitavanje tvrtke."
+    },
+    "form": {
+      "field": {
+        "name": "Naziv",
+        "dateOfCreation": "Datum osnivanja"
+      },
+      "submit": "Spremi"
+    },
+    "actions": "Akcije",
+    "table": {
+      "edit": "Uredi tvrtku",
+      "delete": "Izbriši tvrtku",
+      "dateOfCreation": "Datum osnivanja"
+    },
+    "delete": {
+      "title": "Obriši tvrtku?",
+      "description": "Jeste li sigurni da želite obrisati tvrtku?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    }
+  },
+  "employees": {
+    "list": {
+      "title": "Zaposlenici",
+      "error": "Pogreška pri učitavanju zaposlenika."
+    },
+    "create": {
+      "title": "Kreiraj zaposlenika",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi zaposlenika",
+      "back": "Natrag",
+      "invalidUrlId": "Neispravan URL (id)",
+      "loadError": "Neuspjelo učitavanje zaposlenika."
+    },
+    "form": {
+      "field": {
+        "firstName": "Ime",
+        "lastName": "Prezime",
+        "oib": "OIB",
+        "dateOfBirth": "Datum rođenja",
+        "employmentDate": "Datum zaposlenja",
+        "terminationDate": "Datum prestanka rada",
+        "hasMachineryLicense": "Posjeduje dozvolu za rukovanje strojevima",
+        "clothingSize": "Veličina odjeće",
+        "gloveSize": "Veličina rukavica",
+        "shoeSize": "Veličina obuće",
+        "jobPositionId": "Radno mjesto"
+      },
+      "jobPosition": {
+        "none": "— Bez radnog mjesta —"
+      },
+      "helper": {
+        "oibDigits": "11 znamenki"
+      },
+      "submit": "Spremi"
+    },
+    "actions": "Akcije",
+    "table": {
+      "edit": "Uredi zaposlenika",
+      "delete": "Izbriši zaposlenika"
+    },
+    "delete": {
+      "title": "Izbriši zaposlenika?",
+      "description": "Jeste li sigurni da želite izbrisati zaposlenika?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    }
+  },
+  "jobPositions": {
+    "list": {
+      "title": "Radna mjesta",
+      "error": "Pogreška pri učitavanju radnih mjesta."
+    },
+    "create": {
+      "title": "Kreiraj radno mjesto",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi radno mjesto",
+      "back": "Natrag",
+      "invalidUrlId": "Neispravan URL (id)",
+      "loadError": "Neuspjelo učitavanje radnog mjesta."
+    },
+    "form": {
+      "field": {
+        "name": "Naziv",
+        "description": "Opis"
+      },
+      "submit": "Spremi"
+    },
+    "actions": "Akcije",
+    "table": {
+      "name": "Naziv",
+      "description": "Opis",
+      "edit": "Uredi radno mjesto",
+      "delete": "Izbriši radno mjesto"
+    },
+    "delete": {
+      "title": "Obriši radno mjesto?",
+      "description": "Jeste li sigurni da želite obrisati radno mjesto?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    }
+  },
+  "roles": {
+    "list": {
+      "title": "Uloge",
+      "error": "Pogreška pri učitavanju uloga."
+    },
+    "create": {
+      "title": "Kreiraj ulogu",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi ulogu",
+      "back": "Natrag",
+      "invalidUrlId": "Neispravan URL (roleId)",
+      "loadError": "Neuspjelo učitavanje uloge."
+    },
+    "form": {
+      "field": {
+        "name": "Naziv",
+        "description": "Opis"
+      },
+      "submit": "Spremi"
+    },
+    "actions": "Akcije",
+    "table": {
+      "name": "Naziv",
+      "description": "Opis",
+      "edit": "Uredi ulogu",
+      "delete": "Izbriši ulogu",
+      "permissions": "Dozvole"
+    },
+    "delete": {
+      "title": "Obriši ulogu?",
+      "description": "Jeste li sigurni da želite obrisati ulogu?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    },
+    "permissions": {
+      "title": "{{name}} – Dozvole",
+      "back": "Natrag",
+      "tabLabel": "{{category}} ({{count}})",
+      "saving": "Spremanje...",
+      "update": "Ažuriraj dozvole",
+      "notFound": "Uloga nije pronađena.",
+      "noneAvailable": "Nema dostupnih dozvola."
+    }
+  },
+  "users": {
+    "list": {
+      "title": "Korisnici",
+      "error": "Pogreška pri učitavanju korisnika."
+    },
+    "create": {
+      "title": "Kreiraj korisnika",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi korisnika",
+      "back": "Natrag",
+      "invalidUrlId": "Neispravan URL (id)",
+      "loadError": "Neuspjelo učitavanje korisnika.",
+      "userLabel": "Korisnik"
+    },
+    "form": {
+      "field": {
+        "firstName": "Ime",
+        "lastName": "Prezime",
+        "email": "Email",
+        "phoneNumber": "Broj telefona",
+        "password": "Lozinka",
+        "confirmPassword": "Potvrdi lozinku",
+        "isActive": "Aktivan"
+      },
+      "submit": "Spremi"
+    },
+    "table": {
+      "firstName": "Ime",
+      "lastName": "Prezime",
+      "email": "Email",
+      "phoneNumber": "Broj telefona",
+      "status": "Status",
+      "statusActive": "Aktivan",
+      "statusInactive": "Neaktivan",
+      "actions": "Akcije",
+      "edit": "Uredi korisnika",
+      "delete": "Izbriši korisnika",
+      "activate": "Aktiviraj korisnika",
+      "deactivate": "Deaktiviraj korisnika",
+      "roles": "Uloge korisnika"
+    },
+    "delete": {
+      "title": "Izbriši korisnika?",
+      "description": "Jeste li sigurni da želite izbrisati korisnika?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    },
+    "rolesDialog": {
+      "title": "Upravljanje ulogama",
+      "loading": "Učitavanje...",
+      "error": "Neuspjelo učitavanje uloga.",
+      "empty": "Nema dostupnih uloga.",
+      "cancel": "Odustani",
+      "save": "Spremi",
+      "saving": "Spremanje..."
+    }
+  },
+  "tools": {
+    "list": {
+      "title": "Alati",
+      "error": "Greška prilikom učitavanja alata"
+    },
+    "actions": "Akcije",
+    "table": {
+      "edit": "Uredi",
+      "delete": "Obriši"
+    },
+    "create": {
+      "title": "Dodaj alat",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi alat",
+      "back": "Natrag",
+      "invalidUrlId": "Nevažeći ID alata u URL-u",
+      "loadError": "Nije moguće učitati podatke o alatu"
+    },
+    "delete": {
+      "title": "Brisanje alata",
+      "description": "Jeste li sigurni da želite obrisati ovaj alat?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    },
+    "form": {
+      "submit": "Spremi",
+      "field": {
+        "name": "Naziv",
+        "inventoryNumber": "Inventarni broj",
+        "serialNumber": "Serijski broj",
+        "manufacturer": "Proizvođač",
+        "model": "Model",
+        "purchaseDate": "Datum nabave",
+        "purchasePrice": "Nabavna cijena",
+        "status": "Status",
+        "condition": "Stanje",
+        "description": "Opis",
+        "toolCategoryId": "Kategorija alata",
+        "responsibleEmployeeId": "Odgovorna osoba"
+      },
+      "responsible": {
+        "none": "Nije dodijeljeno"
+      }
+    }
+  },
+  "toolCategories": {
+    "list": {
+      "title": "Kategorije alata",
+      "error": "Greška prilikom učitavanja kategorija"
+    },
+    "actions": "Akcije",
+    "table": {
+      "edit": "Uredi",
+      "delete": "Obriši"
+    },
+    "create": {
+      "title": "Dodaj kategoriju alata",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi kategoriju alata",
+      "back": "Natrag",
+      "invalidUrlId": "Nevažeći ID kategorije u URL-u",
+      "loadError": "Nije moguće učitati podatke o kategoriji"
+    },
+    "delete": {
+      "title": "Brisanje kategorije",
+      "description": "Jeste li sigurni da želite obrisati ovu kategoriju?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    },
+    "form": {
+      "submit": "Spremi",
+      "field": {
+        "name": "Naziv",
+        "description": "Opis"
+      }
+    }
+  }
+}

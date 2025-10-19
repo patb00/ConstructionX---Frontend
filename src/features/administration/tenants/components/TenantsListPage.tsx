@@ -2,13 +2,16 @@ import { Button, Stack, Typography, Paper } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import TenantsTable from "./TenantsTable";
 import { PermissionGate } from "../../../../lib/permissions";
+import { useTranslation } from "react-i18next";
 
 export default function TenantsListPage() {
+  const { t } = useTranslation();
+
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h5" fontWeight={600}>
-          Tenanti
+          {t("tenants.list.title")}
         </Typography>
 
         <PermissionGate guard={{ permission: "Permission.Tenants.Create" }}>
@@ -18,7 +21,7 @@ export default function TenantsListPage() {
             to="create"
             variant="contained"
           >
-            Kreiraj tenanta
+            {t("tenants.create.title")}
           </Button>
         </PermissionGate>
       </Stack>

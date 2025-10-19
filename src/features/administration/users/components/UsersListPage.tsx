@@ -2,13 +2,16 @@ import { Button, Stack, Typography, Paper } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import UsersTable from "./UsersTable";
 import { PermissionGate } from "../../../../lib/permissions";
+import { useTranslation } from "react-i18next";
 
 const UsersListPage = () => {
+  const { t } = useTranslation();
+
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h5" fontWeight={600}>
-          Korisnici
+          {t("users.list.title")}
         </Typography>
 
         <PermissionGate guard={{ permission: "Permission.Users.Create" }}>
@@ -18,7 +21,7 @@ const UsersListPage = () => {
             to="create"
             variant="contained"
           >
-            Kreiraj korisnika
+            {t("users.create.title")}
           </Button>
         </PermissionGate>
       </Stack>

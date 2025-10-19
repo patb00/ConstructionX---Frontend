@@ -3,10 +3,13 @@ import RoleForm from "./RoleForm";
 import { useAddRole } from "../hooks/useAddRole";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function RoleCreatePage() {
+  const { t } = useTranslation();
   const { mutateAsync, isPending } = useAddRole();
   const navigate = useNavigate();
+
   return (
     <Stack spacing={2}>
       <Stack
@@ -16,18 +19,16 @@ export default function RoleCreatePage() {
         sx={{ mb: 2 }}
       >
         <Typography variant="h5" fontWeight={600}>
-          Kreiraj ulogu
+          {t("roles.create.title")}
         </Typography>
         <Button
           size="small"
           variant="outlined"
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate("/app/administration/roles")}
-          sx={{
-            color: "primary.main",
-          }}
+          sx={{ color: "primary.main" }}
         >
-          Natrag
+          {t("roles.create.back")}
         </Button>
       </Stack>
       <Paper

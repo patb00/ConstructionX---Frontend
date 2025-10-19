@@ -4,10 +4,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useUpdateRole } from "../hooks/useUpdateRole";
 import { useRole } from "../hooks/useRole";
 import RoleForm from "./RoleForm";
+import { useTranslation } from "react-i18next";
 
 export default function RoleEditPage() {
+  const { t } = useTranslation();
   const { roleId } = useParams<{ roleId: string }>();
-  if (!roleId) return <div>Neispravan URL (roleId)</div>;
+  if (!roleId) return <div>{t("roles.edit.invalidUrlId")}</div>;
 
   const navigate = useNavigate();
   const { data: role, isLoading, error } = useRole(roleId);
@@ -23,7 +25,7 @@ export default function RoleEditPage() {
     navigate("/app/administration/roles");
   };
 
-  if (error) return <div>Neuspjelo učitavanje uloga.</div>;
+  if (error) return <div>{t("roles.edit.loadError")}</div>;
 
   return (
     <Stack spacing={2}>
@@ -34,18 +36,16 @@ export default function RoleEditPage() {
         sx={{ mb: 2 }}
       >
         <Typography variant="h5" fontWeight={600}>
-          Uredi ulogu
+          {t("roles.edit.title")}
         </Typography>
         <Button
           size="small"
           variant="outlined"
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate("/app/administration/roles")}
-          sx={{
-            color: "primary.main",
-          }}
+          sx={{ color: "primary.main" }}
         >
-          Natrag
+          {t("roles.edit.back")}
         </Button>
       </Stack>
 

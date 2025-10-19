@@ -4,11 +4,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import CompanyForm from "./CompanyForm";
 import { useCompany } from "../hooks/useCompany";
 import { useUpdateCompany } from "../hooks/useUpdateCompany";
+import { useTranslation } from "react-i18next";
 
 export default function CompanyEditPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const companyId = Number(id);
-  if (!Number.isFinite(companyId)) return <div>Neispravan URL (id)</div>;
+  if (!Number.isFinite(companyId))
+    return <div>{t("companies.edit.invalidUrlId")}</div>;
 
   const navigate = useNavigate();
   const { data: company, isLoading, error } = useCompany(companyId);
@@ -16,7 +19,7 @@ export default function CompanyEditPage() {
 
   const defaultValues = company && {
     name: company.name,
-    dateOfCreation: company.dateOfCreation?.slice(0, 10),
+    dateOfCreation: company.dateOfCreation?.slice(0, 16), // keep 'YYYY-MM-DDTHH:mm' for datetime-local
   };
 
   const handleSubmit = async (values: any) => {
@@ -24,7 +27,7 @@ export default function CompanyEditPage() {
   };
 
   if (error) {
-    return <div>Neuspjelo učitavanje tvrtki.</div>;
+    return <div>{t("companies.edit.loadError")}</div>;
   }
 
   return (
@@ -36,18 +39,16 @@ export default function CompanyEditPage() {
         sx={{ mb: 2 }}
       >
         <Typography variant="h5" fontWeight={600}>
-          Uredi tvrtku
+          {t("companies.edit.title")}
         </Typography>
         <Button
           size="small"
           variant="outlined"
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate("/app/administration/companies")}
-          sx={{
-            color: "primary.main",
-          }}
+          sx={{ color: "primary.main" }}
         >
-          Natrag
+          {t("companies.edit.back")}
         </Button>
       </Stack>
 

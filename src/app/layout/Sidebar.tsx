@@ -10,13 +10,13 @@ import {
   IconButton,
   useMediaQuery,
 } from "@mui/material";
-import { alpha } from "@mui/material/styles";
+import { alpha, useTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import { NavLink, useLocation } from "react-router-dom";
 import { FaHardHat } from "react-icons/fa";
-import { useTheme } from "@mui/material/styles";
 import { useAuthStore } from "../../features/auth/store/useAuthStore";
 import { NAV_ITEMS } from "../routes/config";
+import { useTranslation } from "react-i18next";
 
 export const SIDEBAR_WIDTH = 250;
 
@@ -31,6 +31,7 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const tenant = useAuthStore((s) => s.tenant);
   const permissions = useAuthStore((s) => s.permissions || []);
+  const { t } = useTranslation();
 
   const canSee = (guard?: { tenant?: "root" | "any"; permission?: string }) => {
     if (!guard) return true;
@@ -47,7 +48,7 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
     (i) => i.section === "SYSTEM" && canSee(i.guard)
   );
 
-  const renderSectionLabel = (text: string) => (
+  const renderSectionLabel = (key: string) => (
     <Typography
       variant="overline"
       sx={{
@@ -58,12 +59,12 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
         letterSpacing: 0.6,
       }}
     >
-      {text}
+      {t(key as any)}
     </Typography>
   );
 
   const renderNavList = (
-    items: { label: string; to: string; icon: React.ReactNode }[]
+    items: { labelKey: string; to: string; icon: React.ReactNode }[]
   ) => (
     <List dense disablePadding>
       {items.map((it) => {
@@ -102,7 +103,7 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
               {it.icon}
             </ListItemIcon>
             <ListItemText
-              primary={it.label}
+              primary={t(it.labelKey as any)}
               primaryTypographyProps={{ fontWeight: active ? 700 : 500 }}
             />
           </ListItemButton>
@@ -156,10 +157,10 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
       </Toolbar>
 
       <Box sx={{ flex: 1, overflowY: "auto", pb: 1, mt: 2 }}>
-        {renderSectionLabel("UPRAVLJANJE")}
+        {renderSectionLabel("sidebar.management")}
         {renderNavList(MANAGEMENT)}
 
-        {renderSectionLabel("SUSTAV")}
+        {renderSectionLabel("sidebar.system")}
         {renderNavList(SYSTEM)}
       </Box>
     </Box>
@@ -191,10 +192,10 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
         </Box>
 
         <Box sx={{ flex: 1, overflowY: "auto" }}>
-          <Box sx={{ px: 0 }}>{renderSectionLabel("UPRAVLJANJE")}</Box>
+          <Box sx={{ px: 0 }}>{renderSectionLabel("sidebar.management")}</Box>
           {renderNavList(MANAGEMENT)}
 
-          <Box sx={{ px: 0 }}>{renderSectionLabel("SUSTAV")}</Box>
+          <Box sx={{ px: 0 }}>{renderSectionLabel("sidebar.system")}</Box>
           {renderNavList(SYSTEM)}
         </Box>
       </Box>

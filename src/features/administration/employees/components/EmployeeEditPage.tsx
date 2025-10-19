@@ -6,12 +6,15 @@ import { useEmployee } from "../hooks/useEmployee";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import type { EmployeeFormValues } from "..";
 import { useAssignJobPosition } from "../hooks/useAssignJobPosition";
+import { useTranslation } from "react-i18next";
 
 export default function EmployeeEditPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const employeeId = Number(id);
-  if (!Number.isFinite(employeeId)) return <div>Neispravan URL (id)</div>;
+  if (!Number.isFinite(employeeId))
+    return <div>{t("employees.edit.invalidUrlId")}</div>;
 
   const { data: emp, isLoading, error } = useEmployee(employeeId);
   const update = useUpdateEmployee();
@@ -46,7 +49,6 @@ export default function EmployeeEditPage() {
       typeof emp.shoeSize === "number"
         ? emp.shoeSize
         : ("" as unknown as number),
-
     jobPositionId: normalizedJobPositionId,
   };
 
@@ -68,13 +70,13 @@ export default function EmployeeEditPage() {
     navigate("/app/administration/employees");
   };
 
-  if (error) return <div>Neuspjelo učitavanje zaposlenika.</div>;
+  if (error) return <div>{t("employees.edit.loadError")}</div>;
 
   return (
     <Stack spacing={2}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h5" fontWeight={600}>
-          Uredi zaposlenika
+          {t("employees.edit.title")}
         </Typography>
         <Button
           size="small"
@@ -83,7 +85,7 @@ export default function EmployeeEditPage() {
           onClick={() => navigate("/app/administration/employees")}
           sx={{ color: "primary.main" }}
         >
-          Natrag
+          {t("employees.edit.back")}
         </Button>
       </Stack>
       <Paper

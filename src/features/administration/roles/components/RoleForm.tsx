@@ -3,6 +3,7 @@ import {
   type FieldConfig,
 } from "../../../../components/ui/smartform/SmartForm";
 import type { NewRoleRequest } from "..";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   defaultValues?: Partial<NewRoleRequest>;
@@ -11,9 +12,15 @@ type Props = {
 };
 
 export default function RoleForm({ defaultValues, onSubmit, busy }: Props) {
+  const { t } = useTranslation();
+
   const fields: FieldConfig<NewRoleRequest>[] = [
-    { name: "name", label: "Name", required: true },
-    { name: "description", label: "Description", required: true },
+    { name: "name", label: t("roles.form.field.name"), required: true },
+    {
+      name: "description",
+      label: t("roles.form.field.description"),
+      required: true,
+    },
   ];
 
   return (
@@ -25,7 +32,7 @@ export default function RoleForm({ defaultValues, onSubmit, busy }: Props) {
         ...defaultValues,
       }}
       busy={busy}
-      submitLabel="Spremi"
+      submitLabel={t("roles.form.submit")}
       onSubmit={onSubmit}
     />
   );

@@ -4,26 +4,27 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useAddConstructionSite } from "../hooks/useAddConstructionSite";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
+import { useTranslation } from "react-i18next";
 
 export default function ConstructionSiteCreatePage() {
+  const { t } = useTranslation();
   const { mutateAsync, isPending } = useAddConstructionSite();
   const navigate = useNavigate();
   const { employeeRows } = useEmployees();
 
   const managerOptions = [
-    { value: null, label: "— Bez voditelja —" },
+    { value: null, label: t("constructionSites.form.manager.none") },
     ...(employeeRows ?? []).map((e: any) => ({
       value: e.id,
       label: `${e.firstName ?? ""} ${e.lastName ?? ""}`.trim(),
     })),
   ];
 
-  console.log(employeeRows);
   return (
     <Stack spacing={2}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h5" fontWeight={600}>
-          Kreiraj gradilište
+          {t("constructionSites.create.title")}
         </Typography>
         <Button
           size="small"
@@ -32,7 +33,7 @@ export default function ConstructionSiteCreatePage() {
           onClick={() => navigate("/app/constructionSites")}
           sx={{ color: "primary.main" }}
         >
-          Natrag
+          {t("constructionSites.create.back")}
         </Button>
       </Stack>
       <Paper

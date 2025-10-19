@@ -1,17 +1,20 @@
+// nav.tsx (the file you showed)
 import {
   FaTachometerAlt,
   FaKey,
   FaUserShield,
   FaIdBadge,
   FaBriefcase,
+  FaTools, // ⬅️ NEW
 } from "react-icons/fa";
 import { IoIosBusiness } from "react-icons/io";
 import { HiUsers } from "react-icons/hi";
-import type { ReactNode } from "react";
 import { LuConstruction } from "react-icons/lu";
+import { MdCategory } from "react-icons/md"; // ⬅️ NEW
+import type { ReactNode } from "react";
 
 export type NavItem = {
-  label: string;
+  labelKey: string; // i18n key
   to: string;
   icon: ReactNode;
   section: "MANAGEMENT" | "SYSTEM";
@@ -23,14 +26,13 @@ export type NavItem = {
 
 export const NAV_ITEMS: NavItem[] = [
   {
-    label: "Nadzorna ploča",
+    labelKey: "nav.dashboard",
     to: "/app/dashboard",
     icon: <FaTachometerAlt />,
     section: "MANAGEMENT",
   },
-
   {
-    label: "Gradilišta",
+    labelKey: "nav.constructionSites",
     to: "/app/constructionSites",
     icon: <LuConstruction />,
     section: "MANAGEMENT",
@@ -38,42 +40,58 @@ export const NAV_ITEMS: NavItem[] = [
   },
 
   {
-    label: "Tenanti",
+    labelKey: "nav.tools",
+    to: "/app/tools",
+    icon: <FaTools />,
+    section: "MANAGEMENT",
+    guard: { permission: "Permission.Tools.Read" },
+  },
+
+  {
+    labelKey: "nav.toolCategories",
+    to: "/app/tool-categories",
+    icon: <MdCategory />,
+    section: "MANAGEMENT",
+    guard: { permission: "Permission.ToolCategories.Read" },
+  },
+
+  {
+    labelKey: "nav.tenants",
     to: "/app/administration/tenants",
     icon: <FaKey />,
     section: "SYSTEM",
     guard: { tenant: "root" },
   },
   {
-    label: "Tvrtke",
+    labelKey: "nav.companies",
     to: "/app/administration/companies",
     icon: <IoIosBusiness />,
     section: "SYSTEM",
     guard: { permission: "Permission.Companies.Read" },
   },
   {
-    label: "Uloge",
+    labelKey: "nav.roles",
     to: "/app/administration/roles",
     icon: <FaUserShield />,
     section: "SYSTEM",
     guard: { permission: "Permission.Roles.Read" },
   },
   {
-    label: "Korisnici",
+    labelKey: "nav.users",
     to: "/app/administration/users",
     icon: <HiUsers />,
     section: "SYSTEM",
     guard: { permission: "Permission.Users.Read" },
   },
   {
-    label: "Zaposlenici",
+    labelKey: "nav.employees",
     to: "/app/administration/employees",
     icon: <FaIdBadge />,
     section: "SYSTEM",
     guard: { permission: "Permission.Employees.Read" },
   },
   {
-    label: "Radna mjesta",
+    labelKey: "nav.jobPositions",
     to: "/app/administration/jobPositions",
     icon: <FaBriefcase />,
     section: "SYSTEM",

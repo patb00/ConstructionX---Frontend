@@ -22,8 +22,10 @@ import { useActivateUser } from "../hooks/useActivateUser";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 import UserRolesDialog from "./UserRolesDialog";
 import { PermissionGate, useCan } from "../../../../lib/permissions";
+import { useTranslation } from "react-i18next";
 
 export default function UsersTable() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { usersColumns, usersRows, error, isLoading } = useUsers();
   const deleteUser = useDeleteUser();
@@ -61,9 +63,31 @@ export default function UsersTable() {
 
   const columnsWithActions = useMemo<GridColDef<User>[]>(() => {
     const base = usersColumns.map((c) => {
+      if (c.field === "firstName" && !c.headerName) {
+        return {
+          ...c,
+          headerName: t("users.table.firstName"),
+        } as GridColDef<User>;
+      }
+      if (c.field === "lastName" && !c.headerName) {
+        return {
+          ...c,
+          headerName: t("users.table.lastName"),
+        } as GridColDef<User>;
+      }
+      if (c.field === "email" && !c.headerName) {
+        return { ...c, headerName: t("users.table.email") } as GridColDef<User>;
+      }
+      if (c.field === "phoneNumber" && !c.headerName) {
+        return {
+          ...c,
+          headerName: t("users.table.phoneNumber"),
+        } as GridColDef<User>;
+      }
       if (c.field === "isActive") {
         return {
           ...c,
+          headerName: c.headerName ?? t("users.table.status"),
           align: "center",
           headerAlign: "center",
           renderCell: (params) => (
@@ -78,7 +102,11 @@ export default function UsersTable() {
             >
               <Chip
                 size="small"
-                label={params.row.isActive ? "Active" : "Inactive"}
+                label={
+                  params.row.isActive
+                    ? t("users.table.statusActive")
+                    : t("users.table.statusInactive")
+                }
                 color={params.row.isActive ? "success" : "default"}
                 variant={params.row.isActive ? "filled" : "outlined"}
               />
@@ -102,8 +130,8 @@ export default function UsersTable() {
     const actionsCol: GridActionsColDef<User> = {
       field: "actions",
       type: "actions",
-      headerName: "Akcije",
-      width: 280,
+      headerName: t("users.table.actions"),
+      width: 300,
       getActions: (
         params: GridRowParams<User>
       ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
@@ -124,11 +152,11 @@ export default function UsersTable() {
             <GridActionsCellItem
               key="edit"
               icon={
-                <Tooltip title="Uredi korisnika">
+                <Tooltip title={t("users.table.edit")}>
                   <EditIcon fontSize="small" />
                 </Tooltip>
               }
-              label="Uredi"
+              label={t("users.table.edit")}
               disabled={busy}
               onClick={() => navigate(`${u.id}/edit`)}
               showInMenu={false}
@@ -141,11 +169,11 @@ export default function UsersTable() {
             <GridActionsCellItem
               key="delete"
               icon={
-                <Tooltip title="Izbriši korisnika">
+                <Tooltip title={t("users.table.delete")}>
                   <DeleteIcon fontSize="small" color="error" />
                 </Tooltip>
               }
-              label="Obriši"
+              label={t("users.table.delete")}
               disabled={isDeleting}
               onClick={() => requestDelete(u)}
               showInMenu={false}
@@ -159,7 +187,7 @@ export default function UsersTable() {
               <GridActionsCellItem
                 key="deactivate"
                 icon={
-                  <Tooltip title="Deaktiviraj korisnika">
+                  <Tooltip title={t("users.table.deactivate")}>
                     {isToggling ? (
                       <CircularProgress size={16} />
                     ) : (
@@ -167,7 +195,7 @@ export default function UsersTable() {
                     )}
                   </Tooltip>
                 }
-                label="Deaktiviraj"
+                label={t("users.table.deactivate")}
                 disabled={busy}
                 onClick={() => toggleStatus(u)}
                 showInMenu={false}
@@ -178,7 +206,7 @@ export default function UsersTable() {
               <GridActionsCellItem
                 key="activate"
                 icon={
-                  <Tooltip title="Aktiviraj korisnika">
+                  <Tooltip title={t("users.table.activate")}>
                     {isToggling ? (
                       <CircularProgress size={16} />
                     ) : (
@@ -186,7 +214,7 @@ export default function UsersTable() {
                     )}
                   </Tooltip>
                 }
-                label="Aktiviraj"
+                label={t("users.table.activate")}
                 disabled={busy}
                 onClick={() => toggleStatus(u)}
                 showInMenu={false}
@@ -200,11 +228,11 @@ export default function UsersTable() {
             <GridActionsCellItem
               key="roles"
               icon={
-                <Tooltip title="Uloge korisnika">
+                <Tooltip title={t("users.table.roles")}>
                   <SecurityIcon fontSize="small" color="primary" />
                 </Tooltip>
               }
-              label="Uloge"
+              label={t("users.table.roles")}
               onClick={() => setRolesDialogUser(u.id)}
               showInMenu={false}
             />
@@ -226,10 +254,11 @@ export default function UsersTable() {
     updateStatus.variables,
     navigate,
     can,
+    t,
   ]);
 
-  if (error) return <div>Korisnici.</div>;
-
+  if (error) return <div>{t("users.list.error")}</div>;
+  console.log("usersColumns", usersColumns);
   return (
     <>
       <ReusableDataGrid<User>
@@ -244,10 +273,10 @@ export default function UsersTable() {
       <PermissionGate guard={{ permission: "Permission.Users.Delete" }}>
         <ConfirmDialog
           open={confirmOpen}
-          title="Izbriši korisnika?"
-          description="Jeste li sigurni da želite izbrisati korisnika?"
-          confirmText="Obriši"
-          cancelText="Odustani"
+          title={t("users.delete.title")}
+          description={t("users.delete.description")}
+          confirmText={t("users.delete.confirm")}
+          cancelText={t("users.delete.cancel")}
           loading={deleteUser.isPending}
           disableBackdropClose
           onClose={handleCancel}

@@ -3,8 +3,10 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useAddTenant } from "../hooks/useAddTenant";
 import TenantForm from "./TenantForm";
+import { useTranslation } from "react-i18next";
 
 export default function TenantCreatePage() {
+  const { t } = useTranslation();
   const { mutateAsync, isPending } = useAddTenant();
   const navigate = useNavigate();
 
@@ -17,7 +19,7 @@ export default function TenantCreatePage() {
         sx={{ mb: 2 }}
       >
         <Typography variant="h5" fontWeight={600}>
-          Kreiraj tenanta
+          {t("tenants.create.title")}
         </Typography>
         <Button
           size="small"
@@ -26,7 +28,7 @@ export default function TenantCreatePage() {
           onClick={() => navigate("/app/administration/tenants")}
           sx={{ color: "primary.main" }}
         >
-          Natrag
+          {t("tenants.create.back")}
         </Button>
       </Stack>
 

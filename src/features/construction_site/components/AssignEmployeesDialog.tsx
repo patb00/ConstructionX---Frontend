@@ -21,9 +21,9 @@ import { useEmployees } from "../../administration/employees/hooks/useEmployees"
 import { useAssignEmployeesToConstructionSite } from "../hooks/useAssignEmployeesToConstructionSite";
 import { useConstructionSite } from "../hooks/useConstructionSite";
 import { isValidRange, todayStr } from "../utils/dates";
-
 import { fullName } from "../utils/name";
 import { getCommonRange } from "../utils/ranges";
+import { useTranslation } from "react-i18next";
 
 type EmpRange = { from: string; to: string; custom: boolean };
 
@@ -38,6 +38,7 @@ export default function AssignEmployeesDialog({
   open,
   onClose,
 }: Props) {
+  const { t } = useTranslation();
   const { employeeRows = [], isLoading, isError } = useEmployees();
   const { data: site } = useConstructionSite(constructionSiteId);
   const assign = useAssignEmployeesToConstructionSite();
@@ -80,10 +81,9 @@ export default function AssignEmployeesDialog({
     for (const p of prior) {
       const key = fullName(p.firstName, p.lastName);
       if (!bucket.has(key)) bucket.set(key, []);
-      bucket.get(key)!.push({
-        from: p.dateFrom ?? todayStr(),
-        to: p.dateTo ?? todayStr(),
-      });
+      bucket
+        .get(key)!
+        .push({ from: p.dateFrom ?? todayStr(), to: p.dateTo ?? todayStr() });
     }
 
     for (const e of employeeRows) {
@@ -94,7 +94,6 @@ export default function AssignEmployeesDialog({
       if (list?.length) {
         const { from, to } = list.shift()!;
         resultIds.push(id);
-
         resultMap[id] = { from, to, custom: false };
       }
     }
@@ -105,17 +104,13 @@ export default function AssignEmployeesDialog({
   React.useEffect(() => {
     if (!open) return;
     if (!touched) {
-      // hydrate selection & ranges from server
       setSelected(preselected.ids);
       setRanges(preselected.map);
-
-      // ⬇️ also hydrate globals from hydrated rows
       const common = getCommonRange(preselected.ids, preselected.map);
       if (common) {
         setGlobalFrom(common.from);
         setGlobalTo(common.to);
       } else {
-        // optional: leave existing globals as-is or reset to today
         setGlobalFrom(todayStr());
         setGlobalTo(todayStr());
       }
@@ -169,9 +164,7 @@ export default function AssignEmployeesDialog({
           to: globalTo,
           custom: false,
         };
-        if (!r.custom) {
-          updated[id] = { ...r, from: nextFrom, to: nextTo };
-        }
+        if (!r.custom) updated[id] = { ...r, from: nextFrom, to: nextTo };
       });
       return updated;
     });
@@ -263,7 +256,7 @@ export default function AssignEmployeesDialog({
         sx: { border: (t) => `1px solid ${t.palette.primary.main}` },
       }}
     >
-      <DialogTitle>Dodjela zaposlenika</DialogTitle>
+      <DialogTitle>{t("constructionSites.assign.title")}</DialogTitle>
 
       <DialogContent dividers sx={{ p: 0 }}>
         {isLoading ? (
@@ -273,13 +266,13 @@ export default function AssignEmployeesDialog({
         ) : isError ? (
           <Box sx={{ p: 2 }}>
             <Typography color="error">
-              Neuspjelo učitavanje zaposlenika.
+              {t("constructionSites.assign.loadError")}
             </Typography>
           </Box>
         ) : employeeRows.length === 0 ? (
           <Box sx={{ p: 2 }}>
             <Typography color="text.secondary">
-              Nema dostupnih zaposlenika.
+              {t("constructionSites.assign.empty")}
             </Typography>
           </Box>
         ) : (
@@ -305,10 +298,14 @@ export default function AssignEmployeesDialog({
                 sx={{ mb: 1 }}
               >
                 <Typography variant="subtitle2" color="text.secondary">
-                  Zaposlenici ({employeeRows.length})
+                  {t("constructionSites.assign.left.employeesCount", {
+                    count: employeeRows.length,
+                  })}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  Odabrano: {selected.length}
+                  {t("constructionSites.assign.left.selectedCount", {
+                    count: selected.length,
+                  })}
                 </Typography>
               </Stack>
               <Divider sx={{ mb: 1 }} />
@@ -380,7 +377,7 @@ export default function AssignEmployeesDialog({
                 }}
               >
                 <TextField
-                  label="Početak (globalno)"
+                  label={t("constructionSites.assign.global.startLabel")}
                   type="date"
                   size="small"
                   value={globalFrom}
@@ -388,7 +385,7 @@ export default function AssignEmployeesDialog({
                   InputLabelProps={{ shrink: true }}
                 />
                 <TextField
-                  label="Završetak (globalno)"
+                  label={t("constructionSites.assign.global.endLabel")}
                   type="date"
                   size="small"
                   value={globalTo}
@@ -396,7 +393,11 @@ export default function AssignEmployeesDialog({
                   InputLabelProps={{ shrink: true }}
                 />
                 <Chip
-                  label={isCustom ? "Raspon: Prilagođeno" : "Raspon: Globalno"}
+                  label={
+                    isCustom
+                      ? t("constructionSites.assign.chip.custom")
+                      : t("constructionSites.assign.chip.global")
+                  }
                   color={isCustom ? "warning" : "default"}
                   sx={{ ml: { sm: "auto" } }}
                 />
@@ -414,16 +415,16 @@ export default function AssignEmployeesDialog({
                     fontSize: "0.75rem",
                   }}
                 >
-                  <Box> Zaposlenik </Box>
-                  <Box> Početak </Box>
-                  <Box> Završetak </Box>
-                  <Box> Reset </Box>
+                  <Box>{t("constructionSites.assign.grid.employee")}</Box>
+                  <Box>{t("constructionSites.assign.grid.start")}</Box>
+                  <Box>{t("constructionSites.assign.grid.end")}</Box>
+                  <Box>{t("constructionSites.assign.grid.reset")}</Box>
                 </Box>
               )}
 
               {selected.length === 0 ? (
                 <Typography color="text.secondary">
-                  Odaberite zaposlenike s lijeve strane.
+                  {t("constructionSites.assign.pickHint")}
                 </Typography>
               ) : (
                 <Stack spacing={1} sx={{ maxHeight: 420, overflowY: "auto" }}>
@@ -459,7 +460,6 @@ export default function AssignEmployeesDialog({
                           alignItems: "center",
                         }}
                       >
-                        {/* Name */}
                         <Box sx={{ minWidth: 0 }}>
                           <Typography
                             variant="body2"
@@ -485,7 +485,7 @@ export default function AssignEmployeesDialog({
                         </Box>
 
                         <TextField
-                          label="Početak"
+                          label={t("constructionSites.assign.grid.start")}
                           type="date"
                           size="small"
                           value={r.from}
@@ -495,7 +495,7 @@ export default function AssignEmployeesDialog({
                         />
 
                         <TextField
-                          label="Završetak"
+                          label={t("constructionSites.assign.grid.end")}
                           type="date"
                           size="small"
                           value={r.to}
@@ -505,12 +505,16 @@ export default function AssignEmployeesDialog({
                         />
 
                         <Box sx={{ display: "flex", justifyContent: "center" }}>
-                          <Tooltip title="Vrati na globalni raspon">
+                          <Tooltip
+                            title={t(
+                              "constructionSites.assign.tooltip.resetToGlobal"
+                            )}
+                          >
                             <span>
                               <IconButton
                                 size="small"
                                 onClick={() => resetEmpToGlobal(id)}
-                                disabled={isRowGloballySynced} // <— compare dates, not r.custom
+                                disabled={isRowGloballySynced}
                               >
                                 <RestartAltIcon fontSize="small" />
                               </IconButton>
@@ -534,7 +538,7 @@ export default function AssignEmployeesDialog({
             color="error"
             sx={{ mr: "auto", pl: 1 }}
           >
-            Provjerite datume (Početak ≤ Završetak).
+            {t("constructionSites.assign.validation.invalidRange")}
           </Typography>
         )}
 
@@ -551,7 +555,7 @@ export default function AssignEmployeesDialog({
             },
           }}
         >
-          Odustani
+          {t("constructionSites.assign.actions.cancel")}
         </Button>
         <Button
           onClick={handleSave}
@@ -563,7 +567,9 @@ export default function AssignEmployeesDialog({
             (selected.length > 0 && !allRangesValid)
           }
         >
-          {assign.isPending ? "Spremanje..." : "Spremi"}
+          {assign.isPending
+            ? t("constructionSites.assign.actions.saving")
+            : t("constructionSites.assign.actions.save")}
         </Button>
       </DialogActions>
     </Dialog>

@@ -1,12 +1,12 @@
 import { useParams } from "react-router-dom";
 import { Paper, Stack, Typography } from "@mui/material";
 import { useTenant } from "../hooks/useTenant";
+import { useTranslation } from "react-i18next";
 
 export default function TenantDetailsPage() {
+  const { t } = useTranslation();
   const { tenantId } = useParams<{ tenantId: string }>();
   const { data, isLoading, error } = useTenant(tenantId);
-
-  console.log("data", data);
 
   return (
     <Stack spacing={2}>
@@ -17,8 +17,12 @@ export default function TenantDetailsPage() {
         elevation={0}
         sx={{ p: 2, border: (t) => `1px solid ${t.palette.divider}` }}
       >
-        {isLoading && <Typography>Loading…</Typography>}
-        {error && <Typography color="error">Neuspjelo učitavanje.</Typography>}
+        {isLoading && <Typography>{t("common.loading")}</Typography>}
+        {error && (
+          <Typography color="error">
+            {t("tenants.details.loadError")}
+          </Typography>
+        )}
         {data && (
           <>
             <pre style={{ margin: 0 }}>{JSON.stringify(data, null, 2)}</pre>

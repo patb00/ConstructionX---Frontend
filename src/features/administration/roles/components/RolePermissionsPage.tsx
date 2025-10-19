@@ -14,6 +14,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useUpdateRolePermissions } from "../hooks/useUpdateRolePermission";
 import { usePermissions } from "../hooks/usePermissions";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useTranslation } from "react-i18next";
 
 function groupPermissions(perms: string[] = []) {
   const groups: Record<string, string[]> = {};
@@ -26,6 +27,7 @@ function groupPermissions(perms: string[] = []) {
 }
 
 export default function RolePermissionsPage() {
+  const { t } = useTranslation();
   const { roleId } = useParams<{ roleId: string }>();
   const { data: role, isLoading: roleLoading } = useRolesFull(roleId!);
   const { data: permissionsData, isLoading: permsLoading } = usePermissions();
@@ -68,10 +70,10 @@ export default function RolePermissionsPage() {
   };
 
   if (roleLoading || permsLoading)
-    return <Typography>Učitavanje...</Typography>;
-  if (!role) return <Typography>Uloga nije pronađena.</Typography>;
+    return <Typography>{t("common.loading")}</Typography>;
+  if (!role) return <Typography>{t("roles.permissions.notFound")}</Typography>;
   if (allPermissions.length === 0)
-    return <Typography>Nema dostupnih dozvola.</Typography>;
+    return <Typography>{t("roles.permissions.noneAvailable")}</Typography>;
 
   return (
     <Stack spacing={2}>
@@ -81,17 +83,17 @@ export default function RolePermissionsPage() {
         justifyContent="space-between"
         sx={{ mb: 2 }}
       >
-        <Typography variant="h5">{role.name} – Dozvole</Typography>{" "}
+        <Typography variant="h5">
+          {t("roles.permissions.title", { name: role.name })}
+        </Typography>
         <Button
           size="small"
           variant="outlined"
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate("/app/administration/roles")}
-          sx={{
-            color: "primary.main",
-          }}
+          sx={{ color: "primary.main" }}
         >
-          Natrag
+          {t("roles.permissions.back")}
         </Button>
       </Stack>
 
@@ -103,7 +105,13 @@ export default function RolePermissionsPage() {
         allowScrollButtonsMobile
       >
         {categories.map((cat) => (
-          <Tab key={cat} label={`${cat} (${groups[cat].length})`} />
+          <Tab
+            key={cat}
+            label={t("roles.permissions.tabLabel", {
+              category: cat,
+              count: groups[cat].length,
+            })}
+          />
         ))}
       </Tabs>
 
@@ -131,7 +139,9 @@ export default function RolePermissionsPage() {
           onClick={handleUpdate}
           disabled={updatePermissions.isPending}
         >
-          {updatePermissions.isPending ? "Spremanje..." : "Ažuriraj dozvole"}
+          {updatePermissions.isPending
+            ? t("roles.permissions.saving")
+            : t("roles.permissions.update")}
         </Button>
       </Box>
     </Stack>

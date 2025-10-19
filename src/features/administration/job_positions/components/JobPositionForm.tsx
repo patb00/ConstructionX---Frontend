@@ -3,6 +3,7 @@ import {
   type FieldConfig,
 } from "../../../../components/ui/smartform/SmartForm";
 import type { NewJobPositionRequest } from "..";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   defaultValues?: Partial<NewJobPositionRequest>;
@@ -15,9 +16,11 @@ export default function JobPositionForm({
   onSubmit,
   busy,
 }: Props) {
+  const { t } = useTranslation();
+
   const fields: FieldConfig<NewJobPositionRequest>[] = [
-    { name: "name", label: "Name", required: true },
-    { name: "description", label: "Description", required: true },
+    { name: "name", label: t("jobPositions.form.field.name"), required: true },
+    { name: "description", label: t("jobPositions.form.field.description") }, // optional per your choice
   ];
 
   return (
@@ -29,7 +32,7 @@ export default function JobPositionForm({
         ...defaultValues,
       }}
       busy={busy}
-      submitLabel="Spremi"
+      submitLabel={t("jobPositions.form.submit")}
       onSubmit={onSubmit}
     />
   );

@@ -2,13 +2,16 @@ import { Button, Stack, Typography, Paper } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import RolesTable from "./RolesTable";
 import { PermissionGate } from "../../../../lib/permissions";
+import { useTranslation } from "react-i18next";
 
-const RoleslListPage = () => {
+const RolesListPage = () => {
+  const { t } = useTranslation();
+
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h5" fontWeight={600}>
-          Uloge
+          {t("roles.list.title")}
         </Typography>
 
         <PermissionGate guard={{ permission: "Permission.Roles.Create" }}>
@@ -18,7 +21,7 @@ const RoleslListPage = () => {
             to="create"
             variant="contained"
           >
-            Kreiraj ulogu
+            {t("roles.create.title")}
           </Button>
         </PermissionGate>
       </Stack>
@@ -30,4 +33,4 @@ const RoleslListPage = () => {
   );
 };
 
-export default RoleslListPage;
+export default RolesListPage;

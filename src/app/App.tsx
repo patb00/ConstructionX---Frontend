@@ -4,6 +4,7 @@ import { router } from "./routes/router";
 import { queryClient } from "./providers/QueryProvider";
 import { useAuthStore } from "../features/auth/store/useAuthStore";
 import { useEffect } from "react";
+import "./providers/LocalizationProvider/i18n";
 
 export function App() {
   const loadFromCookies = useAuthStore((s) => s.loadFromCookies);

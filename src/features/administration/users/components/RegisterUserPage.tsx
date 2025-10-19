@@ -3,8 +3,10 @@ import UserForm from "./UserForm";
 import { useRegisterUser } from "../hooks/useRegisterUser";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-export default function RegiserUserPage() {
+export default function RegisterUserPage() {
+  const { t } = useTranslation();
   const { mutateAsync, isPending } = useRegisterUser();
   const navigate = useNavigate();
 
@@ -12,7 +14,7 @@ export default function RegiserUserPage() {
     <Stack spacing={2}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h5" fontWeight={600}>
-          Kreiraj korisnika
+          {t("users.create.title")}
         </Typography>
         <Button
           size="small"
@@ -21,7 +23,7 @@ export default function RegiserUserPage() {
           onClick={() => navigate("/app/administration/users")}
           sx={{ color: "primary.main" }}
         >
-          Natrag
+          {t("users.create.back")}
         </Button>
       </Stack>
       <Paper

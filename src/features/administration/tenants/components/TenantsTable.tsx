@@ -18,8 +18,10 @@ import { useTenants } from "../hooks/useTenants";
 import type { Tenant } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import { useCan } from "../../../../lib/permissions";
+import { useTranslation } from "react-i18next";
 
 export default function TenantsTable() {
+  const { t } = useTranslation();
   const { tenantsRows, tenantsColumns, error, isLoading } = useTenants();
   const activate = useActivateTenant();
   const deactivate = useDeactivateTenant();
@@ -31,7 +33,7 @@ export default function TenantsTable() {
       if (c.field === "validUpToDate") {
         return {
           ...c,
-          headerName: c.headerName ?? "Vrijedi do",
+          headerName: c.headerName ?? t("tenants.table.validUntil"),
           flex: c.flex ?? 1.6,
           minWidth: c.minWidth ?? 220,
           sortable: true,
@@ -41,9 +43,9 @@ export default function TenantsTable() {
           sortComparator: (a, b) =>
             new Date(a as any).getTime() - new Date(b as any).getTime(),
           renderCell: (params) => {
-            const t = params.row;
-            const val = t.validUpToDate
-              ? new Date(t.validUpToDate).toLocaleString()
+            const tRow = params.row;
+            const val = tRow.validUpToDate
+              ? new Date(tRow.validUpToDate).toLocaleString()
               : "";
             return (
               <Box
@@ -63,14 +65,20 @@ export default function TenantsTable() {
       if (c.field === "isActive") {
         return {
           ...c,
-          headerName: c.headerName ?? "Status",
+          headerName: c.headerName ?? t("tenants.table.statusHeader"),
           flex: c.flex ?? 1,
           minWidth: c.minWidth ?? 140,
           align: "center",
           headerAlign: "center",
           type: "singleSelect",
-          valueOptions: ["Active", "Inactive"],
-          valueGetter: (_value, row) => (row.isActive ? "Active" : "Inactive"),
+          valueOptions: [
+            t("tenants.table.status.active"),
+            t("tenants.table.status.inactive"),
+          ],
+          valueGetter: (_value, row) =>
+            row.isActive
+              ? t("tenants.table.status.active")
+              : t("tenants.table.status.inactive"),
           renderCell: (params) => {
             const active = params.row.isActive;
             return (
@@ -85,7 +93,11 @@ export default function TenantsTable() {
               >
                 <Chip
                   size="small"
-                  label={active ? "Active" : "Inactive"}
+                  label={
+                    active
+                      ? t("tenants.table.status.active")
+                      : t("tenants.table.status.inactive")
+                  }
                   color={active ? "success" : "default"}
                   variant={active ? "filled" : "outlined"}
                   sx={{ lineHeight: 1 }}
@@ -108,20 +120,20 @@ export default function TenantsTable() {
     const actionsCol: GridActionsColDef<Tenant> = {
       field: "actions",
       type: "actions",
-      headerName: "Akcije",
+      headerName: t("tenants.actions"),
       width: 220,
       sortable: false,
       filterable: false,
       getActions: (
         params: GridRowParams<Tenant>
       ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
-        const t = params.row;
+        const tRow = params.row;
 
         const isActivating =
-          activate.isPending && (activate.variables as any) === t.identifier;
+          activate.isPending && (activate.variables as any) === tRow.identifier;
         const isDeactivating =
           deactivate.isPending &&
-          (deactivate.variables as any) === t.identifier;
+          (deactivate.variables as any) === tRow.identifier;
 
         const items: React.ReactElement<GridActionsCellItemProps>[] = [];
 
@@ -130,24 +142,24 @@ export default function TenantsTable() {
             <GridActionsCellItem
               key="edit"
               icon={
-                <Tooltip title="Uredi tenanta">
+                <Tooltip title={t("tenants.table.edit")}>
                   <EditIcon fontSize="small" />
                 </Tooltip>
               }
-              label="Uredi tenanta"
-              onClick={() => navigate(`${t.identifier}/edit`)}
+              label={t("tenants.table.edit")}
+              onClick={() => navigate(`${tRow.identifier}/edit`)}
               showInMenu={false}
             />
           );
         }
 
         if (canToggleActive) {
-          if (t.isActive) {
+          if (tRow.isActive) {
             items.push(
               <GridActionsCellItem
                 key="deactivate"
                 icon={
-                  <Tooltip title="Deaktiviraj tenanta">
+                  <Tooltip title={t("tenants.table.deactivate")}>
                     {isDeactivating ? (
                       <CircularProgress size={16} />
                     ) : (
@@ -155,9 +167,9 @@ export default function TenantsTable() {
                     )}
                   </Tooltip>
                 }
-                label="Deaktiviraj tenanta"
+                label={t("tenants.table.deactivate")}
                 disabled={isDeactivating}
-                onClick={() => deactivate.mutate(t.identifier)}
+                onClick={() => deactivate.mutate(tRow.identifier)}
                 showInMenu={false}
               />
             );
@@ -166,7 +178,7 @@ export default function TenantsTable() {
               <GridActionsCellItem
                 key="activate"
                 icon={
-                  <Tooltip title="Aktiviraj tenanta">
+                  <Tooltip title={t("tenants.table.activate")}>
                     {isActivating ? (
                       <CircularProgress size={16} />
                     ) : (
@@ -174,9 +186,9 @@ export default function TenantsTable() {
                     )}
                   </Tooltip>
                 }
-                label="Aktiviraj tenanta"
+                label={t("tenants.table.activate")}
                 disabled={isActivating}
-                onClick={() => activate.mutate(t.identifier)}
+                onClick={() => activate.mutate(tRow.identifier)}
                 showInMenu={false}
               />
             );
@@ -196,11 +208,14 @@ export default function TenantsTable() {
     deactivate.isPending,
     deactivate.variables,
     navigate,
+    t,
   ]);
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
-  if (error) return <div>Tenanti.</div>;
+  if (error) return <div>{t("tenants.list.error")}</div>;
+
+  console.log("tenantsColumns", tenantsColumns);
 
   return (
     <ReusableDataGrid<Tenant>

@@ -1,4 +1,3 @@
-// store/useAuthStore.ts
 import { create } from "zustand";
 import { deleteCookie, getCookie, setCookie } from "../../../lib/cookie";
 import { isExpired, decodeJwt } from "../../../lib/jwt";
@@ -7,7 +6,7 @@ const ACCESS_COOKIE = "auth_jwt";
 const REFRESH_COOKIE = "auth_rtok";
 const REFRESH_EXP_COOKIE = "auth_rtok_exp";
 const TENANT_COOKIE = "auth_tenant";
-const MCP_COOKIE = "auth_mcp"; // NEW
+const MCP_COOKIE = "auth_mcp";
 
 export type AuthState = {
   jwt: string | null;
@@ -46,9 +45,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   setPermissions: (perms) => set({ permissions: perms ?? [] }),
 
-  // ⬇️ persist + clear cookie alongside the store flag
   setMustChangePassword: (v) => {
-    if (v) setCookie(MCP_COOKIE, "1", { days: 1 }); // short-lived is fine
+    if (v) setCookie(MCP_COOKIE, "1", { days: 1 });
     else deleteCookie(MCP_COOKIE);
     set({ mustChangePassword: !!v });
   },
@@ -58,7 +56,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const rt = getCookie(REFRESH_COOKIE);
     const exp = getCookie(REFRESH_EXP_COOKIE);
     const tenantCookie = getCookie(TENANT_COOKIE);
-    const mcp = getCookie(MCP_COOKIE); // NEW
+    const mcp = getCookie(MCP_COOKIE);
 
     let tenant = tenantCookie || null;
     let permissions: string[] = [];
@@ -86,7 +84,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       permissions,
       userId,
       isAuthenticated: ok,
-      mustChangePassword: !!mcp, // NEW -> restore flag on refresh
+      mustChangePassword: !!mcp,
       hasHydrated: true,
     });
   },
@@ -118,7 +116,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     deleteCookie(REFRESH_COOKIE);
     deleteCookie(REFRESH_EXP_COOKIE);
     deleteCookie(TENANT_COOKIE);
-    deleteCookie(MCP_COOKIE); // NEW
+    deleteCookie(MCP_COOKIE);
     set({
       jwt: null,
       refreshToken: null,

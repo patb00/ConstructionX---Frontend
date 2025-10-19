@@ -3,15 +3,17 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
 import ConstructionSiteForm from "./ConstructionSiteForm";
 import type { NewConstructionSiteRequest } from "..";
-
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { useConstructionSite } from "../hooks/useConstructionSite";
 import { useUpdateConstructionSite } from "../hooks/useUpdateConstructionSite";
+import { useTranslation } from "react-i18next";
 
 export default function ConstructionSiteEditPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const siteId = Number(id);
-  if (!Number.isFinite(siteId)) return <div>Neispravan URL (id)</div>;
+  if (!Number.isFinite(siteId))
+    return <div>{t("constructionSites.edit.invalidUrlId")}</div>;
 
   const navigate = useNavigate();
   const {
@@ -23,7 +25,7 @@ export default function ConstructionSiteEditPage() {
 
   const { employeeRows = [], isLoading: employeesLoading } = useEmployees();
   const managerOptions = [
-    { value: null, label: "— Bez voditelja —" },
+    { value: null, label: t("constructionSites.form.manager.none") },
     ...(employeeRows ?? []).map((e: any) => ({
       value: e.id,
       label: `${e.firstName ?? ""} ${e.lastName ?? ""}`.trim(),
@@ -46,7 +48,7 @@ export default function ConstructionSiteEditPage() {
     });
   };
 
-  if (error) return <div>Neuspjelo učitavanje gradilišta.</div>;
+  if (error) return <div>{t("constructionSites.edit.loadError")}</div>;
 
   return (
     <Stack spacing={2}>
@@ -57,7 +59,7 @@ export default function ConstructionSiteEditPage() {
         sx={{ mb: 2 }}
       >
         <Typography variant="h5" fontWeight={600}>
-          Uredi gradilište
+          {t("constructionSites.edit.title")}
         </Typography>
         <Button
           size="small"
@@ -66,7 +68,7 @@ export default function ConstructionSiteEditPage() {
           onClick={() => navigate("/app/constructionSites")}
           sx={{ color: "primary.main" }}
         >
-          Natrag
+          {t("constructionSites.edit.back")}
         </Button>
       </Stack>
 

@@ -37,3 +37,15 @@ export interface AssignEmployeesRequest {
   constructionSiteId: number;
   employees: AssignEmployeeItem[];
 }
+
+export interface AssignToolItem {
+  toolId: number;
+  dateFrom: string;
+  dateTo: string;
+  responsibleEmployeeId: number;
+}
+
+export interface AssignToolsRequest {
+  constructionSiteId: number;
+  tools: AssignToolItem[];
+}

@@ -4,8 +4,8 @@ import {
   GridActionsCellItem,
   type GridColDef,
   type GridActionsColDef,
-  type GridActionsCellItemProps,
   type GridRowParams,
+  type GridActionsCellItemProps,
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -17,8 +17,10 @@ import { useRoles } from "../hooks/useRoles";
 import type { Role } from "..";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 import { PermissionGate, useCan } from "../../../../lib/permissions";
+import { useTranslation } from "react-i18next";
 
 export default function RolesTable() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { rolesRows, rolesColumns, error, isLoading } = useRoles();
   const deleteRole = useDeleteRole();
@@ -50,9 +52,28 @@ export default function RolesTable() {
 
   const columnsWithActions = useMemo<GridColDef<Role>[]>(() => {
     const base = rolesColumns.map((c) => {
-      if (c.field === "name" || c.field === "description") {
+      if (c.field === "name") {
         return {
           ...c,
+          headerName: c.headerName ?? t("roles.table.name"),
+          renderCell: (params) => (
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <span>{(params.value as string) ?? ""}</span>
+            </Box>
+          ),
+        } as GridColDef<Role>;
+      }
+      if (c.field === "description") {
+        return {
+          ...c,
+          headerName: c.headerName ?? t("roles.table.description"),
           renderCell: (params) => (
             <Box
               sx={{
@@ -76,14 +97,13 @@ export default function RolesTable() {
       can({ permission: "Permission.RoleClaims.Update" }) ||
       can({ permission: "Permission.RoleClaims.Read" });
 
-    // if user has no access to any actions
     if (!(canEdit || canDelete || canManageClaims)) return base;
     if (base.some((c) => c.field === "actions")) return base;
 
     const actionsCol: GridActionsColDef<Role> = {
       field: "actions",
       type: "actions",
-      headerName: "Akcije",
+      headerName: t("roles.actions"),
       width: 200,
       getActions: (
         params: GridRowParams<Role>
@@ -97,11 +117,11 @@ export default function RolesTable() {
             <GridActionsCellItem
               key="edit"
               icon={
-                <Tooltip title="Uredi ulogu">
+                <Tooltip title={t("roles.table.edit")}>
                   <EditIcon fontSize="small" />
                 </Tooltip>
               }
-              label="Uredi ulogu"
+              label={t("roles.table.edit")}
               disabled={busy}
               onClick={() => navigate(`${row.id}/edit`)}
               showInMenu={false}
@@ -114,11 +134,11 @@ export default function RolesTable() {
             <GridActionsCellItem
               key="delete"
               icon={
-                <Tooltip title="Izbriši ulogu">
+                <Tooltip title={t("roles.table.delete")}>
                   <DeleteIcon fontSize="small" color="error" />
                 </Tooltip>
               }
-              label="Obriši"
+              label={t("roles.table.delete")}
               disabled={busy}
               onClick={() => requestDelete(row)}
               showInMenu={false}
@@ -131,11 +151,11 @@ export default function RolesTable() {
             <GridActionsCellItem
               key="permissions"
               icon={
-                <Tooltip title="Dozvole (Permissions)">
+                <Tooltip title={t("roles.table.permissions")}>
                   <SecurityIcon fontSize="small" color="primary" />
                 </Tooltip>
               }
-              label="Permissions"
+              label={t("roles.table.permissions")}
               onClick={() =>
                 navigate(`/app/administration/roles/${row.id}/permissions`)
               }
@@ -149,12 +169,12 @@ export default function RolesTable() {
     };
 
     return [...base, actionsCol];
-  }, [rolesColumns, can, deleteRole.isPending, navigate, requestDelete]);
+  }, [rolesColumns, can, deleteRole.isPending, navigate, requestDelete, t]);
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
-  if (error) return <div>Uloge.</div>;
-
+  if (error) return <div>{t("roles.list.error")}</div>;
+  console.log("rolesColumns", rolesColumns);
   return (
     <>
       <ReusableDataGrid<Role>
@@ -168,10 +188,10 @@ export default function RolesTable() {
       <PermissionGate guard={{ permission: "Permission.Roles.Delete" }}>
         <ConfirmDialog
           open={confirmOpen}
-          title="Obriši ulogu?"
-          description="Jeste li sigurni da želite obrisati ulogu?"
-          confirmText="Obriši"
-          cancelText="Odustani"
+          title={t("roles.delete.title")}
+          description={t("roles.delete.description")}
+          confirmText={t("roles.delete.confirm")}
+          cancelText={t("roles.delete.cancel")}
           loading={deleteRole.isPending}
           disableBackdropClose
           onClose={handleCancel}

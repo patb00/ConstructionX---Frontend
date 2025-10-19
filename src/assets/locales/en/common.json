@@ -1,0 +1,776 @@
+{
+  "sidebar": {
+    "management": "Management",
+    "system": "System"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "constructionSites": "Construction Sites",
+    "tenants": "Tenants",
+    "companies": "Companies",
+    "roles": "Roles",
+    "users": "Users",
+    "employees": "Employees",
+    "jobPositions": "Job Positions",
+    "tools": "Tools",
+    "toolCategories": "Tool Categories"
+  },
+  "constructionSites": {
+    "list": {
+      "title": "Construction Sites",
+      "error": "Failed to load construction sites."
+    },
+    "create": {
+      "title": "Create construction site",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit construction site",
+      "back": "Back",
+      "invalidUrlId": "Invalid URL (id)",
+      "loadError": "Failed to load construction site."
+    },
+    "assign": {
+      "title": "Assign employees",
+      "loading": "Loading…",
+      "loadError": "Failed to load employees.",
+      "empty": "No employees available.",
+      "left": {
+        "employeesCount": "Employees ({{count}})",
+        "selectedCount": "Selected: {{count}}"
+      },
+      "global": {
+        "startLabel": "Start (global)",
+        "endLabel": "End (global)"
+      },
+      "chip": {
+        "custom": "Range: Custom",
+        "global": "Range: Global"
+      },
+      "grid": {
+        "employee": "Employee",
+        "start": "Start",
+        "end": "End",
+        "reset": "Reset"
+      },
+      "pickHint": "Select employees from the left.",
+      "tooltip": {
+        "resetToGlobal": "Reset to global range"
+      },
+      "validation": {
+        "invalidRange": "Check dates (Start ≤ End)."
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving..."
+      }
+    },
+    "form": {
+      "field": {
+        "name": "Name",
+        "location": "Location",
+        "startDate": "Start",
+        "plannedEndDate": "Planned end",
+        "siteManagerId": "Construction site manager",
+        "description": "Description"
+      },
+      "manager": {
+        "none": "— No manager —"
+      },
+      "submit": "Save"
+    },
+    "actions": "Actions",
+    "table": {
+      "edit": "Edit",
+      "assignEmployees": "Assign employees",
+      "delete": "Delete"
+    },
+    "delete": {
+      "title": "Delete construction site?",
+      "description": "Are you sure you want to delete this construction site?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    }
+  },
+  "common": {
+    "loading": "Loading…",
+    "datagrid": {
+      "columnsButton": "Columns",
+      "filterButton": "Filters",
+      "densitySelector": "Density",
+      "exportButton": "Export",
+      "csv": "Export CSV",
+      "print": "Print",
+      "quickFilterPlaceholder": "Search…",
+      "noRowsLabel": "No rows",
+      "noResultsOverlayLabel": "No results found.",
+      "noColumnsOverlayLabel": "No columns",
+      "noColumnsOverlayManageColumns": "Manage columns",
+      "emptyPivotOverlayLabel": "Add fields to rows, columns, and values to create a pivot table",
+
+      "toolbarDensity": "Density",
+      "toolbarDensityLabel": "Density",
+      "toolbarDensityCompact": "Compact",
+      "toolbarDensityStandard": "Standard",
+      "toolbarDensityComfortable": "Comfortable",
+
+      "toolbarColumns": "Columns",
+      "toolbarColumnsLabel": "Select columns",
+
+      "toolbarFilters": "Filters",
+      "toolbarFiltersLabel": "Show filters",
+      "toolbarFiltersTooltipHide": "Hide filters",
+      "toolbarFiltersTooltipShow": "Show filters",
+      "toolbarFiltersTooltipActive": "{{count}} active filter{{count, plural, one {} other {s}}}",
+
+      "toolbarQuickFilterPlaceholder": "Search…",
+      "toolbarQuickFilterLabel": "Search",
+      "toolbarQuickFilterDeleteIconLabel": "Clear",
+
+      "toolbarExport": "Export",
+      "toolbarExportLabel": "Export",
+      "toolbarExportCSV": "Download as CSV",
+      "toolbarExportPrint": "Print",
+      "toolbarExportExcel": "Download as Excel",
+
+      "toolbarPivot": "Pivot",
+      "toolbarCharts": "Charts",
+      "toolbarAssistant": "AI Assistant",
+
+      "columnsManagementSearchTitle": "Search",
+      "columnsManagementNoColumns": "No columns",
+      "columnsManagementShowHideAllText": "Show/Hide All",
+      "columnsManagementReset": "Reset",
+      "columnsManagementDeleteIconLabel": "Clear",
+
+      "filterPanelAddFilter": "Add filter",
+      "filterPanelRemoveAll": "Remove all",
+      "filterPanelDeleteIconLabel": "Delete",
+      "filterPanelLogicOperator": "Logic operator",
+      "filterPanelOperator": "Operator",
+      "filterPanelOperatorAnd": "And",
+      "filterPanelOperatorOr": "Or",
+      "filterPanelColumns": "Columns",
+      "filterPanelInputLabel": "Value",
+      "filterPanelInputPlaceholder": "Filter value",
+
+      "filterOperatorContains": "contains",
+      "filterOperatorDoesNotContain": "does not contain",
+      "filterOperatorEquals": "equals",
+      "filterOperatorDoesNotEqual": "does not equal",
+      "filterOperatorStartsWith": "starts with",
+      "filterOperatorEndsWith": "ends with",
+      "filterOperatorIs": "is",
+      "filterOperatorNot": "is not",
+      "filterOperatorAfter": "is after",
+      "filterOperatorOnOrAfter": "is on or after",
+      "filterOperatorBefore": "is before",
+      "filterOperatorOnOrBefore": "is on or before",
+      "filterOperatorIsEmpty": "is empty",
+      "filterOperatorIsNotEmpty": "is not empty",
+      "filterOperatorIsAnyOf": "is any of",
+      "filterOperatorEqualSymbol": "=",
+      "filterOperatorNotEqualSymbol": "!=",
+      "filterOperatorGreaterThanSymbol": ">",
+      "filterOperatorGreaterOrEqualSymbol": ">=",
+      "filterOperatorLessThanSymbol": "<",
+      "filterOperatorLessOrEqualSymbol": "<=",
+
+      "headerFilterOperatorContains": "Contains",
+      "headerFilterOperatorDoesNotContain": "Does not contain",
+      "headerFilterOperatorEquals": "Equals",
+      "headerFilterOperatorDoesNotEqual": "Does not equal",
+      "headerFilterOperatorStartsWith": "Starts with",
+      "headerFilterOperatorEndsWith": "Ends with",
+      "headerFilterOperatorIs": "Is",
+      "headerFilterOperatorNot": "Is not",
+      "headerFilterOperatorAfter": "Is after",
+      "headerFilterOperatorOnOrAfter": "Is on or after",
+      "headerFilterOperatorBefore": "Is before",
+      "headerFilterOperatorOnOrBefore": "Is on or before",
+      "headerFilterOperatorIsEmpty": "Is empty",
+      "headerFilterOperatorIsNotEmpty": "Is not empty",
+      "headerFilterOperatorIsAnyOf": "Is any of",
+      "headerFilterOperatorEqualSymbol": "Equals",
+      "headerFilterOperatorNotEqualSymbol": "Not equals",
+      "headerFilterOperatorGreaterThanSymbol": "Greater than",
+      "headerFilterOperatorGreaterOrEqualSymbol": "Greater than or equal to",
+      "headerFilterOperatorLessThanSymbol": "Less than",
+      "headerFilterOperatorLessOrEqualSymbol": "Less than or equal to",
+      "headerFilterClear": "Clear filter",
+
+      "filterValueAny": "any",
+      "filterValueTrue": "true",
+      "filterValueFalse": "false",
+
+      "columnMenuLabel": "Menu",
+      "columnMenuAriaLabel": "{{columnName}} column menu",
+      "columnMenuShowColumns": "Show columns",
+      "columnMenuManageColumns": "Manage columns",
+      "columnMenuFilter": "Filter",
+      "columnMenuHideColumn": "Hide column",
+      "columnMenuUnsort": "Unsort",
+      "columnMenuSortAsc": "Sort by ASC",
+      "columnMenuSortDesc": "Sort by DESC",
+      "columnMenuManagePivot": "Manage pivot",
+      "columnMenuManageCharts": "Manage charts",
+
+      "columnHeaderFiltersTooltipActive": "{{count}} active filter{{count, plural, one {} other {s}}}",
+      "columnHeaderFiltersLabel": "Show filters",
+      "columnHeaderSortIconLabel": "Sort",
+
+      "footerRowSelected": "{{count, number}} row{{count, plural, one {} other {s}}} selected",
+      "footerTotalRows": "Total Rows:",
+      "footerTotalVisibleRows": "{{visibleCount, number}} of {{totalCount, number}}",
+
+      "checkboxSelectionHeaderName": "Checkbox selection",
+      "checkboxSelectionSelectAllRows": "Select all rows",
+      "checkboxSelectionUnselectAllRows": "Unselect all rows",
+      "checkboxSelectionSelectRow": "Select row",
+      "checkboxSelectionUnselectRow": "Unselect row",
+
+      "booleanCellTrueLabel": "yes",
+      "booleanCellFalseLabel": "no",
+
+      "actionsCellMore": "more",
+
+      "pinToLeft": "Pin to left",
+      "pinToRight": "Pin to right",
+      "unpin": "Unpin",
+
+      "treeDataGroupingHeaderName": "Group",
+      "treeDataExpand": "see children",
+      "treeDataCollapse": "hide children",
+
+      "groupingColumnHeaderName": "Group",
+      "groupColumn": "Group by {{name}}",
+      "unGroupColumn": "Stop grouping by {{name}}",
+
+      "detailPanelToggle": "Detail panel toggle",
+      "expandDetailPanel": "Expand",
+      "collapseDetailPanel": "Collapse",
+
+      "paginationRowsPerPage": "Rows per page:",
+      "paginationDisplayedRows": "{{from}}–{{to}} of {{countLabel}}",
+      "paginationDisplayedRowsEstimated": "{{from}}–{{to}} of {{estimatedLabel}}",
+      "moreThanX": "more than {{to}}",
+      "aroundX": "around {{estimated}}",
+      "paginationFirst": "Go to first page",
+      "paginationLast": "Go to last page",
+      "paginationNext": "Go to next page",
+      "paginationPrevious": "Go to previous page",
+
+      "rowReorderingHeaderName": "Row reordering",
+
+      "aggregationMenuItemHeader": "Aggregation",
+      "aggregationFunctionLabelNone": "none",
+      "aggregationFunctionLabelSum": "sum",
+      "aggregationFunctionLabelAvg": "avg",
+      "aggregationFunctionLabelMin": "min",
+      "aggregationFunctionLabelMax": "max",
+      "aggregationFunctionLabelSize": "size",
+
+      "pivotToggleLabel": "Pivot",
+      "pivotRows": "Rows",
+      "pivotColumns": "Columns",
+      "pivotValues": "Values",
+      "pivotCloseButton": "Close pivot settings",
+      "pivotSearchButton": "Search fields",
+      "pivotSearchControlPlaceholder": "Search fields",
+      "pivotSearchControlLabel": "Search fields",
+      "pivotSearchControlClear": "Clear search",
+      "pivotNoFields": "No fields",
+      "pivotMenuMoveUp": "Move up",
+      "pivotMenuMoveDown": "Move down",
+      "pivotMenuMoveToTop": "Move to top",
+      "pivotMenuMoveToBottom": "Move to bottom",
+      "pivotMenuRows": "Rows",
+      "pivotMenuColumns": "Columns",
+      "pivotMenuValues": "Values",
+      "pivotMenuOptions": "Field options",
+      "pivotMenuAddToRows": "Add to Rows",
+      "pivotMenuAddToColumns": "Add to Columns",
+      "pivotMenuAddToValues": "Add to Values",
+      "pivotMenuRemove": "Remove",
+      "pivotDragToRows": "Drag here to create rows",
+      "pivotDragToColumns": "Drag here to create columns",
+      "pivotDragToValues": "Drag here to create values",
+      "pivotYearColumnHeaderName": "(Year)",
+      "pivotQuarterColumnHeaderName": "(Quarter)",
+
+      "chartsNoCharts": "There are no charts available",
+      "chartsChartNotSelected": "Select a chart type to configure its options",
+      "chartsTabChart": "Chart",
+      "chartsTabFields": "Fields",
+      "chartsTabCustomize": "Customize",
+      "chartsCloseButton": "Close charts configuration",
+      "chartsSyncButtonLabel": "Sync chart",
+      "chartsSearchPlaceholder": "Search fields",
+      "chartsSearchLabel": "Search fields",
+      "chartsSearchClear": "Clear search",
+      "chartsNoFields": "No fields",
+      "chartsFieldBlocked": "This field cannot be added to any section",
+      "chartsCategories": "Categories",
+      "chartsSeries": "Series",
+      "chartsMenuAddToDimensions": "Add to {{dimensionLabel}}",
+      "chartsMenuAddToValues": "Add to {{valuesLabel}}",
+      "chartsMenuMoveUp": "Move up",
+      "chartsMenuMoveDown": "Move down",
+      "chartsMenuMoveToTop": "Move to top",
+      "chartsMenuMoveToBottom": "Move to bottom",
+      "chartsMenuOptions": "Field options",
+      "chartsMenuRemove": "Remove",
+      "chartsDragToDimensions": "Drag here to use column as {{dimensionLabel}}",
+      "chartsDragToValues": "Drag here to use column as {{valuesLabel}}",
+
+      "aiAssistantPanelTitle": "AI Assistant",
+      "aiAssistantPanelClose": "Close AI Assistant",
+      "aiAssistantPanelNewConversation": "New conversation",
+      "aiAssistantPanelConversationHistory": "Conversation history",
+      "aiAssistantPanelEmptyConversation": "No prompt history",
+      "aiAssistantSuggestions": "Suggestions",
+
+      "promptFieldLabel": "Prompt",
+      "promptFieldPlaceholder": "Type a prompt…",
+      "promptFieldPlaceholderWithRecording": "Type or record a prompt…",
+      "promptFieldPlaceholderListening": "Listening for prompt…",
+      "promptFieldSpeechRecognitionNotSupported": "Speech recognition is not supported in this browser",
+      "promptFieldSend": "Send",
+      "promptFieldRecord": "Record",
+      "promptFieldStopRecording": "Stop recording",
+
+      "promptRerun": "Run again",
+      "promptProcessing": "Processing…",
+      "promptAppliedChanges": "Applied changes",
+
+      "promptChangeGroupDescription": "Group by {{column}}",
+      "promptChangeAggregationLabel": "{{column}} ({{aggregation}})",
+      "promptChangeAggregationDescription": "Aggregate {{column}} ({{aggregation}})",
+      "promptChangeFilterLabelAnyOf": "{{column}} is any of: {{value}}",
+      "promptChangeFilterLabel": "{{column}} {{operator}} {{value}}",
+      "promptChangeFilterDescriptionAnyOf": "Filter where {{column}} is any of: {{value}}",
+      "promptChangeFilterDescription": "Filter where {{column}} {{operator}} {{value}}",
+      "promptChangeSortDescription": "Sort by {{column}} ({{direction}})",
+      "promptChangePivotEnableLabel": "Pivot",
+      "promptChangePivotEnableDescription": "Enable pivot",
+      "promptChangePivotColumnsLabel": "Columns ({{count}})",
+      "promptChangePivotColumnsDescription": "{{column}}{{direction ? ` (${direction})` : ''}}",
+      "promptChangePivotRowsLabel": "Rows ({{count}})",
+      "promptChangePivotValuesLabel": "Values ({{count}})",
+      "promptChangePivotValuesDescription": "{{column}} ({{aggregation}})"
+    },
+    "columns": {
+      "id": "Id",
+      "name": "Name",
+      "description": "Description",
+      "actions": "Actions",
+
+      "location": "Location",
+      "startDate": "Start",
+      "plannedEndDate": "Planned end",
+      "siteManagerId": "Site manager ID",
+      "siteManagerName": "Site manager",
+      "constructionSiteTools": "Construction site tools",
+      "constructionSiteEmployees": "Employees",
+
+      "createdDate": "Created at",
+      "createdBy": "Created by",
+      "modifiedDate": "Modified at",
+      "modifiedBy": "Modified by",
+
+      "identifier": "Identifier",
+      "connectionString": "Connection String",
+      "email": "Email",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "validUntil": "Valid until",
+      "isActive": "Active",
+
+      "dateOfCreation": "Date of creation",
+
+      "permissions": "Permissions",
+      "userName": "Username",
+
+      "oib": "OIB",
+      "dateOfBirth": "Date of birth",
+      "employmentDate": "Employment date",
+      "terminationDate": "Termination date",
+      "hasMachineryLicense": "Has machinery license",
+      "clothingSize": "Clothing size",
+      "gloveSize": "Glove size",
+      "shoeSize": "Shoe size",
+      "jobPosition": "Job position",
+
+      "inventoryNumber": "Inventory number",
+      "serialNumber": "Serial number",
+      "manufacturer": "Manufacturer",
+      "model": "Model",
+      "purchaseDate": "Purchase date",
+      "purchasePrice": "Purchase price",
+      "status": "Status",
+      "condition": "Condition",
+      "toolCategoryId": "Tool category ID",
+      "toolCategoryName": "Tool category",
+      "responsibleEmployeeId": "Responsible employee ID",
+      "responsibleEmployeeName": "Responsible employee",
+      "responsibleEmployeeJobPosition": "Job position"
+    }
+  },
+  "tenants": {
+    "list": {
+      "title": "Tenants",
+      "error": "Failed to load tenants."
+    },
+    "create": {
+      "title": "Create tenant",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit tenant subscription",
+      "back": "Back",
+      "invalidUrlId": "Invalid URL (tenantId)",
+      "loadError": "Failed to load tenant.",
+      "tenantLabel": "Tenant",
+      "validUntil": "Valid until",
+      "save": "Save"
+    },
+    "details": {
+      "loadError": "Failed to load tenant."
+    },
+    "form": {
+      "field": {
+        "identifier": "Identifier",
+        "name": "Name",
+        "connectionString": "Connection String",
+        "email": "Email",
+        "validUntil": "Valid Until",
+        "firstName": "First name",
+        "lastName": "Last name",
+        "isActive": "Active"
+      },
+      "submit": "Save"
+    },
+    "actions": "Actions",
+    "table": {
+      "validUntil": "Valid until",
+      "statusHeader": "Status",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "edit": "Edit tenant",
+      "activate": "Activate tenant",
+      "deactivate": "Deactivate tenant"
+    }
+  },
+  "companies": {
+    "list": {
+      "title": "Companies",
+      "error": "Failed to load companies."
+    },
+    "create": {
+      "title": "Create company",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit company",
+      "back": "Back",
+      "invalidUrlId": "Invalid URL (id)",
+      "loadError": "Failed to load company."
+    },
+    "details": {
+      "loadError": "Failed to load company."
+    },
+    "form": {
+      "field": {
+        "name": "Name",
+        "dateOfCreation": "Date of creation"
+      },
+      "submit": "Save"
+    },
+    "actions": "Actions",
+    "table": {
+      "edit": "Edit company",
+      "delete": "Delete company",
+      "dateOfCreation": "Date of creation"
+    },
+    "delete": {
+      "title": "Delete company?",
+      "description": "Are you sure you want to delete this company?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    }
+  },
+  "employees": {
+    "list": {
+      "title": "Employees",
+      "error": "Failed to load employees."
+    },
+    "create": {
+      "title": "Create employee",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit employee",
+      "back": "Back",
+      "invalidUrlId": "Invalid URL (id)",
+      "loadError": "Failed to load employee."
+    },
+    "form": {
+      "field": {
+        "firstName": "First name",
+        "lastName": "Last name",
+        "oib": "OIB",
+        "dateOfBirth": "Date of birth",
+        "employmentDate": "Employment date",
+        "terminationDate": "Termination date",
+        "hasMachineryLicense": "Has machinery license",
+        "clothingSize": "Clothing size",
+        "gloveSize": "Glove size",
+        "shoeSize": "Shoe size",
+        "jobPositionId": "Job position"
+      },
+      "jobPosition": {
+        "none": "— No job position —"
+      },
+      "helper": {
+        "oibDigits": "11 digits"
+      },
+      "submit": "Save"
+    },
+    "actions": "Actions",
+    "table": {
+      "edit": "Edit employee",
+      "delete": "Delete employee"
+    },
+    "delete": {
+      "title": "Delete employee?",
+      "description": "Are you sure you want to delete this employee?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    }
+  },
+  "jobPositions": {
+    "list": {
+      "title": "Job positions",
+      "error": "Failed to load job positions."
+    },
+    "create": {
+      "title": "Create job position",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit job position",
+      "back": "Back",
+      "invalidUrlId": "Invalid URL (id)",
+      "loadError": "Failed to load job position."
+    },
+    "form": {
+      "field": {
+        "name": "Name",
+        "description": "Description"
+      },
+      "submit": "Save"
+    },
+    "actions": "Actions",
+    "table": {
+      "name": "Name",
+      "description": "Description",
+      "edit": "Edit job position",
+      "delete": "Delete job position"
+    },
+    "delete": {
+      "title": "Delete job position?",
+      "description": "Are you sure you want to delete this job position?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    }
+  },
+  "roles": {
+    "list": {
+      "title": "Roles",
+      "error": "Failed to load roles."
+    },
+    "create": {
+      "title": "Create role",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit role",
+      "back": "Back",
+      "invalidUrlId": "Invalid URL (roleId)",
+      "loadError": "Failed to load role."
+    },
+    "form": {
+      "field": {
+        "name": "Name",
+        "description": "Description"
+      },
+      "submit": "Save"
+    },
+    "actions": "Actions",
+    "table": {
+      "name": "Name",
+      "description": "Description",
+      "edit": "Edit role",
+      "delete": "Delete role",
+      "permissions": "Permissions"
+    },
+    "delete": {
+      "title": "Delete role?",
+      "description": "Are you sure you want to delete this role?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "permissions": {
+      "title": "{{name}} – Permissions",
+      "back": "Back",
+      "tabLabel": "{{category}} ({{count}})",
+      "saving": "Saving...",
+      "update": "Update permissions",
+      "notFound": "Role not found.",
+      "noneAvailable": "No permissions available."
+    }
+  },
+  "users": {
+    "list": {
+      "title": "Users",
+      "error": "Failed to load users."
+    },
+    "create": {
+      "title": "Create user",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit user",
+      "back": "Back",
+      "invalidUrlId": "Invalid URL (id)",
+      "loadError": "Failed to load user.",
+      "userLabel": "User"
+    },
+    "form": {
+      "field": {
+        "firstName": "First name",
+        "lastName": "Last name",
+        "email": "Email",
+        "phoneNumber": "Phone number",
+        "password": "Password",
+        "confirmPassword": "Confirm password",
+        "isActive": "Active"
+      },
+      "submit": "Save"
+    },
+    "table": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "phoneNumber": "Phone number",
+      "status": "Status",
+      "statusActive": "Active",
+      "statusInactive": "Inactive",
+      "actions": "Actions",
+      "edit": "Edit user",
+      "delete": "Delete user",
+      "activate": "Activate user",
+      "deactivate": "Deactivate user",
+      "roles": "User roles"
+    },
+    "delete": {
+      "title": "Delete user?",
+      "description": "Are you sure you want to delete this user?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "rolesDialog": {
+      "title": "Manage roles",
+      "loading": "Loading…",
+      "error": "Failed to load roles.",
+      "empty": "No roles available.",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving..."
+    }
+  },
+  "tools": {
+    "list": {
+      "title": "Tools",
+      "error": "Failed to load tools"
+    },
+    "actions": "Actions",
+    "table": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "create": {
+      "title": "Create Tool",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit Tool",
+      "back": "Back",
+      "invalidUrlId": "Invalid tool id in URL",
+      "loadError": "Could not load tool data"
+    },
+    "delete": {
+      "title": "Delete Tool",
+      "description": "Are you sure you want to delete this tool?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "form": {
+      "submit": "Save",
+      "field": {
+        "name": "Name",
+        "inventoryNumber": "Inventory number",
+        "serialNumber": "Serial number",
+        "manufacturer": "Manufacturer",
+        "model": "Model",
+        "purchaseDate": "Purchase date",
+        "purchasePrice": "Purchase price",
+        "status": "Status",
+        "condition": "Condition",
+        "description": "Description",
+        "toolCategoryId": "Tool category",
+        "responsibleEmployeeId": "Responsible employee"
+      },
+      "responsible": {
+        "none": "Unassigned"
+      }
+    }
+  },
+  "toolCategories": {
+    "list": {
+      "title": "Tool Categories",
+      "error": "Failed to load tool categories"
+    },
+    "actions": "Actions",
+    "table": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "create": {
+      "title": "Create Tool Category",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit Tool Category",
+      "back": "Back",
+      "invalidUrlId": "Invalid category id in URL",
+      "loadError": "Could not load category data"
+    },
+    "delete": {
+      "title": "Delete Tool Category",
+      "description": "Are you sure you want to delete this category?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "form": {
+      "submit": "Save",
+      "field": {
+        "name": "Name",
+        "description": "Description"
+      }
+    }
+  }
+}

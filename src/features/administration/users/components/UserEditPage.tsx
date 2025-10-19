@@ -4,10 +4,12 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
 import { useUpdateUser } from "../hooks/useUpdateUser";
 import { useUser } from "../hooks/useUser";
+import { useTranslation } from "react-i18next";
 
 export default function UserEditPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
-  if (!id) return <div>Neispravan URL (id)</div>;
+  if (!id) return <div>{t("users.edit.invalidUrlId")}</div>;
 
   const navigate = useNavigate();
   const { data: user, isLoading, error } = useUser(id);
@@ -33,24 +35,22 @@ export default function UserEditPage() {
     navigate("/app/administration/users");
   };
 
-  if (error) return <div>Neuspjelo učitavanje korisnika.</div>;
+  if (error) return <div>{t("users.edit.loadError")}</div>;
 
   return (
     <Stack spacing={2}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h5" fontWeight={600}>
-          Uredi korisnika
+          {t("users.edit.title")}
         </Typography>
         <Button
           size="small"
           variant="outlined"
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate("/app/administration/users")}
-          sx={{
-            color: "primary.main",
-          }}
+          sx={{ color: "primary.main" }}
         >
-          Natrag
+          {t("users.edit.back")}
         </Button>
       </Stack>
 
@@ -65,23 +65,26 @@ export default function UserEditPage() {
         <form onSubmit={handleSubmit}>
           <Stack spacing={2} maxWidth={480}>
             <Typography variant="subtitle1">
-              Korisnik: <strong>{email}</strong>
+              {t("users.edit.userLabel")}: <strong>{email}</strong>
             </Typography>
 
             <TextField
-              label="Ime"
+              size="small"
+              label={t("users.form.field.firstName")}
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               disabled={isLoading || isPending}
             />
             <TextField
-              label="Prezime"
+              size="small"
+              label={t("users.form.field.lastName")}
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               disabled={isLoading || isPending}
             />
             <TextField
-              label="Broj telefona"
+              size="small"
+              label={t("users.form.field.phoneNumber")}
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               disabled={isLoading || isPending}
@@ -92,7 +95,7 @@ export default function UserEditPage() {
               variant="contained"
               disabled={isPending || isLoading}
             >
-              Spremi
+              {t("users.form.submit")}
             </Button>
           </Stack>
         </form>
