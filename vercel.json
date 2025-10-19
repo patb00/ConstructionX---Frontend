@@ -1,15 +1,15 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/:path*" },
+    {
+      "source": "/api/:path*",
+      "destination": "https://fradotovic-001-site1.jtempurl.com/api/:path*"
+    },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
     {
       "source": "/api/:path*",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store" },
-        { "key": "Content-Type", "value": "application/json; charset=utf-8" }
-      ]
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
     }
   ]
 }
