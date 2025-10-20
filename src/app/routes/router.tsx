@@ -1,9 +1,7 @@
-// router.tsx (the file you showed)
 import { createBrowserRouter } from "react-router-dom";
 import LoginRoute from "../../features/auth/routes/LoginRoute";
 import AppShell from "../layout/AppShell";
 import DashboardRoute from "../../features/dashboard/routes/DashboardRoute";
-
 import { companiesRoutes } from "../../features/administration/companies/routes";
 import { tenantsRoutes } from "../../features/administration/tenants/routes";
 import { rolesRoutes } from "../../features/administration/roles/routes";
@@ -13,9 +11,9 @@ import { jobPostionRoutes } from "../../features/administration/job_positions/ro
 import { RequireAuth } from "./RequireAuth";
 import ResetPasswordRoute from "../../features/auth/routes/ResetPasswordRoute";
 import { constructionSitesRoutes } from "../../features/construction_site/routes";
-
 import { toolsRoutes } from "../../features/tools/routes";
 import { toolCategoriesRoutes } from "../../features/tools_category/routes";
+import { vehiclesRoutes } from "../../features/vehicles/routes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <LoginRoute /> },
@@ -46,6 +44,8 @@ export const router = createBrowserRouter([
       toolCategoriesRoutes,
       { path: "constructionSites" },
       constructionSitesRoutes,
+      { path: "vehicles" },
+      vehiclesRoutes,
     ],
   },
 ]);

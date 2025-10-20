@@ -25,15 +25,20 @@ export function ForceChangePasswordDialog({ open, onDone }: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    await changePassword({
-      userId,
-      currentPassword,
-      newPassword,
-      confirmNewPassword,
-    });
+    if (newPassword !== confirmNewPassword) {
+      return;
+    }
 
-    setMustChangePassword(false);
-    onDone();
+    try {
+      await changePassword({
+        userId,
+        currentPassword,
+        newPassword,
+        confirmNewPassword,
+      });
+      setMustChangePassword(false);
+      onDone();
+    } catch (err: any) {}
   };
 
   return (
@@ -44,7 +49,9 @@ export function ForceChangePasswordDialog({ open, onDone }: Props) {
         if (reason === "backdropClick") return;
       }}
       fullWidth
-      maxWidth="sm"
+      PaperProps={{
+        sx: { border: (t) => `1px solid ${t.palette.primary.main}` },
+      }}
     >
       <form onSubmit={handleSubmit}>
         <DialogTitle>Potrebna je promjena lozinke</DialogTitle>

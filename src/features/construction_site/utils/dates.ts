@@ -10,3 +10,14 @@ export function isValidRange(from: string, to: string) {
   if (!from || !to) return false;
   return new Date(from) <= new Date(to);
 }
+
+export const formatDate = (d?: string | null) => {
+  if (!d) return "—";
+  try {
+    return new Date(d).toLocaleDateString("hr-HR");
+  } catch {
+    return String(d);
+  }
+};
+export const formatDateRange = (from?: string | null, to?: string | null) =>
+  `${formatDate(from)} — ${formatDate(to)}`;

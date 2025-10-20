@@ -13,7 +13,8 @@
     "employees": "Employees",
     "jobPositions": "Job Positions",
     "tools": "Tools",
-    "toolCategories": "Tool Categories"
+    "toolCategories": "Tool Categories",
+    "vehicles": "Vehicles"
   },
   "constructionSites": {
     "list": {
@@ -414,7 +415,16 @@
       "toolCategoryName": "Tool category",
       "responsibleEmployeeId": "Responsible employee ID",
       "responsibleEmployeeName": "Responsible employee",
-      "responsibleEmployeeJobPosition": "Job position"
+      "responsibleEmployeeJobPosition": "Job position",
+
+      "registrationNumber": "Registration number",
+      "vin": "VIN",
+      "brand": "Brand",
+      "yearOfManufacturing": "Year of manufacturing",
+      "vehicleType": "Vehicle type",
+      "horsePower": "Horsepower",
+      "averageConsumption": "Average consumption",
+      "weight": "Weight"
     }
   },
   "tenants": {
@@ -769,6 +779,64 @@
       "submit": "Save",
       "field": {
         "name": "Name",
+        "description": "Description"
+      }
+    }
+  },
+  "vehicles": {
+    "list": {
+      "title": "Vehicles",
+      "error": "Error loading vehicles"
+    },
+    "table": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "details": "Details"
+    },
+    "actions": "Actions",
+    "create": {
+      "title": "Add Vehicle",
+      "back": "Back",
+      "submit": "Save"
+    },
+    "edit": {
+      "title": "Edit Vehicle",
+      "back": "Back",
+      "loadError": "Failed to load vehicle",
+      "invalidUrlId": "Invalid vehicle id",
+      "submit": "Save changes"
+    },
+    "delete": {
+      "title": "Delete Vehicle",
+      "description": "Are you sure you want to delete this vehicle?",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "detail": {
+      "title": "Vehicle details",
+      "summary": "Vehicle summary",
+      "left": "Specifications",
+      "right": "Ownership / Status",
+      "bottom": "Additional information",
+      "back": "Back"
+    },
+    "form": {
+      "submit": "Save",
+      "field": {
+        "name": "Name",
+        "registrationNumber": "Registration number",
+        "vin": "VIN",
+        "brand": "Brand",
+        "model": "Model",
+        "yearOfManufacturing": "Year of manufacturing",
+        "vehicleType": "Vehicle type",
+        "status": "Status",
+        "condition": "Condition",
+        "purchaseDate": "Purchase date",
+        "purchasePrice": "Purchase price",
+        "horsePower": "Horsepower",
+        "averageConsumption": "Average consumption (L/100km)",
+        "weight": "Weight (kg)",
         "description": "Description"
       }
     }

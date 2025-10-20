@@ -119,5 +119,24 @@ export default function useColumnHeaderMappings(): MapItem[] {
       original: "ResponsibleEmployeeJobPosition",
       translated: t("common.columns.responsibleEmployeeJobPosition"),
     },
+
+    // VEHICLE COLUMNS (NEW)
+    {
+      original: "RegistrationNumber",
+      translated: t("common.columns.registrationNumber"),
+    },
+    { original: "Vin", translated: t("common.columns.vin") },
+    { original: "Brand", translated: t("common.columns.brand") },
+    {
+      original: "YearOfManufacturing",
+      translated: t("common.columns.yearOfManufacturing"),
+    },
+    { original: "VehicleType", translated: t("common.columns.vehicleType") },
+    { original: "HorsePower", translated: t("common.columns.horsePower") },
+    {
+      original: "AverageConsumption",
+      translated: t("common.columns.averageConsumption"),
+    },
+    { original: "Weight", translated: t("common.columns.weight") },
   ];
 }

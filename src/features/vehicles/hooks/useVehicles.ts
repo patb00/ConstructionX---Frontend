@@ -1,24 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 
 import type { GridColDef } from "@mui/x-data-grid";
-import { toolsKeys } from "../api/tools.keys";
-import { ToolsApi } from "../api/tools.api";
-import type { Tool } from "..";
+import type { Vehicle } from "..";
+import { vehiclesKeys } from "../api/vehicles.keys";
+import { VehiclesApi } from "../api/vehicles.api";
 
-interface TransformedToolsData {
-  columnDefs: GridColDef<Tool>[];
-  rowDefs: Tool[];
+interface TransformedVehiclesData {
+  columnDefs: GridColDef<Vehicle>[];
+  rowDefs: Vehicle[];
 }
 
-export const useTools = () => {
+export const useVehicles = () => {
   const { data, error, isLoading, isError } = useQuery<
-    Tool[],
+    Vehicle[],
     Error,
-    TransformedToolsData
+    TransformedVehiclesData
   >({
-    queryKey: toolsKeys.list(),
-    queryFn: ToolsApi.getAll,
-    select: (rows): TransformedToolsData => {
+    queryKey: vehiclesKeys.list(),
+    queryFn: VehiclesApi.getAll,
+    select: (rows): TransformedVehiclesData => {
       if (!rows?.length) return { columnDefs: [], rowDefs: [] };
 
       const allKeys = Array.from(new Set(rows.flatMap(Object.keys)));
@@ -41,8 +41,8 @@ export const useTools = () => {
   });
 
   return {
-    toolsRows: data?.rowDefs ?? [],
-    toolsColumns: data?.columnDefs ?? [],
+    vehiclesRows: data?.rowDefs ?? [],
+    vehiclesColumns: data?.columnDefs ?? [],
     error,
     isLoading,
     isError,

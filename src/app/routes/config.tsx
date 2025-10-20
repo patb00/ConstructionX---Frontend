@@ -1,20 +1,20 @@
-// nav.tsx (the file you showed)
 import {
   FaTachometerAlt,
   FaKey,
   FaUserShield,
   FaIdBadge,
   FaBriefcase,
-  FaTools, // ⬅️ NEW
+  FaTools,
+  FaCarSide,
 } from "react-icons/fa";
 import { IoIosBusiness } from "react-icons/io";
 import { HiUsers } from "react-icons/hi";
 import { LuConstruction } from "react-icons/lu";
-import { MdCategory } from "react-icons/md"; // ⬅️ NEW
+import { MdCategory } from "react-icons/md";
 import type { ReactNode } from "react";
 
 export type NavItem = {
-  labelKey: string; // i18n key
+  labelKey: string;
   to: string;
   icon: ReactNode;
   section: "MANAGEMENT" | "SYSTEM";
@@ -53,6 +53,14 @@ export const NAV_ITEMS: NavItem[] = [
     icon: <MdCategory />,
     section: "MANAGEMENT",
     guard: { permission: "Permission.ToolCategories.Read" },
+  },
+
+  {
+    labelKey: "nav.vehicles",
+    to: "/app/vehicles",
+    icon: <FaCarSide />,
+    section: "MANAGEMENT",
+    guard: { permission: "Permission.Vehicles.Read" },
   },
 
   {

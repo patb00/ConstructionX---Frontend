@@ -13,7 +13,8 @@
     "employees": "Mitarbeiter",
     "jobPositions": "Arbeitsstellen",
     "tools": "Werkzeuge",
-    "toolCategories": "Werkzeugkategorien"
+    "toolCategories": "Werkzeugkategorien",
+    "vehicles": "Fahrzeuge"
   },
   "constructionSites": {
     "list": {
@@ -414,7 +415,16 @@
       "toolCategoryName": "Werkzeugkategorie",
       "responsibleEmployeeId": "Verantwortlicher Mitarbeiter (ID)",
       "responsibleEmployeeName": "Verantwortlicher Mitarbeiter",
-      "responsibleEmployeeJobPosition": "Stellenbezeichnung"
+      "responsibleEmployeeJobPosition": "Stellenbezeichnung",
+
+      "registrationNumber": "Kennzeichen",
+      "vin": "Fahrgestellnummer (VIN)",
+      "brand": "Marke",
+      "yearOfManufacturing": "Baujahr",
+      "vehicleType": "Fahrzeugtyp",
+      "horsePower": "Leistung (PS)",
+      "averageConsumption": "Durchschnittsverbrauch",
+      "weight": "Gewicht"
     }
   },
   "tenants": {
@@ -769,6 +779,64 @@
       "submit": "Speichern",
       "field": {
         "name": "Name",
+        "description": "Beschreibung"
+      }
+    }
+  },
+  "vehicles": {
+    "list": {
+      "title": "Fahrzeuge",
+      "error": "Fehler beim Laden der Fahrzeuge"
+    },
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "details": "Details"
+    },
+    "actions": "Aktionen",
+    "create": {
+      "title": "Fahrzeug hinzufügen",
+      "back": "Zurück",
+      "submit": "Speichern"
+    },
+    "edit": {
+      "title": "Fahrzeug bearbeiten",
+      "back": "Zurück",
+      "loadError": "Fahrzeug konnte nicht geladen werden",
+      "invalidUrlId": "Ungültige Fahrzeug-ID",
+      "submit": "Änderungen speichern"
+    },
+    "delete": {
+      "title": "Fahrzeug löschen",
+      "description": "Sind Sie sicher, dass Sie dieses Fahrzeug löschen möchten?",
+      "confirm": "Bestätigen",
+      "cancel": "Abbrechen"
+    },
+    "detail": {
+      "title": "Fahrzeugdetails",
+      "summary": "Fahrzeugübersicht",
+      "left": "Spezifikationen",
+      "right": "Status / Zustand",
+      "bottom": "Zusätzliche Informationen",
+      "back": "Zurück"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "name": "Name",
+        "registrationNumber": "Kennzeichen",
+        "vin": "Fahrgestellnummer (VIN)",
+        "brand": "Marke",
+        "model": "Modell",
+        "yearOfManufacturing": "Baujahr",
+        "vehicleType": "Fahrzeugtyp",
+        "status": "Status",
+        "condition": "Zustand",
+        "purchaseDate": "Kaufdatum",
+        "purchasePrice": "Kaufpreis",
+        "horsePower": "Leistung (PS)",
+        "averageConsumption": "Durchschnittsverbrauch (L/100km)",
+        "weight": "Gewicht (kg)",
         "description": "Beschreibung"
       }
     }

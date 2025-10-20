@@ -13,7 +13,8 @@
     "employees": "Zaposlenici",
     "jobPositions": "Radna mjesta",
     "tools": "Alati",
-    "toolCategories": "Kategorije alata"
+    "toolCategories": "Kategorije alata",
+    "vehicles": "Vozila"
   },
   "constructionSites": {
     "list": {
@@ -414,7 +415,16 @@
       "toolCategoryName": "Kategorija alata",
       "responsibleEmployeeId": "ID odgovorne osobe",
       "responsibleEmployeeName": "Odgovorna osoba",
-      "responsibleEmployeeJobPosition": "Radno mjesto"
+      "responsibleEmployeeJobPosition": "Radno mjesto",
+
+      "registrationNumber": "Registracija",
+      "vin": "Broj šasije (VIN)",
+      "brand": "Marka",
+      "yearOfManufacturing": "Godina proizvodnje",
+      "vehicleType": "Vrsta vozila",
+      "horsePower": "Snaga (KS)",
+      "averageConsumption": "Prosječna potrošnja",
+      "weight": "Težina"
     }
   },
   "tenants": {
@@ -769,6 +779,64 @@
       "submit": "Spremi",
       "field": {
         "name": "Naziv",
+        "description": "Opis"
+      }
+    }
+  },
+  "vehicles": {
+    "list": {
+      "title": "Vozila",
+      "error": "Greška kod učitavanja vozila"
+    },
+    "table": {
+      "edit": "Uredi",
+      "delete": "Obriši",
+      "details": "Detalji"
+    },
+    "actions": "Akcije",
+    "create": {
+      "title": "Dodaj vozilo",
+      "back": "Natrag",
+      "submit": "Spremi"
+    },
+    "edit": {
+      "title": "Uredi vozilo",
+      "back": "Natrag",
+      "loadError": "Neuspješno učitavanje vozila",
+      "invalidUrlId": "Nevažeći ID vozila",
+      "submit": "Spremi promjene"
+    },
+    "delete": {
+      "title": "Brisanje vozila",
+      "description": "Jeste li sigurni da želite obrisati ovo vozilo?",
+      "confirm": "Potvrdi",
+      "cancel": "Odustani"
+    },
+    "detail": {
+      "title": "Pregled vozila",
+      "summary": "Sažetak vozila",
+      "left": "Specifikacije",
+      "right": "Status / stanje",
+      "bottom": "Dodatne informacije",
+      "back": "Natrag"
+    },
+    "form": {
+      "submit": "Spremi",
+      "field": {
+        "name": "Naziv",
+        "registrationNumber": "Registracija",
+        "vin": "Broj šasije (VIN)",
+        "brand": "Marka",
+        "model": "Model",
+        "yearOfManufacturing": "Godina proizvodnje",
+        "vehicleType": "Vrsta vozila",
+        "status": "Status",
+        "condition": "Stanje",
+        "purchaseDate": "Datum nabave",
+        "purchasePrice": "Nabavna cijena",
+        "horsePower": "Snaga (KS)",
+        "averageConsumption": "Prosječna potrošnja (L/100km)",
+        "weight": "Težina (kg)",
         "description": "Opis"
       }
     }

@@ -6,14 +6,20 @@ export function useLogin(
   tenant?: string
 ): UseMutationResult<LoginResponse, Error, LoginBody> {
   const setTokens = useAuthStore((s) => s.setTokens);
-
+  const setMustChangePassword = useAuthStore((s) => s.setMustChangePassword);
   return useMutation<LoginResponse, Error, LoginBody>({
     mutationFn: (body) => login(body, tenant),
     onSuccess: (data) => {
       if (!data.isSuccessfull)
         throw new Error(data.messages?.[0] || "Login failed");
-      const { jwt, refreshToken, refreshTokenExpirationDate } = data.data;
+      const {
+        jwt,
+        refreshToken,
+        refreshTokenExpirationDate,
+        mustChangePassword,
+      } = data.data;
       setTokens(jwt, refreshToken, refreshTokenExpirationDate);
+      setMustChangePassword(!!mustChangePassword);
     },
   });
 }

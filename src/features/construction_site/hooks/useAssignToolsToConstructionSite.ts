@@ -14,15 +14,12 @@ export function useAssignToolsToConstructionSite() {
 
     onSuccess: (data: any) => {
       qc.invalidateQueries({ queryKey: constructionSitesKeys.list() });
-
+      qc.invalidateQueries({ queryKey: constructionSitesKeys.all });
       enqueueSnackbar(data.messages?.[0] || data?.messages, {
         variant: "success",
       });
     },
 
-    onError: (err: any) =>
-      enqueueSnackbar(err.message || "Error assigning tools", {
-        variant: "error",
-      }),
+    onError: (err: any) => enqueueSnackbar(err.message, { variant: "error" }),
   });
 }

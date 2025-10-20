@@ -1,3 +1,51 @@
+export interface ConstructionSiteEmployee {
+  id: number;
+  firstName: string;
+  lastName: string;
+  jobPositionName?: string | null;
+  dateFrom?: string | null;
+  dateTo?: string | null;
+}
+
+export interface ConstructionSiteTool {
+  id: number;
+  name?: string | null;
+  model?: string | null;
+  inventoryNumber?: string | null;
+  serialNumber?: string | null;
+  status?: string | null;
+  condition?: string | null;
+  purchaseDate?: string | null;
+  purchasePrice?: number | null;
+  responsibleEmployeeName?: string | null;
+  dateFrom?: string | null;
+  dateTo?: string | null;
+  description?: string | null;
+  category?: string | null;
+}
+
+export interface ConstructionSiteVehicle {
+  id: number;
+  name?: string | null;
+  registrationNumber?: string | null;
+  vin?: string | null;
+  vehicleType?: string | null;
+  brand?: string | null;
+  model?: string | null;
+  yearOfManufacturing?: number | null;
+  horsePower?: number | null;
+  weight?: number | null;
+  averageConsumption?: number | null;
+  status?: string | null;
+  condition?: string | null;
+  purchaseDate?: string | null;
+  purchasePrice?: number | null;
+  responsibleEmployeeName?: string | null;
+  dateFrom?: string | null;
+  dateTo?: string | null;
+  description?: string | null;
+}
+
 export interface ConstructionSite {
   id: number;
   name: string;
@@ -6,6 +54,12 @@ export interface ConstructionSite {
   plannedEndDate: string;
   description: string | null;
   siteManagerId: number | null;
+  createdDate: string;
+  siteManagerName: string;
+
+  constructionSiteEmployees: ConstructionSiteEmployee[];
+  constructionSiteTools: ConstructionSiteTool[];
+  constructionSiteVehicles: ConstructionSiteVehicle[];
 }
 
 export interface NewConstructionSiteRequest {
@@ -48,4 +102,16 @@ export interface AssignToolItem {
 export interface AssignToolsRequest {
   constructionSiteId: number;
   tools: AssignToolItem[];
+}
+
+export interface AssignVehicleItem {
+  vehicleId: number;
+  dateFrom: string;
+  dateTo: string;
+  responsibleEmployeeId: number;
+}
+
+export interface AssignVehiclesRequest {
+  constructionSiteId: number;
+  vehicles: AssignVehicleItem[];
 }
