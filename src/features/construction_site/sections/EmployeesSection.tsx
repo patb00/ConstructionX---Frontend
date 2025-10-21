@@ -19,6 +19,7 @@ type Employee = {
   dateFrom?: string | null;
   dateTo?: string | null;
 };
+
 export default function EmployeesSection({
   employees,
   onAdd,
@@ -49,7 +50,7 @@ export default function EmployeesSection({
                 sub={
                   e.jobPositionName ||
                   t("common.notAvailable", {
-                    defaultValue: "Nije definirano radno mjesto",
+                    defaultValue: "Nije definirano",
                   })
                 }
                 right={

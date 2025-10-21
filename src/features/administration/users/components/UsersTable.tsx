@@ -258,7 +258,7 @@ export default function UsersTable() {
   ]);
 
   if (error) return <div>{t("users.list.error")}</div>;
-  console.log("usersColumns", usersColumns);
+
   return (
     <>
       <ReusableDataGrid<User>

@@ -21,7 +21,6 @@ import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useTranslation } from "react-i18next";
 
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
-// if you have a hook for vehicles:
 
 import { useConstructionSite } from "../hooks/useConstructionSite";
 
@@ -52,7 +51,7 @@ export default function AssignVehiclesDialog({
 
   const { data: site } = useConstructionSite(constructionSiteId);
   const {
-    employeeRows = [],
+    employeeRows,
     isLoading: empLoading,
     isError: empError,
   } = useEmployees();
@@ -81,33 +80,43 @@ export default function AssignVehiclesDialog({
     }
   }, [open]);
 
-  // preselect from site
   const preselected = React.useMemo(() => {
     const prior = site?.constructionSiteVehicles ?? [];
     const resultIds: number[] = [];
     const resultMap: Record<number, VehRange> = {};
-
     if (!prior.length) return { ids: resultIds, map: resultMap };
 
+    // Fallback name→id map (only used if API doesn't give an ID)
+    const norm = (s: string) =>
+      s
+        ?.normalize?.("NFKD")
+        ?.replace(/\p{Diacritic}/gu, "")
+        ?.trim()
+        ?.toLowerCase?.() ?? "";
     const byName = new Map(
-      employeeRows.map((e: any) => [
-        fullName(e.firstName, e.lastName),
+      (employeeRows ?? []).map((e: any) => [
+        norm(fullName(e.firstName, e.lastName)),
         Number(e.id),
       ])
     );
 
     for (const v of prior) {
-      const id = Number((v as any).id);
-      if (!Number.isFinite(id)) continue;
-      resultIds.push(id);
-      const respId = v.responsibleEmployeeName
-        ? byName.get(v.responsibleEmployeeName)
-        : undefined;
-      resultMap[id] = {
+      const vehId = Number((v as any).id);
+      if (!Number.isFinite(vehId)) continue;
+      resultIds.push(vehId);
+
+      let respId: number | null | undefined = v.responsibleEmployeeId;
+      if (respId == null && v.responsibleEmployeeName) {
+        respId = byName.get(norm(v.responsibleEmployeeName));
+      }
+
+      resultMap[vehId] = {
         from: v.dateFrom ?? todayStr(),
         to: v.dateTo ?? todayStr(),
         custom: true,
-        responsibleEmployeeId: respId ?? null,
+        responsibleEmployeeId: Number.isFinite(Number(respId))
+          ? Number(respId)
+          : null,
       };
     }
     return { ids: resultIds, map: resultMap };
@@ -273,8 +282,6 @@ export default function AssignVehiclesDialog({
               };
             }),
     };
-    // optional: filter out entries without responsible
-    // payload.vehicles = payload.vehicles.filter(x => x.responsibleEmployeeId)
 
     assign.mutate(payload as any, { onSuccess: onClose });
   };
@@ -329,11 +336,10 @@ export default function AssignVehiclesDialog({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "320px 1fr" },
+              gridTemplateColumns: { xs: "1fr", md: "260px 1fr" },
               minHeight: 420,
             }}
           >
-            {/* LEFT: vehicles list */}
             <Box
               sx={{
                 borderRight: (t) => ({ md: `1px solid ${t.palette.divider}` }),
@@ -417,7 +423,6 @@ export default function AssignVehiclesDialog({
               </Stack>
             </Box>
 
-            {/* RIGHT: global + per-item details */}
             <Box sx={{ p: 2 }}>
               <Stack
                 direction={{ xs: "column", sm: "row" }}
@@ -548,7 +553,7 @@ export default function AssignVehiclesDialog({
                         </Box>
 
                         <TextField
-                          label={t("constructionSites.assign.grid.start")}
+                          //label={t("constructionSites.assign.grid.start")}
                           type="date"
                           size="small"
                           value={r.from}
@@ -557,7 +562,7 @@ export default function AssignVehiclesDialog({
                           error={!isValidRange(r.from, r.to)}
                         />
                         <TextField
-                          label={t("constructionSites.assign.grid.end")}
+                          //label={t("constructionSites.assign.grid.end")}
                           type="date"
                           size="small"
                           value={r.to}
@@ -568,15 +573,19 @@ export default function AssignVehiclesDialog({
 
                         <Autocomplete
                           size="small"
-                          options={employeeRows as any[]}
+                          options={(employeeRows as any[]) ?? []}
                           getOptionLabel={(e: any) =>
-                            fullName(e.firstName, e.lastName) || `ID ${e.id}`
+                            e ? fullName(e.firstName, e.lastName) : ""
+                          }
+                          isOptionEqualToValue={(opt: any, val: any) =>
+                            Number(opt?.id) === Number(val?.id)
                           }
                           value={
-                            r.responsibleEmployeeId
+                            r.responsibleEmployeeId != null
                               ? (employeeRows as any[]).find(
                                   (e) =>
-                                    Number(e.id) === r.responsibleEmployeeId
+                                    Number(e.id) ===
+                                    Number(r.responsibleEmployeeId)
                                 ) ?? null
                               : null
                           }
@@ -586,10 +595,10 @@ export default function AssignVehiclesDialog({
                           renderInput={(params) => (
                             <TextField
                               {...params}
-                              label={t(
+                              /*    label={t(
                                 "constructionSites.assign.grid.responsible",
                                 { defaultValue: "Odgovorna osoba" }
-                              )}
+                              )} */
                             />
                           )}
                         />

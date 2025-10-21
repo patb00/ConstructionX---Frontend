@@ -8,6 +8,7 @@ export interface ConstructionSiteEmployee {
 }
 
 export interface ConstructionSiteTool {
+  responsibleEmployeeId: number | null | undefined;
   id: number;
   name?: string | null;
   model?: string | null;
@@ -25,6 +26,7 @@ export interface ConstructionSiteTool {
 }
 
 export interface ConstructionSiteVehicle {
+  responsibleEmployeeId: number | null | undefined;
   id: number;
   name?: string | null;
   registrationNumber?: string | null;

@@ -10,10 +10,12 @@ import {
 } from "@mui/material";
 import { useChangePassword } from "../../administration/users/hooks/useChangePassword";
 import { useAuthStore } from "../../auth/store/useAuthStore";
+import { useTranslation } from "react-i18next";
 
 type Props = { open: boolean; onDone: () => void; onLogout?: () => void };
 
 export function ForceChangePasswordDialog({ open, onDone }: Props) {
+  const { t } = useTranslation();
   const userId = useAuthStore((s) => s.userId)!;
   const setMustChangePassword = useAuthStore((s) => s.setMustChangePassword);
   const { mutateAsync: changePassword, isPending } = useChangePassword();
@@ -54,16 +56,16 @@ export function ForceChangePasswordDialog({ open, onDone }: Props) {
       }}
     >
       <form onSubmit={handleSubmit}>
-        <DialogTitle>Potrebna je promjena lozinke</DialogTitle>
+        <DialogTitle>{t("auth.forcePasswordChange.title")}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
             <Typography variant="body2">
-              Radi sigurnosti morate postaviti novu lozinku prije nastavka.
+              {t("auth.forcePasswordChange.message")}
             </Typography>
             <TextField
               size="small"
               type="password"
-              label="Nova lozinka"
+              label={t("auth.forcePasswordChange.newPassword")}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
@@ -71,7 +73,7 @@ export function ForceChangePasswordDialog({ open, onDone }: Props) {
             <TextField
               size="small"
               type="password"
-              label="Potvrdite novu lozinku"
+              label={t("auth.forcePasswordChange.confirmNewPassword")}
               value={confirmNewPassword}
               onChange={(e) => setConfirmNewPassword(e.target.value)}
               required
@@ -83,7 +85,7 @@ export function ForceChangePasswordDialog({ open, onDone }: Props) {
               variant="contained"
               disabled={isPending}
             >
-              Spremi lozinku
+              {t("auth.forcePasswordChange.submit")}
             </Button>
           </Stack>
         </DialogContent>

@@ -71,6 +71,7 @@ export default function useColumnHeaderMappings(): MapItem[] {
       original: "EmploymentDate",
       translated: t("common.columns.employmentDate"),
     },
+    { original: "PhoneNumber", translated: t("common.columns.phoneNumber") },
     {
       original: "TerminationDate",
       translated: t("common.columns.terminationDate"),

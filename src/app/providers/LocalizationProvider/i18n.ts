@@ -9,7 +9,7 @@ void i18n
   .init({
     resources,
     defaultNS,
-    fallbackLng: "en",
+    fallbackLng: "hr",
     supportedLngs,
     detection: {
       order: ["localStorage", "navigator", "htmlTag"],

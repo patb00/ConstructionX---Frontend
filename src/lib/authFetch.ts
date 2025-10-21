@@ -40,7 +40,6 @@ export async function authFetch<T = any>(
   let res = await fetch(url, { ...options, headers });
 
   if (res.status === 401 && refreshToken) {
-    console.warn("[authFetch] 401 detected, attempting refresh…");
     if (!refreshInFlight) {
       refreshInFlight = refreshTokens(jwt!, refreshToken);
     }
@@ -56,7 +55,6 @@ export async function authFetch<T = any>(
       retryHeaders.set("Authorization", `Bearer ${newJwt}`);
       res = await fetch(url, { ...options, headers: retryHeaders });
     } else {
-      console.error("[authFetch] ❌ Refresh failed, logging out…");
       const store = useAuthStore.getState();
       store.clear();
     }
@@ -90,7 +88,6 @@ export async function refreshTokens(
   currentRefreshToken: string
 ) {
   try {
-    console.log("[authFetch] 🔁 Refreshing token…");
     const res = await fetch("/api/Token/refresh-token", {
       method: "POST",
       headers: {
@@ -115,12 +112,10 @@ export async function refreshTokens(
     })();
 
     if (!res.ok) {
-      console.error("[authFetch] Refresh request failed:", res.status, json);
       return null;
     }
 
     if (!json?.data?.jwt) {
-      console.error("[authFetch] Invalid refresh response:", json);
       return null;
     }
 
@@ -133,10 +128,8 @@ export async function refreshTokens(
     const store = useAuthStore.getState();
     store.setTokens(jwt, refreshToken, refreshTokenExpirationDate);
 
-    console.log("[authFetch] ✅ Tokens refreshed successfully");
     return jwt;
   } catch (err) {
-    console.error("[authFetch] ⚠️ Refresh error:", err);
     deleteCookie(ACCESS_COOKIE);
     deleteCookie(REFRESH_COOKIE);
     deleteCookie(REFRESH_EXP_COOKIE);

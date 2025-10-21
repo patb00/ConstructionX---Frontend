@@ -485,7 +485,7 @@ export default function AssignEmployeesDialog({
                         </Box>
 
                         <TextField
-                          label={t("constructionSites.assign.grid.start")}
+                          //label={t("constructionSites.assign.grid.start")}
                           type="date"
                           size="small"
                           value={r.from}
@@ -495,7 +495,7 @@ export default function AssignEmployeesDialog({
                         />
 
                         <TextField
-                          label={t("constructionSites.assign.grid.end")}
+                          //label={t("constructionSites.assign.grid.end")}
                           type="date"
                           size="small"
                           value={r.to}

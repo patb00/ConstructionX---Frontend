@@ -123,7 +123,7 @@ export default function EmployeesTable() {
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   if (error) return <div>{t("employees.list.error")}</div>;
-  console.log("employeeColumns", employeeColumns);
+
   return (
     <>
       <ReusableDataGrid<Employee>

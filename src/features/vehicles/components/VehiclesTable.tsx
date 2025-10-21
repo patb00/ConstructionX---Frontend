@@ -134,7 +134,7 @@ export default function VehiclesTable() {
       </div>
     );
   }
-  console.log("vehiclesColumns", vehiclesColumns);
+
   return (
     <>
       <ReusableDataGrid<Vehicle>

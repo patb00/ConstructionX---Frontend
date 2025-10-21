@@ -17,6 +17,30 @@
     "vehicles": "Vozila"
   },
   "constructionSites": {
+    "detail": {
+      "employees": "Zaposlenici",
+      "addEmployee": "Dodaj zaposlenika",
+      "addFirstEmployee": "Dodaj prvog zaposlenika",
+      "noEmployees": "Nema dodijeljenih zaposlenika.",
+
+      "tools": "Alati",
+      "addTool": "Dodaj alat",
+      "addFirstTool": "Dodaj prvi alat",
+      "noTools": "Nema dodijeljenih alata.",
+
+      "vehicles": "Vozila",
+      "addVehicle": "Dodaj vozilo",
+      "addFirstVehicle": "Dodaj prvo vozilo",
+      "noVehicles": "Nema dodijeljenih vozila."
+    },
+    "fields": {
+      "period": "Razdoblje",
+      "created": "Kreirano",
+      "manager": "Voditelj gradilišta",
+      "id": "ID",
+      "location": "Lokacija",
+      "name": "Naziv"
+    },
     "list": {
       "title": "Gradilišta",
       "error": "Pogreška pri učitavanju gradilišta."
@@ -32,13 +56,23 @@
       "loadError": "Neuspjelo učitavanje gradilišta."
     },
     "assign": {
+      "vehiclesTitle": "Dodjela vozila",
+      "toolsTitle": "Dodjela alata",
+
+      "noVehicles": "Nema dostupnih vozila.",
+      "noTools": "Nema dostupnih alata.",
+
+      "pickVehicleHint": "Odaberite vozilo(a) s lijeve strane.",
+      "pickToolHint": "Odaberite alat(e) s lijeve strane.",
       "title": "Dodjela zaposlenika",
       "loading": "Učitavanje…",
       "loadError": "Neuspjelo učitavanje zaposlenika.",
       "empty": "Nema dostupnih zaposlenika.",
       "left": {
         "employeesCount": "Zaposlenici ({{count}})",
-        "selectedCount": "Odabrano: {{count}}"
+        "selectedCount": "Odabrano: {{count}}",
+        "vehiclesCount": "Vozila: {{count}}",
+        "toolsCount": "Alati: {{count}}"
       },
       "global": {
         "startLabel": "Početak (globalno)",
@@ -52,7 +86,10 @@
         "employee": "Zaposlenik",
         "start": "Početak",
         "end": "Završetak",
-        "reset": "Reset"
+        "reset": "Reset",
+        "vehicle": "Vozilo",
+        "tool": "Alat",
+        "responsible": "Odgovorna osoba"
       },
       "pickHint": "Odaberite zaposlenike s lijeve strane.",
       "tooltip": {
@@ -85,7 +122,8 @@
     "table": {
       "edit": "Uredi",
       "assignEmployees": "Dodijeli zaposlenike",
-      "delete": "Izbriši"
+      "delete": "Izbriši",
+      "detailView": "Pregled gradilišta"
     },
     "delete": {
       "title": "Izbriši gradilište?",
@@ -95,6 +133,7 @@
     }
   },
   "common": {
+    "notAvailable": "Nije definirano",
     "loading": "Učitavanje…",
     "datagrid": {
       "columnsButton": "Stupci",
@@ -362,11 +401,12 @@
       "promptChangePivotValuesDescription": "{{column}} ({{aggregation}})"
     },
     "columns": {
+      "constructionSiteVehicles": "Vozila",
       "id": "Id",
       "name": "Naziv",
       "description": "Opis",
       "actions": "Akcije",
-
+      "phoneNumber": "Broj telefona",
       "location": "Lokacija",
       "startDate": "Početak",
       "plannedEndDate": "Planirani završetak",
@@ -839,6 +879,89 @@
         "weight": "Težina (kg)",
         "description": "Opis"
       }
+    }
+  },
+  "dashboard": {
+    "root": {
+      "stats": {
+        "total": "Ukupno tenanta",
+        "active": "Aktivni",
+        "inactive": "Neaktivni",
+        "expired": "Istekla licenca"
+      },
+      "title": "Nadzorna ploča",
+      "bar": {
+        "tenantsByStatus": "Tenanti po statusu — {{year}}",
+        "tenantsFiltered": "Tenanti — {{status}} — {{year}}",
+        "yAxisLabel": "Broj",
+        "series": {
+          "active": "Aktivni",
+          "inactive": "Neaktivni",
+          "expired": "Istekli"
+        }
+      },
+      "line": {
+        "title": "Mjesečni rast — {{year}}",
+        "activeTenants": "Aktivni tenanti"
+      },
+      "recent": {
+        "title": "Nedavni tenanti (zadnjih 5)",
+        "table": {
+          "tenant": "Tenant",
+          "email": "Email",
+          "validUntil": "Vrijedi do",
+          "statusToday": "Status (danas)"
+        }
+      },
+      "statusChip": {
+        "active": "Aktivan",
+        "inactive": "Neaktivan",
+        "expired": "Istekao"
+      }
+    },
+    "admin": {
+      "title": "Nadzorna ploča",
+      "stats": {
+        "sites": "Gradilišta",
+        "employees": "Zaposlenici",
+        "tools": "Alati",
+        "vehicles": "Vozila"
+      },
+      "bar": {
+        "sites": "Gradilišta — Mjesečno ({{year}})",
+        "employees": "Zaposlenici — Mjesečno ({{year}})",
+        "tools": "Alati — Mjesečno ({{year}})",
+        "vehicles": "Vozila — Mjesečno ({{year}})",
+        "yAxis": "Broj"
+      },
+      "line": {
+        "title": "Mjesečni rast — {{year}} (Gradilišta)",
+        "cumulative": "Kumulativna gradilišta"
+      },
+      "recent": {
+        "title": "Nedavna gradilišta (zadnjih 5)",
+        "table": {
+          "site": "Gradilište",
+          "location": "Lokacija",
+          "created": "Kreirano",
+          "range": "Početak → Planirani završetak",
+          "resources": "Zaposl. / Alati / Vozila",
+          "status": "Status"
+        }
+      },
+      "statusChip": {
+        "active": "Aktivno",
+        "past": "Završeno"
+      }
+    }
+  },
+  "auth": {
+    "forcePasswordChange": {
+      "title": "Potrebna je promjena lozinke",
+      "message": "Radi sigurnosti morate postaviti novu lozinku prije nastavka.",
+      "newPassword": "Nova lozinka",
+      "confirmNewPassword": "Potvrdite novu lozinku",
+      "submit": "Spremi lozinku"
     }
   }
 }

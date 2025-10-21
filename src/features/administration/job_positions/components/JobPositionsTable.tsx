@@ -163,7 +163,7 @@ export default function JobPositionsTable() {
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   if (error) return <div>{t("jobPositions.list.error")}</div>;
-  console.log("jobPositionsColumns", jobPositionsColumns);
+
   return (
     <>
       <ReusableDataGrid<JobPosition>

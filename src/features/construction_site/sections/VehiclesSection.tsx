@@ -74,30 +74,57 @@ export default function VehiclesSection({
                         label={v.responsibleEmployeeName}
                       />
                     )}
-                    {v.status && (
+                    {/* {v.status && (
                       <Chip size="small" variant="outlined" label={v.status} />
-                    )}
+                    )} */}
                     {v.condition && <Chip size="small" label={v.condition} />}
-                    {v.vehicleType && (
-                      <Chip
-                        size="small"
-                        variant="outlined"
-                        label={v.vehicleType}
-                      />
-                    )}
+                    {/* {v.vehicleType && (
+                      <Chip size="small" variant="outlined" label={v.vehicleType} />
+                    )} */}
                   </Stack>
                 }
                 sub={
                   [
-                    v.registrationNumber && `Reg.: ${v.registrationNumber}`,
+                    v.registrationNumber &&
+                      `${t(
+                        "constructionSites.detail.vehicle.registrationShort",
+                        {
+                          defaultValue: "Reg.",
+                        }
+                      )}: ${v.registrationNumber}`,
                     (v.brand || v.model) &&
-                      `Vozilo: ${[v.brand, v.model].filter(Boolean).join(" ")}`,
-                    v.vin && `VIN: ${v.vin}`,
-                    v.yearOfManufacturing && `God.: ${v.yearOfManufacturing}`,
-                    v.horsePower && `Snaga: ${v.horsePower} KS`,
-                    v.weight && `Težina: ${v.weight} kg`,
+                      `${t("constructionSites.detail.vehicle.labelShort", {
+                        defaultValue: "Vozilo",
+                      })}: ${[v.brand, v.model].filter(Boolean).join(" ")}`,
+                    v.vin &&
+                      `${t("constructionSites.detail.vehicle.vinShort", {
+                        defaultValue: "VIN",
+                      })}: ${v.vin}`,
+                    v.yearOfManufacturing &&
+                      `${t("constructionSites.detail.vehicle.yearShort", {
+                        defaultValue: "God.",
+                      })}: ${v.yearOfManufacturing}`,
+                    v.horsePower &&
+                      `${t("constructionSites.detail.vehicle.powerShort", {
+                        defaultValue: "Snaga",
+                      })}: ${v.horsePower} ${t("units.hp", {
+                        defaultValue: "KS",
+                      })}`,
+                    v.weight &&
+                      `${t("constructionSites.detail.vehicle.weightShort", {
+                        defaultValue: "Težina",
+                      })}: ${v.weight} ${t("units.kg", {
+                        defaultValue: "kg",
+                      })}`,
                     v.averageConsumption &&
-                      `Potrošnja: ${v.averageConsumption} L/100km`,
+                      `${t(
+                        "constructionSites.detail.vehicle.consumptionShort",
+                        {
+                          defaultValue: "Potrošnja",
+                        }
+                      )}: ${v.averageConsumption} ${t("units.lPer100km", {
+                        defaultValue: "L/100km",
+                      })}`,
                   ]
                     .filter(Boolean)
                     .join(" · ") || "—"

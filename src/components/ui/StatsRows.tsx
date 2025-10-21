@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import { People, CheckCircle, Cancel, AccessTime } from "@mui/icons-material";
-import { StatCard } from "../../../components/ui/StatCard";
+import { StatCard } from "./StatCard";
+import { useTranslation } from "react-i18next";
 
 type Filter = "all" | "active" | "inactive" | "expired";
 
@@ -19,6 +20,8 @@ export function StatsRow({
   onSelectExpired: () => void;
   selected: Filter;
 }) {
+  const { t } = useTranslation();
+
   const itemSx = {
     flexBasis: { xs: "100%", sm: "calc(50% - 8px)", md: "calc(25% - 12px)" },
     flexGrow: 1,
@@ -28,7 +31,7 @@ export function StatsRow({
     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
       <StatCard
         sx={itemSx}
-        label="Ukupno tenanta"
+        label={t("dashboard.root.stats.total")}
         value={totals.total}
         icon={<People color="primary" fontSize="small" />}
         onClick={onSelectTotal}
@@ -36,7 +39,7 @@ export function StatsRow({
       />
       <StatCard
         sx={itemSx}
-        label="Aktivni"
+        label={t("dashboard.root.stats.active")}
         value={totals.active}
         icon={<CheckCircle color="primary" fontSize="small" />}
         onClick={onSelectActive}
@@ -44,7 +47,7 @@ export function StatsRow({
       />
       <StatCard
         sx={itemSx}
-        label="Neaktivni"
+        label={t("dashboard.root.stats.inactive")}
         value={totals.inactive}
         icon={<Cancel color="primary" fontSize="small" />}
         onClick={onSelectInactive}
@@ -52,7 +55,7 @@ export function StatsRow({
       />
       <StatCard
         sx={itemSx}
-        label="Istekla licenca"
+        label={t("dashboard.root.stats.expired")}
         value={totals.expired}
         icon={<AccessTime color="primary" fontSize="small" />}
         onClick={onSelectExpired}

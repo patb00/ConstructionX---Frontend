@@ -174,7 +174,7 @@ export default function RolesTable() {
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   if (error) return <div>{t("roles.list.error")}</div>;
-  console.log("rolesColumns", rolesColumns);
+
   return (
     <>
       <ReusableDataGrid<Role>

@@ -21,6 +21,30 @@
       "title": "Baustellen",
       "error": "Fehler beim Laden der Baustellen."
     },
+    "detail": {
+      "employees": "Mitarbeiter",
+      "addEmployee": "Mitarbeiter hinzufügen",
+      "addFirstEmployee": "Ersten Mitarbeiter hinzufügen",
+      "noEmployees": "Keine Mitarbeiter zugewiesen.",
+
+      "tools": "Werkzeuge",
+      "addTool": "Werkzeug hinzufügen",
+      "addFirstTool": "Erstes Werkzeug hinzufügen",
+      "noTools": "Keine Werkzeuge zugewiesen.",
+
+      "vehicles": "Fahrzeuge",
+      "addVehicle": "Fahrzeug hinzufügen",
+      "addFirstVehicle": "Erstes Fahrzeug hinzufügen",
+      "noVehicles": "Keine Fahrzeuge zugewiesen."
+    },
+    "fields": {
+      "period": "Zeitraum",
+      "created": "Erstellt",
+      "manager": "Bauleiter",
+      "id": "ID",
+      "location": "Standort",
+      "name": "Name"
+    },
     "create": {
       "title": "Baustelle erstellen",
       "back": "Zurück"
@@ -32,13 +56,23 @@
       "loadError": "Baustelle konnte nicht geladen werden."
     },
     "assign": {
+      "vehiclesTitle": "Fahrzeuge zuweisen",
+      "toolsTitle": "Werkzeuge zuweisen",
+
+      "noVehicles": "Keine Fahrzeuge verfügbar.",
+      "noTools": "Keine Werkzeuge verfügbar.",
+
+      "pickVehicleHint": "Wählen Sie Fahrzeug(e) links aus.",
+      "pickToolHint": "Wählen Sie Werkzeug(e) links aus.",
       "title": "Mitarbeiter zuweisen",
       "loading": "Wird geladen…",
       "loadError": "Mitarbeiter konnten nicht geladen werden.",
       "empty": "Keine Mitarbeiter verfügbar.",
       "left": {
         "employeesCount": "Mitarbeiter ({{count}})",
-        "selectedCount": "Ausgewählt: {{count}}"
+        "selectedCount": "Ausgewählt: {{count}}",
+        "vehiclesCount": "Fahrzeuge: {{count}}",
+        "toolsCount": "Werkzeuge: {{count}}"
       },
       "global": {
         "startLabel": "Beginn (global)",
@@ -52,7 +86,10 @@
         "employee": "Mitarbeiter",
         "start": "Beginn",
         "end": "Ende",
-        "reset": "Zurücksetzen"
+        "reset": "Zurücksetzen",
+        "vehicle": "Fahrzeug",
+        "tool": "Werkzeug",
+        "responsible": "Verantwortlich"
       },
       "pickHint": "Wählen Sie Mitarbeiter links aus.",
       "tooltip": {
@@ -85,7 +122,8 @@
     "table": {
       "edit": "Bearbeiten",
       "assignEmployees": "Mitarbeiter zuweisen",
-      "delete": "Löschen"
+      "delete": "Löschen",
+      "detailView": "Baustelle anzeigen"
     },
     "delete": {
       "title": "Baustelle löschen?",
@@ -95,6 +133,7 @@
     }
   },
   "common": {
+    "notAvailable": "Nicht verfügbar",
     "loading": "Wird geladen…",
     "datagrid": {
       "columnsButton": "Spalten",
@@ -362,6 +401,8 @@
       "promptChangePivotValuesDescription": "{{column}} ({{aggregation}})"
     },
     "columns": {
+      "constructionSiteVehicles": "Fahrzeuge",
+      "phoneNumber": "Telefonnummer",
       "id": "Id",
       "name": "Name",
       "description": "Beschreibung",
@@ -839,6 +880,89 @@
         "weight": "Gewicht (kg)",
         "description": "Beschreibung"
       }
+    }
+  },
+  "dashboard": {
+    "root": {
+      "title": "Dashboard",
+      "stats": {
+        "total": "Gesamtzahl Mandanten",
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "expired": "Abgelaufene Lizenz"
+      },
+      "bar": {
+        "tenantsByStatus": "Mandanten nach Status — {{year}}",
+        "tenantsFiltered": "Mandanten — {{status}} — {{year}}",
+        "yAxisLabel": "Anzahl",
+        "series": {
+          "active": "Aktiv",
+          "inactive": "Inaktiv",
+          "expired": "Abgelaufen"
+        }
+      },
+      "line": {
+        "title": "Monatliches Wachstum — {{year}}",
+        "activeTenants": "Aktive Mandanten"
+      },
+      "recent": {
+        "title": "Neueste Mandanten (letzte 5)",
+        "table": {
+          "tenant": "Mandant",
+          "email": "E-Mail",
+          "validUntil": "Gültig bis",
+          "statusToday": "Status (heute)"
+        }
+      },
+      "statusChip": {
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "expired": "Abgelaufen"
+      }
+    },
+    "admin": {
+      "title": "Admin-Dashboard",
+      "stats": {
+        "sites": "Baustellen",
+        "employees": "Mitarbeiter",
+        "tools": "Werkzeuge",
+        "vehicles": "Fahrzeuge"
+      },
+      "bar": {
+        "sites": "Baustellen — Monatlich ({{year}})",
+        "employees": "Mitarbeiter — Monatlich ({{year}})",
+        "tools": "Werkzeuge — Monatlich ({{year}})",
+        "vehicles": "Fahrzeuge — Monatlich ({{year}})",
+        "yAxis": "Anzahl"
+      },
+      "line": {
+        "title": "Monatliches Wachstum — {{year}} (Baustellen)",
+        "cumulative": "Kumulative Baustellen"
+      },
+      "recent": {
+        "title": "Neueste Baustellen (letzte 5)",
+        "table": {
+          "site": "Baustelle",
+          "location": "Standort",
+          "created": "Erstellt",
+          "range": "Start → Geplantes Ende",
+          "resources": "MA / Werkz. / Fahrzeuge",
+          "status": "Status"
+        }
+      },
+      "statusChip": {
+        "active": "Aktiv",
+        "past": "Abgeschlossen"
+      }
+    }
+  },
+  "auth": {
+    "forcePasswordChange": {
+      "title": "Passwortänderung erforderlich",
+      "message": "Aus Sicherheitsgründen müssen Sie ein neues Passwort festlegen, bevor Sie fortfahren.",
+      "newPassword": "Neues Passwort",
+      "confirmNewPassword": "Neues Passwort bestätigen",
+      "submit": "Passwort speichern"
     }
   }
 }

@@ -147,7 +147,7 @@ export default function ToolsTable() {
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   if (error) return <div>{t("tools.list.error")}</div>;
-  console.log("toolsColumns", toolsColumns);
+
   return (
     <>
       <ReusableDataGrid<Tool>

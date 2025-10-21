@@ -24,6 +24,7 @@ type Tool = {
   dateTo?: string | null;
   responsibleEmployeeName?: string | null;
 };
+
 export default function ToolsSection({
   tools,
   onAdd,
@@ -65,13 +66,9 @@ export default function ToolsSection({
                         label={tool.responsibleEmployeeName}
                       />
                     )}
-                    {tool.status && (
-                      <Chip
-                        size="small"
-                        variant="outlined"
-                        label={tool.status}
-                      />
-                    )}
+                    {/* {tool.status && (
+                      <Chip size="small" variant="outlined" label={tool.status} />
+                    )} */}
                     {tool.condition && (
                       <Chip size="small" label={tool.condition} />
                     )}
@@ -79,9 +76,18 @@ export default function ToolsSection({
                 }
                 sub={
                   [
-                    tool.model && `Model: ${tool.model}`,
-                    tool.inventoryNumber && `Inv. br.: ${tool.inventoryNumber}`,
-                    tool.serialNumber && `Ser. br.: ${tool.serialNumber}`,
+                    tool.model &&
+                      `${t("constructionSites.detail.tool.modelShort", {
+                        defaultValue: "Model",
+                      })}: ${tool.model}`,
+                    tool.inventoryNumber &&
+                      `${t("constructionSites.detail.tool.inventoryShort", {
+                        defaultValue: "Inv. br.",
+                      })}: ${tool.inventoryNumber}`,
+                    tool.serialNumber &&
+                      `${t("constructionSites.detail.tool.serialShort", {
+                        defaultValue: "Ser. br.",
+                      })}: ${tool.serialNumber}`,
                   ]
                     .filter(Boolean)
                     .join(" · ") || "—"

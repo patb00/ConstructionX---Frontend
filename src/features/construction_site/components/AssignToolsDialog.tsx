@@ -21,7 +21,7 @@ import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useTranslation } from "react-i18next";
 
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
-// if you have a hook for listing tools:
+
 import { useTools } from "../../tools/hooks/useTools";
 import { useConstructionSite } from "../hooks/useConstructionSite";
 
@@ -49,19 +49,16 @@ export default function AssignToolsDialog({
 }: Props) {
   const { t } = useTranslation();
 
-  // data sources
   const { data: site } = useConstructionSite(constructionSiteId);
   const {
-    employeeRows = [],
+    employeeRows,
     isLoading: empLoading,
     isError: empError,
   } = useEmployees();
   const { toolsRows, isLoading: toolLoading, isError: toolError } = useTools();
-  // ^ if you don't have useTools, replace with your tool listing hook/props
 
   const assign = useAssignToolsToConstructionSite();
 
-  // state
   const [selected, setSelected] = React.useState<number[]>([]);
   const [globalFrom, setGlobalFrom] = React.useState<string>(todayStr());
   const [globalTo, setGlobalTo] = React.useState<string>(todayStr());
@@ -80,46 +77,53 @@ export default function AssignToolsDialog({
     }
   }, [open]);
 
-  // --- Preselect from site: match by tool id; map responsible by employee full name (from API) ---
   const preselected = React.useMemo(() => {
     const prior = site?.constructionSiteTools ?? [];
     const resultIds: number[] = [];
     const resultMap: Record<number, ToolRange> = {};
-
     if (!prior.length) return { ids: resultIds, map: resultMap };
 
+    const norm = (s: string) =>
+      s
+        ?.normalize?.("NFKD")
+        ?.replace(/\p{Diacritic}/gu, "")
+        ?.trim()
+        ?.toLowerCase?.() ?? "";
     const byName = new Map(
-      employeeRows.map((e: any) => [
-        fullName(e.firstName, e.lastName),
+      (employeeRows ?? []).map((e: any) => [
+        norm(fullName(e.firstName, e.lastName)),
         Number(e.id),
       ])
     );
 
     for (const t of prior) {
-      const id = Number((t as any).id);
-      if (!Number.isFinite(id)) continue;
-      resultIds.push(id);
-      const respId = t.responsibleEmployeeName
-        ? byName.get(t.responsibleEmployeeName)
-        : undefined;
-      resultMap[id] = {
+      const toolId = Number((t as any).id);
+      if (!Number.isFinite(toolId)) continue;
+      resultIds.push(toolId);
+
+      let respId: number | null | undefined = t.responsibleEmployeeId;
+      if (respId == null && t.responsibleEmployeeName) {
+        respId = byName.get(norm(t.responsibleEmployeeName));
+      }
+
+      resultMap[toolId] = {
         from: t.dateFrom ?? todayStr(),
         to: t.dateTo ?? todayStr(),
         custom: true,
-        responsibleEmployeeId: respId ?? null,
+        responsibleEmployeeId: Number.isFinite(Number(respId))
+          ? Number(respId)
+          : null,
       };
     }
     return { ids: resultIds, map: resultMap };
   }, [site, employeeRows]);
 
-  // initialize selection when dialog opens (only once unless user touches)
   React.useEffect(() => {
     if (!open || touched) return;
     setSelected(preselected.ids);
     setRanges(preselected.map);
   }, [open, preselected, touched]);
 
-  // filter selection to current tool list
   React.useEffect(() => {
     if (!open || selected.length === 0) return;
     const existing = new Set(toolsRows.map((t: any) => Number(t.id)));
@@ -163,7 +167,6 @@ export default function AssignToolsDialog({
     });
   };
 
-  // global dates apply to items that aren't custom
   const applyGlobal = (nextFrom: string, nextTo: string) => {
     setRanges((old) => {
       const updated: Record<number, ToolRange> = { ...old };
@@ -271,13 +274,10 @@ export default function AssignToolsDialog({
                 toolId,
                 dateFrom: r.from,
                 dateTo: r.to,
-                responsibleEmployeeId: r.responsibleEmployeeId ?? 0, // if API requires number, ensure not null
+                responsibleEmployeeId: r.responsibleEmployeeId ?? 0,
               };
             }),
     };
-
-    // optional: filter out ones without responsibleEmployeeId if required
-    // payload.tools = payload.tools.filter(x => x.responsibleEmployeeId)
 
     assign.mutate(payload as any, { onSuccess: onClose });
   };
@@ -332,11 +332,10 @@ export default function AssignToolsDialog({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "320px 1fr" },
+              gridTemplateColumns: { xs: "1fr", md: "260px 1fr" },
               minHeight: 420,
             }}
           >
-            {/* LEFT: tool list */}
             <Box
               sx={{
                 borderRight: (t) => ({ md: `1px solid ${t.palette.divider}` }),
@@ -420,7 +419,6 @@ export default function AssignToolsDialog({
               </Stack>
             </Box>
 
-            {/* RIGHT: global + per-item details */}
             <Box sx={{ p: 2 }}>
               <Stack
                 direction={{ xs: "column", sm: "row" }}
@@ -551,7 +549,7 @@ export default function AssignToolsDialog({
                         </Box>
 
                         <TextField
-                          label={t("constructionSites.assign.grid.start")}
+                          //label={t("constructionSites.assign.grid.start")}
                           type="date"
                           size="small"
                           value={r.from}
@@ -560,7 +558,7 @@ export default function AssignToolsDialog({
                           error={!isValidRange(r.from, r.to)}
                         />
                         <TextField
-                          label={t("constructionSites.assign.grid.end")}
+                          //label={t("constructionSites.assign.grid.end")}
                           type="date"
                           size="small"
                           value={r.to}
@@ -571,15 +569,19 @@ export default function AssignToolsDialog({
 
                         <Autocomplete
                           size="small"
-                          options={employeeRows as any[]}
+                          options={(employeeRows as any[]) ?? []}
                           getOptionLabel={(e: any) =>
-                            fullName(e.firstName, e.lastName) || `ID ${e.id}`
+                            e ? fullName(e.firstName, e.lastName) : ""
+                          }
+                          isOptionEqualToValue={(opt: any, val: any) =>
+                            Number(opt?.id) === Number(val?.id)
                           }
                           value={
-                            r.responsibleEmployeeId
+                            r.responsibleEmployeeId != null
                               ? (employeeRows as any[]).find(
                                   (e) =>
-                                    Number(e.id) === r.responsibleEmployeeId
+                                    Number(e.id) ===
+                                    Number(r.responsibleEmployeeId)
                                 ) ?? null
                               : null
                           }
@@ -589,10 +591,12 @@ export default function AssignToolsDialog({
                           renderInput={(params) => (
                             <TextField
                               {...params}
-                              label={t(
+                              /*  label={t(
                                 "constructionSites.assign.grid.responsible",
-                                { defaultValue: "Odgovorna osoba" }
-                              )}
+                                {
+                                  defaultValue: "Odgovorna osoba",
+                                }
+                              )} */
                             />
                           )}
                         />

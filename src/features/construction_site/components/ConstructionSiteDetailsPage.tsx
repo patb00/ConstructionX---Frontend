@@ -24,11 +24,11 @@ export default function ConstructionSiteDetailsPage() {
   if (!Number.isFinite(siteId))
     return <div>{t("constructionSites.edit.invalidUrlId")}</div>;
   const { data } = useConstructionSite(siteId);
-  console.log(data);
 
   const [openEmp, setOpenEmp] = useState(false);
   const [openTools, setOpenTools] = useState(false);
   const [openVeh, setOpenVeh] = useState(false);
+
   return (
     <Stack spacing={2} sx={{ width: "100%", minWidth: 0 }}>
       <Box display="flex" alignItems="center" justifyContent="space-between">

@@ -79,7 +79,7 @@ export function SignInForm({
         sx={{ mt: 2, height: 36 }}
         disabled={isPending}
       >
-        {isPending ? <CircularProgress size={20} color="inherit" /> : "Login"}
+        {isPending ? <CircularProgress size={20} color="inherit" /> : "Prijava"}
       </Button>
     </Box>
   );

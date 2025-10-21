@@ -148,8 +148,6 @@ export default function CompaniesTable() {
 
   if (error) return <div>{t("companies.list.error")}</div>;
 
-  console.log("companiesColumns", companiesColumns);
-
   return (
     <>
       <ReusableDataGrid<Company>

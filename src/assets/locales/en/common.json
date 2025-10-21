@@ -21,6 +21,30 @@
       "title": "Construction Sites",
       "error": "Failed to load construction sites."
     },
+    "detail": {
+      "employees": "Employees",
+      "addEmployee": "Add employee",
+      "addFirstEmployee": "Add first employee",
+      "noEmployees": "No employees assigned.",
+
+      "tools": "Tools",
+      "addTool": "Add tool",
+      "addFirstTool": "Add first tool",
+      "noTools": "No tools assigned.",
+
+      "vehicles": "Vehicles",
+      "addVehicle": "Add vehicle",
+      "addFirstVehicle": "Add first vehicle",
+      "noVehicles": "No vehicles assigned."
+    },
+    "fields": {
+      "period": "Period",
+      "created": "Created",
+      "manager": "Site manager",
+      "id": "ID",
+      "location": "Location",
+      "name": "Name"
+    },
     "create": {
       "title": "Create construction site",
       "back": "Back"
@@ -32,13 +56,23 @@
       "loadError": "Failed to load construction site."
     },
     "assign": {
+      "vehiclesTitle": "Assign vehicles",
+      "toolsTitle": "Assign tools",
+
+      "noVehicles": "No vehicles available.",
+      "noTools": "No tools available.",
+
+      "pickVehicleHint": "Select vehicle(s) from the left.",
+      "pickToolHint": "Select tool(s) from the left.",
       "title": "Assign employees",
       "loading": "Loading…",
       "loadError": "Failed to load employees.",
       "empty": "No employees available.",
       "left": {
         "employeesCount": "Employees ({{count}})",
-        "selectedCount": "Selected: {{count}}"
+        "selectedCount": "Selected: {{count}}",
+        "vehiclesCount": "Vehicles: {{count}}",
+        "toolsCount": "Tools: {{count}}"
       },
       "global": {
         "startLabel": "Start (global)",
@@ -52,7 +86,10 @@
         "employee": "Employee",
         "start": "Start",
         "end": "End",
-        "reset": "Reset"
+        "reset": "Reset",
+        "vehicle": "Vehicle",
+        "tool": "Tool",
+        "responsible": "Responsible"
       },
       "pickHint": "Select employees from the left.",
       "tooltip": {
@@ -85,7 +122,8 @@
     "table": {
       "edit": "Edit",
       "assignEmployees": "Assign employees",
-      "delete": "Delete"
+      "delete": "Delete",
+      "detailView": "View site"
     },
     "delete": {
       "title": "Delete construction site?",
@@ -95,6 +133,7 @@
     }
   },
   "common": {
+    "notAvailable": "Not available",
     "loading": "Loading…",
     "datagrid": {
       "columnsButton": "Columns",
@@ -362,6 +401,8 @@
       "promptChangePivotValuesDescription": "{{column}} ({{aggregation}})"
     },
     "columns": {
+      "constructionSiteVehicles": "Vehicles",
+      "phoneNumber": "Phone number",
       "id": "Id",
       "name": "Name",
       "description": "Description",
@@ -839,6 +880,89 @@
         "weight": "Weight (kg)",
         "description": "Description"
       }
+    }
+  },
+  "dashboard": {
+    "root": {
+      "title": "Dashboard",
+      "stats": {
+        "total": "Total tenants",
+        "active": "Active",
+        "inactive": "Inactive",
+        "expired": "Expired license"
+      },
+      "bar": {
+        "tenantsByStatus": "Tenants by Status — {{year}}",
+        "tenantsFiltered": "Tenants — {{status}} — {{year}}",
+        "yAxisLabel": "Count",
+        "series": {
+          "active": "Active",
+          "inactive": "Inactive",
+          "expired": "Expired"
+        }
+      },
+      "line": {
+        "title": "Monthly Growth — {{year}}",
+        "activeTenants": "Active tenants"
+      },
+      "recent": {
+        "title": "Recent Tenants (last 5)",
+        "table": {
+          "tenant": "Tenant",
+          "email": "Email",
+          "validUntil": "Valid until",
+          "statusToday": "Status (today)"
+        }
+      },
+      "statusChip": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "expired": "Expired"
+      }
+    },
+    "admin": {
+      "title": "Admin Dashboard",
+      "stats": {
+        "sites": "Construction Sites",
+        "employees": "Employees",
+        "tools": "Tools",
+        "vehicles": "Vehicles"
+      },
+      "bar": {
+        "sites": "Sites — Monthly ({{year}})",
+        "employees": "Employees — Monthly ({{year}})",
+        "tools": "Tools — Monthly ({{year}})",
+        "vehicles": "Vehicles — Monthly ({{year}})",
+        "yAxis": "Count"
+      },
+      "line": {
+        "title": "Monthly Growth — {{year}} (Sites)",
+        "cumulative": "Cumulative sites"
+      },
+      "recent": {
+        "title": "Recent Construction Sites (last 5)",
+        "table": {
+          "site": "Site",
+          "location": "Location",
+          "created": "Created",
+          "range": "Start → Planned end",
+          "resources": "Emp / Tools / Vehicles",
+          "status": "Status"
+        }
+      },
+      "statusChip": {
+        "active": "Active",
+        "past": "Completed"
+      }
+    }
+  },
+  "auth": {
+    "forcePasswordChange": {
+      "title": "Password change required",
+      "message": "For security reasons you must set a new password before continuing.",
+      "newPassword": "New password",
+      "confirmNewPassword": "Confirm new password",
+      "submit": "Save password"
     }
   }
 }

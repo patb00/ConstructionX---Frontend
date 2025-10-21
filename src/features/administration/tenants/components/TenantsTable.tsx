@@ -215,8 +215,6 @@ export default function TenantsTable() {
 
   if (error) return <div>{t("tenants.list.error")}</div>;
 
-  console.log("tenantsColumns", tenantsColumns);
-
   return (
     <ReusableDataGrid<Tenant>
       rows={tenantsRows}
