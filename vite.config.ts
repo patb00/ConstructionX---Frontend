@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://fradotovic-001-site1.jtempurl.com",
+        target: "https://localhost:7118",
         changeOrigin: true,
         secure: false,
       },
