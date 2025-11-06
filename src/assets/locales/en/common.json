@@ -14,7 +14,8 @@
     "jobPositions": "Job Positions",
     "tools": "Tools",
     "toolCategories": "Tool Categories",
-    "vehicles": "Vehicles"
+    "vehicles": "Vehicles",
+    "assignments": "Assignments"
   },
   "constructionSites": {
     "list": {
@@ -465,7 +466,18 @@
       "vehicleType": "Vehicle type",
       "horsePower": "Horsepower",
       "averageConsumption": "Average consumption",
-      "weight": "Weight"
+      "weight": "Weight",
+
+      "constructionSiteId": "Construction site ID",
+      "constructionSiteLocation": "Construction site location",
+      "constructionSiteName": "Construction site name",
+      "employeeId": "Employee ID",
+      "siteManagerPhoneNumber": "Site manager phone",
+      "dateFrom": "Date from",
+      "dateTo": "Date to",
+      "vehicleId": "Vehicle ID",
+      "responsibleEmployeeFullName": "Responsible employee (full name)",
+      "toolId": "Tool ID"
     }
   },
   "tenants": {
@@ -962,7 +974,51 @@
       "message": "For security reasons you must set a new password before continuing.",
       "newPassword": "New password",
       "confirmNewPassword": "Confirm new password",
+      "currentPassword": "Current password",
       "submit": "Save password"
+    }
+  },
+  "assignments": {
+    "title": "Assignments",
+    "filterByEmployee": "Filter by employee",
+    "allEmployees": "All employees",
+    "construction": "Construction sites",
+    "vehicles": "Vehicles",
+    "tools": "Tools"
+  },
+  "appShell": {
+    "a11y": {
+      "openMenu": "Open menu"
+    },
+    "userAvatarAlt": "User",
+    "snackbar": {
+      "loggedOut": "You have been signed out."
+    },
+    "menu": {
+      "profile": "Profile",
+      "logout": "Sign out"
+    },
+    "profile": {
+      "title": "User profile",
+      "userId": "User ID",
+      "tenant": "Tenant",
+      "userData": "User details",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "username": "Username",
+      "phone": "Phone",
+      "status": "Status",
+      "active": "active",
+      "inactive": "inactive",
+      "role": "Role",
+      "permissions": "Permissions ({{count}})",
+      "tokenStatus": "Token status",
+      "accessToken": "Access token",
+      "expired": "expired",
+      "refreshTokenExpires": "Refresh token expires",
+      "notFound": "No user with the signed-in ID was found in the users list.",
+      "close": "Close"
     }
   }
 }

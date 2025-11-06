@@ -14,7 +14,8 @@
     "jobPositions": "Radna mjesta",
     "tools": "Alati",
     "toolCategories": "Kategorije alata",
-    "vehicles": "Vozila"
+    "vehicles": "Vozila",
+    "assignments": "Dodjele"
   },
   "constructionSites": {
     "detail": {
@@ -464,7 +465,18 @@
       "vehicleType": "Vrsta vozila",
       "horsePower": "Snaga (KS)",
       "averageConsumption": "Prosječna potrošnja",
-      "weight": "Težina"
+      "weight": "Težina",
+
+      "constructionSiteId": "ID gradilišta",
+      "constructionSiteLocation": "Lokacija gradilišta",
+      "constructionSiteName": "Naziv gradilišta",
+      "employeeId": "ID zaposlenika",
+      "siteManagerPhoneNumber": "Telefon voditelja gradilišta",
+      "dateFrom": "Datum od",
+      "dateTo": "Datum do",
+      "vehicleId": "ID vozila",
+      "responsibleEmployeeFullName": "Odgovorni zaposlenik (puno ime)",
+      "toolId": "ID alata"
     }
   },
   "tenants": {
@@ -961,7 +973,51 @@
       "message": "Radi sigurnosti morate postaviti novu lozinku prije nastavka.",
       "newPassword": "Nova lozinka",
       "confirmNewPassword": "Potvrdite novu lozinku",
+      "currentPassword": "Trenutna lozinka",
       "submit": "Spremi lozinku"
+    }
+  },
+  "assignments": {
+    "title": "Dodjele",
+    "filterByEmployee": "Filtriraj po zaposleniku",
+    "allEmployees": "Svi zaposlenici",
+    "construction": "Gradilišta",
+    "vehicles": "Vozila",
+    "tools": "Alati"
+  },
+  "appShell": {
+    "a11y": {
+      "openMenu": "Otvori izbornik"
+    },
+    "userAvatarAlt": "Korisnik",
+    "snackbar": {
+      "loggedOut": "Odjavljeni ste."
+    },
+    "menu": {
+      "profile": "Profil",
+      "logout": "Odjava"
+    },
+    "profile": {
+      "title": "Profil korisnika",
+      "userId": "ID korisnika",
+      "tenant": "Tenant",
+      "userData": "Korisnički podaci",
+      "firstName": "Ime",
+      "lastName": "Prezime",
+      "email": "Email",
+      "username": "Korisničko ime",
+      "phone": "Telefon",
+      "status": "Status",
+      "active": "aktivan",
+      "inactive": "neaktivan",
+      "role": "Uloga",
+      "permissions": "Dozvole ({{count}})",
+      "tokenStatus": "Status tokena",
+      "accessToken": "Access token",
+      "expired": "istekao",
+      "refreshTokenExpires": "Refresh token istječe",
+      "notFound": "Nije pronađen korisnik s ID-om iz prijave u listi korisnika.",
+      "close": "Zatvori"
     }
   }
 }

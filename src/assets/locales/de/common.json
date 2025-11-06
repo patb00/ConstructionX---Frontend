@@ -14,7 +14,8 @@
     "jobPositions": "Arbeitsstellen",
     "tools": "Werkzeuge",
     "toolCategories": "Werkzeugkategorien",
-    "vehicles": "Fahrzeuge"
+    "vehicles": "Fahrzeuge",
+    "assignments": "Zuweisungen"
   },
   "constructionSites": {
     "list": {
@@ -465,7 +466,18 @@
       "vehicleType": "Fahrzeugtyp",
       "horsePower": "Leistung (PS)",
       "averageConsumption": "Durchschnittsverbrauch",
-      "weight": "Gewicht"
+      "weight": "Gewicht",
+
+      "constructionSiteId": "Baustellen-ID",
+      "constructionSiteLocation": "Baustellenstandort",
+      "constructionSiteName": "Baustellenname",
+      "employeeId": "Mitarbeiter-ID",
+      "siteManagerPhoneNumber": "Telefon des Bauleiters",
+      "dateFrom": "Datum von",
+      "dateTo": "Datum bis",
+      "vehicleId": "Fahrzeug-ID",
+      "responsibleEmployeeFullName": "Verantwortlicher Mitarbeiter (vollständiger Name)",
+      "toolId": "Werkzeug-ID"
     }
   },
   "tenants": {
@@ -962,7 +974,51 @@
       "message": "Aus Sicherheitsgründen müssen Sie ein neues Passwort festlegen, bevor Sie fortfahren.",
       "newPassword": "Neues Passwort",
       "confirmNewPassword": "Neues Passwort bestätigen",
+      "currentPassword": "Aktuelles Passwort",
       "submit": "Passwort speichern"
+    }
+  },
+  "assignments": {
+    "title": "Zuweisungen",
+    "filterByEmployee": "Nach Mitarbeiter filtern",
+    "allEmployees": "Alle Mitarbeiter",
+    "construction": "Baustellen",
+    "vehicles": "Fahrzeuge",
+    "tools": "Werkzeuge"
+  },
+  "appShell": {
+    "a11y": {
+      "openMenu": "Menü öffnen"
+    },
+    "userAvatarAlt": "Benutzer",
+    "snackbar": {
+      "loggedOut": "Sie wurden abgemeldet."
+    },
+    "menu": {
+      "profile": "Profil",
+      "logout": "Abmelden"
+    },
+    "profile": {
+      "title": "Benutzerprofil",
+      "userId": "Benutzer-ID",
+      "tenant": "Mandant",
+      "userData": "Benutzerdaten",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "username": "Benutzername",
+      "phone": "Telefon",
+      "status": "Status",
+      "active": "aktiv",
+      "inactive": "inaktiv",
+      "role": "Rolle",
+      "permissions": "Berechtigungen ({{count}})",
+      "tokenStatus": "Tokenstatus",
+      "accessToken": "Access-Token",
+      "expired": "abgelaufen",
+      "refreshTokenExpires": "Refresh-Token läuft ab",
+      "notFound": "Kein Benutzer mit der angemeldeten ID in der Benutzerliste gefunden.",
+      "close": "Schließen"
     }
   }
 }

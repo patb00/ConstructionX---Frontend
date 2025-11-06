@@ -1,5 +1,8 @@
 import { authFetch } from "../../../../lib/authFetch";
 import type {
+  AssignedConstructionSite,
+  AssignedTool,
+  AssignedVehicle,
   AssignJobPositionRequest,
   Employee,
   NewEmployeeRequest,
@@ -52,6 +55,29 @@ export const EmployeesApi = {
       `${base}/all-machinery-license?hasLicense=${encodeURIComponent(
         hasLicense
       )}`
+    );
+    return res.data;
+  },
+
+  getAssignedConstructionSites: async (): Promise<
+    AssignedConstructionSite[]
+  > => {
+    const res = await authFetch<ApiEnvelope<AssignedConstructionSite[]>>(
+      `${base}/assigned-construction-sites`
+    );
+    return res.data;
+  },
+
+  getAssignedVehicles: async (): Promise<AssignedVehicle[]> => {
+    const res = await authFetch<ApiEnvelope<AssignedVehicle[]>>(
+      `${base}/assigned-vehicles`
+    );
+    return res.data;
+  },
+
+  getAssignedTools: async (): Promise<AssignedTool[]> => {
+    const res = await authFetch<ApiEnvelope<AssignedTool[]>>(
+      `${base}/assigned-tools`
     );
     return res.data;
   },

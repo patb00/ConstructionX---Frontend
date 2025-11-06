@@ -24,3 +24,52 @@ export type EmployeeFormValues = NewEmployeeRequest & {
 };
 
 export type UpdateEmployeeRequest = Employee;
+
+export interface AssignedConstructionSite {
+  constructionSiteId: number;
+  employeeId: number;
+  name: string;
+  location: string;
+  startDate: string;
+  plannedEndDate: string;
+  siteManagerName: string;
+  siteManagerPhoneNumber: string | null;
+  dateFrom: string;
+  dateTo: string;
+}
+
+export interface AssignedVehicle {
+  constructionSiteId: number;
+  constructionSiteLocation: string;
+  constructionSiteName: string;
+  vehicleId: number;
+  registrationNumber: string;
+  vin: string;
+  brand: string;
+  model: string;
+  yearOfManufacturing: number;
+  vehicleType: string;
+  dateFrom: string;
+  dateTo: string;
+  isActive: boolean;
+  responsibleEmployeeId: number;
+  responsibleEmployeeFullName: string;
+}
+
+export interface AssignedTool {
+  constructionSiteId: number;
+  constructionSiteLocation: string;
+  constructionSiteName: string;
+  toolId: number;
+  name: string;
+  inventoryNumber: string;
+  serialNumber: string;
+  manufacturer: string;
+  model: string;
+  condition: string;
+  dateFrom: string;
+  dateTo: string;
+  isActive: boolean;
+  responsibleEmployeeId: number;
+  responsibleEmployeeFullName: string;
+}
