@@ -1,15 +1,6 @@
 import { useMemo, useState, useCallback } from "react";
-import { Box, Tooltip } from "@mui/material";
-import {
-  GridActionsCellItem,
-  type GridColDef,
-  type GridActionsColDef,
-  type GridRowParams,
-  type GridActionsCellItemProps,
-} from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SecurityIcon from "@mui/icons-material/Security";
+import { Box } from "@mui/material";
+import { type GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import { useDeleteRole } from "../hooks/useDeleteRole";
@@ -18,6 +9,7 @@ import type { Role } from "..";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 import { PermissionGate, useCan } from "../../../../lib/permissions";
 import { useTranslation } from "react-i18next";
+import { RowActions } from "../../../../components/ui/datagrid/RowActions";
 
 export default function RolesTable() {
   const { t } = useTranslation();
@@ -100,71 +92,38 @@ export default function RolesTable() {
     if (!(canEdit || canDelete || canManageClaims)) return base;
     if (base.some((c) => c.field === "actions")) return base;
 
-    const actionsCol: GridActionsColDef<Role> = {
+    const actionsCol: GridColDef<Role> = {
       field: "actions",
-      type: "actions",
       headerName: t("roles.actions"),
-      width: 200,
-      getActions: (
-        params: GridRowParams<Role>
-      ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+      width: 220,
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
         const row = params.row;
         const busy = deleteRole.isPending;
-        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
 
-        if (canEdit) {
-          items.push(
-            <GridActionsCellItem
-              key="edit"
-              icon={
-                <Tooltip title={t("roles.table.edit")}>
-                  <EditIcon fontSize="small" />
-                </Tooltip>
-              }
-              label={t("roles.table.edit")}
-              disabled={busy}
-              onClick={() => navigate(`${row.id}/edit`)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        if (canDelete) {
-          items.push(
-            <GridActionsCellItem
-              key="delete"
-              icon={
-                <Tooltip title={t("roles.table.delete")}>
-                  <DeleteIcon fontSize="small" color="error" />
-                </Tooltip>
-              }
-              label={t("roles.table.delete")}
-              disabled={busy}
-              onClick={() => requestDelete(row)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        if (canManageClaims) {
-          items.push(
-            <GridActionsCellItem
-              key="permissions"
-              icon={
-                <Tooltip title={t("roles.table.permissions")}>
-                  <SecurityIcon fontSize="small" color="primary" />
-                </Tooltip>
-              }
-              label={t("roles.table.permissions")}
-              onClick={() =>
-                navigate(`/app/administration/roles/${row.id}/permissions`)
-              }
-              showInMenu={false}
-            />
-          );
-        }
-
-        return items;
+        return (
+          <RowActions
+            color="#F1B103"
+            disabled={busy}
+            onEdit={canEdit ? () => navigate(`${row.id}/edit`) : undefined}
+            onDelete={canDelete ? () => requestDelete(row) : undefined}
+            onManageRoles={
+              canManageClaims
+                ? () =>
+                    navigate(`/app/administration/roles/${row.id}/permissions`)
+                : undefined
+            }
+            labels={{
+              edit: t("roles.table.edit"),
+              delete: t("roles.table.delete"),
+              roles: t("roles.table.permissions"),
+            }}
+          />
+        );
       },
     };
 
@@ -181,7 +140,7 @@ export default function RolesTable() {
         rows={rolesRows}
         columns={columnsWithActions}
         getRowId={(r) => r.id}
-        stickyRightField={hasActions ? "actions" : undefined}
+        pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
       />
 

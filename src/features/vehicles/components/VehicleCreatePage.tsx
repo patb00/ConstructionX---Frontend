@@ -23,7 +23,7 @@ export default function VehicleCreatePage() {
     <Stack spacing={2}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h5" fontWeight={600}>
-          {t("vehicles.create.title", { defaultValue: "Add vehicle" })}
+          {t("vehicles.create.title")}
         </Typography>
         <Button
           size="small"
@@ -32,7 +32,7 @@ export default function VehicleCreatePage() {
           onClick={() => navigate("/app/vehicles")}
           sx={{ color: "primary.main" }}
         >
-          {t("vehicles.create.back", { defaultValue: "Back" })}
+          {t("vehicles.create.back")}
         </Button>
       </Stack>
 

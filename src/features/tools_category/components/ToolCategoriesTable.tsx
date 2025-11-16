@@ -1,14 +1,6 @@
 import { useMemo, useState, useCallback } from "react";
-import { Box, Tooltip } from "@mui/material";
-import {
-  GridActionsCellItem,
-  type GridColDef,
-  type GridActionsColDef,
-  type GridRowParams,
-  type GridActionsCellItemProps,
-} from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Box } from "@mui/material";
+import { type GridColDef } from "@mui/x-data-grid";
 
 import { useTranslation } from "react-i18next";
 import { useToolCategories } from "../hooks/useToolCategories";
@@ -18,6 +10,7 @@ import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { ToolCategory } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
+import { RowActions } from "../../../components/ui/datagrid/RowActions";
 
 export default function ToolCategoriesTable() {
   const { t } = useTranslation();
@@ -44,6 +37,7 @@ export default function ToolCategoriesTable() {
   const handleConfirm = useCallback(() => {
     if (!pendingRow) return;
     const id = (pendingRow as any).id;
+
     deleteToolCategory.mutate(id, {
       onSuccess: () => {
         setConfirmOpen(false);
@@ -80,59 +74,38 @@ export default function ToolCategoriesTable() {
     if (!(canEdit || canDelete)) return base;
     if (base.some((c) => c.field === "actions")) return base;
 
-    const actionsCol: GridActionsColDef<ToolCategory> = {
-      field: "actions",
-      type: "actions",
-      headerName: t("toolCategories.actions"),
-      width: 120,
-      getActions: (
-        params: GridRowParams<ToolCategory>
-      ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
-        const row = params.row;
-        const id = (row as any).id;
-        const busy = deleteToolCategory.isPending;
+    return [
+      ...base,
+      {
+        field: "actions",
+        headerName: t("toolCategories.actions"),
+        width: 120,
+        sortable: false,
+        filterable: false,
+        align: "center",
+        headerAlign: "center",
+        disableColumnMenu: true,
 
-        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
+        renderCell: (params) => {
+          const row = params.row;
+          const id = (row as any).id;
+          const busy = deleteToolCategory.isPending;
 
-        if (canEdit) {
-          items.push(
-            <GridActionsCellItem
-              key="edit"
-              icon={
-                <Tooltip title={t("toolCategories.table.edit")}>
-                  <EditIcon fontSize="small" />
-                </Tooltip>
-              }
-              label={t("toolCategories.table.edit")}
+          return (
+            <RowActions
               disabled={busy}
-              onClick={() => navigate(`${id}/edit`)}
-              showInMenu={false}
+              color="#F1B103"
+              onEdit={canEdit ? () => navigate(`${id}/edit`) : undefined}
+              onDelete={canDelete ? () => requestDelete(row) : undefined}
+              labels={{
+                edit: t("toolCategories.table.edit"),
+                delete: t("toolCategories.table.delete"),
+              }}
             />
           );
-        }
-
-        if (canDelete) {
-          items.push(
-            <GridActionsCellItem
-              key="delete"
-              icon={
-                <Tooltip title={t("toolCategories.table.delete")}>
-                  <DeleteIcon fontSize="small" color="error" />
-                </Tooltip>
-              }
-              label={t("toolCategories.table.delete")}
-              disabled={busy}
-              onClick={() => requestDelete(row)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        return items;
-      },
-    };
-
-    return [...base, actionsCol];
+        },
+      } satisfies GridColDef<ToolCategory>,
+    ];
   }, [
     toolCategoriesColumns,
     can,
@@ -152,7 +125,7 @@ export default function ToolCategoriesTable() {
         rows={toolCategoriesRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}
-        stickyRightField={hasActions ? "actions" : undefined}
+        pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
       />
 

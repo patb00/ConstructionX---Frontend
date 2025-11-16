@@ -1,18 +1,141 @@
 import * as React from "react";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, Stack, Typography, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import {
-  DataGrid,
+  DataGridPro,
   type GridColDef,
   type GridRowsProp,
   type GridRowIdGetter,
   type GridValidRowModel,
+  type GridRenderCellParams,
+  type GridListViewColDef,
   useGridApiRef,
-} from "@mui/x-data-grid";
+  type GridRowParams,
+} from "@mui/x-data-grid-pro";
 import { useTranslation } from "react-i18next";
 import { DataGridToolbar } from "./DatagridToolbar";
 import useColumnHeaderMappings from "./useColumnHeaderMappings";
 import { getGridLocaleText } from "./gridLocaleText";
+
+type PinnedColumnsState = {
+  left?: string[];
+  right?: string[];
+};
+
+function defaultListViewCell<T extends GridValidRowModel>(
+  params: GridRenderCellParams<T>,
+  columns: GridColDef<T>[],
+  listViewColumns?: string[]
+) {
+  const { id, api, row } = params;
+
+  const colMap = new Map<string, GridColDef<T>>();
+  columns.forEach((col) => {
+    if (col.field) colMap.set(col.field, col);
+  });
+
+  const orderedFields =
+    listViewColumns && listViewColumns.length
+      ? listViewColumns
+      : (columns.map((c) => c.field).filter(Boolean) as string[]);
+
+  const idField =
+    orderedFields.find((f) => f === "id") ??
+    orderedFields.find((f) => f.toLowerCase().includes("id"));
+
+  const actionsField = orderedFields.find((f) => f === "actions");
+
+  const primaryField = orderedFields.find(
+    (f) => f !== idField && f !== actionsField
+  );
+
+  const idCol = idField ? colMap.get(idField) : undefined;
+  const primaryCol = primaryField ? colMap.get(primaryField) : undefined;
+  const actionsCol = actionsField ? colMap.get(actionsField) : undefined;
+
+  const getValue = (field?: string) => {
+    if (!field) return undefined;
+    if (typeof (api as any).getCellValue === "function") {
+      return (api as any).getCellValue(id, field);
+    }
+    return (row as any)[field];
+  };
+
+  const idValue = getValue(idField);
+  const primaryValue = getValue(primaryField);
+
+  let actions: React.ReactElement[] = [];
+  if (
+    actionsCol &&
+    (actionsCol.type === "actions" || actionsCol.field === "actions")
+  ) {
+    const getActions = (actionsCol as any).getActions as
+      | ((p: any) => React.ReactElement[])
+      | undefined;
+
+    actions =
+      getActions?.({
+        id,
+        row,
+        field: actionsCol.field,
+        api,
+      }) ?? [];
+  }
+
+  return (
+    <Stack
+      direction="row"
+      sx={{
+        alignItems: "center",
+        height: "100%",
+        px: 1,
+        gap: 1,
+        overflow: "hidden",
+      }}
+    >
+      <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+        {idCol && idValue !== undefined && (
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{
+              display: "block",
+              mb: 0.25,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {(idCol.headerName ?? idCol.field) + ": "} {String(idValue)}
+          </Typography>
+        )}
+
+        {primaryCol && (
+          <Typography
+            variant="body2"
+            fontWeight={500}
+            sx={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {(primaryCol.headerName ?? primaryCol.field) + ": "}{" "}
+            {primaryValue !== undefined ? String(primaryValue) : ""}
+          </Typography>
+        )}
+      </Box>
+
+      {actions.length > 0 && (
+        <Box sx={{ display: "flex", gap: 0.5, flexShrink: 0 }}>
+          {actions.map((action, idx) => (
+            <Box key={idx}>{action}</Box>
+          ))}
+        </Box>
+      )}
+    </Stack>
+  );
+}
 
 export type ReusableDataGridProps<
   T extends GridValidRowModel = GridValidRowModel
@@ -23,8 +146,12 @@ export type ReusableDataGridProps<
   pageSize?: number;
   exportFileName?: string;
   toolbarColor?: string;
-  stickyRightField?: string;
+  pinnedRightField?: string;
   loading?: boolean;
+  renderListViewCell?: (params: GridRenderCellParams<T>) => React.ReactNode;
+  listViewColumns?: string[];
+  getDetailPanelContent?: (params: GridRowParams<T>) => React.ReactNode;
+  getDetailPanelHeight?: (params: GridRowParams<T>) => number;
 };
 
 function applyHeaderMappings<T extends GridValidRowModel>(
@@ -57,14 +184,22 @@ export default function ReusableDataGrid<
   pageSize = 50,
   exportFileName = "export",
   toolbarColor = "#646464",
-  stickyRightField,
+  pinnedRightField,
   loading,
+  renderListViewCell,
+  listViewColumns,
+  getDetailPanelContent,
+  getDetailPanelHeight,
 }: ReusableDataGridProps<T>) {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const apiRef = useGridApiRef();
   const { t, i18n } = useTranslation();
   const headerMappings = useColumnHeaderMappings();
+
+  const [pinnedState, setPinnedState] = React.useState<
+    PinnedColumnsState | undefined
+  >(undefined);
 
   React.useEffect(() => {
     const api = apiRef.current;
@@ -91,108 +226,156 @@ export default function ReusableDataGrid<
     [t, i18n.language]
   );
 
+  const isListView = isSmall;
+
+  const listViewColumn: GridListViewColDef<T> = React.useMemo(
+    () => ({
+      field: "__list__",
+      renderCell: (params) =>
+        renderListViewCell
+          ? renderListViewCell(params)
+          : defaultListViewCell(params, columnsForScreen, listViewColumns),
+    }),
+    [renderListViewCell, columnsForScreen, listViewColumns]
+  );
+
+  const rowHeight = isListView ? 64 : 52;
+
+  const pinnedColumns = !isListView ? pinnedState : undefined;
+
+  React.useEffect(() => {
+    if (!pinnedRightField) return;
+
+    setPinnedState((prev) => {
+      const right = new Set(prev?.right ?? []);
+      if (!right.has(pinnedRightField)) right.add(pinnedRightField);
+      return { ...prev, right: Array.from(right) };
+    });
+  }, [pinnedRightField]);
+
   return (
-    <Box sx={{ flex: 1, position: "relative", height: "100%", width: "100%" }}>
-      <Box
-        sx={{
-          position: "absolute",
-          inset: 0,
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-        }}
-      >
-        <DataGrid
-          loading={loading}
-          apiRef={apiRef}
-          showToolbar
-          rows={rows}
-          columns={columnsForScreen}
-          getRowId={getRowId}
-          disableRowSelectionOnClick
-          autoHeight={isSmall}
-          initialState={{
-            pagination: { paginationModel: { page: 0, pageSize } },
-          }}
-          pageSizeOptions={[5, 10, 25, 50]}
-          slots={{ toolbar: DataGridToolbar }}
-          slotProps={{
-            toolbar: {
-              color: toolbarColor,
-              csvOptions: {
-                fileName: exportFileName,
-                delimiter: ",",
-                utf8WithBom: true,
-              },
-              printOptions: { hideFooter: false, hideToolbar: false },
-            },
-            loadingOverlay: {
-              variant: "skeleton",
-              noRowsVariant: "skeleton",
-            },
-          }}
-          sortingOrder={["asc", "desc"]}
-          disableColumnMenu={isSmall}
-          checkboxSelection={false}
-          disableVirtualization={Boolean(stickyRightField)}
-          localeText={localeText}
-          sx={
-            stickyRightField
-              ? {
-                  [`& .MuiDataGrid-cell[data-field="${stickyRightField}"]`]: {
-                    position: "sticky",
-                    right: 0,
-                    zIndex: 1112,
-                    backgroundColor: (t) => t.palette.background.paper,
-                    borderLeft: (t) => `1px solid ${t.palette.divider}`,
-                    boxShadow: (t) =>
-                      t.palette.mode === "dark"
-                        ? "-2px 0 4px rgba(0,0,0,.18)"
-                        : "-2px 0 4px rgba(0,0,0,.05)",
-                    "&::after": {
-                      content: '""',
-                      position: "absolute",
-                      left: -4,
-                      top: 0,
-                      bottom: 0,
-                      width: 4,
-                      pointerEvents: "none",
-                      background: (t) =>
-                        t.palette.mode === "dark"
-                          ? "linear-gradient(to left, rgba(0,0,0,.10), rgba(0,0,0,0))"
-                          : "linear-gradient(to left, rgba(0,0,0,.03), rgba(0,0,0,0))",
-                    },
-                  },
-                  [`& .MuiDataGrid-columnHeaders .MuiDataGrid-columnHeader[data-field="${stickyRightField}"]`]:
-                    {
-                      position: "sticky",
-                      right: 0,
-                      zIndex: 1113,
-                      backgroundColor: (t) => t.palette.background.paper,
-                      borderLeft: (t) => `1px solid ${t.palette.divider}`,
-                      boxShadow: (t) =>
-                        t.palette.mode === "dark"
-                          ? "-2px 0 4px rgba(0,0,0,.20)"
-                          : "-2px 0 4px rgba(0,0,0,.06)",
-                      "&::after": {
-                        content: '""',
-                        position: "absolute",
-                        left: -4,
-                        top: 0,
-                        bottom: 0,
-                        width: 4,
-                        pointerEvents: "none",
-                        background: (t) =>
-                          t.palette.mode === "dark"
-                            ? "linear-gradient(to left, rgba(0,0,0,.12), rgba(0,0,0,0))"
-                            : "linear-gradient(to left, rgba(0,0,0,.04), rgba(0,0,0,0))",
-                      },
-                    },
-                }
-              : undefined
-          }
-        />
-      </Box>
-    </Box>
+    <DataGridPro
+      loading={loading}
+      apiRef={apiRef}
+      showToolbar
+      rows={rows}
+      columns={columnsForScreen}
+      getRowId={getRowId}
+      disableRowSelectionOnClick
+      autoHeight={isSmall}
+      initialState={{
+        pagination: { paginationModel: { page: 0, pageSize } },
+      }}
+      pageSizeOptions={[5, 10, 25, 50]}
+      slots={{ toolbar: DataGridToolbar }}
+      slotProps={{
+        toolbar: {
+          color: toolbarColor,
+          csvOptions: {
+            fileName: exportFileName,
+            delimiter: ",",
+            utf8WithBom: true,
+          },
+          printOptions: { hideFooter: false, hideToolbar: false },
+        },
+        loadingOverlay: {
+          variant: "skeleton",
+          noRowsVariant: "skeleton",
+        },
+      }}
+      sortingOrder={["asc", "desc"]}
+      disableColumnMenu={isSmall}
+      checkboxSelection={false}
+      localeText={localeText}
+      listView={isListView}
+      listViewColumn={listViewColumn}
+      rowHeight={rowHeight}
+      pinnedColumns={pinnedColumns}
+      onPinnedColumnsChange={(newPinned) =>
+        setPinnedState(newPinned as PinnedColumnsState)
+      }
+      getDetailPanelContent={getDetailPanelContent}
+      getDetailPanelHeight={getDetailPanelHeight}
+      sx={{
+        border: "none",
+        backgroundColor: "#fff",
+
+        "& .MuiDataGrid-main": {
+          border: "1px solid #E5E7EB",
+          borderBottomLeftRadius: 0,
+          borderBottomRightRadius: 0,
+
+          borderTopLeftRadius: 8,
+          borderTopRightRadius: 8,
+
+          overflow: "hidden",
+          backgroundColor: "#fff",
+        },
+
+        "& .MuiDataGrid-columnHeaders": {
+          backgroundColor: "#F4F6FF",
+          borderTopLeftRadius: 8,
+          borderTopRightRadius: 8,
+          overflow: "visible",
+        },
+
+        "& .MuiDataGrid-columnHeadersInner": {
+          borderTopLeftRadius: 8,
+          borderTopRightRadius: 8,
+        },
+
+        "& .MuiDataGrid-filler": {
+          backgroundColor: "#fff",
+        },
+
+        "& .MuiDataGrid-columnHeaders .MuiDataGrid-filler": {
+          backgroundColor: "#F4F6FF",
+          borderTopRightRadius: 8,
+        },
+
+        "& .MuiDataGrid-scrollbarFiller, & .MuiDataGrid-scrollbarFiller--pinnedRight":
+          {
+            backgroundColor: "#F4F6FF !important",
+            borderTopRightRadius: 8,
+            zIndex: 0,
+          },
+
+        "& .MuiDataGrid-columnHeader": {
+          color: "#6F7295",
+          fontSize: "11px",
+          fontWeight: 600,
+          textTransform: "uppercase",
+          letterSpacing: "0.06em",
+          backgroundColor: "transparent",
+        },
+
+        "& .MuiDataGrid-columnHeader--pinnedRight": {
+          backgroundColor: "#F4F6FF",
+          zIndex: 3,
+          borderTopRightRadius: "16px",
+        },
+
+        "& .MuiDataGrid-cell--pinnedRight": {
+          backgroundColor: "#fff",
+          zIndex: 2,
+        },
+
+        "& .MuiDataGrid-pinnedColumnHeaders--right, & .MuiDataGrid-pinnedColumns--right":
+          {
+            boxShadow: "-8px 0 8px -4px rgba(15, 23, 42, 0.08)",
+          },
+
+        "& .MuiDataGrid-iconSeparator": {
+          display: "none",
+        },
+
+        "& .MuiDataGrid-cell": {
+          fontSize: 13,
+          color: "#1D1F2C",
+          borderBottom: "none",
+          backgroundColor: "#fff",
+        },
+      }}
+    />
   );
 }

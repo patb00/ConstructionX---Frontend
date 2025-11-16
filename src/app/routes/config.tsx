@@ -39,6 +39,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: <FaTasks />,
     section: "MANAGEMENT",
   },
+
   {
     labelKey: "nav.constructionSites",
     to: "/app/constructionSites",

@@ -1,15 +1,7 @@
 import { useMemo, useState, useCallback } from "react";
-import { Box, Tooltip } from "@mui/material";
-import {
-  GridActionsCellItem,
-  type GridColDef,
-  type GridActionsColDef,
-  type GridRowParams,
-  type GridActionsCellItemProps,
-} from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import { Box } from "@mui/material";
+import { type GridColDef } from "@mui/x-data-grid";
+
 import type { ConstructionSite } from "..";
 import { useNavigate } from "react-router-dom";
 import { useConstructionSites } from "../hooks/useConstructionSites";
@@ -18,6 +10,8 @@ import { PermissionGate, useCan } from "../../../lib/permissions";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { useTranslation } from "react-i18next";
+import { RowActions } from "../../../components/ui/datagrid/RowActions";
+import { ConstructionSiteDetailPanel } from "./ConstructionSiteDetailPanel";
 
 export default function ConstructionSitesTable() {
   const { t } = useTranslation();
@@ -87,78 +81,34 @@ export default function ConstructionSitesTable() {
     if (!(canEdit || canDelete || canDetails)) return base;
     if (base.some((c) => c.field === "actions")) return base;
 
-    const actionsCol: GridActionsColDef<ConstructionSite> = {
+    const actionsCol: GridColDef<ConstructionSite> = {
       field: "actions",
-      type: "actions",
       headerName: t("constructionSites.actions"),
-      width: 200,
-      getActions: (
-        params: GridRowParams<ConstructionSite>
-      ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+      width: 160,
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
         const row = params.row;
         const id = (row as any).id;
         const busy = deleteConstructionSite.isPending;
 
-        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
-
-        if (canDetails) {
-          items.push(
-            <GridActionsCellItem
-              key="details"
-              icon={
-                <Tooltip
-                  title={t("constructionSites.table.detailView", {
-                    defaultValue: "Pregled gradilišta",
-                  })}
-                >
-                  <VisibilityIcon fontSize="small" />
-                </Tooltip>
-              }
-              label={t("constructionSites.table.detailView", {
-                defaultValue: "Pregled gradilišta",
-              })}
-              disabled={busy}
-              onClick={() => navigate(`${id}/details`)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        if (canEdit) {
-          items.push(
-            <GridActionsCellItem
-              key="edit"
-              icon={
-                <Tooltip title={t("constructionSites.table.edit")}>
-                  <EditIcon fontSize="small" />
-                </Tooltip>
-              }
-              label={t("constructionSites.table.edit")}
-              disabled={busy}
-              onClick={() => navigate(`${id}/edit`)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        if (canDelete) {
-          items.push(
-            <GridActionsCellItem
-              key="delete"
-              icon={
-                <Tooltip title={t("constructionSites.table.delete")}>
-                  <DeleteIcon fontSize="small" color="error" />
-                </Tooltip>
-              }
-              label={t("constructionSites.table.delete")}
-              disabled={busy}
-              onClick={() => requestDelete(row)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        return items;
+        return (
+          <RowActions
+            disabled={busy}
+            color="#F1B103"
+            labels={{
+              view: t("constructionSites.table.detailView"),
+              edit: t("constructionSites.table.edit"),
+              delete: t("constructionSites.table.delete"),
+            }}
+            onView={canDetails ? () => navigate(`${id}/details`) : undefined}
+            onEdit={canEdit ? () => navigate(`${id}/edit`) : undefined}
+            onDelete={canDelete ? () => requestDelete(row) : undefined}
+          />
+        );
       },
     };
 
@@ -182,8 +132,14 @@ export default function ConstructionSitesTable() {
         rows={constructionSitesRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}
-        stickyRightField={hasActions ? "actions" : undefined}
+        pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
+        getDetailPanelContent={(params) => (
+          <ConstructionSiteDetailPanel
+            constructionSiteId={Number((params.row as any).id)}
+          />
+        )}
+        getDetailPanelHeight={() => 400}
       />
 
       <PermissionGate

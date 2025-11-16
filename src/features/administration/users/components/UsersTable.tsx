@@ -1,17 +1,7 @@
 import { useMemo, useState, useCallback } from "react";
-import { Box, Chip, Tooltip, CircularProgress } from "@mui/material";
-import {
-  GridActionsCellItem,
-  type GridColDef,
-  type GridActionsColDef,
-  type GridActionsCellItemProps,
-  type GridRowParams,
-} from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import CheckIcon from "@mui/icons-material/Check";
-import BlockIcon from "@mui/icons-material/Block";
-import SecurityIcon from "@mui/icons-material/Security";
+import { Box, Chip } from "@mui/material";
+import { type GridColDef } from "@mui/x-data-grid";
+
 import { useNavigate } from "react-router-dom";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import type { User } from "..";
@@ -23,6 +13,7 @@ import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialo
 import UserRolesDialog from "./UserRolesDialog";
 import { PermissionGate, useCan } from "../../../../lib/permissions";
 import { useTranslation } from "react-i18next";
+import { RowActions } from "../../../../components/ui/datagrid/RowActions";
 
 export default function UsersTable() {
   const { t } = useTranslation();
@@ -119,7 +110,6 @@ export default function UsersTable() {
 
     if (base.some((c) => c.field === "actions")) return base;
 
-    // permissions
     const canEdit = can({ permission: "Permission.Users.Update" });
     const canDelete = can({ permission: "Permission.Users.Delete" });
     const canToggle = can({ permission: "Permission.Users.Update" });
@@ -127,15 +117,18 @@ export default function UsersTable() {
 
     if (!(canEdit || canDelete || canToggle || canManageRoles)) return base;
 
-    const actionsCol: GridActionsColDef<User> = {
+    const actionsCol: GridColDef<User> = {
       field: "actions",
-      type: "actions",
       headerName: t("users.table.actions"),
       width: 300,
-      getActions: (
-        params: GridRowParams<User>
-      ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
         const u = params.row;
+
         const isUpdating =
           updateUser.isPending && (updateUser.variables as any)?.id === u.id;
         const isToggling =
@@ -143,103 +136,36 @@ export default function UsersTable() {
           (updateStatus.variables as any)?.userId === u.id;
         const isDeleting =
           deleteUser.isPending && (deleteUser.variables as any) === u.id;
+
         const busy = isUpdating || isToggling || isDeleting;
 
-        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
-
-        if (canEdit) {
-          items.push(
-            <GridActionsCellItem
-              key="edit"
-              icon={
-                <Tooltip title={t("users.table.edit")}>
-                  <EditIcon fontSize="small" />
-                </Tooltip>
-              }
-              label={t("users.table.edit")}
-              disabled={busy}
-              onClick={() => navigate(`${u.id}/edit`)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        if (canDelete) {
-          items.push(
-            <GridActionsCellItem
-              key="delete"
-              icon={
-                <Tooltip title={t("users.table.delete")}>
-                  <DeleteIcon fontSize="small" color="error" />
-                </Tooltip>
-              }
-              label={t("users.table.delete")}
-              disabled={isDeleting}
-              onClick={() => requestDelete(u)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        if (canToggle) {
-          if (u.isActive) {
-            items.push(
-              <GridActionsCellItem
-                key="deactivate"
-                icon={
-                  <Tooltip title={t("users.table.deactivate")}>
-                    {isToggling ? (
-                      <CircularProgress size={16} />
-                    ) : (
-                      <BlockIcon fontSize="small" />
-                    )}
-                  </Tooltip>
-                }
-                label={t("users.table.deactivate")}
-                disabled={busy}
-                onClick={() => toggleStatus(u)}
-                showInMenu={false}
-              />
-            );
-          } else {
-            items.push(
-              <GridActionsCellItem
-                key="activate"
-                icon={
-                  <Tooltip title={t("users.table.activate")}>
-                    {isToggling ? (
-                      <CircularProgress size={16} />
-                    ) : (
-                      <CheckIcon fontSize="small" />
-                    )}
-                  </Tooltip>
-                }
-                label={t("users.table.activate")}
-                disabled={busy}
-                onClick={() => toggleStatus(u)}
-                showInMenu={false}
-              />
-            );
-          }
-        }
-
-        if (canManageRoles) {
-          items.push(
-            <GridActionsCellItem
-              key="roles"
-              icon={
-                <Tooltip title={t("users.table.roles")}>
-                  <SecurityIcon fontSize="small" color="primary" />
-                </Tooltip>
-              }
-              label={t("users.table.roles")}
-              onClick={() => setRolesDialogUser(u.id)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        return items;
+        return (
+          <RowActions
+            color="#F1B103"
+            disabled={busy}
+            onEdit={
+              canEdit
+                ? () => {
+                    navigate(`${u.id}/edit`);
+                  }
+                : undefined
+            }
+            onDelete={canDelete ? () => requestDelete(u) : undefined}
+            onToggleActive={canToggle ? () => toggleStatus(u) : undefined}
+            isActive={u.isActive}
+            toggleLoading={isToggling}
+            onManageRoles={
+              canManageRoles ? () => setRolesDialogUser(u.id) : undefined
+            }
+            labels={{
+              edit: t("users.table.edit"),
+              delete: t("users.table.delete"),
+              activate: t("users.table.activate"),
+              deactivate: t("users.table.deactivate"),
+              roles: t("users.table.roles"),
+            }}
+          />
+        );
       },
     };
 
@@ -266,7 +192,7 @@ export default function UsersTable() {
         columns={columnsWithActions}
         getRowId={(r) => r.id}
         pageSize={10}
-        stickyRightField="actions"
+        pinnedRightField="actions"
         loading={!!isLoading}
       />
 

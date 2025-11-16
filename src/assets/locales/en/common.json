@@ -23,6 +23,7 @@
       "error": "Failed to load construction sites."
     },
     "detail": {
+      "title": "Construction site overview",
       "employees": "Employees",
       "addEmployee": "Add employee",
       "addFirstEmployee": "Add first employee",
@@ -36,7 +37,32 @@
       "vehicles": "Vehicles",
       "addVehicle": "Add vehicle",
       "addFirstVehicle": "Add first vehicle",
-      "noVehicles": "No vehicles assigned."
+      "noVehicles": "No vehicles assigned.",
+      "vehicle": {
+        "registration": "Registration",
+        "model": "Model"
+      },
+      "tool": {
+        "modelShort": "Model",
+        "inventoryShort": "Inventory no.",
+        "serialShort": "Serial no."
+      }
+    },
+    "detailPanel": {
+      "loading": "Loading details…",
+      "loadError": "Failed to load construction site details.",
+      "fallbackName": "Construction site",
+
+      "noEmployeesAssigned": "No employees assigned.",
+      "noPosition": "No position set",
+
+      "noVehiclesAssigned": "No vehicles assigned.",
+      "vehicleFallback": "Vehicle",
+
+      "noToolsAssigned": "No tools assigned.",
+      "toolFallback": "Tool",
+
+      "invPrefix": "Inv:"
     },
     "fields": {
       "period": "Period",
@@ -982,9 +1008,52 @@
     "title": "Assignments",
     "filterByEmployee": "Filter by employee",
     "allEmployees": "All employees",
+
     "construction": "Construction sites",
     "vehicles": "Vehicles",
-    "tools": "Tools"
+    "tools": "Tools",
+
+    "view": {
+      "board": "Board",
+      "timeline": "Timeline"
+    },
+
+    "employee": {
+      "info": "Employee info",
+      "noOib": "OIB is not defined",
+      "dates": "Dates",
+      "birthDate": "Date of birth:",
+      "birthDateUnknown": "Date of birth is not defined",
+      "employedFrom": "Employed since",
+      "notEmployed": "Employment date is not defined",
+      "assignments": "Assignments",
+      "assignmentsCaption": "Sites · Vehicles · Tools"
+    },
+
+    "timeline": {
+      "laneConstruction": "Construction sites",
+      "laneVehicles": "Vehicles",
+      "laneTools": "Tools",
+      "constructionItem": "Construction site",
+      "vehicleItem": "Vehicle",
+      "toolItem": "Tool",
+      "empty": "No assignments to display on the timeline.",
+      "tooltip": {
+        "assignedTo": "Assigned to:",
+        "lane": "Lane:",
+        "from": "From:",
+        "to": "To:"
+      }
+    },
+
+    "emptyConstruction": "No assigned construction sites.",
+    "noLocation": "Location is not defined",
+    "assignmentRange": "Assigned:",
+    "siteRange": "Site period:",
+    "managerLabel": "Site manager:",
+    "emptyVehicles": "No assigned vehicles.",
+    "noSite": "Not linked to a construction site",
+    "emptyTools": "No assigned tools."
   },
   "appShell": {
     "a11y": {

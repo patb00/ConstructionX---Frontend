@@ -8,7 +8,7 @@ import {
   Typography,
   Stack,
   Button,
-  Paper,
+  Card,
 } from "@mui/material";
 import { useState, useEffect, useMemo } from "react";
 import { useUpdateRolePermissions } from "../hooks/useUpdateRolePermission";
@@ -115,7 +115,7 @@ export default function RolePermissionsPage() {
         ))}
       </Tabs>
 
-      <Paper sx={{ p: 2 }}>
+      <Card sx={{ p: 2 }}>
         {activePermissions.map((perm) => (
           <Stack
             key={perm}
@@ -131,7 +131,7 @@ export default function RolePermissionsPage() {
             />
           </Stack>
         ))}
-      </Paper>
+      </Card>
 
       <Box>
         <Button

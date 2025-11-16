@@ -29,94 +29,78 @@ export default function VehicleForm({
   const fields: FieldConfig<NewVehicleRequest>[] = [
     {
       name: "name",
-      label: t("vehicles.form.field.name", { defaultValue: "Name" }),
+      label: t("vehicles.form.field.name"),
       required: true,
     },
     {
       name: "registrationNumber",
-      label: t("vehicles.form.field.registrationNumber", {
-        defaultValue: "Registration number",
-      }),
+      label: t("vehicles.form.field.registrationNumber"),
     },
     {
       name: "vin",
-      label: t("vehicles.form.field.vin", { defaultValue: "VIN" }),
+      label: t("vehicles.form.field.vin"),
     },
     {
       name: "brand",
-      label: t("vehicles.form.field.brand", { defaultValue: "Brand" }),
+      label: t("vehicles.form.field.brand"),
     },
     {
       name: "model",
-      label: t("vehicles.form.field.model", { defaultValue: "Model" }),
+      label: t("vehicles.form.field.model"),
     },
     {
       name: "yearOfManufacturing",
-      label: t("vehicles.form.field.yearOfManufacturing", {
-        defaultValue: "Year of manufacturing",
-      }),
+      label: t("vehicles.form.field.yearOfManufacturing"),
       type: "number",
     },
     {
       name: "vehicleType",
-      label: t("vehicles.form.field.vehicleType", {
-        defaultValue: "Vehicle type",
-      }),
+      label: t("vehicles.form.field.vehicleType"),
       type: "select",
       options: typeOptions,
     },
     {
       name: "status",
-      label: t("vehicles.form.field.status", { defaultValue: "Status" }),
+      label: t("vehicles.form.field.status"),
       type: "select",
       options: statusOptions,
     },
     {
       name: "condition",
-      label: t("vehicles.form.field.condition", { defaultValue: "Condition" }),
+      label: t("vehicles.form.field.condition"),
       type: "select",
       options: conditionOptions,
     },
     {
       name: "purchaseDate",
-      label: t("vehicles.form.field.purchaseDate", {
-        defaultValue: "Purchase date",
-      }),
+      label: t("vehicles.form.field.purchaseDate"),
       type: "date",
       required: true,
     },
     {
       name: "purchasePrice",
-      label: t("vehicles.form.field.purchasePrice", {
-        defaultValue: "Purchase price",
-      }),
+      label: t("vehicles.form.field.purchasePrice"),
       type: "number",
       required: true,
     },
     {
       name: "horsePower",
-      label: t("vehicles.form.field.horsePower", {
-        defaultValue: "Horse power",
-      }),
+      label: t("vehicles.form.field.horsePower"),
       type: "number",
     },
     {
       name: "averageConsumption",
-      label: t("vehicles.form.field.averageConsumption", {
-        defaultValue: "Average consumption",
-      }),
+      label: t("vehicles.form.field.averageConsumption"),
       type: "number",
     },
     {
       name: "weight",
-      label: t("vehicles.form.field.weight", { defaultValue: "Weight (kg)" }),
+      label: t("vehicles.form.field.weight"),
       type: "number",
     },
     {
       name: "description",
-      label: t("vehicles.form.field.description", {
-        defaultValue: "Description",
-      }),
+      label: t("vehicles.form.field.description"),
     },
   ];
 
@@ -152,7 +136,7 @@ export default function VehicleForm({
         ...defaultValues,
       }}
       busy={busy}
-      submitLabel={t("vehicles.form.submit", { defaultValue: "Save" })}
+      submitLabel={t("vehicles.form.submit")}
       onSubmit={onSubmit}
     />
   );

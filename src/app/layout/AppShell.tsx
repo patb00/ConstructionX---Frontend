@@ -84,7 +84,7 @@ export default function AppShell() {
         position="fixed"
         elevation={0}
         sx={(theme) => ({
-          bgcolor: theme.palette.grey[50],
+          bgcolor: "#F7F7F8",
           borderBottom: `1px solid ${theme.palette.divider}`,
           color: theme.palette.text.primary,
           zIndex: (t) => t.zIndex.drawer + 1,
@@ -116,7 +116,6 @@ export default function AppShell() {
                 color: "primary.main",
               }}
             >
-              {/* brand name usually stays as-is; translate only if you want */}
               ConstructionX
             </Typography>
           </Box>
@@ -181,6 +180,7 @@ export default function AppShell() {
           maxWidth: "100%",
           overflowX: "clip",
           p: 2,
+          background: "#FDFDFD",
         }}
       >
         <Outlet />
