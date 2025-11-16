@@ -1,4 +1,7 @@
-import type { GridLocaleText } from "@mui/x-data-grid";
+import {
+  GRID_DEFAULT_LOCALE_TEXT,
+  type GridLocaleText,
+} from "@mui/x-data-grid";
 import type { TFunction } from "i18next";
 
 /**
@@ -6,7 +9,7 @@ import type { TFunction } from "i18next";
  * Falls back to MUI defaults when a key is missing.
  */
 export function getGridLocaleText(t: TFunction): GridLocaleText {
-  return {
+  const overrides: Partial<GridLocaleText> = {
     // ===== Root / overlays =====
     noRowsLabel: t("common.datagrid.noRowsLabel", "No rows"),
     noResultsOverlayLabel: t(
@@ -793,5 +796,9 @@ export function getGridLocaleText(t: TFunction): GridLocaleText {
         aggregation,
         defaultValue: "{{column}} ({{aggregation}})",
       }),
+  };
+  return {
+    ...GRID_DEFAULT_LOCALE_TEXT,
+    ...overrides,
   };
 }
