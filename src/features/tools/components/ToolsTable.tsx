@@ -1,24 +1,16 @@
 import { useMemo, useState, useCallback } from "react";
-import { Box, Tooltip } from "@mui/material";
-import {
-  GridActionsCellItem,
-  type GridColDef,
-  type GridActionsColDef,
-  type GridRowParams,
-  type GridActionsCellItemProps,
-} from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-
-import { useNavigate } from "react-router-dom";
+import { Box } from "@mui/material";
+import { type GridColDef } from "@mui/x-data-grid";
 
 import { useTranslation } from "react-i18next";
 import { useDeleteTool } from "../hooks/useDeleteTool";
 import { useTools } from "../hooks/useTools";
+import { useNavigate } from "react-router-dom";
 import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { Tool } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
+import { RowActions } from "../../../components/ui/datagrid/RowActions";
 
 export default function ToolsTable() {
   const { t } = useTranslation();
@@ -89,55 +81,32 @@ export default function ToolsTable() {
     if (!(canEdit || canDelete)) return base;
     if (base.some((c) => c.field === "actions")) return base;
 
-    const actionsCol: GridActionsColDef<Tool> = {
+    const actionsCol: GridColDef<Tool> = {
       field: "actions",
-      type: "actions",
       headerName: t("tools.actions"),
       width: 120,
-      getActions: (
-        params: GridRowParams<Tool>
-      ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
         const row = params.row;
         const id = (row as any).id;
         const busy = deleteTool.isPending;
 
-        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
-
-        if (canEdit) {
-          items.push(
-            <GridActionsCellItem
-              key="edit"
-              icon={
-                <Tooltip title={t("tools.table.edit")}>
-                  <EditIcon fontSize="small" />
-                </Tooltip>
-              }
-              label={t("tools.table.edit")}
-              disabled={busy}
-              onClick={() => navigate(`${id}/edit`)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        if (canDelete) {
-          items.push(
-            <GridActionsCellItem
-              key="delete"
-              icon={
-                <Tooltip title={t("tools.table.delete")}>
-                  <DeleteIcon fontSize="small" color="error" />
-                </Tooltip>
-              }
-              label={t("tools.table.delete")}
-              disabled={busy}
-              onClick={() => requestDelete(row)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        return items;
+        return (
+          <RowActions
+            disabled={busy}
+            color="#F1B103"
+            onEdit={canEdit ? () => navigate(`${id}/edit`) : undefined}
+            onDelete={canDelete ? () => requestDelete(row) : undefined}
+            labels={{
+              edit: t("tools.table.edit"),
+              delete: t("tools.table.delete"),
+            }}
+          />
+        );
       },
     };
 
@@ -154,7 +123,7 @@ export default function ToolsTable() {
         rows={toolsRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}
-        stickyRightField={hasActions ? "actions" : undefined}
+        pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
       />
 

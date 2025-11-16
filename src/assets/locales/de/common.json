@@ -14,7 +14,8 @@
     "jobPositions": "Arbeitsstellen",
     "tools": "Werkzeuge",
     "toolCategories": "Werkzeugkategorien",
-    "vehicles": "Fahrzeuge"
+    "vehicles": "Fahrzeuge",
+    "assignments": "Zuweisungen"
   },
   "constructionSites": {
     "list": {
@@ -22,6 +23,7 @@
       "error": "Fehler beim Laden der Baustellen."
     },
     "detail": {
+      "title": "Baustellenübersicht",
       "employees": "Mitarbeiter",
       "addEmployee": "Mitarbeiter hinzufügen",
       "addFirstEmployee": "Ersten Mitarbeiter hinzufügen",
@@ -35,7 +37,32 @@
       "vehicles": "Fahrzeuge",
       "addVehicle": "Fahrzeug hinzufügen",
       "addFirstVehicle": "Erstes Fahrzeug hinzufügen",
-      "noVehicles": "Keine Fahrzeuge zugewiesen."
+      "noVehicles": "Keine Fahrzeuge zugewiesen.",
+      "vehicle": {
+        "registration": "Kennzeichen",
+        "model": "Modell"
+      },
+      "tool": {
+        "modelShort": "Modell",
+        "inventoryShort": "Inventarnummer",
+        "serialShort": "Seriennummer"
+      }
+    },
+    "detailPanel": {
+      "loading": "Details werden geladen…",
+      "loadError": "Baustellendetails konnten nicht geladen werden.",
+      "fallbackName": "Baustelle",
+
+      "noEmployeesAssigned": "Keine Mitarbeiter zugewiesen.",
+      "noPosition": "Position nicht festgelegt",
+
+      "noVehiclesAssigned": "Keine Fahrzeuge zugewiesen.",
+      "vehicleFallback": "Fahrzeug",
+
+      "noToolsAssigned": "Keine Werkzeuge zugewiesen.",
+      "toolFallback": "Werkzeug",
+
+      "invPrefix": "Inv.-Nr.:"
     },
     "fields": {
       "period": "Zeitraum",
@@ -465,7 +492,18 @@
       "vehicleType": "Fahrzeugtyp",
       "horsePower": "Leistung (PS)",
       "averageConsumption": "Durchschnittsverbrauch",
-      "weight": "Gewicht"
+      "weight": "Gewicht",
+
+      "constructionSiteId": "Baustellen-ID",
+      "constructionSiteLocation": "Baustellenstandort",
+      "constructionSiteName": "Baustellenname",
+      "employeeId": "Mitarbeiter-ID",
+      "siteManagerPhoneNumber": "Telefon des Bauleiters",
+      "dateFrom": "Datum von",
+      "dateTo": "Datum bis",
+      "vehicleId": "Fahrzeug-ID",
+      "responsibleEmployeeFullName": "Verantwortlicher Mitarbeiter (vollständiger Name)",
+      "toolId": "Werkzeug-ID"
     }
   },
   "tenants": {
@@ -962,7 +1000,94 @@
       "message": "Aus Sicherheitsgründen müssen Sie ein neues Passwort festlegen, bevor Sie fortfahren.",
       "newPassword": "Neues Passwort",
       "confirmNewPassword": "Neues Passwort bestätigen",
+      "currentPassword": "Aktuelles Passwort",
       "submit": "Passwort speichern"
+    }
+  },
+  "assignments": {
+    "title": "Zuweisungen",
+    "filterByEmployee": "Nach Mitarbeiter filtern",
+    "allEmployees": "Alle Mitarbeiter",
+
+    "construction": "Baustellen",
+    "vehicles": "Fahrzeuge",
+    "tools": "Werkzeuge",
+
+    "view": {
+      "board": "Board",
+      "timeline": "Zeitleiste"
+    },
+
+    "employee": {
+      "info": "Mitarbeiterinformationen",
+      "noOib": "OIB ist nicht definiert",
+      "dates": "Daten",
+      "birthDate": "Geburtsdatum:",
+      "birthDateUnknown": "Geburtsdatum ist nicht definiert",
+      "employedFrom": "Beschäftigt seit",
+      "notEmployed": "Beschäftigungsdatum ist nicht definiert",
+      "assignments": "Zuweisungen",
+      "assignmentsCaption": "Baustellen · Fahrzeuge · Werkzeuge"
+    },
+
+    "timeline": {
+      "laneConstruction": "Baustellen",
+      "laneVehicles": "Fahrzeuge",
+      "laneTools": "Werkzeuge",
+      "constructionItem": "Baustelle",
+      "vehicleItem": "Fahrzeug",
+      "toolItem": "Werkzeug",
+      "empty": "Keine Zuweisungen zur Anzeige auf der Zeitleiste.",
+      "tooltip": {
+        "assignedTo": "Zugewiesen an:",
+        "lane": "Spur:",
+        "from": "Von:",
+        "to": "Bis:"
+      }
+    },
+
+    "emptyConstruction": "Keine zugewiesenen Baustellen.",
+    "noLocation": "Standort ist nicht definiert",
+    "assignmentRange": "Zugewiesen:",
+    "siteRange": "Baustellenzeitraum:",
+    "managerLabel": "Bauleiter:",
+    "emptyVehicles": "Keine zugewiesenen Fahrzeuge.",
+    "noSite": "Nicht mit einer Baustelle verknüpft",
+    "emptyTools": "Keine zugewiesenen Werkzeuge."
+  },
+  "appShell": {
+    "a11y": {
+      "openMenu": "Menü öffnen"
+    },
+    "userAvatarAlt": "Benutzer",
+    "snackbar": {
+      "loggedOut": "Sie wurden abgemeldet."
+    },
+    "menu": {
+      "profile": "Profil",
+      "logout": "Abmelden"
+    },
+    "profile": {
+      "title": "Benutzerprofil",
+      "userId": "Benutzer-ID",
+      "tenant": "Mandant",
+      "userData": "Benutzerdaten",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "username": "Benutzername",
+      "phone": "Telefon",
+      "status": "Status",
+      "active": "aktiv",
+      "inactive": "inaktiv",
+      "role": "Rolle",
+      "permissions": "Berechtigungen ({{count}})",
+      "tokenStatus": "Tokenstatus",
+      "accessToken": "Access-Token",
+      "expired": "abgelaufen",
+      "refreshTokenExpires": "Refresh-Token läuft ab",
+      "notFound": "Kein Benutzer mit der angemeldeten ID in der Benutzerliste gefunden.",
+      "close": "Schließen"
     }
   }
 }

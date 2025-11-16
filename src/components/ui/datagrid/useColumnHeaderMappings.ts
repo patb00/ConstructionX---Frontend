@@ -139,5 +139,26 @@ export default function useColumnHeaderMappings(): MapItem[] {
       translated: t("common.columns.averageConsumption"),
     },
     { original: "Weight", translated: t("common.columns.weight") },
+
+    //  CONSTRUCTION / ASSIGNMENTS
+    {
+      original: "ConstructionSiteId",
+      translated: t("common.columns.constructionSiteId"),
+    },
+    {
+      original: "ConstructionSiteLocation",
+      translated: t("common.columns.constructionSiteLocation"),
+    },
+    {
+      original: "ConstructionSiteName",
+      translated: t("common.columns.constructionSiteName"),
+    },
+    { original: "EmployeeId", translated: t("common.columns.employeeId") },
+    {
+      original: "SiteManagerPhoneNumber",
+      translated: t("common.columns.siteManagerPhoneNumber"),
+    },
+    { original: "DateFrom", translated: t("common.columns.dateFrom") },
+    { original: "DateTo", translated: t("common.columns.dateTo") },
   ];
 }

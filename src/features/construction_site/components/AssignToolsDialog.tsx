@@ -19,12 +19,10 @@ import {
 } from "@mui/material";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useTranslation } from "react-i18next";
-
+import CloseIcon from "@mui/icons-material/Close";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
-
 import { useTools } from "../../tools/hooks/useTools";
 import { useConstructionSite } from "../hooks/useConstructionSite";
-
 import { isValidRange, todayStr } from "../utils/dates";
 import { useAssignToolsToConstructionSite } from "../hooks/useAssignToolsToConstructionSite";
 import { fullName } from "../utils/name";
@@ -296,20 +294,65 @@ export default function AssignToolsDialog({
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={(_e, _reason) => {
+        if (assign.isPending) return;
+        onClose();
+      }}
       fullWidth
-      maxWidth="lg"
+      maxWidth="xl"
       PaperProps={{
-        sx: { border: (t) => `1px solid ${t.palette.primary.main}` },
+        sx: {
+          position: "relative",
+          p: 2.5,
+          pt: 2.25,
+          pb: 2.5,
+        },
       }}
     >
-      <DialogTitle>
-        {t("constructionSites.assign.toolsTitle", {
-          defaultValue: "Dodjela alata",
-        })}
-      </DialogTitle>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          mb: 2,
+        }}
+      >
+        <DialogTitle
+          sx={{
+            m: 0,
+            p: 0,
+            fontSize: 16,
+            fontWeight: 600,
+            color: "#111827",
+          }}
+        >
+          {t("constructionSites.assign.toolsTitle")}
+        </DialogTitle>
 
-      <DialogContent dividers sx={{ p: 0 }}>
+        <IconButton
+          onClick={() => {
+            if (assign.isPending) return;
+            onClose();
+          }}
+          disabled={assign.isPending}
+          sx={{
+            width: 32,
+            height: 32,
+            borderRadius: "999px",
+            p: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            "&:hover": {
+              backgroundColor: "#EFF6FF",
+            },
+          }}
+        >
+          <CloseIcon sx={{ fontSize: 16, color: "#111827" }} />
+        </IconButton>
+      </Box>
+
+      <DialogContent sx={{ p: 0, mb: 2 }}>
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
             <CircularProgress />
@@ -323,9 +366,7 @@ export default function AssignToolsDialog({
         ) : toolsRows.length === 0 ? (
           <Box sx={{ p: 2 }}>
             <Typography color="text.secondary">
-              {t("constructionSites.assign.noTools", {
-                defaultValue: "Nema dostupnih alata.",
-              })}
+              {t("constructionSites.assign.noTools")}
             </Typography>
           </Box>
         ) : (
@@ -351,10 +392,7 @@ export default function AssignToolsDialog({
                 sx={{ mb: 1 }}
               >
                 <Typography variant="subtitle2" color="text.secondary">
-                  {t("constructionSites.assign.left.toolsCount", {
-                    defaultValue: "Alati: {{count}}",
-                    count: toolsRows.length,
-                  })}
+                  {t("constructionSites.assign.left.toolsCount")}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
                   {t("constructionSites.assign.left.selectedCount", {
@@ -470,27 +508,17 @@ export default function AssignToolsDialog({
                     fontSize: "0.75rem",
                   }}
                 >
-                  <Box>
-                    {t("constructionSites.assign.grid.tool", {
-                      defaultValue: "Alat",
-                    })}
-                  </Box>
+                  <Box>{t("constructionSites.assign.grid.tool")}</Box>
                   <Box>{t("constructionSites.assign.grid.start")}</Box>
                   <Box>{t("constructionSites.assign.grid.end")}</Box>
-                  <Box>
-                    {t("constructionSites.assign.grid.responsible", {
-                      defaultValue: "Odgovorna osoba",
-                    })}
-                  </Box>
+                  <Box>{t("constructionSites.assign.grid.responsible")}</Box>
                   <Box>{t("constructionSites.assign.grid.reset")}</Box>
                 </Box>
               )}
 
               {selected.length === 0 ? (
                 <Typography color="text.secondary">
-                  {t("constructionSites.assign.pickToolHint", {
-                    defaultValue: "Odaberite alat(e) s lijeve strane.",
-                  })}
+                  {t("constructionSites.assign.pickToolHint")}
                 </Typography>
               ) : (
                 <Stack spacing={1} sx={{ maxHeight: 420, overflowY: "auto" }}>
@@ -549,7 +577,6 @@ export default function AssignToolsDialog({
                         </Box>
 
                         <TextField
-                          //label={t("constructionSites.assign.grid.start")}
                           type="date"
                           size="small"
                           value={r.from}
@@ -558,7 +585,6 @@ export default function AssignToolsDialog({
                           error={!isValidRange(r.from, r.to)}
                         />
                         <TextField
-                          //label={t("constructionSites.assign.grid.end")}
                           type="date"
                           size="small"
                           value={r.to}
@@ -588,17 +614,7 @@ export default function AssignToolsDialog({
                           onChange={(_, val: any | null) =>
                             setResponsible(id, val ? Number(val.id) : null)
                           }
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              /*  label={t(
-                                "constructionSites.assign.grid.responsible",
-                                {
-                                  defaultValue: "Odgovorna osoba",
-                                }
-                              )} */
-                            />
-                          )}
+                          renderInput={(params) => <TextField {...params} />}
                         />
 
                         <Box sx={{ display: "flex", justifyContent: "center" }}>
@@ -628,34 +644,52 @@ export default function AssignToolsDialog({
         )}
       </DialogContent>
 
-      <DialogActions sx={{ p: 2 }}>
+      <DialogActions
+        sx={{
+          p: 0,
+          mt: 1,
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: 1.5,
+        }}
+      >
         {selected.length > 0 && !allRangesValid && (
           <Typography
             variant="caption"
             color="error"
-            sx={{ mr: "auto", pl: 1 }}
+            sx={{ mr: "auto", pl: 0.5 }}
           >
             {t("constructionSites.assign.validation.invalidRange")}
           </Typography>
         )}
 
         <Button
-          onClick={onClose}
+          onClick={() => {
+            if (assign.isPending) return;
+            onClose();
+          }}
           disabled={assign.isPending}
+          size="small"
           variant="outlined"
           sx={{
-            color: (t) => t.palette.grey[700],
-            borderColor: (t) => t.palette.grey[400],
+            textTransform: "none",
+            fontWeight: 500,
+            px: 2.5,
+            borderColor: "#E5E7EB",
+            color: "#111827",
+            backgroundColor: "#ffffff",
             "&:hover": {
-              backgroundColor: (t) => t.palette.grey[100],
-              borderColor: (t) => t.palette.grey[500],
+              backgroundColor: "#F9FAFB",
+              borderColor: "#D1D5DB",
             },
           }}
         >
           {t("constructionSites.assign.actions.cancel")}
         </Button>
+
         <Button
           onClick={handleSave}
+          size="small"
           variant="contained"
           disabled={
             assign.isPending ||
@@ -663,6 +697,11 @@ export default function AssignToolsDialog({
             hasError ||
             (selected.length > 0 && !allRangesValid)
           }
+          sx={{
+            textTransform: "none",
+            fontWeight: 600,
+            px: 2.5,
+          }}
         >
           {assign.isPending
             ? t("constructionSites.assign.actions.saving")

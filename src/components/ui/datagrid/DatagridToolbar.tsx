@@ -28,6 +28,7 @@ function DataGridToolbarBase({
       sx={{
         gap: 1,
         p: 1,
+        borderBottom: "none !important",
         "& .MuiButtonBase-root": {
           color,
           "& svg": { color },
@@ -38,6 +39,7 @@ function DataGridToolbarBase({
           "& .MuiSvgIcon-root": { color },
           "& input": { color },
         },
+        background: "#FDFDFD",
       }}
     >
       <GridToolbarColumnsButton />

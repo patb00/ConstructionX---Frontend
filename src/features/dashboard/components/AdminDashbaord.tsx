@@ -309,7 +309,12 @@ export default function AdminDashboard() {
               },
             ]}
             series={[
-              { data: growthY, label: t("dashboard.admin.line.cumulative") },
+              {
+                data: growthY,
+                label: t("dashboard.admin.line.cumulative"),
+                color: "#5D2BFF",
+                curve: "linear",
+              },
             ]}
             height={isXs ? 240 : 300}
             margin={

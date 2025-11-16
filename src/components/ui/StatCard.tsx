@@ -14,41 +14,65 @@ type Props = {
   sx?: SxProps<Theme>;
   onClick?: () => void;
   selected?: boolean;
+  disabled?: boolean;
 };
 
-export function StatCard({ label, value, icon, sx, onClick, selected }: Props) {
+export function StatCard({
+  label,
+  value,
+  icon,
+  sx,
+  onClick,
+  selected,
+  disabled,
+}: Props) {
+  const computedDisabled =
+    disabled ?? (typeof value === "number" ? value === 0 : value === "0");
+
+  const interactive = !!onClick && !computedDisabled;
+  const isSelected = !!selected && !computedDisabled;
+
   return (
     <Card
-      elevation={selected ? 6 : 3}
-      onClick={onClick}
-      role={onClick ? "button" : undefined}
-      tabIndex={onClick ? 0 : -1}
+      elevation={isSelected ? 6 : 1}
+      onClick={interactive ? onClick : undefined}
+      role={interactive ? "button" : undefined}
+      aria-disabled={computedDisabled || undefined}
+      tabIndex={interactive ? 0 : -1}
       sx={{
         height: 120,
-        cursor: onClick ? "pointer" : "default",
+        cursor: interactive
+          ? "pointer"
+          : computedDisabled
+          ? "not-allowed"
+          : "default",
         outline: "none",
         border: (theme) =>
-          selected
+          isSelected
             ? `2px solid ${theme.palette.primary.main}`
             : "2px solid transparent",
         backgroundColor: (theme) =>
-          selected ? theme.palette.primary.main : "inherit",
-        color: (theme) => (selected ? theme.palette.common.white : "inherit"),
+          isSelected ? theme.palette.primary.main : "inherit",
+        color: (theme) => (isSelected ? theme.palette.common.white : "inherit"),
         "& .MuiTypography-root": {
-          color: (theme) => (selected ? theme.palette.common.white : undefined),
+          color: (theme) =>
+            isSelected ? theme.palette.common.white : undefined,
         },
         "& svg": {
-          color: (theme) => (selected ? theme.palette.common.white : undefined),
+          color: (theme) =>
+            isSelected ? theme.palette.common.white : undefined,
         },
-        "&:hover": onClick ? { transform: "translateY(-2px)" } : undefined,
+        opacity: computedDisabled ? 0.5 : 1,
+        pointerEvents: computedDisabled ? "none" : "auto",
+        "&:hover": interactive ? { transform: "translateY(-2px)" } : undefined,
         transition: "transform 120ms ease, box-shadow 120ms ease",
         ...sx,
       }}
       onKeyDown={(e) => {
-        if (!onClick) return;
+        if (!interactive) return;
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          onClick();
+          onClick?.();
         }
       }}
     >

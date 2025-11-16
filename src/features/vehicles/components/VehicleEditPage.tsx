@@ -16,13 +16,7 @@ export default function VehicleEditPage() {
   const { id } = useParams<{ id: string }>();
   const vehicleId = Number(id);
   if (!Number.isFinite(vehicleId))
-    return (
-      <div>
-        {t("vehicles.edit.invalidUrlId", {
-          defaultValue: "Invalid vehicle id",
-        })}
-      </div>
-    );
+    return <div>{t("vehicles.edit.invalidUrlId")}</div>;
 
   const navigate = useNavigate();
   const { data: vehicle, isLoading: vL, error } = useVehicle(vehicleId);
@@ -33,14 +27,7 @@ export default function VehicleEditPage() {
   const { data: types = [], isLoading: tL } = useVehicleTypes();
   const toOptions = (arr: string[]) => arr.map((x) => ({ value: x, label: x }));
 
-  if (error)
-    return (
-      <div>
-        {t("vehicles.edit.loadError", {
-          defaultValue: "Failed to load vehicle",
-        })}
-      </div>
-    );
+  if (error) return <div>{t("vehicles.edit.loadError")}</div>;
 
   const defaultValues: NewVehicleRequest | undefined = vehicle && {
     name: vehicle.name ?? "",
@@ -75,7 +62,7 @@ export default function VehicleEditPage() {
     <Stack spacing={2}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h5" fontWeight={600}>
-          {t("vehicles.edit.title", { defaultValue: "Edit vehicle" })}
+          {t("vehicles.edit.title")}
         </Typography>
         <Button
           size="small"
@@ -84,7 +71,7 @@ export default function VehicleEditPage() {
           onClick={() => navigate("/app/vehicles")}
           sx={{ color: "primary.main" }}
         >
-          {t("vehicles.edit.back", { defaultValue: "Back" })}
+          {t("vehicles.edit.back")}
         </Button>
       </Stack>
 

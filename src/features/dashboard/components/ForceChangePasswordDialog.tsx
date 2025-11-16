@@ -20,7 +20,7 @@ export function ForceChangePasswordDialog({ open, onDone }: Props) {
   const setMustChangePassword = useAuthStore((s) => s.setMustChangePassword);
   const { mutateAsync: changePassword, isPending } = useChangePassword();
 
-  const [currentPassword] = useState("P@ssw0rd123!");
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
@@ -62,6 +62,15 @@ export function ForceChangePasswordDialog({ open, onDone }: Props) {
             <Typography variant="body2">
               {t("auth.forcePasswordChange.message")}
             </Typography>
+            <TextField
+              size="small"
+              type="password"
+              label={t("auth.forcePasswordChange.currentPassword")}
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              required
+            />
+
             <TextField
               size="small"
               type="password"

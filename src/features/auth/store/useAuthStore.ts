@@ -14,12 +14,14 @@ export type AuthState = {
   refreshTokenExpirationDate: string | null;
   isAuthenticated: boolean;
   tenant: string | null;
+  role: string | null;
   permissions: string[];
   userId: string | null;
   mustChangePassword: boolean;
   hasHydrated: boolean;
   setTenant: (tenant: string) => void;
   setPermissions: (perms: string[]) => void;
+  setRole: (role: string | null) => void;
   setMustChangePassword: (v: boolean) => void;
   loadFromCookies: () => void;
   setTokens: (jwt: string, refreshToken: string, refreshExpISO: string) => void;
@@ -34,6 +36,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isAuthenticated: false,
   tenant: null,
   permissions: [],
+  role: null,
   userId: null,
   mustChangePassword: false,
   hasHydrated: false,
@@ -44,6 +47,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   setPermissions: (perms) => set({ permissions: perms ?? [] }),
+
+  setRole: (role) => set({ role: role ?? null }),
 
   setMustChangePassword: (v) => {
     if (v) setCookie(MCP_COOKIE, "1", { days: 1 });
@@ -61,12 +66,21 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     let tenant = tenantCookie || null;
     let permissions: string[] = [];
     let userId: string | null = null;
+    let role: string | null = null;
 
     if (jwt) {
       const claims = decodeJwt(jwt) as any;
       if (claims) {
         tenant = tenant ?? claims.tenant ?? null;
         if (Array.isArray(claims.permission)) permissions = claims.permission;
+
+        role =
+          claims[
+            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+          ] ??
+          claims["role"] ??
+          null;
+
         userId =
           claims[
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
@@ -82,6 +96,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       refreshTokenExpirationDate: exp || null,
       tenant,
       permissions,
+      role,
       userId,
       isAuthenticated: ok,
       mustChangePassword: !!mcp,
@@ -96,6 +111,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     const claims = decodeJwt(jwt) as any;
     const perms = Array.isArray(claims?.permission) ? claims.permission : [];
+
+    const role =
+      claims?.[
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+      ] ??
+      claims?.["role"] ??
+      null;
+
     const userId =
       claims?.[
         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
@@ -106,6 +129,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       refreshToken,
       refreshTokenExpirationDate: refreshExpISO,
       permissions: perms,
+      role,
       userId,
       isAuthenticated: !isExpired(jwt),
     });
@@ -123,6 +147,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       refreshTokenExpirationDate: null,
       tenant: null,
       permissions: [],
+      role: null,
       userId: null,
       mustChangePassword: false,
       isAuthenticated: false,

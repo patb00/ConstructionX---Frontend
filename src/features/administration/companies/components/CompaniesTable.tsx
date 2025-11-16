@@ -1,15 +1,8 @@
 import { useMemo, useState, useCallback } from "react";
-import { Box, Tooltip } from "@mui/material";
-import {
-  GridActionsCellItem,
-  type GridActionsCellItemProps,
-  type GridActionsColDef,
-  type GridColDef,
-  type GridRowParams,
-} from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Box } from "@mui/material";
+import { type GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
+
 import { useCompanies } from "../hooks/useCompanies";
 import { useDeleteCompany } from "../hooks/useDeleteCompany";
 import type { Company } from "..";
@@ -17,6 +10,7 @@ import { PermissionGate, useCan } from "../../../../lib/permissions";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 import { useTranslation } from "react-i18next";
+import { RowActions } from "../../../../components/ui/datagrid/RowActions";
 
 export default function CompaniesTable() {
   const { t } = useTranslation();
@@ -84,53 +78,31 @@ export default function CompaniesTable() {
     if (!(canEdit || canDelete)) return base;
     if (base.some((c) => c.field === "actions")) return base;
 
-    const actionsCol: GridActionsColDef<Company> = {
+    const actionsCol: GridColDef<Company> = {
       field: "actions",
-      type: "actions",
       headerName: t("companies.actions"),
       width: 160,
-      getActions: (
-        params: GridRowParams<Company>
-      ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
         const { row } = params;
         const busy = deleteCompany.isPending;
-        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
 
-        if (canEdit) {
-          items.push(
-            <GridActionsCellItem
-              key="edit"
-              icon={
-                <Tooltip title={t("companies.table.edit")}>
-                  <EditIcon fontSize="small" />
-                </Tooltip>
-              }
-              label={t("companies.table.edit")}
-              disabled={busy}
-              onClick={() => navigate(`${row.id}/edit`)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        if (canDelete) {
-          items.push(
-            <GridActionsCellItem
-              key="delete"
-              icon={
-                <Tooltip title={t("companies.table.delete")}>
-                  <DeleteIcon fontSize="small" color="error" />
-                </Tooltip>
-              }
-              label={t("companies.table.delete")}
-              disabled={busy}
-              onClick={() => requestDelete(row)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        return items;
+        return (
+          <RowActions
+            color="#F1B103"
+            disabled={busy}
+            onEdit={canEdit ? () => navigate(`${row.id}/edit`) : undefined}
+            onDelete={canDelete ? () => requestDelete(row) : undefined}
+            labels={{
+              edit: t("companies.table.edit"),
+              delete: t("companies.table.delete"),
+            }}
+          />
+        );
       },
     };
 
@@ -154,7 +126,7 @@ export default function CompaniesTable() {
         rows={companiesRows}
         columns={columnsWithActions}
         getRowId={(r) => r.id}
-        stickyRightField={hasActions ? "actions" : undefined}
+        pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
       />
 

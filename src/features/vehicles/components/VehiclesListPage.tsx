@@ -10,7 +10,7 @@ export default function VehiclesListPage() {
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h5" fontWeight={600}>
-          {t("vehicles.list.title", { defaultValue: "Vehicles" })}
+          {t("vehicles.list.title")}
         </Typography>
         <PermissionGate guard={{ permission: "Permission.Vehicles.Create" }}>
           <Button
@@ -19,7 +19,7 @@ export default function VehiclesListPage() {
             to="create"
             variant="contained"
           >
-            {t("vehicles.create.title", { defaultValue: "Add vehicle" })}
+            {t("vehicles.create.title")}
           </Button>
         </PermissionGate>
       </Stack>

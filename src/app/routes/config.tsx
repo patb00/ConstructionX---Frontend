@@ -6,6 +6,7 @@ import {
   FaBriefcase,
   FaTools,
   FaCarSide,
+  FaTasks,
 } from "react-icons/fa";
 import { IoIosBusiness } from "react-icons/io";
 import { HiUsers } from "react-icons/hi";
@@ -31,6 +32,14 @@ export const NAV_ITEMS: NavItem[] = [
     icon: <FaTachometerAlt />,
     section: "MANAGEMENT",
   },
+
+  {
+    labelKey: "nav.assignments",
+    to: "/app/assignments",
+    icon: <FaTasks />,
+    section: "MANAGEMENT",
+  },
+
   {
     labelKey: "nav.constructionSites",
     to: "/app/constructionSites",

@@ -14,6 +14,7 @@ import { constructionSitesRoutes } from "../../features/construction_site/routes
 import { toolsRoutes } from "../../features/tools/routes";
 import { toolCategoriesRoutes } from "../../features/tools_category/routes";
 import { vehiclesRoutes } from "../../features/vehicles/routes";
+import { assignmentsRoutes } from "../../features/assignments/routes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <LoginRoute /> },
@@ -46,6 +47,8 @@ export const router = createBrowserRouter([
       constructionSitesRoutes,
       { path: "vehicles" },
       vehiclesRoutes,
+      { path: "assignments" },
+      assignmentsRoutes,
     ],
   },
 ]);

@@ -1,14 +1,7 @@
 import { useMemo, useState, useCallback } from "react";
-import { Box, Tooltip } from "@mui/material";
-import {
-  GridActionsCellItem,
-  type GridColDef,
-  type GridActionsColDef,
-  type GridRowParams,
-  type GridActionsCellItemProps,
-} from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Box } from "@mui/material";
+import { type GridColDef } from "@mui/x-data-grid";
+
 import type { JobPosition } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import { useJobPositions } from "../hooks/useJobPositions";
@@ -17,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 import { PermissionGate, useCan } from "../../../../lib/permissions";
 import { useTranslation } from "react-i18next";
+import { RowActions } from "../../../../components/ui/datagrid/RowActions";
 
 export default function JobPositionsTable() {
   const { t } = useTranslation();
@@ -98,55 +92,32 @@ export default function JobPositionsTable() {
     if (!(canEdit || canDelete)) return base;
     if (base.some((c) => c.field === "actions")) return base;
 
-    const actionsCol: GridActionsColDef<JobPosition> = {
+    const actionsCol: GridColDef<JobPosition> = {
       field: "actions",
-      type: "actions",
       headerName: t("jobPositions.actions"),
       width: 140,
-      getActions: (
-        params: GridRowParams<JobPosition>
-      ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
         const row = params.row;
         const id = (row as any).id;
         const busy = deleteJobPosition.isPending;
 
-        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
-
-        if (canEdit) {
-          items.push(
-            <GridActionsCellItem
-              key="edit"
-              icon={
-                <Tooltip title={t("jobPositions.table.edit")}>
-                  <EditIcon fontSize="small" />
-                </Tooltip>
-              }
-              label={t("jobPositions.table.edit")}
-              disabled={busy}
-              onClick={() => navigate(`${id}/edit`)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        if (canDelete) {
-          items.push(
-            <GridActionsCellItem
-              key="delete"
-              icon={
-                <Tooltip title={t("jobPositions.table.delete")}>
-                  <DeleteIcon fontSize="small" color="error" />
-                </Tooltip>
-              }
-              label={t("jobPositions.table.delete")}
-              disabled={busy}
-              onClick={() => requestDelete(row)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        return items;
+        return (
+          <RowActions
+            disabled={busy}
+            color="#F1B103"
+            labels={{
+              edit: t("jobPositions.table.edit"),
+              delete: t("jobPositions.table.delete"),
+            }}
+            onEdit={canEdit ? () => navigate(`${id}/edit`) : undefined}
+            onDelete={canDelete ? () => requestDelete(row) : undefined}
+          />
+        );
       },
     };
 
@@ -170,8 +141,9 @@ export default function JobPositionsTable() {
         rows={jobPositionsRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}
-        stickyRightField={hasActions ? "actions" : undefined}
+        pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
+        listViewColumns={["id", "name", "actions"]}
       />
 
       <PermissionGate guard={{ permission: "Permission.JobPositions.Delete" }}>

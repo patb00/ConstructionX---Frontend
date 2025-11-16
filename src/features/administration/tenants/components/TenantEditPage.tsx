@@ -95,6 +95,7 @@ export default function TenantEditPage() {
             />
 
             <Button
+              size="small"
               type="submit"
               variant="contained"
               disabled={!effectiveLocal || isPending || isLoading}
