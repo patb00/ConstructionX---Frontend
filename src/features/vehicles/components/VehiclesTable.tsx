@@ -1,15 +1,5 @@
 import { useMemo, useState, useCallback } from "react";
-import { Tooltip } from "@mui/material";
-import {
-  GridActionsCellItem,
-  type GridColDef,
-  type GridActionsColDef,
-  type GridRowParams,
-  type GridActionsCellItemProps,
-} from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-
+import { type GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -19,6 +9,7 @@ import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { Vehicle } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
+import { RowActions } from "../../../components/ui/datagrid/RowActions";
 
 export default function VehiclesTable() {
   const { t } = useTranslation();
@@ -53,7 +44,7 @@ export default function VehiclesTable() {
   }, [deleteVehicle, pendingRow]);
 
   const columnsWithActions = useMemo<GridColDef<Vehicle>[]>(() => {
-    const base = vehiclesColumns;
+    const base = vehiclesColumns.slice();
 
     const canEdit = can({ permission: "Permission.Vehicles.Update" });
     const canDelete = can({ permission: "Permission.Vehicles.Delete" });
@@ -61,57 +52,31 @@ export default function VehiclesTable() {
     if (!(canEdit || canDelete)) return base;
     if (base.some((c) => c.field === "actions")) return base;
 
-    const actionsCol: GridActionsColDef<Vehicle> = {
+    const actionsCol: GridColDef<Vehicle> = {
       field: "actions",
-      type: "actions",
-      headerName: t("vehicles.actions", { defaultValue: "Akcije" }),
+      headerName: t("vehicles.actions"),
       width: 150,
-      getActions: (
-        params: GridRowParams<Vehicle>
-      ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
         const id = (params.row as any).id;
         const busy = deleteVehicle.isPending;
-        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
 
-        if (canEdit) {
-          items.push(
-            <GridActionsCellItem
-              key="edit"
-              icon={
-                <Tooltip
-                  title={t("vehicles.table.edit", { defaultValue: "Uredi" })}
-                >
-                  <EditIcon fontSize="small" />
-                </Tooltip>
-              }
-              label="Edit"
-              disabled={busy}
-              onClick={() => navigate(`${id}/edit`)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        if (canDelete) {
-          items.push(
-            <GridActionsCellItem
-              key="delete"
-              icon={
-                <Tooltip
-                  title={t("vehicles.table.delete", { defaultValue: "Obriši" })}
-                >
-                  <DeleteIcon fontSize="small" color="error" />
-                </Tooltip>
-              }
-              label="Delete"
-              disabled={busy}
-              onClick={() => requestDelete(params.row)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        return items;
+        return (
+          <RowActions
+            color="#F1B103"
+            disabled={busy}
+            onEdit={canEdit ? () => navigate(`${id}/edit`) : undefined}
+            onDelete={canDelete ? () => requestDelete(params.row) : undefined}
+            labels={{
+              edit: t("vehicles.table.edit"),
+              delete: t("vehicles.table.delete"),
+            }}
+          />
+        );
       },
     };
 
@@ -128,11 +93,7 @@ export default function VehiclesTable() {
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   if (error) {
-    return (
-      <div>
-        {t("vehicles.list.error", { defaultValue: "Greška kod učitavanja" })}
-      </div>
-    );
+    return <div>{t("vehicles.list.error")}</div>;
   }
 
   return (
@@ -141,23 +102,17 @@ export default function VehiclesTable() {
         rows={vehiclesRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}
-        stickyRightField={hasActions ? "actions" : undefined}
+        pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
       />
 
       <PermissionGate guard={{ permission: "Permission.Vehicles.Delete" }}>
         <ConfirmDialog
           open={confirmOpen}
-          title={t("vehicles.delete.title", {
-            defaultValue: "Brisanje vozila",
-          })}
-          description={t("vehicles.delete.description", {
-            defaultValue: "Jeste li sigurni?",
-          })}
-          confirmText={t("vehicles.delete.confirm", {
-            defaultValue: "Potvrdi",
-          })}
-          cancelText={t("vehicles.delete.cancel", { defaultValue: "Odustani" })}
+          title={t("vehicles.delete.title")}
+          description={t("vehicles.delete.description")}
+          confirmText={t("vehicles.delete.confirm")}
+          cancelText={t("vehicles.delete.cancel")}
           loading={deleteVehicle.isPending}
           disableBackdropClose
           onClose={handleCancel}

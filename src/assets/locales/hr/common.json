@@ -19,6 +19,7 @@
   },
   "constructionSites": {
     "detail": {
+      "title": "Pregled gradilišta",
       "employees": "Zaposlenici",
       "addEmployee": "Dodaj zaposlenika",
       "addFirstEmployee": "Dodaj prvog zaposlenika",
@@ -32,7 +33,32 @@
       "vehicles": "Vozila",
       "addVehicle": "Dodaj vozilo",
       "addFirstVehicle": "Dodaj prvo vozilo",
-      "noVehicles": "Nema dodijeljenih vozila."
+      "noVehicles": "Nema dodijeljenih vozila.",
+      "vehicle": {
+        "registration": "Registracija",
+        "model": "Model"
+      },
+      "tool": {
+        "modelShort": "Model",
+        "inventoryShort": "Inventarni broj",
+        "serialShort": "Serijski broj"
+      }
+    },
+    "detailPanel": {
+      "loading": "Učitavanje detalja…",
+      "loadError": "Neuspjelo učitavanje detalja gradilišta.",
+      "fallbackName": "Gradilište",
+
+      "noEmployeesAssigned": "Nema dodijeljenih zaposlenika.",
+      "noPosition": "Radno mjesto nije definirano",
+
+      "noVehiclesAssigned": "Nema dodijeljenih vozila.",
+      "vehicleFallback": "Vozilo",
+
+      "noToolsAssigned": "Nema dodijeljenih alata.",
+      "toolFallback": "Alat",
+
+      "invPrefix": "Inv.:"
     },
     "fields": {
       "period": "Razdoblje",
@@ -981,9 +1007,52 @@
     "title": "Dodjele",
     "filterByEmployee": "Filtriraj po zaposleniku",
     "allEmployees": "Svi zaposlenici",
+
     "construction": "Gradilišta",
     "vehicles": "Vozila",
-    "tools": "Alati"
+    "tools": "Alati",
+
+    "view": {
+      "board": "Ploča",
+      "timeline": "Vremenska crta"
+    },
+
+    "employee": {
+      "info": "Podaci o zaposleniku",
+      "noOib": "OIB nije definiran",
+      "dates": "Datumi",
+      "birthDate": "Datum rođenja:",
+      "birthDateUnknown": "Datum rođenja nije definiran",
+      "employedFrom": "Zaposlen od",
+      "notEmployed": "Datum zaposlenja nije definiran",
+      "assignments": "Dodjele",
+      "assignmentsCaption": "Gradilišta · Vozila · Alati"
+    },
+
+    "timeline": {
+      "laneConstruction": "Gradilišta",
+      "laneVehicles": "Vozila",
+      "laneTools": "Alati",
+      "constructionItem": "Gradilište",
+      "vehicleItem": "Vozilo",
+      "toolItem": "Alat",
+      "empty": "Nema dodjela za prikaz na vremenskoj crti.",
+      "tooltip": {
+        "assignedTo": "Dodijeljeno:",
+        "lane": "Traka:",
+        "from": "Od:",
+        "to": "Do:"
+      }
+    },
+
+    "emptyConstruction": "Nema dodijeljenih gradilišta.",
+    "noLocation": "Lokacija nije definirana",
+    "assignmentRange": "Dodijeljen:",
+    "siteRange": "Razdoblje gradilišta:",
+    "managerLabel": "Voditelj gradilišta:",
+    "emptyVehicles": "Nema dodijeljenih vozila.",
+    "noSite": "Nije povezano s gradilištem",
+    "emptyTools": "Nema dodijeljenih alata."
   },
   "appShell": {
     "a11y": {

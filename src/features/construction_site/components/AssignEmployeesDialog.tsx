@@ -24,6 +24,7 @@ import { isValidRange, todayStr } from "../utils/dates";
 import { fullName } from "../utils/name";
 import { getCommonRange } from "../utils/ranges";
 import { useTranslation } from "react-i18next";
+import CloseIcon from "@mui/icons-material/Close";
 
 type EmpRange = { from: string; to: string; custom: boolean };
 
@@ -249,16 +250,65 @@ export default function AssignEmployeesDialog({
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={(_e, _reason) => {
+        if (assign.isPending) return;
+        onClose();
+      }}
       fullWidth
-      maxWidth="lg"
+      maxWidth="xl"
       PaperProps={{
-        sx: { border: (t) => `1px solid ${t.palette.primary.main}` },
+        sx: {
+          position: "relative",
+          p: 2.5,
+          pt: 2.25,
+          pb: 2.5,
+        },
       }}
     >
-      <DialogTitle>{t("constructionSites.assign.title")}</DialogTitle>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          mb: 2,
+        }}
+      >
+        <DialogTitle
+          sx={{
+            m: 0,
+            p: 0,
+            fontSize: 16,
+            fontWeight: 600,
+            color: "#111827",
+          }}
+        >
+          {t("constructionSites.assign.title")}
+        </DialogTitle>
 
-      <DialogContent dividers sx={{ p: 0 }}>
+        <IconButton
+          onClick={() => {
+            if (assign.isPending) return;
+            onClose();
+          }}
+          disabled={assign.isPending}
+          sx={{
+            width: 32,
+            height: 32,
+            borderRadius: "999px",
+            p: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            "&:hover": {
+              backgroundColor: "#EFF6FF",
+            },
+          }}
+        >
+          <CloseIcon sx={{ fontSize: 16, color: "#111827" }} />
+        </IconButton>
+      </Box>
+
+      <DialogContent sx={{ p: 0, mb: 2 }}>
         {isLoading ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
             <CircularProgress />
@@ -485,7 +535,6 @@ export default function AssignEmployeesDialog({
                         </Box>
 
                         <TextField
-                          //label={t("constructionSites.assign.grid.start")}
                           type="date"
                           size="small"
                           value={r.from}
@@ -495,7 +544,6 @@ export default function AssignEmployeesDialog({
                         />
 
                         <TextField
-                          //label={t("constructionSites.assign.grid.end")}
                           type="date"
                           size="small"
                           value={r.to}
@@ -531,34 +579,52 @@ export default function AssignEmployeesDialog({
         )}
       </DialogContent>
 
-      <DialogActions sx={{ p: 2 }}>
+      <DialogActions
+        sx={{
+          p: 0,
+          mt: 1,
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: 1.5,
+        }}
+      >
         {selected.length > 0 && !allRangesValid && (
           <Typography
             variant="caption"
             color="error"
-            sx={{ mr: "auto", pl: 1 }}
+            sx={{ mr: "auto", pl: 0.5 }}
           >
             {t("constructionSites.assign.validation.invalidRange")}
           </Typography>
         )}
 
         <Button
-          onClick={onClose}
+          onClick={() => {
+            if (assign.isPending) return;
+            onClose();
+          }}
           disabled={assign.isPending}
+          size="small"
           variant="outlined"
           sx={{
-            color: (t) => t.palette.grey[700],
-            borderColor: (t) => t.palette.grey[400],
+            textTransform: "none",
+            fontWeight: 500,
+            px: 2.5,
+            borderColor: "#E5E7EB",
+            color: "#111827",
+            backgroundColor: "#ffffff",
             "&:hover": {
-              backgroundColor: (t) => t.palette.grey[100],
-              borderColor: (t) => t.palette.grey[500],
+              backgroundColor: "#F9FAFB",
+              borderColor: "#D1D5DB",
             },
           }}
         >
           {t("constructionSites.assign.actions.cancel")}
         </Button>
+
         <Button
           onClick={handleSave}
+          size="small"
           variant="contained"
           disabled={
             assign.isPending ||
@@ -566,6 +632,11 @@ export default function AssignEmployeesDialog({
             isError ||
             (selected.length > 0 && !allRangesValid)
           }
+          sx={{
+            textTransform: "none",
+            fontWeight: 600,
+            px: 2.5,
+          }}
         >
           {assign.isPending
             ? t("constructionSites.assign.actions.saving")

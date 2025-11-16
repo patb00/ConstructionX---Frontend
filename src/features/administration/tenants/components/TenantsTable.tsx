@@ -1,15 +1,6 @@
 import * as React from "react";
-import { Box, Chip, CircularProgress, Tooltip } from "@mui/material";
-import {
-  type GridColDef,
-  GridActionsCellItem,
-  type GridActionsColDef,
-  type GridActionsCellItemProps,
-  type GridRowParams,
-} from "@mui/x-data-grid";
-import CheckIcon from "@mui/icons-material/Check";
-import BlockIcon from "@mui/icons-material/Block";
-import EditIcon from "@mui/icons-material/Edit";
+import { Box, Chip } from "@mui/material";
+import { type GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 
 import { useActivateTenant } from "../hooks/useActivateTenant";
@@ -19,6 +10,7 @@ import type { Tenant } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import { useCan } from "../../../../lib/permissions";
 import { useTranslation } from "react-i18next";
+import { RowActions } from "../../../../components/ui/datagrid/RowActions";
 
 export default function TenantsTable() {
   const { t } = useTranslation();
@@ -117,16 +109,16 @@ export default function TenantsTable() {
     if (!(canEdit || canToggleActive)) return base;
     if (base.some((c) => c.field === "actions")) return base;
 
-    const actionsCol: GridActionsColDef<Tenant> = {
+    const actionsCol: GridColDef<Tenant> = {
       field: "actions",
-      type: "actions",
       headerName: t("tenants.actions"),
       width: 220,
       sortable: false,
       filterable: false,
-      getActions: (
-        params: GridRowParams<Tenant>
-      ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+      disableColumnMenu: true,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
         const tRow = params.row;
 
         const isActivating =
@@ -135,67 +127,36 @@ export default function TenantsTable() {
           deactivate.isPending &&
           (deactivate.variables as any) === tRow.identifier;
 
-        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
+        const toggleLoading = isActivating || isDeactivating;
+        const busy = toggleLoading;
 
-        if (canEdit) {
-          items.push(
-            <GridActionsCellItem
-              key="edit"
-              icon={
-                <Tooltip title={t("tenants.table.edit")}>
-                  <EditIcon fontSize="small" />
-                </Tooltip>
-              }
-              label={t("tenants.table.edit")}
-              onClick={() => navigate(`${tRow.identifier}/edit`)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        if (canToggleActive) {
-          if (tRow.isActive) {
-            items.push(
-              <GridActionsCellItem
-                key="deactivate"
-                icon={
-                  <Tooltip title={t("tenants.table.deactivate")}>
-                    {isDeactivating ? (
-                      <CircularProgress size={16} />
-                    ) : (
-                      <BlockIcon fontSize="small" />
-                    )}
-                  </Tooltip>
-                }
-                label={t("tenants.table.deactivate")}
-                disabled={isDeactivating}
-                onClick={() => deactivate.mutate(tRow.identifier)}
-                showInMenu={false}
-              />
-            );
-          } else {
-            items.push(
-              <GridActionsCellItem
-                key="activate"
-                icon={
-                  <Tooltip title={t("tenants.table.activate")}>
-                    {isActivating ? (
-                      <CircularProgress size={16} />
-                    ) : (
-                      <CheckIcon fontSize="small" />
-                    )}
-                  </Tooltip>
-                }
-                label={t("tenants.table.activate")}
-                disabled={isActivating}
-                onClick={() => activate.mutate(tRow.identifier)}
-                showInMenu={false}
-              />
-            );
-          }
-        }
-
-        return items;
+        return (
+          <RowActions
+            color="#F1B103"
+            disabled={busy}
+            onEdit={
+              canEdit ? () => navigate(`${tRow.identifier}/edit`) : undefined
+            }
+            onToggleActive={
+              canToggleActive
+                ? () => {
+                    if (tRow.isActive) {
+                      deactivate.mutate(tRow.identifier);
+                    } else {
+                      activate.mutate(tRow.identifier);
+                    }
+                  }
+                : undefined
+            }
+            isActive={tRow.isActive}
+            toggleLoading={toggleLoading}
+            labels={{
+              edit: t("tenants.table.edit"),
+              activate: t("tenants.table.activate"),
+              deactivate: t("tenants.table.deactivate"),
+            }}
+          />
+        );
       },
     };
 
@@ -220,7 +181,7 @@ export default function TenantsTable() {
       rows={tenantsRows}
       columns={columnsWithActions}
       getRowId={(r) => r.identifier}
-      stickyRightField={hasActions ? "actions" : undefined}
+      pinnedRightField={hasActions ? "actions" : undefined}
       loading={!!isLoading}
     />
   );

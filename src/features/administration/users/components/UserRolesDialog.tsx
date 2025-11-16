@@ -10,7 +10,9 @@ import {
   Box,
   Typography,
   Stack,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import * as React from "react";
 import { useUserRoles } from "../hooks/useUserRoles";
 import { useUpdateRoles } from "../hooks/useUpdateRoles";
@@ -45,7 +47,7 @@ export default function UserRolesDialog({ userId, open, onClose }: Props) {
   };
 
   const handleSave = () => {
-    if (!rolesList.length) return;
+    if (!rolesList.length || updateRoles.isPending) return;
     updateRoles.mutate(
       {
         userId,
@@ -60,21 +62,78 @@ export default function UserRolesDialog({ userId, open, onClose }: Props) {
     );
   };
 
+  const handleDialogClose = (
+    _event: object,
+    _reason: "backdropClick" | "escapeKeyDown"
+  ) => {
+    if (updateRoles.isPending) return;
+    onClose();
+  };
+
+  const handleExplicitClose = () => {
+    if (updateRoles.isPending) return;
+    onClose();
+  };
+
+  const title = t("users.rolesDialog.title");
+
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleDialogClose}
       fullWidth
       maxWidth="sm"
       PaperProps={{
         sx: {
-          border: (t) => `1px solid ${t.palette.primary.main}`,
+          position: "relative",
+          p: 2.5,
+          pt: 2.25,
+          pb: 2.5,
+          backgroundColor: "#ffffff",
         },
       }}
     >
-      <DialogTitle>{t("users.rolesDialog.title")}</DialogTitle>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          mb: 2,
+        }}
+      >
+        <DialogTitle
+          sx={{
+            m: 0,
+            p: 0,
+            fontSize: 16,
+            fontWeight: 600,
+            color: "#111827",
+          }}
+        >
+          {title}
+        </DialogTitle>
 
-      <DialogContent dividers>
+        <IconButton
+          onClick={handleExplicitClose}
+          disabled={updateRoles.isPending}
+          sx={{
+            width: 32,
+            height: 32,
+            borderRadius: "999px",
+            p: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            "&:hover": {
+              backgroundColor: "#EFF6FF",
+            },
+          }}
+        >
+          <CloseIcon sx={{ fontSize: 16, color: "#111827" }} />
+        </IconButton>
+      </Box>
+
+      <DialogContent sx={{ p: 0, mb: 2 }}>
         {isLoading ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
             <CircularProgress />
@@ -96,6 +155,7 @@ export default function UserRolesDialog({ userId, open, onClose }: Props) {
                   <Checkbox
                     checked={selected.includes(r.roleId)}
                     onChange={() => toggleRole(r.roleId)}
+                    disabled={updateRoles.isPending}
                   />
                 }
                 label={
@@ -120,17 +180,30 @@ export default function UserRolesDialog({ userId, open, onClose }: Props) {
         )}
       </DialogContent>
 
-      <DialogActions sx={{ p: 2 }}>
+      <DialogActions
+        sx={{
+          p: 0,
+          mt: 1,
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: 1.5,
+        }}
+      >
         <Button
-          onClick={onClose}
+          onClick={handleExplicitClose}
           disabled={updateRoles.isPending}
+          size="small"
           variant="outlined"
           sx={{
-            color: (t) => t.palette.grey[700],
-            borderColor: (t) => t.palette.grey[400],
+            textTransform: "none",
+            fontWeight: 500,
+            px: 2.5,
+            borderColor: "#E5E7EB",
+            color: "#111827",
+            backgroundColor: "#ffffff",
             "&:hover": {
-              backgroundColor: (t) => t.palette.grey[100],
-              borderColor: (t) => t.palette.grey[500],
+              backgroundColor: "#F9FAFB",
+              borderColor: "#D1D5DB",
             },
           }}
         >
@@ -139,8 +212,14 @@ export default function UserRolesDialog({ userId, open, onClose }: Props) {
 
         <Button
           onClick={handleSave}
+          size="small"
           variant="contained"
           disabled={updateRoles.isPending || rolesList.length === 0}
+          sx={{
+            textTransform: "none",
+            fontWeight: 600,
+            px: 2.5,
+          }}
         >
           {updateRoles.isPending
             ? t("users.rolesDialog.saving")

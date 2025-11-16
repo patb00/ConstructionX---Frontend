@@ -148,7 +148,8 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
         display: "flex",
         flexDirection: "column",
         overflowX: "hidden",
-        bgcolor: theme.palette.grey[50],
+        //bgcolor: theme.palette.grey[50],
+        bgcolor: "#F7F7F8",
         borderRight: `1px solid ${theme.palette.divider}`,
       }}
     >
@@ -191,13 +192,11 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
           </IconButton>
         </Box>
 
-        <Box sx={{ flex: 1, overflowY: "auto" }}>
-          <Box sx={{ px: 0 }}>{renderSectionLabel("sidebar.management")}</Box>
-          {renderNavList(MANAGEMENT)}
+        <Box sx={{ px: 0 }}>{renderSectionLabel("sidebar.management")}</Box>
+        {renderNavList(MANAGEMENT)}
 
-          <Box sx={{ px: 0 }}>{renderSectionLabel("sidebar.system")}</Box>
-          {renderNavList(SYSTEM)}
-        </Box>
+        <Box sx={{ px: 0 }}>{renderSectionLabel("sidebar.system")}</Box>
+        {renderNavList(SYSTEM)}
       </Box>
     ) : null;
   }

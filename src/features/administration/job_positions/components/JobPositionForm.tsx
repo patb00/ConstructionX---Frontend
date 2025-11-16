@@ -20,7 +20,7 @@ export default function JobPositionForm({
 
   const fields: FieldConfig<NewJobPositionRequest>[] = [
     { name: "name", label: t("jobPositions.form.field.name"), required: true },
-    { name: "description", label: t("jobPositions.form.field.description") }, // optional per your choice
+    { name: "description", label: t("jobPositions.form.field.description") },
   ];
 
   return (

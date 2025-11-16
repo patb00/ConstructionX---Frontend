@@ -23,6 +23,7 @@
       "error": "Fehler beim Laden der Baustellen."
     },
     "detail": {
+      "title": "Baustellenübersicht",
       "employees": "Mitarbeiter",
       "addEmployee": "Mitarbeiter hinzufügen",
       "addFirstEmployee": "Ersten Mitarbeiter hinzufügen",
@@ -36,7 +37,32 @@
       "vehicles": "Fahrzeuge",
       "addVehicle": "Fahrzeug hinzufügen",
       "addFirstVehicle": "Erstes Fahrzeug hinzufügen",
-      "noVehicles": "Keine Fahrzeuge zugewiesen."
+      "noVehicles": "Keine Fahrzeuge zugewiesen.",
+      "vehicle": {
+        "registration": "Kennzeichen",
+        "model": "Modell"
+      },
+      "tool": {
+        "modelShort": "Modell",
+        "inventoryShort": "Inventarnummer",
+        "serialShort": "Seriennummer"
+      }
+    },
+    "detailPanel": {
+      "loading": "Details werden geladen…",
+      "loadError": "Baustellendetails konnten nicht geladen werden.",
+      "fallbackName": "Baustelle",
+
+      "noEmployeesAssigned": "Keine Mitarbeiter zugewiesen.",
+      "noPosition": "Position nicht festgelegt",
+
+      "noVehiclesAssigned": "Keine Fahrzeuge zugewiesen.",
+      "vehicleFallback": "Fahrzeug",
+
+      "noToolsAssigned": "Keine Werkzeuge zugewiesen.",
+      "toolFallback": "Werkzeug",
+
+      "invPrefix": "Inv.-Nr.:"
     },
     "fields": {
       "period": "Zeitraum",
@@ -982,9 +1008,52 @@
     "title": "Zuweisungen",
     "filterByEmployee": "Nach Mitarbeiter filtern",
     "allEmployees": "Alle Mitarbeiter",
+
     "construction": "Baustellen",
     "vehicles": "Fahrzeuge",
-    "tools": "Werkzeuge"
+    "tools": "Werkzeuge",
+
+    "view": {
+      "board": "Board",
+      "timeline": "Zeitleiste"
+    },
+
+    "employee": {
+      "info": "Mitarbeiterinformationen",
+      "noOib": "OIB ist nicht definiert",
+      "dates": "Daten",
+      "birthDate": "Geburtsdatum:",
+      "birthDateUnknown": "Geburtsdatum ist nicht definiert",
+      "employedFrom": "Beschäftigt seit",
+      "notEmployed": "Beschäftigungsdatum ist nicht definiert",
+      "assignments": "Zuweisungen",
+      "assignmentsCaption": "Baustellen · Fahrzeuge · Werkzeuge"
+    },
+
+    "timeline": {
+      "laneConstruction": "Baustellen",
+      "laneVehicles": "Fahrzeuge",
+      "laneTools": "Werkzeuge",
+      "constructionItem": "Baustelle",
+      "vehicleItem": "Fahrzeug",
+      "toolItem": "Werkzeug",
+      "empty": "Keine Zuweisungen zur Anzeige auf der Zeitleiste.",
+      "tooltip": {
+        "assignedTo": "Zugewiesen an:",
+        "lane": "Spur:",
+        "from": "Von:",
+        "to": "Bis:"
+      }
+    },
+
+    "emptyConstruction": "Keine zugewiesenen Baustellen.",
+    "noLocation": "Standort ist nicht definiert",
+    "assignmentRange": "Zugewiesen:",
+    "siteRange": "Baustellenzeitraum:",
+    "managerLabel": "Bauleiter:",
+    "emptyVehicles": "Keine zugewiesenen Fahrzeuge.",
+    "noSite": "Nicht mit einer Baustelle verknüpft",
+    "emptyTools": "Keine zugewiesenen Werkzeuge."
   },
   "appShell": {
     "a11y": {

@@ -1,22 +1,15 @@
 import { useMemo, useState, useCallback } from "react";
-import { Tooltip } from "@mui/material";
-import {
-  GridActionsCellItem,
-  type GridColDef,
-  type GridActionsColDef,
-  type GridActionsCellItemProps,
-  type GridRowParams,
-} from "@mui/x-data-grid";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
+import { type GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+
 import type { Employee } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import { useEmployees } from "../hooks/useEmployees";
 import { useDeleteEmployee } from "../hooks/useDeleteEmployee";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 import { useCan, PermissionGate } from "../../../../lib/permissions";
-import { useTranslation } from "react-i18next";
+import { RowActions } from "../../../../components/ui/datagrid/RowActions";
 
 export default function EmployeesTable() {
   const { t } = useTranslation();
@@ -67,53 +60,31 @@ export default function EmployeesTable() {
     if (!(canEdit || canDelete)) return base;
     if (base.some((c) => c.field === "actions")) return base;
 
-    const actionsCol: GridActionsColDef<Employee> = {
+    const actionsCol: GridColDef<Employee> = {
       field: "actions",
-      type: "actions",
       headerName: t("employees.actions"),
-      width: 120,
-      getActions: (
-        params: GridRowParams<Employee>
-      ): readonly React.ReactElement<GridActionsCellItemProps>[] => {
+      width: 140,
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
         const e = params.row;
         const isDeletingThis = busy && (variables as any) === e.id;
 
-        const items: React.ReactElement<GridActionsCellItemProps>[] = [];
-
-        if (canEdit) {
-          items.push(
-            <GridActionsCellItem
-              key="edit"
-              icon={
-                <Tooltip title={t("employees.table.edit")}>
-                  <EditIcon fontSize="small" />
-                </Tooltip>
-              }
-              label={t("employees.table.edit")}
-              onClick={() => handleEdit(e.id)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        if (canDelete) {
-          items.push(
-            <GridActionsCellItem
-              key="delete"
-              icon={
-                <Tooltip title={t("employees.table.delete")}>
-                  <DeleteIcon fontSize="small" color="error" />
-                </Tooltip>
-              }
-              label={t("employees.table.delete")}
-              disabled={isDeletingThis}
-              onClick={() => requestDelete(e)}
-              showInMenu={false}
-            />
-          );
-        }
-
-        return items;
+        return (
+          <RowActions
+            color="#F1B103"
+            disabled={isDeletingThis}
+            labels={{
+              edit: t("employees.table.edit"),
+              delete: t("employees.table.delete"),
+            }}
+            onEdit={canEdit ? () => handleEdit(e.id) : undefined}
+            onDelete={canDelete ? () => requestDelete(e) : undefined}
+          />
+        );
       },
     };
 
@@ -130,7 +101,7 @@ export default function EmployeesTable() {
         rows={employeeRows}
         columns={columnsWithActions}
         getRowId={(r) => r.id}
-        stickyRightField={hasActions ? "actions" : undefined}
+        pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
       />
 
