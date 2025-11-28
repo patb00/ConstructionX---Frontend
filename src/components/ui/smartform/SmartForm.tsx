@@ -8,6 +8,7 @@ import {
   Button,
   MenuItem,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 
 import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
@@ -35,7 +36,8 @@ export type FieldType =
   | "date"
   | "checkbox"
   | "textarea"
-  | "select";
+  | "select"
+  | "file";
 
 export type FieldConfig<TValues extends Record<string, any>> = {
   name: keyof TValues & string;
@@ -64,6 +66,12 @@ export type FieldConfig<TValues extends Record<string, any>> = {
       "checked" | "onChange"
     >;
   };
+
+  fileConfig?: {
+    file?: File | null;
+    onChange?: (file: File | null) => void;
+    accept?: string;
+  };
 };
 
 export type SmartFormProps<TValues extends Record<string, any>> = {
@@ -74,7 +82,38 @@ export type SmartFormProps<TValues extends Record<string, any>> = {
   busy?: boolean;
   submitLabel?: string;
   formProps?: Omit<React.ComponentProps<typeof Box>, "component" | "onSubmit">;
+  renderFooterActions?: (values: TValues) => React.ReactNode;
 };
+
+function buildInitial<TValues extends Record<string, any>>(
+  fields: FieldConfig<TValues>[],
+  defaultValues?: Partial<TValues>
+): TValues {
+  const base: Record<string, any> = {};
+
+  for (const f of fields) {
+    if (f.type === "file") continue;
+
+    const incoming =
+      (defaultValues as any)?.[f.name] ??
+      f.defaultValue ??
+      (f.type === "checkbox" ? false : "");
+
+    if (f.transformIn) {
+      base[f.name] = f.transformIn(incoming, defaultValues ?? {});
+    } else if (f.type === "datetime-local") {
+      base[f.name] = incoming;
+    } else if (f.type === "date") {
+      base[f.name] = toDateOnly(incoming);
+    } else if (f.type === "checkbox") {
+      base[f.name] = Boolean(incoming);
+    } else {
+      base[f.name] = incoming ?? "";
+    }
+  }
+
+  return base as TValues;
+}
 
 export function SmartForm<TValues extends Record<string, any>>({
   fields,
@@ -84,54 +123,37 @@ export function SmartForm<TValues extends Record<string, any>>({
   busy,
   submitLabel = "Spremi",
   formProps,
+  renderFooterActions,
 }: SmartFormProps<TValues>) {
-  const initial = React.useMemo(() => {
-    const base: Record<string, any> = {};
+  const [values, setValues] = React.useState<TValues>(() =>
+    buildInitial(fields, defaultValues)
+  );
 
-    for (const f of fields) {
-      const incoming =
-        (defaultValues as any)?.[f.name] ??
-        f.defaultValue ??
-        (f.type === "checkbox" ? false : "");
+  const [hasInteracted, setHasInteracted] = React.useState(false);
 
-      if (f.transformIn) {
-        base[f.name] = f.transformIn(incoming, defaultValues ?? {});
-      } else if (f.type === "datetime-local") {
-        base[f.name] = incoming;
-      } else if (f.type === "date") {
-        base[f.name] = toDateOnly(incoming);
-      } else if (f.type === "checkbox") {
-        base[f.name] = Boolean(incoming);
-      } else {
-        base[f.name] = incoming ?? "";
-      }
+  React.useEffect(() => {
+    const hasDefaults =
+      defaultValues && Object.keys(defaultValues as object).length > 0;
+    if (!hasDefaults) return;
+    if (hasInteracted) {
+      return;
     }
 
-    return base as TValues;
-  }, [fields, defaultValues]);
-
-  const [values, setValues] = React.useState<TValues>(initial);
-
-  const defaultsKey = React.useMemo(
-    () => JSON.stringify(defaultValues ?? {}),
-    [defaultValues]
-  );
+    setValues(buildInitial(fields, defaultValues));
+  }, [defaultValues, fields, hasInteracted]);
 
   const update =
     (name: keyof TValues & string) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const isCheckbox = e.target.type === "checkbox";
       const next: any = isCheckbox ? (e.target as any).checked : e.target.value;
+      setHasInteracted(true);
       setValues((v) => ({ ...v, [name]: next }));
     };
 
-  // ---------------------------------------------------------------------------
-  // FIELD RENDERING
-  // ---------------------------------------------------------------------------
   const renderField = (f: FieldConfig<TValues>) => {
     const type = f.type ?? "text";
 
-    // CHECKBOX
     if (type === "checkbox") {
       const { checkboxProps, ...restProps } = (f.props ?? {}) as any;
 
@@ -179,9 +201,46 @@ export function SmartForm<TValues extends Record<string, any>>({
       ...fieldSx,
     };
 
-    // -------------------------------------------------------------------------
-    // DATE PICKER (type: "date")
-    // -------------------------------------------------------------------------
+    // FILE FIELD (uses fileConfig, not values)
+    if (type === "file") {
+      const fileCfg = f.fileConfig;
+      return (
+        <Box key={f.name} sx={{ flex: 1, minWidth: 0 }}>
+          <Typography
+            variant="caption"
+            sx={{ fontWeight: 500, color: "text.secondary" }}
+          >
+            {f.label}
+          </Typography>
+
+          <Box
+            sx={{
+              mt: 0.5,
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+            }}
+          >
+            <input
+              type="file"
+              accept={fileCfg?.accept}
+              onChange={(e) => {
+                const file = e.target.files?.[0] ?? null;
+                fileCfg?.onChange?.(file);
+              }}
+              style={{ fontSize: 12 }}
+            />
+            {fileCfg?.file && (
+              <Typography variant="body2" color="text.secondary">
+                {fileCfg.file.name}
+              </Typography>
+            )}
+          </Box>
+        </Box>
+      );
+    }
+
+    // DATE
     if (type === "date") {
       const raw = (values as any)[f.name];
       const dateValue =
@@ -208,6 +267,7 @@ export function SmartForm<TValues extends Record<string, any>>({
           <DatePicker
             value={isNaN(dateValue as any) ? null : dateValue}
             onChange={(newValue) => {
+              setHasInteracted(true);
               setValues((v) => ({
                 ...v,
                 [f.name]: toDateOnly(newValue ?? null),
@@ -229,9 +289,7 @@ export function SmartForm<TValues extends Record<string, any>>({
       );
     }
 
-    // -------------------------------------------------------------------------
-    // DATETIME PICKER (type: "datetime-local")
-    // -------------------------------------------------------------------------
+    // DATETIME
     if (type === "datetime-local") {
       const raw = (values as any)[f.name];
       const dateValue =
@@ -258,6 +316,7 @@ export function SmartForm<TValues extends Record<string, any>>({
           <DateTimePicker
             value={isNaN(dateValue as any) ? null : dateValue}
             onChange={(newValue) => {
+              setHasInteracted(true);
               setValues((v) => ({
                 ...v,
                 [f.name]: newValue ? newValue.toISOString() : null,
@@ -314,7 +373,7 @@ export function SmartForm<TValues extends Record<string, any>>({
       );
     }
 
-    // DEFAULT INPUT (text, email, password, number, textarea)
+    // DEFAULT INPUT
     return (
       <Box key={f.name} sx={{ flex: 1, minWidth: 0 }}>
         <Typography
@@ -366,6 +425,8 @@ export function SmartForm<TValues extends Record<string, any>>({
     const out: Record<string, any> = {};
 
     for (const f of fields) {
+      if (f.type === "file") continue; // file/attachment handled separately
+
       const raw = (values as any)[f.name];
 
       if (f.transformOut) {
@@ -382,10 +443,6 @@ export function SmartForm<TValues extends Record<string, any>>({
     onSubmit(out as TValues);
   };
 
-  React.useEffect(() => {
-    setValues(initial);
-  }, [defaultsKey, initial]);
-
   return (
     <Box
       component="form"
@@ -400,14 +457,27 @@ export function SmartForm<TValues extends Record<string, any>>({
           </Stack>
         ))}
 
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mt: 1,
+            gap: 2,
+          }}
+        >
+          <Box>{renderFooterActions ? renderFooterActions(values) : null}</Box>
+
           <Button
             type="submit"
             variant="contained"
             disabled={busy}
             size="small"
           >
-            {busy ? "Spremanje" : submitLabel}
+            {busy && (
+              <CircularProgress size={16} sx={{ mr: 1, color: "inherit" }} />
+            )}
+            {submitLabel}
           </Button>
         </Box>
       </Stack>

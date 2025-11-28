@@ -15,6 +15,9 @@ import { toolsRoutes } from "../../features/tools/routes";
 import { toolCategoriesRoutes } from "../../features/tools_category/routes";
 import { vehiclesRoutes } from "../../features/vehicles/routes";
 import { assignmentsRoutes } from "../../features/assignments/routes";
+import { reportsRoutes } from "../../features/reports/routes";
+import { medicalExaminationsRoutes } from "../../features/medical_examinations/routes";
+import { examinationTypesRoutes } from "../../features/examination_types/routes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <LoginRoute /> },
@@ -49,6 +52,12 @@ export const router = createBrowserRouter([
       vehiclesRoutes,
       { path: "assignments" },
       assignmentsRoutes,
+      { path: "izvjestaji" },
+      reportsRoutes,
+      { path: "medicalExaminations" },
+      medicalExaminationsRoutes,
+      { path: "examinationTypes" },
+      examinationTypesRoutes,
     ],
   },
 ]);

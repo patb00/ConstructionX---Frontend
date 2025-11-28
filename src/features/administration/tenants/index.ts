@@ -18,8 +18,19 @@ export type NewTenantRequest = {
   email: string;
   firstName: string;
   lastName: string;
-  validUpToDate: string;
+  validUpToDate?: string | null;
   isActive: boolean;
+  oib?: string | null;
+  vatNumber?: string | null;
+  registrationNumber?: string | null;
+  companyCode?: string | null;
+  contactPhone?: string | null;
+  websiteUrl?: string | null;
+  addressStreet?: string | null;
+  addressPostalCode?: string | null;
+  addressCity?: string | null;
+  addressState?: string | null;
+  addressCountry?: string | null;
 };
 
 export type UpdateSubscriptionRequest = {

@@ -1,7 +1,10 @@
 {
   "sidebar": {
     "management": "Management",
-    "system": "System"
+    "system": "System",
+    "constructionGroup": "Construction sites",
+    "codebookGroup": "Codebooks",
+    "identityGroup": "Identity"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -15,7 +18,10 @@
     "tools": "Tools",
     "toolCategories": "Tool Categories",
     "vehicles": "Vehicles",
-    "assignments": "Assignments"
+    "assignments": "Assignments",
+    "reports": "Reports",
+    "examinationTypes": "Examination Types",
+    "medicalExaminations": "Medical Examinations"
   },
   "constructionSites": {
     "list": {
@@ -503,7 +509,16 @@
       "dateTo": "Date to",
       "vehicleId": "Vehicle ID",
       "responsibleEmployeeFullName": "Responsible employee (full name)",
-      "toolId": "Tool ID"
+      "toolId": "Tool ID",
+
+      "examinationTypeName": "Examination type name",
+      "monthsToNextExamination": "Months to next examination",
+
+      "examinationTypeId": "Examination Type",
+      "examinationDate": "Examination Date",
+      "nextExaminationDate": "Next Examination Date",
+      "result": "Result",
+      "note": "Note"
     }
   },
   "tenants": {
@@ -536,7 +551,18 @@
         "validUntil": "Valid Until",
         "firstName": "First name",
         "lastName": "Last name",
-        "isActive": "Active"
+        "isActive": "Active",
+        "oib": "OIB",
+        "vatNumber": "VAT Number",
+        "registrationNumber": "Registration Number",
+        "companyCode": "Company Code",
+        "contactPhone": "Phone",
+        "websiteUrl": "Website URL",
+        "addressStreet": "Street",
+        "addressPostalCode": "Postal Code",
+        "addressCity": "City",
+        "addressState": "State",
+        "addressCountry": "Country"
       },
       "submit": "Save"
     },
@@ -1088,6 +1114,103 @@
       "refreshTokenExpires": "Refresh token expires",
       "notFound": "No user with the signed-in ID was found in the users list.",
       "close": "Close"
+    }
+  },
+  "reports": {
+    "list": {
+      "title": "Reports",
+      "subtitle": "Select a module to view its reports."
+    },
+    "modules": {
+      "cta": "View reports →"
+    },
+    "module": {
+      "notFoundTitle": "Module not found",
+      "back": "Back",
+      "description": "Choose and run a report for this module.",
+      "noReports": "There are no reports defined for this module yet.",
+      "open": "Open report",
+      "opening": "Opening..."
+    },
+    "items": {
+      "employeeList": {
+        "label": "Employee list",
+        "description": "Download a list of all employees."
+      }
+    }
+  },
+  "examinationTypes": {
+    "list": {
+      "title": "Examination Types",
+      "error": "Failed to load examination types."
+    },
+    "create": {
+      "title": "Create Examination Type",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit Examination Type",
+      "back": "Back",
+      "invalidUrlId": "Invalid URL (id).",
+      "loadError": "Failed to load examination type."
+    },
+    "delete": {
+      "title": "Delete examination type?",
+      "description": "Are you sure you want to delete this examination type?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "actions": "Actions",
+    "table": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "detailView": "Details"
+    },
+    "form": {
+      "submit": "Save",
+      "field": {
+        "examinationTypeName": "Examination type name",
+        "monthsToNextExamination": "Months until next examination"
+      }
+    }
+  },
+  "medicalExaminations": {
+    "list": {
+      "title": "Medical Examinations",
+      "error": "Failed to load medical examinations."
+    },
+    "create": {
+      "title": "Add Medical Examination",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit Medical Examination",
+      "back": "Back",
+      "invalidUrlId": "Invalid URL (id)",
+      "loadError": "Failed to load medical examination."
+    },
+    "form": {
+      "submit": "Save",
+      "field": {
+        "employeeId": "Employee",
+        "examinationTypeId": "Examination Type",
+        "examinationDate": "Examination Date",
+        "nextExaminationDate": "Next Examination Date",
+        "result": "Result",
+        "note": "Note"
+      }
+    },
+    "actions": "Actions",
+    "table": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "detailView": "Details"
+    },
+    "delete": {
+      "title": "Delete Examination?",
+      "description": "Are you sure you want to delete this medical examination?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
     }
   }
 }

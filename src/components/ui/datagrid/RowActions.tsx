@@ -184,7 +184,6 @@ export function RowActions({
         </Tooltip>
       )}
 
-      {/* ACTIVATE / DEACTIVATE — NEW COLORS */}
       {onToggleActive && (
         <Tooltip
           title={
@@ -214,7 +213,6 @@ export function RowActions({
         </Tooltip>
       )}
 
-      {/* ROLES */}
       {onManageRoles && (
         <Tooltip title={labels?.roles ?? "Role"}>
           <span>

@@ -1,4 +1,3 @@
-// app/router/RequireAuth.tsx
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../features/auth/store/useAuthStore";
@@ -24,15 +23,12 @@ export function RequireAuth({
     let cancelled = false;
 
     async function go() {
-      if (!hasHydrated) return; // wait for cookie load
-
-      // Already authenticated with a valid token
+      if (!hasHydrated) return;
       if (jwt && !isExpired(jwt)) {
         setChecking(false);
         return;
       }
 
-      // Try cookie JWT
       const cookieJwt = getCookie(ACCESS_COOKIE);
       if (cookieJwt && !isExpired(cookieJwt)) {
         setTokens(
@@ -44,7 +40,6 @@ export function RequireAuth({
         return;
       }
 
-      // Silent refresh if we have a refresh token
       const cookieRt = getCookie(REFRESH_COOKIE);
       if (cookieRt) {
         const newJwt = await refreshTokens(cookieJwt ?? "", cookieRt);

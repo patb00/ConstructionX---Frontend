@@ -1,14 +1,16 @@
 import { useMemo, useState, useCallback } from "react";
 import { Box } from "@mui/material";
 import { type GridColDef } from "@mui/x-data-grid";
-
+import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useTranslation } from "react-i18next";
+
 import { useDeleteTool } from "../hooks/useDeleteTool";
 import { useTools } from "../hooks/useTools";
 import { useNavigate } from "react-router-dom";
 import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { Tool } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
+import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
 
@@ -115,6 +117,23 @@ export default function ToolsTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<Tool>) => {
+      return (
+        <GridDetailPanel<Tool>
+          row={params.row}
+          columns={toolsColumns as GridColDef<Tool>[]}
+        />
+      );
+    },
+    [toolsColumns]
+  );
+
+  const getDetailPanelHeight = useCallback(
+    (_params: GridRowParams<Tool>) => 220,
+    []
+  );
+
   if (error) return <div>{t("tools.list.error")}</div>;
 
   return (
@@ -125,6 +144,9 @@ export default function ToolsTable() {
         getRowId={(r) => String((r as any).id)}
         pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
+        getDetailPanelContent={renderDetailPanel}
+        getDetailPanelHeight={getDetailPanelHeight}
+        detailPanelMode="mobile-only"
       />
 
       <PermissionGate guard={{ permission: "Permission.Tools.Delete" }}>

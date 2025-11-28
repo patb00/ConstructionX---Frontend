@@ -213,7 +213,7 @@ export function ConstructionSiteDetailPanel({ constructionSiteId }: Props) {
                   key={emp.id}
                   sx={{
                     p: 1.25,
-                    borderRadius: 2,
+
                     borderColor: "divider",
                     boxShadow:
                       "0 1px 2px rgba(15,23,42,0.04), 0 0 0 1px rgba(15,23,42,0.02)",
@@ -302,7 +302,7 @@ export function ConstructionSiteDetailPanel({ constructionSiteId }: Props) {
                   key={veh.id}
                   sx={{
                     p: 1.25,
-                    borderRadius: 2,
+
                     borderColor: "divider",
                     boxShadow:
                       "0 1px 2px rgba(15,23,42,0.04), 0 0 0 1px rgba(15,23,42,0.02)",
@@ -413,7 +413,7 @@ export function ConstructionSiteDetailPanel({ constructionSiteId }: Props) {
                   key={tool.id}
                   sx={{
                     p: 1.25,
-                    borderRadius: 2,
+
                     borderColor: "divider",
                     boxShadow:
                       "0 1px 2px rgba(15,23,42,0.04), 0 0 0 1px rgba(15,23,42,0.02)",

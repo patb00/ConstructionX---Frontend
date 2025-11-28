@@ -1,35 +1,451 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Stack,
+  Typography,
+  Card,
+  Chip,
+  IconButton,
+} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import PlaceIcon from "@mui/icons-material/Place";
 import BadgeIcon from "@mui/icons-material/Badge";
+import AddIcon from "@mui/icons-material/Add";
+import GroupIcon from "@mui/icons-material/Group";
+import HandymanIcon from "@mui/icons-material/Handyman";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+
 import StatCard from "./StatCard";
-import { formatDate } from "../utils/dates";
+import { formatDate, formatDateRange } from "../utils/dates";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useConstructionSite } from "../hooks/useConstructionSite";
-import EmployeesSection from "../sections/EmployeesSection";
-import ToolsSection from "../sections/ToolsSection";
-import VehiclesSection from "../sections/VehiclesSection";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+
 import AssignEmployeesDialog from "./AssignEmployeesDialog";
 import AssignToolsDialog from "./AssignToolsDialog";
 import AssignVehiclesDialog from "./AssignVehiclesDialog";
+import {
+  BoardView,
+  type BoardColumnConfig,
+} from "../../../components/ui/views/BoardView";
+
+type Employee = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  jobPositionName?: string | null;
+  dateFrom?: string | null;
+  dateTo?: string | null;
+};
+
+type Tool = {
+  id: number;
+  name?: string | null;
+  model?: string | null;
+  inventoryNumber?: string | null;
+  serialNumber?: string | null;
+  status?: string | null;
+  condition?: string | null;
+  dateFrom?: string | null;
+  dateTo?: string | null;
+  responsibleEmployeeName?: string | null;
+};
+
+type Vehicle = {
+  id: number;
+  name?: string | null;
+  brand?: string | null;
+  model?: string | null;
+  registrationNumber?: string | null;
+  status?: string | null;
+  condition?: string | null;
+  dateFrom?: string | null;
+  dateTo?: string | null;
+  responsibleEmployeeName?: string | null;
+};
 
 export default function ConstructionSiteDetailsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const siteId = Number(id);
+
   if (!Number.isFinite(siteId))
     return <div>{t("constructionSites.edit.invalidUrlId")}</div>;
+
   const { data } = useConstructionSite(siteId);
 
   const [openEmp, setOpenEmp] = useState(false);
   const [openTools, setOpenTools] = useState(false);
   const [openVeh, setOpenVeh] = useState(false);
 
-  console.log("data", data);
+  const employees = (data?.constructionSiteEmployees ?? []) as Employee[];
+  const tools = (data?.constructionSiteTools ?? []) as Tool[];
+  const vehicles = (data?.constructionSiteVehicles ?? []) as Vehicle[];
+
+  const columns: BoardColumnConfig[] = useMemo(() => {
+    const employeeCount = employees.length;
+    const toolCount = tools.length;
+    const vehicleCount = vehicles.length;
+
+    const employeeEmpty = (
+      <Stack spacing={1.5} sx={{ p: 2, pl: 0 }}>
+        <Typography variant="body2" color="text.secondary">
+          {t("constructionSites.detail.noEmployees")}
+        </Typography>
+
+        <Box
+          onClick={() => setOpenEmp(true)}
+          sx={{
+            p: 1.5,
+            border: "1px dashed",
+            borderColor: "primary.main",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          <AddIcon fontSize="small" color="primary" />
+          <Typography variant="body2">
+            {t("constructionSites.detail.addFirstEmployee")}
+          </Typography>
+        </Box>
+      </Stack>
+    );
+
+    const toolsEmpty = (
+      <Stack spacing={1.5} sx={{ p: 2, pl: 0 }}>
+        <Typography variant="body2" color="text.secondary">
+          {t("constructionSites.detail.noTools")}
+        </Typography>
+
+        <Box
+          onClick={() => setOpenTools(true)}
+          sx={{
+            p: 1.5,
+            border: "1px dashed",
+            borderColor: "primary.main",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          <AddIcon fontSize="small" color="primary" />
+          <Typography variant="body2">
+            {t("constructionSites.detail.addFirstTool")}
+          </Typography>
+        </Box>
+      </Stack>
+    );
+
+    const vehiclesEmpty = (
+      <Stack spacing={1.5} sx={{ p: 2, pl: 0 }}>
+        <Typography variant="body2" color="text.secondary">
+          {t("constructionSites.detail.noVehicles")}
+        </Typography>
+
+        <Box
+          onClick={() => setOpenVeh(true)}
+          sx={{
+            p: 1.5,
+            border: "1px dashed",
+            borderColor: "primary.main",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          <AddIcon fontSize="small" color="primary" />
+          <Typography variant="body2">
+            {t("constructionSites.detail.addFirstVehicle")}
+          </Typography>
+        </Box>
+      </Stack>
+    );
+
+    const employeeColumn: BoardColumnConfig<Employee> = {
+      id: "employees",
+      icon: <GroupIcon color="primary" fontSize="small" />,
+      title: t("constructionSites.detail.employees"),
+      rows: employees,
+      count: employeeCount,
+      headerAction: (
+        <IconButton
+          size="small"
+          onClick={() => setOpenEmp(true)}
+          disableRipple
+          sx={{
+            p: 0.25,
+            color: "primary.main",
+            "&:hover": {
+              backgroundColor: "transparent",
+              opacity: 0.8,
+            },
+          }}
+        >
+          <AddIcon fontSize="small" />
+        </IconButton>
+      ),
+      emptyContent: employeeEmpty,
+      renderRow: (e) => {
+        const fullName = `${e.firstName} ${e.lastName}`.trim();
+        const position = e.jobPositionName || t("common.notAvailable");
+        const dateRange = formatDateRange(e.dateFrom, e.dateTo);
+
+        return (
+          <Card key={e.id} sx={{ p: 1.5 }}>
+            <Typography
+              variant="body2"
+              fontWeight={600}
+              sx={{ mb: 0.25 }}
+              noWrap
+            >
+              {fullName}
+            </Typography>
+
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ display: "block", mb: 0.25 }}
+              noWrap
+            >
+              {position}
+            </Typography>
+
+            {dateRange && (
+              <Typography
+                variant="caption"
+                color="primary.main"
+                sx={{ display: "block", mt: 0.25 }}
+              >
+                {dateRange}
+              </Typography>
+            )}
+          </Card>
+        );
+      },
+    };
+
+    const toolsColumn: BoardColumnConfig<Tool> = {
+      id: "tools",
+      icon: <HandymanIcon color="primary" fontSize="small" />,
+      title: t("constructionSites.detail.tools"),
+      rows: tools,
+      count: toolCount,
+      headerAction: (
+        <IconButton
+          size="small"
+          onClick={() => setOpenTools(true)}
+          disableRipple
+          sx={{
+            p: 0.25,
+            color: "primary.main",
+            "&:hover": {
+              backgroundColor: "transparent",
+              opacity: 0.8,
+            },
+          }}
+        >
+          <AddIcon fontSize="small" />
+        </IconButton>
+      ),
+      emptyContent: toolsEmpty,
+      renderRow: (tool) => {
+        const title =
+          tool.name ||
+          tool.model ||
+          tool.inventoryNumber ||
+          tool.serialNumber ||
+          "—";
+
+        const meta =
+          [
+            tool.model &&
+              `${t("constructionSites.detail.tool.modelShort")}: ${tool.model}`,
+            tool.inventoryNumber &&
+              `${t("constructionSites.detail.tool.inventoryShort")}: ${
+                tool.inventoryNumber
+              }`,
+            tool.serialNumber &&
+              `${t("constructionSites.detail.tool.serialShort")}: ${
+                tool.serialNumber
+              }`,
+          ]
+            .filter(Boolean)
+            .join(" · ") || "—";
+
+        const dateRange = formatDateRange(tool.dateFrom, tool.dateTo);
+
+        return (
+          <Card key={tool.id} sx={{ p: 1.5 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                mb: 0.5,
+                gap: 1,
+              }}
+            >
+              <Box sx={{ minWidth: 0 }}>
+                <Typography
+                  variant="body2"
+                  fontWeight={600}
+                  noWrap
+                  sx={{ mb: 0.25 }}
+                >
+                  {title}
+                </Typography>
+
+                {tool.responsibleEmployeeName && (
+                  <Typography variant="caption" color="text.secondary" noWrap>
+                    {tool.responsibleEmployeeName}
+                  </Typography>
+                )}
+              </Box>
+
+              {tool.condition && <Chip size="small" label={tool.condition} />}
+            </Box>
+
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ display: "block", mb: 0.25 }}
+              noWrap
+            >
+              {meta}
+            </Typography>
+
+            {dateRange && (
+              <Typography
+                variant="caption"
+                color="primary.main"
+                sx={{ display: "block", mt: 0.25 }}
+              >
+                {dateRange}
+              </Typography>
+            )}
+          </Card>
+        );
+      },
+    };
+
+    const vehiclesColumn: BoardColumnConfig<Vehicle> = {
+      id: "vehicles",
+      icon: <DirectionsCarIcon color="primary" fontSize="small" />,
+      title: t("constructionSites.detail.vehicles"),
+      rows: vehicles,
+      count: vehicleCount,
+      headerAction: (
+        <IconButton
+          size="small"
+          onClick={() => setOpenVeh(true)}
+          disableRipple
+          sx={{
+            p: 0.25,
+            color: "primary.main",
+            "&:hover": {
+              backgroundColor: "transparent",
+              opacity: 0.8,
+            },
+          }}
+        >
+          <AddIcon fontSize="small" />
+        </IconButton>
+      ),
+      emptyContent: vehiclesEmpty,
+      renderRow: (v) => {
+        const title =
+          v.name ||
+          `${v.brand ?? ""} ${v.model ?? ""}`.trim() ||
+          v.registrationNumber ||
+          "—";
+
+        const meta =
+          [
+            v.registrationNumber &&
+              `${t("constructionSites.detail.vehicle.registration")}: ${
+                v.registrationNumber
+              }`,
+            v.brand &&
+              v.model &&
+              `${t("constructionSites.detail.vehicle.model")}: ${v.brand} ${
+                v.model
+              }`,
+          ]
+            .filter(Boolean)
+            .join(" · ") || "—";
+
+        const dateRange = formatDateRange(v.dateFrom, v.dateTo);
+
+        return (
+          <Card key={v.id} sx={{ p: 1.5 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                mb: 0.5,
+                gap: 1,
+              }}
+            >
+              <Box sx={{ minWidth: 0 }}>
+                <Typography
+                  variant="body2"
+                  fontWeight={600}
+                  noWrap
+                  sx={{ mb: 0.25 }}
+                >
+                  {title}
+                </Typography>
+
+                {v.responsibleEmployeeName && (
+                  <Typography variant="caption" color="text.secondary" noWrap>
+                    {v.responsibleEmployeeName}
+                  </Typography>
+                )}
+              </Box>
+
+              {(v.condition || v.status) && (
+                <Stack direction="row" spacing={0.5}>
+                  {v.status && (
+                    <Chip size="small" variant="outlined" label={v.status} />
+                  )}
+                  {v.condition && <Chip size="small" label={v.condition} />}
+                </Stack>
+              )}
+            </Box>
+
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ display: "block", mb: 0.25 }}
+              noWrap
+            >
+              {meta}
+            </Typography>
+
+            {dateRange && (
+              <Typography
+                variant="caption"
+                color="primary.main"
+                sx={{ display: "block", mt: 0.25 }}
+              >
+                {dateRange}
+              </Typography>
+            )}
+          </Card>
+        );
+      },
+    };
+
+    return [employeeColumn, vehiclesColumn, toolsColumn];
+  }, [employees, tools, vehicles, t]);
 
   return (
     <Stack spacing={2} sx={{ width: "100%", minWidth: 0 }}>
@@ -75,65 +491,7 @@ export default function ConstructionSiteDetailsPage() {
         />
       </Box>
 
-      <Box
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 2,
-          width: "100%",
-        }}
-      >
-        <Box
-          sx={{
-            flexGrow: 1,
-            flexBasis: {
-              xs: "100%",
-              sm: "100%",
-              md: "calc(33.333% - 16px)",
-            },
-            minWidth: 0,
-          }}
-        >
-          <EmployeesSection
-            employees={data?.constructionSiteEmployees}
-            onAdd={() => setOpenEmp(true)}
-          />
-        </Box>
-
-        <Box
-          sx={{
-            flexGrow: 1,
-            flexBasis: {
-              xs: "100%",
-              sm: "100%",
-              md: "calc(33.333% - 16px)",
-            },
-            minWidth: 0,
-          }}
-        >
-          <VehiclesSection
-            vehicles={data?.constructionSiteVehicles}
-            onAdd={() => setOpenVeh(true)}
-          />
-        </Box>
-
-        <Box
-          sx={{
-            flexGrow: 1,
-            flexBasis: {
-              xs: "100%",
-              sm: "100%",
-              md: "calc(33.333% - 16px)",
-            },
-            minWidth: 0,
-          }}
-        >
-          <ToolsSection
-            tools={data?.constructionSiteTools}
-            onAdd={() => setOpenTools(true)}
-          />
-        </Box>
-      </Box>
+      <BoardView columns={columns} />
 
       <AssignEmployeesDialog
         constructionSiteId={siteId}

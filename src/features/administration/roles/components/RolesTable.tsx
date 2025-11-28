@@ -1,6 +1,7 @@
 import { useMemo, useState, useCallback } from "react";
 import { Box } from "@mui/material";
 import { type GridColDef } from "@mui/x-data-grid";
+import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
 import { useDeleteRole } from "../hooks/useDeleteRole";
@@ -10,6 +11,7 @@ import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialo
 import { PermissionGate, useCan } from "../../../../lib/permissions";
 import { useTranslation } from "react-i18next";
 import { RowActions } from "../../../../components/ui/datagrid/RowActions";
+import { GridDetailPanel } from "../../../../components/ui/datagrid/GridDetailPanel";
 
 export default function RolesTable() {
   const { t } = useTranslation();
@@ -132,6 +134,23 @@ export default function RolesTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<Role>) => {
+      return (
+        <GridDetailPanel<Role>
+          row={params.row}
+          columns={rolesColumns as GridColDef<Role>[]}
+        />
+      );
+    },
+    [rolesColumns]
+  );
+
+  const getDetailPanelHeight = useCallback(
+    (_params: GridRowParams<Role>) => 200,
+    []
+  );
+
   if (error) return <div>{t("roles.list.error")}</div>;
 
   return (
@@ -142,6 +161,9 @@ export default function RolesTable() {
         getRowId={(r) => r.id}
         pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
+        getDetailPanelContent={renderDetailPanel}
+        getDetailPanelHeight={getDetailPanelHeight}
+        detailPanelMode="mobile-only"
       />
 
       <PermissionGate guard={{ permission: "Permission.Roles.Delete" }}>

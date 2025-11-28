@@ -1,10 +1,12 @@
 import { useMemo, useState, useCallback } from "react";
 import { type GridColDef } from "@mui/x-data-grid";
+import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import type { Employee } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
+import { GridDetailPanel } from "../../../../components/ui/datagrid/GridDetailPanel";
 import { useEmployees } from "../hooks/useEmployees";
 import { useDeleteEmployee } from "../hooks/useDeleteEmployee";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
@@ -93,6 +95,23 @@ export default function EmployeesTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<Employee>) => {
+      return (
+        <GridDetailPanel<Employee>
+          row={params.row}
+          columns={employeeColumns as GridColDef<Employee>[]}
+        />
+      );
+    },
+    [employeeColumns]
+  );
+
+  const getDetailPanelHeight = useCallback(
+    (_params: GridRowParams<Employee>) => 220,
+    []
+  );
+
   if (error) return <div>{t("employees.list.error")}</div>;
 
   return (
@@ -103,6 +122,9 @@ export default function EmployeesTable() {
         getRowId={(r) => r.id}
         pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
+        getDetailPanelContent={renderDetailPanel}
+        getDetailPanelHeight={getDetailPanelHeight}
+        detailPanelMode="mobile-only"
       />
 
       <PermissionGate guard={{ permission: "Permission.Employees.Delete" }}>

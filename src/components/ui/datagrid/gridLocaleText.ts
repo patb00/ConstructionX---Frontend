@@ -4,10 +4,6 @@ import {
 } from "@mui/x-data-grid";
 import type { TFunction } from "i18next";
 
-/**
- * Builds a complete GridLocaleText object from i18next translations.
- * Falls back to MUI defaults when a key is missing.
- */
 export function getGridLocaleText(t: TFunction): GridLocaleText {
   const overrides: Partial<GridLocaleText> = {
     // ===== Root / overlays =====

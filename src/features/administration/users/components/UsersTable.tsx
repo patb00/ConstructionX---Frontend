@@ -1,9 +1,10 @@
 import { useMemo, useState, useCallback } from "react";
 import { Box, Chip } from "@mui/material";
 import { type GridColDef } from "@mui/x-data-grid";
-
+import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
+import { GridDetailPanel } from "../../../../components/ui/datagrid/GridDetailPanel";
 import type { User } from "..";
 import { useUsers } from "../hooks/useUsers";
 import { useDeleteUser } from "../hooks/useDeleteUser";
@@ -183,6 +184,23 @@ export default function UsersTable() {
     t,
   ]);
 
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<User>) => {
+      return (
+        <GridDetailPanel<User>
+          row={params.row}
+          columns={usersColumns as GridColDef<User>[]}
+        />
+      );
+    },
+    [usersColumns]
+  );
+
+  const getDetailPanelHeight = useCallback(
+    (_params: GridRowParams<User>) => 220,
+    []
+  );
+
   if (error) return <div>{t("users.list.error")}</div>;
 
   return (
@@ -194,6 +212,9 @@ export default function UsersTable() {
         pageSize={10}
         pinnedRightField="actions"
         loading={!!isLoading}
+        getDetailPanelContent={renderDetailPanel}
+        getDetailPanelHeight={getDetailPanelHeight}
+        detailPanelMode="mobile-only"
       />
 
       <PermissionGate guard={{ permission: "Permission.Users.Delete" }}>

@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback } from "react";
 import { type GridColDef } from "@mui/x-data-grid";
+import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -8,6 +9,7 @@ import { useDeleteVehicle } from "../hooks/useDeleteVehicle";
 import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { Vehicle } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
+import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
 
@@ -92,6 +94,23 @@ export default function VehiclesTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<Vehicle>) => {
+      return (
+        <GridDetailPanel<Vehicle>
+          row={params.row}
+          columns={vehiclesColumns as GridColDef<Vehicle>[]}
+        />
+      );
+    },
+    [vehiclesColumns]
+  );
+
+  const getDetailPanelHeight = useCallback(
+    (_params: GridRowParams<Vehicle>) => 220,
+    []
+  );
+
   if (error) {
     return <div>{t("vehicles.list.error")}</div>;
   }
@@ -104,6 +123,9 @@ export default function VehiclesTable() {
         getRowId={(r) => String((r as any).id)}
         pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
+        getDetailPanelContent={renderDetailPanel}
+        getDetailPanelHeight={getDetailPanelHeight}
+        detailPanelMode="mobile-only"
       />
 
       <PermissionGate guard={{ permission: "Permission.Vehicles.Delete" }}>

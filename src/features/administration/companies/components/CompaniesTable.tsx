@@ -1,6 +1,7 @@
 import { useMemo, useState, useCallback } from "react";
 import { Box } from "@mui/material";
 import { type GridColDef } from "@mui/x-data-grid";
+import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
 
 import { useCompanies } from "../hooks/useCompanies";
@@ -8,6 +9,7 @@ import { useDeleteCompany } from "../hooks/useDeleteCompany";
 import type { Company } from "..";
 import { PermissionGate, useCan } from "../../../../lib/permissions";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
+import { GridDetailPanel } from "../../../../components/ui/datagrid/GridDetailPanel";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 import { useTranslation } from "react-i18next";
 import { RowActions } from "../../../../components/ui/datagrid/RowActions";
@@ -118,6 +120,23 @@ export default function CompaniesTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<Company>) => {
+      return (
+        <GridDetailPanel<Company>
+          row={params.row}
+          columns={companiesColumns as GridColDef<Company>[]}
+        />
+      );
+    },
+    [companiesColumns]
+  );
+
+  const getDetailPanelHeight = useCallback(
+    (_params: GridRowParams<Company>) => 220,
+    []
+  );
+
   if (error) return <div>{t("companies.list.error")}</div>;
 
   return (
@@ -128,6 +147,9 @@ export default function CompaniesTable() {
         getRowId={(r) => r.id}
         pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
+        getDetailPanelContent={renderDetailPanel}
+        getDetailPanelHeight={getDetailPanelHeight}
+        detailPanelMode="mobile-only"
       />
 
       <PermissionGate guard={{ permission: "Permission.Companies.Delete" }}>

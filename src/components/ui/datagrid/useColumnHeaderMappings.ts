@@ -160,5 +160,40 @@ export default function useColumnHeaderMappings(): MapItem[] {
     },
     { original: "DateFrom", translated: t("common.columns.dateFrom") },
     { original: "DateTo", translated: t("common.columns.dateTo") },
+
+    // EXAMINATION TYPES
+    {
+      original: "ExaminationTypeName",
+      translated: t("common.columns.examinationTypeName"),
+    },
+    {
+      original: "MonthsToNextExamination",
+      translated: t("common.columns.monthsToNextExamination"),
+    },
+
+    {
+      original: "ExaminationTypeName",
+      translated: t("common.columns.examinationTypeName"),
+    },
+    {
+      original: "MonthsToNextExamination",
+      translated: t("common.columns.monthsToNextExamination"),
+    },
+
+    // MEDICAL EXAMINATIONS
+    {
+      original: "ExaminationTypeId",
+      translated: t("common.columns.examinationTypeId"),
+    },
+    {
+      original: "ExaminationDate",
+      translated: t("common.columns.examinationDate"),
+    },
+    {
+      original: "NextExaminationDate",
+      translated: t("common.columns.nextExaminationDate"),
+    },
+    { original: "Result", translated: t("common.columns.result") },
+    { original: "Note", translated: t("common.columns.note") },
   ];
 }

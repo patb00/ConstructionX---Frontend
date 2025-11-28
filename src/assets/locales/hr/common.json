@@ -1,7 +1,10 @@
 {
   "sidebar": {
     "management": "Upravljanje",
-    "system": "Sustav"
+    "system": "Sustav",
+    "constructionGroup": "Gradilišta",
+    "codebookGroup": "Šifrarnik",
+    "identityGroup": "Identitet"
   },
   "nav": {
     "dashboard": "Nadzorna ploča",
@@ -15,7 +18,10 @@
     "tools": "Alati",
     "toolCategories": "Kategorije alata",
     "vehicles": "Vozila",
-    "assignments": "Dodjele"
+    "assignments": "Dodjele",
+    "reports": "Izvještaji",
+    "examinationTypes": "Tipovi pregleda",
+    "medicalExaminations": "Zdravstveni pregledi"
   },
   "constructionSites": {
     "detail": {
@@ -502,7 +508,16 @@
       "dateTo": "Datum do",
       "vehicleId": "ID vozila",
       "responsibleEmployeeFullName": "Odgovorni zaposlenik (puno ime)",
-      "toolId": "ID alata"
+      "toolId": "ID alata",
+
+      "examinationTypeName": "Naziv vrste pregleda",
+      "monthsToNextExamination": "Mjeseci do sljedećeg pregleda",
+
+      "examinationTypeId": "Vrsta pregleda",
+      "examinationDate": "Datum pregleda",
+      "nextExaminationDate": "Sljedeći pregled",
+      "result": "Rezultat",
+      "note": "Napomena"
     }
   },
   "tenants": {
@@ -535,7 +550,18 @@
         "validUntil": "Vrijedi do",
         "firstName": "Ime",
         "lastName": "Prezime",
-        "isActive": "Aktivan"
+        "isActive": "Aktivan",
+        "oib": "OIB",
+        "vatNumber": "PDV broj",
+        "registrationNumber": "Registracijski broj",
+        "companyCode": "Šifra tvrtke",
+        "contactPhone": "Telefon",
+        "websiteUrl": "Web stranica",
+        "addressStreet": "Ulica",
+        "addressPostalCode": "Poštanski broj",
+        "addressCity": "Grad",
+        "addressState": "Županija",
+        "addressCountry": "Država"
       },
       "submit": "Spremi"
     },
@@ -1087,6 +1113,103 @@
       "refreshTokenExpires": "Refresh token istječe",
       "notFound": "Nije pronađen korisnik s ID-om iz prijave u listi korisnika.",
       "close": "Zatvori"
+    }
+  },
+  "reports": {
+    "list": {
+      "title": "Izvještaji",
+      "subtitle": "Odaberi modul za koji želiš pregledati izvještaje."
+    },
+    "modules": {
+      "cta": "Pogledaj izvještaje →"
+    },
+    "module": {
+      "notFoundTitle": "Modul nije pronađen",
+      "back": "Natrag",
+      "description": "Odaberi i pokreni izvještaj za ovaj modul.",
+      "noReports": "Za ovaj modul još nema definiranih izvještaja.",
+      "open": "Otvori izvještaj",
+      "opening": "Otvaranje..."
+    },
+    "items": {
+      "employeeList": {
+        "label": "Lista zaposlenika",
+        "description": "Preuzmi listu svih zaposlenika."
+      }
+    }
+  },
+  "examinationTypes": {
+    "list": {
+      "title": "Tipovi pregleda",
+      "error": "Neuspjelo učitavanje vrsta provjera."
+    },
+    "create": {
+      "title": "Kreiraj tip pregleda",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi tip pregleda",
+      "back": "Natrag",
+      "invalidUrlId": "Neispravan URL (id).",
+      "loadError": "Neuspjelo učitavanje tipova pregleda."
+    },
+    "delete": {
+      "title": "Obriši tip pregleda?",
+      "description": "Jeste li sigurni da želite obrisati ovaj tip pregleda?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    },
+    "actions": "Akcije",
+    "table": {
+      "edit": "Uredi",
+      "delete": "Izbriši",
+      "detailView": "Detalji"
+    },
+    "form": {
+      "submit": "Spremi",
+      "field": {
+        "examinationTypeName": "Naziv tip pregleda",
+        "monthsToNextExamination": "Mjeseci do sljedećeg pregleda"
+      }
+    }
+  },
+  "medicalExaminations": {
+    "list": {
+      "title": "Zdravstveni pregledi",
+      "error": "Pogreška pri učitavanju zdravstvenih pregleda."
+    },
+    "create": {
+      "title": "Dodaj zdravstveni pregled",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi zdravstveni pregled",
+      "back": "Natrag",
+      "invalidUrlId": "Neispravan URL (id)",
+      "loadError": "Neuspjelo učitavanje zdravstvenog pregleda."
+    },
+    "form": {
+      "submit": "Spremi",
+      "field": {
+        "employeeId": "Zaposlenik",
+        "examinationTypeId": "Vrsta pregleda",
+        "examinationDate": "Datum pregleda",
+        "nextExaminationDate": "Sljedeći pregled",
+        "result": "Rezultat",
+        "note": "Napomena"
+      }
+    },
+    "actions": "Akcije",
+    "table": {
+      "edit": "Uredi",
+      "delete": "Izbriši",
+      "detailView": "Detalji"
+    },
+    "delete": {
+      "title": "Obriši pregled?",
+      "description": "Jeste li sigurni da želite obrisati ovaj zdravstveni pregled?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
     }
   }
 }

@@ -85,6 +85,7 @@ export default function TenantEditPage() {
             </Typography>
 
             <TextField
+              size="small"
               label={t("tenants.edit.validUntil")}
               type="datetime-local"
               value={effectiveLocal}

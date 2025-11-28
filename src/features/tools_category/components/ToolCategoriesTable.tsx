@@ -1,6 +1,7 @@
 import { useMemo, useState, useCallback } from "react";
 import { Box } from "@mui/material";
 import { type GridColDef } from "@mui/x-data-grid";
+import { type GridRowParams } from "@mui/x-data-grid-pro";
 
 import { useTranslation } from "react-i18next";
 import { useToolCategories } from "../hooks/useToolCategories";
@@ -9,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { ToolCategory } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
+import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
 
@@ -117,6 +119,23 @@ export default function ToolCategoriesTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<ToolCategory>) => {
+      return (
+        <GridDetailPanel<ToolCategory>
+          row={params.row}
+          columns={toolCategoriesColumns as GridColDef<ToolCategory>[]}
+        />
+      );
+    },
+    [toolCategoriesColumns]
+  );
+
+  const getDetailPanelHeight = useCallback(
+    (_params: GridRowParams<ToolCategory>) => 220,
+    []
+  );
+
   if (error) return <div>{t("toolCategories.list.error")}</div>;
 
   return (
@@ -127,6 +146,9 @@ export default function ToolCategoriesTable() {
         getRowId={(r) => String((r as any).id)}
         pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
+        getDetailPanelContent={renderDetailPanel}
+        getDetailPanelHeight={getDetailPanelHeight}
+        detailPanelMode="mobile-only"
       />
 
       <PermissionGate

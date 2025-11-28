@@ -32,8 +32,12 @@ export async function authFetch<T = any>(
 
   const headers = new Headers(options.headers || {});
   if (!headers.has("Accept")) headers.set("Accept", "application/json");
-  if (!headers.has("Content-Type"))
+
+  const isFormData = options.body instanceof FormData;
+  if (!isFormData && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
+  }
+
   if (tenant) headers.set("tenant", tenant);
   if (jwt) headers.set("Authorization", `Bearer ${jwt}`);
 
@@ -49,10 +53,15 @@ export async function authFetch<T = any>(
       const retryHeaders = new Headers(options.headers || {});
       if (!retryHeaders.has("Accept"))
         retryHeaders.set("Accept", "application/json");
-      if (!retryHeaders.has("Content-Type"))
+
+      const isRetryFormData = options.body instanceof FormData;
+      if (!isRetryFormData && !retryHeaders.has("Content-Type")) {
         retryHeaders.set("Content-Type", "application/json");
+      }
+
       if (tenant) retryHeaders.set("tenant", tenant);
       retryHeaders.set("Authorization", `Bearer ${newJwt}`);
+
       res = await fetch(url, { ...options, headers: retryHeaders });
     } else {
       const store = useAuthStore.getState();
@@ -81,6 +90,62 @@ export async function authFetch<T = any>(
     return res.json() as Promise<T>;
   }
   return (await res.text()) as unknown as T;
+}
+
+export async function authFetchBlob(
+  url: string,
+  options: RequestInit = {}
+): Promise<Blob> {
+  const jwt = getCookie(ACCESS_COOKIE);
+  const refreshToken = getCookie(REFRESH_COOKIE);
+  const tenant = getCookie(TENANT_COOKIE);
+
+  const headers = new Headers(options.headers || {});
+  if (!headers.has("Accept")) {
+    headers.set("Accept", "application/octet-stream");
+  }
+  if (tenant) headers.set("tenant", tenant);
+  if (jwt) headers.set("Authorization", `Bearer ${jwt}`);
+
+  let res = await fetch(url, { ...options, headers });
+
+  if (res.status === 401 && refreshToken) {
+    if (!refreshInFlight) {
+      refreshInFlight = refreshTokens(jwt!, refreshToken);
+    }
+    const newJwt = await refreshInFlight;
+
+    if (newJwt) {
+      const retryHeaders = new Headers(options.headers || {});
+      if (!retryHeaders.has("Accept")) {
+        retryHeaders.set("Accept", "application/octet-stream");
+      }
+      if (tenant) retryHeaders.set("tenant", tenant);
+      retryHeaders.set("Authorization", `Bearer ${newJwt}`);
+      res = await fetch(url, { ...options, headers: retryHeaders });
+    } else {
+      const store = useAuthStore.getState();
+      store.clear();
+    }
+  }
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    let data: any = null;
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch {
+      data = text || null;
+    }
+
+    const msg = pickMessage(data, res.statusText || `HTTP ${res.status}`);
+    const error: any = new Error(msg);
+    error.status = res.status;
+    error.data = data;
+    throw error;
+  }
+
+  return res.blob();
 }
 
 export async function refreshTokens(

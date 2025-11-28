@@ -46,4 +46,15 @@ export const TenantsApi = {
     const res = await authFetch<ApiEnvelope<Tenant[]>>(`${base}/get-all`);
     return res.data;
   },
+
+  uploadLogo: async (tenantId: TenantId, file: File) => {
+    const formData = new FormData();
+
+    formData.append("File", file);
+
+    return authFetch<ApiEnvelope<Tenant>>(`${base}/${tenantId}/logo`, {
+      method: "POST",
+      body: formData,
+    });
+  },
 };

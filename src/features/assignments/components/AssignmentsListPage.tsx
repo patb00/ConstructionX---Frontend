@@ -8,7 +8,6 @@ import {
   MenuItem,
   type SelectChangeEvent,
   CircularProgress,
-  ButtonBase,
 } from "@mui/material";
 
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -39,7 +38,8 @@ import {
   TimelineView,
   type Lane,
   type TimelineItem,
-} from "../../../components/ui/TimelineView";
+} from "../../../components/ui/views/TimelineView";
+import { ViewSelect } from "../../../components/ui/select/ViewSelect";
 
 type ViewMode = "board" | "timeline";
 
@@ -249,7 +249,6 @@ const AssignmentsListPage = () => {
     const findEmployee = (id?: number | null) =>
       id == null ? null : employeeRows.find((e) => e.id === id) ?? null;
 
-    // Construction sites
     constructionAssignments.forEach((row) => {
       const start =
         row.dateFrom || row.startDate || row.plannedEndDate || todayIso;
@@ -283,7 +282,6 @@ const AssignmentsListPage = () => {
       });
     });
 
-    // Vehicles
     vehicleAssignments.forEach((row) => {
       const start = row.dateFrom || todayIso;
       const end = row.dateTo || start;
@@ -315,7 +313,6 @@ const AssignmentsListPage = () => {
       });
     });
 
-    // Tools
     toolAssignments.forEach((row) => {
       const start = row.dateFrom || todayIso;
       const end = row.dateTo || start;
@@ -390,107 +387,22 @@ const AssignmentsListPage = () => {
           {t("assignments.title")}
         </Typography>
 
-        <Box
-          sx={(theme) => ({
-            display: "inline-flex",
-            alignItems: "center",
-            padding: "2px",
-            borderRadius: 1,
-            backgroundColor: "#F7F7F8",
-            border: `1px solid ${theme.palette.divider}`,
-            gap: 0.5,
-          })}
-        >
-          <ButtonBase
-            onClick={() => setViewMode("board")}
-            sx={(theme) => {
-              const active = viewMode === "board";
-              return {
-                borderRadius: 1,
-                padding: "4px 10px",
-                display: "flex",
-                alignItems: "center",
-                gap: 0.75,
-                transition: "all 0.16s ease-out",
-                minWidth: 0,
-                ...(active
-                  ? {
-                      backgroundColor: theme.palette.background.paper,
-                      boxShadow:
-                        "0 1px 2px rgba(15,23,42,0.15), 0 0 0 1px rgba(15,23,42,0.06)",
-                    }
-                  : {
-                      opacity: 0.75,
-                      "&:hover": { opacity: 1, backgroundColor: "transparent" },
-                    }),
-              };
-            }}
-          >
-            <ViewModuleIcon
-              fontSize="small"
-              sx={{
-                fontSize: 18,
-                color: viewMode === "board" ? "primary.main" : "text.secondary",
-              }}
-            />
-            <Typography
-              variant="caption"
-              sx={{
-                fontWeight: viewMode === "board" ? 600 : 500,
-                color: viewMode === "board" ? "text.primary" : "text.secondary",
-                textTransform: "none",
-              }}
-            >
-              {t("assignments.view.board")}
-            </Typography>
-          </ButtonBase>
-
-          <ButtonBase
-            onClick={() => setViewMode("timeline")}
-            sx={(theme) => {
-              const active = viewMode === "timeline";
-              return {
-                borderRadius: 1,
-                padding: "4px 10px",
-                display: "flex",
-                alignItems: "center",
-                gap: 0.75,
-                transition: "all 0.16s ease-out",
-                minWidth: 0,
-                ...(active
-                  ? {
-                      backgroundColor: theme.palette.background.paper,
-                      boxShadow:
-                        "0 1px 2px rgba(15,23,42,0.15), 0 0 0 1px rgba(15,23,42,0.06)",
-                    }
-                  : {
-                      opacity: 0.75,
-                      "&:hover": { opacity: 1, backgroundColor: "transparent" },
-                    }),
-              };
-            }}
-          >
-            <TimelineIcon
-              fontSize="small"
-              sx={{
-                fontSize: 18,
-                color:
-                  viewMode === "timeline" ? "primary.main" : "text.secondary",
-              }}
-            />
-            <Typography
-              variant="caption"
-              sx={{
-                fontWeight: viewMode === "timeline" ? 600 : 500,
-                color:
-                  viewMode === "timeline" ? "text.primary" : "text.secondary",
-                textTransform: "none",
-              }}
-            >
-              {t("assignments.view.timeline")}
-            </Typography>
-          </ButtonBase>
-        </Box>
+        <ViewSelect
+          value={viewMode}
+          onChange={(val) => setViewMode(val as ViewMode)}
+          options={[
+            {
+              value: "board",
+              label: t("assignments.view.board"),
+              icon: <ViewModuleIcon />,
+            },
+            {
+              value: "timeline",
+              label: t("assignments.view.timeline"),
+              icon: <TimelineIcon />,
+            },
+          ]}
+        />
       </Box>
 
       {role === "Admin" && (

@@ -7,8 +7,13 @@ import { useTranslation } from "react-i18next";
 
 type Props = {
   defaultValues?: Partial<NewTenantRequest>;
-  onSubmit: (values: NewTenantRequest) => void;
+  onSubmit: (values: NewTenantRequest) => void | Promise<void>;
   busy?: boolean;
+
+  // 🆕 logo file props
+  selectedLogoFile?: File | null;
+  onLogoFileChange?: (file: File | null) => void;
+  logoFileAccept?: string;
 };
 
 function normalizeBackslashes(s: string) {
@@ -20,7 +25,14 @@ function sanitizeConnectionString(s?: string | null): string | null {
   return normalizeBackslashes(trimmed);
 }
 
-export default function TenantForm({ defaultValues, onSubmit, busy }: Props) {
+export default function TenantForm({
+  defaultValues,
+  onSubmit,
+  busy,
+  selectedLogoFile,
+  onLogoFileChange,
+  logoFileAccept = "image/*",
+}: Props) {
   const { t } = useTranslation();
 
   const fields: FieldConfig<NewTenantRequest>[] = [
@@ -58,18 +70,64 @@ export default function TenantForm({ defaultValues, onSubmit, busy }: Props) {
       type: "checkbox",
       defaultValue: true,
     },
+
+    { name: "oib", label: t("tenants.form.field.oib") },
+    { name: "vatNumber", label: t("tenants.form.field.vatNumber") },
+    {
+      name: "registrationNumber",
+      label: t("tenants.form.field.registrationNumber"),
+    },
+    { name: "companyCode", label: t("tenants.form.field.companyCode") },
+    {
+      name: "contactPhone",
+      label: t("tenants.form.field.contactPhone"),
+      props: { inputProps: { inputMode: "tel" } },
+    },
+    {
+      name: "websiteUrl",
+      label: t("tenants.form.field.websiteUrl"),
+    },
+    { name: "addressStreet", label: t("tenants.form.field.addressStreet") },
+    {
+      name: "addressPostalCode",
+      label: t("tenants.form.field.addressPostalCode"),
+    },
+    { name: "addressCity", label: t("tenants.form.field.addressCity") },
+    { name: "addressState", label: t("tenants.form.field.addressState") },
+    { name: "addressCountry", label: t("tenants.form.field.addressCountry") },
+
+    // 🆕 logo file field (not part of NewTenantRequest, so cast as any)
+    {
+      name: "logo" as any,
+      label: t("tenants.form.field.logo", { defaultValue: "Logo" }),
+      type: "file",
+      fileConfig: {
+        file: selectedLogoFile ?? null,
+        onChange: onLogoFileChange,
+        accept: logoFileAccept,
+      },
+    } as any,
   ];
 
   return (
     <SmartForm<NewTenantRequest>
       fields={fields}
-      rows={[
-        ["identifier", "name"],
-        ["connectionString"],
-        ["email", "validUpToDate"],
-        ["firstName", "lastName"],
-        ["isActive"],
-      ]}
+      rows={
+        [
+          ["identifier", "name"],
+          ["connectionString"],
+          ["email", "validUpToDate"],
+          ["firstName", "lastName"],
+          ["oib", "vatNumber"],
+          ["registrationNumber", "companyCode"],
+          ["contactPhone", "websiteUrl"],
+          ["addressStreet"],
+          ["addressPostalCode", "addressCity"],
+          ["addressState", "addressCountry"],
+          ["isActive"],
+          ["logo" as any], // 🆕 logo row
+        ] as any
+      }
       defaultValues={{
         identifier: "",
         name: "",
@@ -77,8 +135,21 @@ export default function TenantForm({ defaultValues, onSubmit, busy }: Props) {
         email: "",
         firstName: "",
         lastName: "",
-        validUpToDate: defaultValues?.validUpToDate,
+        validUpToDate: defaultValues?.validUpToDate ?? null,
         isActive: true,
+
+        oib: "",
+        vatNumber: "",
+        registrationNumber: "",
+        companyCode: "",
+        contactPhone: "",
+        websiteUrl: "",
+        addressStreet: "",
+        addressPostalCode: "",
+        addressCity: "",
+        addressState: "",
+        addressCountry: "",
+
         ...defaultValues,
       }}
       busy={busy}

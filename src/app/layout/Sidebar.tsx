@@ -9,7 +9,11 @@ import {
   Typography,
   IconButton,
   useMediaQuery,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { alpha, useTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import { NavLink, useLocation } from "react-router-dom";
@@ -46,6 +50,20 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
   );
   const SYSTEM = NAV_ITEMS.filter(
     (i) => i.section === "SYSTEM" && canSee(i.guard)
+  );
+
+  const MANAGEMENT_GRADILISTA = MANAGEMENT.filter(
+    (i) => i.category === "CONSTRUCTION"
+  );
+  const MANAGEMENT_OSTALO = MANAGEMENT.filter(
+    (i) => i.category !== "CONSTRUCTION"
+  );
+
+  const SYSTEM_SIFRARNIK = SYSTEM.filter((i) => i.category === "CODEBOOK");
+  const SYSTEM_IDENTITET = SYSTEM.filter((i) => i.category === "IDENTITY");
+  const SYSTEM_OSTALO = SYSTEM.filter(
+    (i) =>
+      !i.category || (i.category !== "CODEBOOK" && i.category !== "IDENTITY")
   );
 
   const renderSectionLabel = (key: string) => (
@@ -112,6 +130,41 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
     </List>
   );
 
+  const renderAccordion = (title: string, items: typeof NAV_ITEMS) => {
+    if (!items.length) return null;
+    return (
+      <Accordion
+        disableGutters
+        elevation={0}
+        defaultExpanded
+        square
+        sx={{
+          bgcolor: "transparent",
+          "&:before": { display: "none" },
+        }}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          sx={{
+            px: 2,
+            minHeight: 40,
+            "& .MuiAccordionSummary-content": { my: 0.5 },
+          }}
+        >
+          <Typography
+            variant="subtitle2"
+            sx={{ color: theme.palette.text.secondary }}
+          >
+            {title}
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails sx={{ p: 0 }}>
+          {renderNavList(items)}
+        </AccordionDetails>
+      </Accordion>
+    );
+  };
+
   const Brand = () => (
     <Box
       sx={{
@@ -141,6 +194,23 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
     </Box>
   );
 
+  const ManagementContent = (
+    <>
+      {renderSectionLabel("sidebar.management")}
+      {renderAccordion(t("sidebar.constructionGroup"), MANAGEMENT_GRADILISTA)}
+      {renderNavList(MANAGEMENT_OSTALO)}
+    </>
+  );
+
+  const SystemContent = (
+    <>
+      {renderSectionLabel("sidebar.system")}
+      {renderAccordion(t("sidebar.codebookGroup"), SYSTEM_SIFRARNIK)}
+      {renderAccordion(t("sidebar.identityGroup"), SYSTEM_IDENTITET)}
+      {renderNavList(SYSTEM_OSTALO)}
+    </>
+  );
+
   const NavContent = (
     <Box
       sx={{
@@ -158,11 +228,8 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
       </Toolbar>
 
       <Box sx={{ flex: 1, overflowY: "auto", pb: 1, mt: 2 }}>
-        {renderSectionLabel("sidebar.management")}
-        {renderNavList(MANAGEMENT)}
-
-        {renderSectionLabel("sidebar.system")}
-        {renderNavList(SYSTEM)}
+        {ManagementContent}
+        {SystemContent}
       </Box>
     </Box>
   );
@@ -192,11 +259,10 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
           </IconButton>
         </Box>
 
-        <Box sx={{ px: 0 }}>{renderSectionLabel("sidebar.management")}</Box>
-        {renderNavList(MANAGEMENT)}
-
-        <Box sx={{ px: 0 }}>{renderSectionLabel("sidebar.system")}</Box>
-        {renderNavList(SYSTEM)}
+        <Box sx={{ px: 0 }}>
+          {ManagementContent}
+          {SystemContent}
+        </Box>
       </Box>
     ) : null;
   }

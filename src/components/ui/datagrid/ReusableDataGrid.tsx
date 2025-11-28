@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, Stack, Typography, useMediaQuery } from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import {
   DataGridPro,
@@ -7,8 +7,6 @@ import {
   type GridRowsProp,
   type GridRowIdGetter,
   type GridValidRowModel,
-  type GridRenderCellParams,
-  type GridListViewColDef,
   useGridApiRef,
   type GridRowParams,
 } from "@mui/x-data-grid-pro";
@@ -22,120 +20,7 @@ type PinnedColumnsState = {
   right?: string[];
 };
 
-function defaultListViewCell<T extends GridValidRowModel>(
-  params: GridRenderCellParams<T>,
-  columns: GridColDef<T>[],
-  listViewColumns?: string[]
-) {
-  const { id, api, row } = params;
-
-  const colMap = new Map<string, GridColDef<T>>();
-  columns.forEach((col) => {
-    if (col.field) colMap.set(col.field, col);
-  });
-
-  const orderedFields =
-    listViewColumns && listViewColumns.length
-      ? listViewColumns
-      : (columns.map((c) => c.field).filter(Boolean) as string[]);
-
-  const idField =
-    orderedFields.find((f) => f === "id") ??
-    orderedFields.find((f) => f.toLowerCase().includes("id"));
-
-  const actionsField = orderedFields.find((f) => f === "actions");
-
-  const primaryField = orderedFields.find(
-    (f) => f !== idField && f !== actionsField
-  );
-
-  const idCol = idField ? colMap.get(idField) : undefined;
-  const primaryCol = primaryField ? colMap.get(primaryField) : undefined;
-  const actionsCol = actionsField ? colMap.get(actionsField) : undefined;
-
-  const getValue = (field?: string) => {
-    if (!field) return undefined;
-    if (typeof (api as any).getCellValue === "function") {
-      return (api as any).getCellValue(id, field);
-    }
-    return (row as any)[field];
-  };
-
-  const idValue = getValue(idField);
-  const primaryValue = getValue(primaryField);
-
-  let actions: React.ReactElement[] = [];
-  if (
-    actionsCol &&
-    (actionsCol.type === "actions" || actionsCol.field === "actions")
-  ) {
-    const getActions = (actionsCol as any).getActions as
-      | ((p: any) => React.ReactElement[])
-      | undefined;
-
-    actions =
-      getActions?.({
-        id,
-        row,
-        field: actionsCol.field,
-        api,
-      }) ?? [];
-  }
-
-  return (
-    <Stack
-      direction="row"
-      sx={{
-        alignItems: "center",
-        height: "100%",
-        px: 1,
-        gap: 1,
-        overflow: "hidden",
-      }}
-    >
-      <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-        {idCol && idValue !== undefined && (
-          <Typography
-            variant="caption"
-            color="text.secondary"
-            sx={{
-              display: "block",
-              mb: 0.25,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {(idCol.headerName ?? idCol.field) + ": "} {String(idValue)}
-          </Typography>
-        )}
-
-        {primaryCol && (
-          <Typography
-            variant="body2"
-            fontWeight={500}
-            sx={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {(primaryCol.headerName ?? primaryCol.field) + ": "}{" "}
-            {primaryValue !== undefined ? String(primaryValue) : ""}
-          </Typography>
-        )}
-      </Box>
-
-      {actions.length > 0 && (
-        <Box sx={{ display: "flex", gap: 0.5, flexShrink: 0 }}>
-          {actions.map((action, idx) => (
-            <Box key={idx}>{action}</Box>
-          ))}
-        </Box>
-      )}
-    </Stack>
-  );
-}
+export type DetailPanelMode = "all" | "mobile-only" | "desktop-only";
 
 export type ReusableDataGridProps<
   T extends GridValidRowModel = GridValidRowModel
@@ -148,10 +33,12 @@ export type ReusableDataGridProps<
   toolbarColor?: string;
   pinnedRightField?: string;
   loading?: boolean;
-  renderListViewCell?: (params: GridRenderCellParams<T>) => React.ReactNode;
-  listViewColumns?: string[];
+  renderListViewCell?: never;
+  listViewColumns?: never;
+
   getDetailPanelContent?: (params: GridRowParams<T>) => React.ReactNode;
   getDetailPanelHeight?: (params: GridRowParams<T>) => number;
+  detailPanelMode?: DetailPanelMode; // 👈 NEW
 };
 
 function applyHeaderMappings<T extends GridValidRowModel>(
@@ -186,10 +73,9 @@ export default function ReusableDataGrid<
   toolbarColor = "#646464",
   pinnedRightField,
   loading,
-  renderListViewCell,
-  listViewColumns,
   getDetailPanelContent,
   getDetailPanelHeight,
+  detailPanelMode = "all",
 }: ReusableDataGridProps<T>) {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -209,7 +95,17 @@ export default function ReusableDataGrid<
 
   const baseForScreen = React.useMemo<GridColDef<T>[]>(() => {
     if (!isSmall) return columns;
-    return columns.map((c) => ({
+
+    const actionsCol = columns.find((c) => c.field === "actions");
+    const firstDataCol = columns.find((c) => c.field !== "actions");
+
+    const mobileCols: GridColDef<T>[] = [];
+    if (firstDataCol) mobileCols.push(firstDataCol);
+    if (actionsCol) mobileCols.push(actionsCol);
+
+    const chosen = mobileCols.length > 0 ? mobileCols : columns;
+
+    return chosen.map((c) => ({
       ...c,
       sortable: false,
       minWidth: c.minWidth ?? 120,
@@ -226,22 +122,7 @@ export default function ReusableDataGrid<
     [t, i18n.language]
   );
 
-  const isListView = isSmall;
-
-  const listViewColumn: GridListViewColDef<T> = React.useMemo(
-    () => ({
-      field: "__list__",
-      renderCell: (params) =>
-        renderListViewCell
-          ? renderListViewCell(params)
-          : defaultListViewCell(params, columnsForScreen, listViewColumns),
-    }),
-    [renderListViewCell, columnsForScreen, listViewColumns]
-  );
-
-  const rowHeight = isListView ? 64 : 52;
-
-  const pinnedColumns = !isListView ? pinnedState : undefined;
+  const pinnedColumns = !isSmall ? pinnedState : undefined;
 
   React.useEffect(() => {
     if (!pinnedRightField) return;
@@ -252,6 +133,21 @@ export default function ReusableDataGrid<
       return { ...prev, right: Array.from(right) };
     });
   }, [pinnedRightField]);
+
+  const shouldUseDetailPanel =
+    !!getDetailPanelContent &&
+    !!getDetailPanelHeight &&
+    (() => {
+      switch (detailPanelMode) {
+        case "mobile-only":
+          return isSmall;
+        case "desktop-only":
+          return !isSmall;
+        case "all":
+        default:
+          return true;
+      }
+    })();
 
   return (
     <DataGridPro
@@ -287,15 +183,17 @@ export default function ReusableDataGrid<
       disableColumnMenu={isSmall}
       checkboxSelection={false}
       localeText={localeText}
-      listView={isListView}
-      listViewColumn={listViewColumn}
-      rowHeight={rowHeight}
+      rowHeight={isSmall ? 56 : 52}
       pinnedColumns={pinnedColumns}
       onPinnedColumnsChange={(newPinned) =>
         setPinnedState(newPinned as PinnedColumnsState)
       }
-      getDetailPanelContent={getDetailPanelContent}
-      getDetailPanelHeight={getDetailPanelHeight}
+      getDetailPanelContent={
+        shouldUseDetailPanel ? getDetailPanelContent : undefined
+      }
+      getDetailPanelHeight={
+        shouldUseDetailPanel ? getDetailPanelHeight : undefined
+      }
       sx={{
         border: "none",
         backgroundColor: "#fff",
@@ -304,11 +202,8 @@ export default function ReusableDataGrid<
           border: "1px solid #E5E7EB",
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
-
           borderTopLeftRadius: 8,
           borderTopRightRadius: 8,
-
-          overflow: "hidden",
           backgroundColor: "#fff",
         },
 
@@ -316,7 +211,6 @@ export default function ReusableDataGrid<
           backgroundColor: "#F4F6FF",
           borderTopLeftRadius: 8,
           borderTopRightRadius: 8,
-          overflow: "visible",
         },
 
         "& .MuiDataGrid-columnHeadersInner": {
@@ -337,7 +231,6 @@ export default function ReusableDataGrid<
           {
             backgroundColor: "#F4F6FF !important",
             borderTopRightRadius: 8,
-            zIndex: 0,
           },
 
         "& .MuiDataGrid-columnHeader": {
@@ -364,10 +257,6 @@ export default function ReusableDataGrid<
           {
             boxShadow: "-8px 0 8px -4px rgba(15, 23, 42, 0.08)",
           },
-
-        "& .MuiDataGrid-iconSeparator": {
-          display: "none",
-        },
 
         "& .MuiDataGrid-cell": {
           fontSize: 13,

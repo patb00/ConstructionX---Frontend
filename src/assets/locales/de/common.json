@@ -1,7 +1,10 @@
 {
   "sidebar": {
     "management": "Verwaltung",
-    "system": "System"
+    "system": "System",
+    "constructionGroup": "Baustellen",
+    "codebookGroup": "Stammdaten",
+    "identityGroup": "Identität"
   },
   "nav": {
     "dashboard": "Übersicht",
@@ -15,7 +18,10 @@
     "tools": "Werkzeuge",
     "toolCategories": "Werkzeugkategorien",
     "vehicles": "Fahrzeuge",
-    "assignments": "Zuweisungen"
+    "assignments": "Zuweisungen",
+    "reports": "Berichte",
+    "examinationTypes": "Prüfarten",
+    "medicalExaminations": "Medizinische Untersuchungen"
   },
   "constructionSites": {
     "list": {
@@ -503,7 +509,16 @@
       "dateTo": "Datum bis",
       "vehicleId": "Fahrzeug-ID",
       "responsibleEmployeeFullName": "Verantwortlicher Mitarbeiter (vollständiger Name)",
-      "toolId": "Werkzeug-ID"
+      "toolId": "Werkzeug-ID",
+
+      "examinationTypeName": "Untersuchungsart",
+      "monthsToNextExamination": "Monate bis zur nächsten Untersuchung",
+
+      "examinationTypeId": "Untersuchungstyp",
+      "examinationDate": "Untersuchungsdatum",
+      "nextExaminationDate": "Nächstes Untersuchungsdatum",
+      "result": "Ergebnis",
+      "note": "Notiz"
     }
   },
   "tenants": {
@@ -536,7 +551,18 @@
         "validUntil": "Gültig bis",
         "firstName": "Vorname",
         "lastName": "Nachname",
-        "isActive": "Aktiv"
+        "isActive": "Aktiv",
+        "oib": "OIB",
+        "vatNumber": "Umsatzsteuernummer",
+        "registrationNumber": "Registrierungsnummer",
+        "companyCode": "Firmenkode",
+        "contactPhone": "Telefon",
+        "websiteUrl": "Webseite",
+        "addressStreet": "Straße",
+        "addressPostalCode": "Postleitzahl",
+        "addressCity": "Stadt",
+        "addressState": "Bundesland",
+        "addressCountry": "Land"
       },
       "submit": "Speichern"
     },
@@ -1088,6 +1114,103 @@
       "refreshTokenExpires": "Refresh-Token läuft ab",
       "notFound": "Kein Benutzer mit der angemeldeten ID in der Benutzerliste gefunden.",
       "close": "Schließen"
+    }
+  },
+  "reports": {
+    "list": {
+      "title": "Berichte",
+      "subtitle": "Wähle ein Modul aus, um dessen Berichte anzuzeigen."
+    },
+    "modules": {
+      "cta": "Berichte anzeigen →"
+    },
+    "module": {
+      "notFoundTitle": "Modul nicht gefunden",
+      "back": "Zurück",
+      "description": "Wähle und starte einen Bericht für dieses Modul.",
+      "noReports": "Für dieses Modul sind noch keine Berichte definiert.",
+      "open": "Bericht öffnen",
+      "opening": "Wird geöffnet..."
+    },
+    "items": {
+      "employeeList": {
+        "label": "Mitarbeiterliste",
+        "description": "Lade die Liste aller Mitarbeiter herunter."
+      }
+    }
+  },
+  "examinationTypes": {
+    "list": {
+      "title": "Prüfarten",
+      "error": "Fehler beim Laden der Prüfarten."
+    },
+    "create": {
+      "title": "Prüfart erstellen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Prüfart bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (ID).",
+      "loadError": "Fehler beim Laden der Prüfart."
+    },
+    "delete": {
+      "title": "Prüfart löschen?",
+      "description": "Sind Sie sicher, dass Sie diese Prüfart löschen möchten?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "detailView": "Details"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "examinationTypeName": "Bezeichnung der Prüfart",
+        "monthsToNextExamination": "Monate bis zur nächsten Prüfung"
+      }
+    }
+  },
+  "medicalExaminations": {
+    "list": {
+      "title": "Medizinische Untersuchungen",
+      "error": "Fehler beim Laden der medizinischen Untersuchungen."
+    },
+    "create": {
+      "title": "Medizinische Untersuchung hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Medizinische Untersuchung bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (ID)",
+      "loadError": "Die medizinische Untersuchung konnte nicht geladen werden."
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "employeeId": "Mitarbeiter",
+        "examinationTypeId": "Untersuchungstyp",
+        "examinationDate": "Untersuchungsdatum",
+        "nextExaminationDate": "Nächstes Untersuchungsdatum",
+        "result": "Ergebnis",
+        "note": "Notiz"
+      }
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "detailView": "Details"
+    },
+    "delete": {
+      "title": "Untersuchung löschen?",
+      "description": "Sind Sie sicher, dass Sie diese medizinische Untersuchung löschen möchten?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
     }
   }
 }
