@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
+import { useTranslation } from "react-i18next";
 
 export type AppSelectOption = {
   value: string;
@@ -26,14 +27,17 @@ type AppSelectProps = {
 };
 
 export const ViewSelect: React.FC<AppSelectProps> = ({
-  label,
+  label = "assignments.view.label",
   value,
   options,
   onChange,
   size = "small",
   sx = {},
 }) => {
+  const { t } = useTranslation();
   const labelId = React.useId();
+
+  const translatedLabel = label ? t(label) : undefined;
 
   const selected = options.find((o) => o.value === value);
 
@@ -45,7 +49,8 @@ export const ViewSelect: React.FC<AppSelectProps> = ({
     <FormControl
       size={size}
       sx={{
-        minWidth: 140,
+        width: 160,
+        minWidth: 160,
         "& .MuiInputLabel-root": {
           fontSize: 12,
           fontWeight: 500,
@@ -53,21 +58,19 @@ export const ViewSelect: React.FC<AppSelectProps> = ({
         ...sx,
       }}
     >
-      {label && <InputLabel id={labelId}>{label}</InputLabel>}
+      {translatedLabel && (
+        <InputLabel id={labelId}>{translatedLabel}</InputLabel>
+      )}
 
       <Select
-        labelId={label ? labelId : undefined}
+        labelId={translatedLabel ? labelId : undefined}
         value={value}
-        label={label}
+        label={translatedLabel}
         onChange={handleChange}
         displayEmpty
         sx={(theme) => ({
+          width: 160,
           borderRadius: 1,
-          backgroundColor:
-            theme.palette.mode === "light"
-              ? "#F7F7F8"
-              : theme.palette.background.paper,
-
           "& .MuiSelect-select": {
             display: "flex",
             alignItems: "center",
@@ -76,7 +79,6 @@ export const ViewSelect: React.FC<AppSelectProps> = ({
             px: 1.25,
             fontSize: 15,
           },
-
           "& fieldset": {
             borderColor: theme.palette.divider,
           },
@@ -89,7 +91,7 @@ export const ViewSelect: React.FC<AppSelectProps> = ({
         })}
         renderValue={() =>
           selected && (
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               {selected.icon && (
                 <Box
                   sx={{

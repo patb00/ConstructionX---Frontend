@@ -1043,6 +1043,7 @@
     "tools": "Alati",
 
     "view": {
+      "label": "Prikaz",
       "board": "Ploča",
       "timeline": "Vremenska crta"
     },

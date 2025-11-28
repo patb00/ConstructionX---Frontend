@@ -1044,6 +1044,7 @@
     "tools": "Tools",
 
     "view": {
+      "label": "View",
       "board": "Board",
       "timeline": "Timeline"
     },

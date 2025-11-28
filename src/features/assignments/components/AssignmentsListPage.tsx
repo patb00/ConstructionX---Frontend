@@ -407,7 +407,13 @@ const AssignmentsListPage = () => {
 
       {role === "Admin" && (
         <>
-          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              alignItems: "center",
+            }}
+          >
             <FormControl size="small" sx={{ minWidth: 280 }} variant="outlined">
               <InputLabel id="employee-select-label" shrink>
                 {t("assignments.filterByEmployee")}

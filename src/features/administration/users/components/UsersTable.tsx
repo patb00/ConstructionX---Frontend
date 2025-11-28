@@ -82,30 +82,38 @@ export default function UsersTable() {
           headerName: c.headerName ?? t("users.table.status"),
           align: "center",
           headerAlign: "center",
-          renderCell: (params) => (
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Chip
-                size="small"
-                label={
-                  params.row.isActive
-                    ? t("users.table.statusActive")
-                    : t("users.table.statusInactive")
-                }
-                color={params.row.isActive ? "success" : "default"}
-                variant={params.row.isActive ? "filled" : "outlined"}
-              />
-            </Box>
-          ),
+          renderCell: (params) => {
+            const isActive = params.row.isActive;
+
+            return (
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Chip
+                  size="small"
+                  label={
+                    isActive
+                      ? t("users.table.statusActive")
+                      : t("users.table.statusInactive")
+                  }
+                  color={isActive ? "success" : "error"}
+                  variant="filled"
+                  sx={{
+                    color: !isActive ? "white" : undefined,
+                  }}
+                />
+              </Box>
+            );
+          },
         } as GridColDef<User>;
       }
+
       return c;
     });
 
