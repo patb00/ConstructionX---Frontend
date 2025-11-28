@@ -168,6 +168,10 @@
   "common": {
     "notAvailable": "Nicht verfügbar",
     "loading": "Wird geladen…",
+    "fileInput": {
+      "choose": "Datei auswählen",
+      "noFile": "Keine Datei ausgewählt"
+    },
     "datagrid": {
       "columnsButton": "Spalten",
       "filterButton": "Filter",
@@ -1197,7 +1201,8 @@
         "examinationDate": "Untersuchungsdatum",
         "nextExaminationDate": "Nächstes Untersuchungsdatum",
         "result": "Ergebnis",
-        "note": "Notiz"
+        "note": "Notiz",
+        "attachmentLabel": "Anhang"
       }
     },
     "actions": "Aktionen",

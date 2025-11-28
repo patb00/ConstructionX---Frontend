@@ -168,6 +168,10 @@
   "common": {
     "notAvailable": "Not available",
     "loading": "Loading…",
+    "fileInput": {
+      "choose": "Choose file",
+      "noFile": "No file chosen"
+    },
     "datagrid": {
       "columnsButton": "Columns",
       "filterButton": "Filters",
@@ -1197,7 +1201,8 @@
         "examinationDate": "Examination Date",
         "nextExaminationDate": "Next Examination Date",
         "result": "Result",
-        "note": "Note"
+        "note": "Note",
+        "attachmentLabel": "Attachment"
       }
     },
     "actions": "Actions",

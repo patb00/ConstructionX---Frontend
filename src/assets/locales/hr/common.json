@@ -168,6 +168,10 @@
   "common": {
     "notAvailable": "Nije definirano",
     "loading": "Učitavanje…",
+    "fileInput": {
+      "choose": "Odaberi datoteku",
+      "noFile": "Nije odabrana nijedna datoteka"
+    },
     "datagrid": {
       "columnsButton": "Stupci",
       "filterButton": "Filteri",
@@ -1196,7 +1200,8 @@
         "examinationDate": "Datum pregleda",
         "nextExaminationDate": "Sljedeći pregled",
         "result": "Rezultat",
-        "note": "Napomena"
+        "note": "Napomena",
+        "attachmentLabel": "Prilog"
       }
     },
     "actions": "Akcije",

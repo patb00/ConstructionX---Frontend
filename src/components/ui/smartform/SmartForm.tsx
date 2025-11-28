@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 
 import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
+import { useTranslation } from "react-i18next";
 
 function toDateOnly(v?: string | Date | null) {
   if (!v) return "";
@@ -71,6 +72,7 @@ export type FieldConfig<TValues extends Record<string, any>> = {
     file?: File | null;
     onChange?: (file: File | null) => void;
     accept?: string;
+    existingFileName?: string | null;
   };
 };
 
@@ -128,7 +130,7 @@ export function SmartForm<TValues extends Record<string, any>>({
   const [values, setValues] = React.useState<TValues>(() =>
     buildInitial(fields, defaultValues)
   );
-
+  const { t } = useTranslation();
   const [hasInteracted, setHasInteracted] = React.useState(false);
 
   React.useEffect(() => {
@@ -201,9 +203,16 @@ export function SmartForm<TValues extends Record<string, any>>({
       ...fieldSx,
     };
 
-    // FILE FIELD (uses fileConfig, not values)
     if (type === "file") {
       const fileCfg = f.fileConfig;
+      const hasFile = !!fileCfg?.file || !!fileCfg?.existingFileName;
+      const fileName =
+        fileCfg?.file?.name ||
+        fileCfg?.existingFileName ||
+        t("common.fileInput.noFile");
+
+      const inputId = `${f.name}-file-input`;
+
       return (
         <Box key={f.name} sx={{ flex: 1, minWidth: 0 }}>
           <Typography
@@ -221,20 +230,49 @@ export function SmartForm<TValues extends Record<string, any>>({
               gap: 1.5,
             }}
           >
+            <Box
+              component="label"
+              htmlFor={inputId}
+              sx={{
+                display: "inline-block",
+                px: 1.5,
+                py: 0.5,
+                borderRadius: 0.5,
+                border: "1px solid rgba(0,0,0,0.23)",
+                backgroundColor: "background.paper",
+                fontSize: "0.8125rem",
+                cursor: "pointer",
+                lineHeight: 1.5,
+                userSelect: "none",
+              }}
+            >
+              {t("common.fileInput.choose")}
+            </Box>
+
             <input
+              id={inputId}
               type="file"
               accept={fileCfg?.accept}
               onChange={(e) => {
                 const file = e.target.files?.[0] ?? null;
                 fileCfg?.onChange?.(file);
               }}
-              style={{ fontSize: 12 }}
+              style={{
+                position: "absolute",
+                opacity: 0,
+                width: 0,
+                height: 0,
+                pointerEvents: "none",
+              }}
             />
-            {fileCfg?.file && (
-              <Typography variant="body2" color="text.secondary">
-                {fileCfg.file.name}
-              </Typography>
-            )}
+
+            <Typography
+              variant="body2"
+              color={hasFile ? "text.primary" : "text.secondary"}
+              sx={{ fontStyle: hasFile ? "normal" : "italic" }}
+            >
+              {fileName}
+            </Typography>
           </Box>
         </Box>
       );

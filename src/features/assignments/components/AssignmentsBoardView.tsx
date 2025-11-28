@@ -46,7 +46,11 @@ export const AssignmentsBoardView: React.FC<Props> = ({
       title: t("assignments.construction"),
       loading: construction.loading,
       rows: construction.rows,
-      emptyLabel: t("assignments.emptyConstruction"),
+      emptyContent: (
+        <Typography variant="body2" color="text.secondary">
+          {t("assignments.emptyConstruction")}
+        </Typography>
+      ),
       renderRow: (row: AssignedConstructionSite) => (
         <Card
           key={`${row.constructionSiteId}-${row.employeeId ?? ""}-${
@@ -106,7 +110,11 @@ export const AssignmentsBoardView: React.FC<Props> = ({
       title: t("assignments.vehicles"),
       loading: vehicles.loading,
       rows: vehicles.rows,
-      emptyLabel: t("assignments.emptyVehicles"),
+      emptyContent: (
+        <Typography variant="body2" color="text.secondary">
+          {t("assignments.emptyVehicles")}
+        </Typography>
+      ),
       renderRow: (row: AssignedVehicle) => (
         <Card
           key={`${row.vehicleId}-${row.responsibleEmployeeId ?? ""}-${
@@ -180,7 +188,11 @@ export const AssignmentsBoardView: React.FC<Props> = ({
       title: t("assignments.tools"),
       loading: tools.loading,
       rows: tools.rows,
-      emptyLabel: t("assignments.emptyTools"),
+      emptyContent: (
+        <Typography variant="body2" color="text.secondary">
+          {t("assignments.emptyTools")}
+        </Typography>
+      ),
       renderRow: (row: AssignedTool) => (
         <Card
           key={`${row.toolId}-${row.responsibleEmployeeId ?? ""}-${

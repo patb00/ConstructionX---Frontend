@@ -77,7 +77,7 @@ export default function MedicalExaminationForm({
 
     {
       name: "attachment" as any,
-      label: t("medicalExaminations.form.attachmentLabel", {
+      label: t("medicalExaminations.form.field.attachmentLabel", {
         defaultValue: "Attachment",
       }),
       type: "file",
