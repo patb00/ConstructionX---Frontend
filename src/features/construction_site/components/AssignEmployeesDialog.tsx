@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Dialog,
   DialogTitle,
@@ -25,6 +24,7 @@ import { fullName } from "../utils/name";
 import { getCommonRange } from "../utils/ranges";
 import { useTranslation } from "react-i18next";
 import CloseIcon from "@mui/icons-material/Close";
+import { useEffect, useMemo, useState } from "react";
 
 type EmpRange = { from: string; to: string; custom: boolean };
 
@@ -44,13 +44,13 @@ export default function AssignEmployeesDialog({
   const { data: site } = useConstructionSite(constructionSiteId);
   const assign = useAssignEmployeesToConstructionSite();
 
-  const [selected, setSelected] = React.useState<number[]>([]);
-  const [globalFrom, setGlobalFrom] = React.useState<string>(todayStr());
-  const [globalTo, setGlobalTo] = React.useState<string>(todayStr());
-  const [ranges, setRanges] = React.useState<Record<number, EmpRange>>({});
-  const [touched, setTouched] = React.useState(false);
+  const [selected, setSelected] = useState<number[]>([]);
+  const [globalFrom, setGlobalFrom] = useState<string>(todayStr());
+  const [globalTo, setGlobalTo] = useState<string>(todayStr());
+  const [ranges, setRanges] = useState<Record<number, EmpRange>>({});
+  const [touched, setTouched] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) {
       setSelected([]);
       setGlobalFrom(todayStr());
@@ -60,7 +60,7 @@ export default function AssignEmployeesDialog({
     }
   }, [open]);
 
-  const preselected = React.useMemo(() => {
+  const preselected = useMemo(() => {
     type Prior = {
       firstName?: string;
       lastName?: string;
@@ -102,7 +102,7 @@ export default function AssignEmployeesDialog({
     return { ids: resultIds, map: resultMap };
   }, [site, employeeRows]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) return;
     if (!touched) {
       setSelected(preselected.ids);
@@ -118,7 +118,7 @@ export default function AssignEmployeesDialog({
     }
   }, [open, preselected, touched]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open || selected.length === 0) return;
     const existing = new Set(employeeRows.map((e: any) => Number(e.id)));
     const filtered = selected.filter((id) => existing.has(id));
@@ -207,7 +207,7 @@ export default function AssignEmployeesDialog({
     });
   };
 
-  const isCustom = React.useMemo(() => {
+  const isCustom = useMemo(() => {
     if (selected.length === 0) return false;
     return selected.some((id) => {
       const r = ranges[id] ?? { from: globalFrom, to: globalTo };
@@ -215,7 +215,7 @@ export default function AssignEmployeesDialog({
     });
   }, [selected, ranges, globalFrom, globalTo]);
 
-  const allRangesValid = React.useMemo(() => {
+  const allRangesValid = useMemo(() => {
     if (!isValidRange(globalFrom, globalTo)) return false;
     for (const id of selected) {
       const r = ranges[id] ?? { from: globalFrom, to: globalTo, custom: false };

@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Box, Chip } from "@mui/material";
 import { type GridColDef } from "@mui/x-data-grid";
 import { type GridRowParams } from "@mui/x-data-grid-pro";
@@ -13,6 +12,7 @@ import { GridDetailPanel } from "../../../../components/ui/datagrid/GridDetailPa
 import { useCan } from "../../../../lib/permissions";
 import { useTranslation } from "react-i18next";
 import { RowActions } from "../../../../components/ui/datagrid/RowActions";
+import { useCallback, useMemo } from "react";
 
 export default function TenantsTable() {
   const { t } = useTranslation();
@@ -22,7 +22,7 @@ export default function TenantsTable() {
   const navigate = useNavigate();
   const can = useCan();
 
-  const columnsWithActions = React.useMemo<GridColDef<Tenant>[]>(() => {
+  const columnsWithActions = useMemo<GridColDef<Tenant>[]>(() => {
     const base = tenantsColumns.map((c) => {
       if (c.field === "validUpToDate") {
         return {
@@ -179,7 +179,7 @@ export default function TenantsTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
-  const renderDetailPanel = React.useCallback(
+  const renderDetailPanel = useCallback(
     (params: GridRowParams<Tenant>) => {
       return (
         <GridDetailPanel<Tenant>
@@ -191,7 +191,7 @@ export default function TenantsTable() {
     [tenantsColumns]
   );
 
-  const getDetailPanelHeight = React.useCallback(
+  const getDetailPanelHeight = useCallback(
     (_params: GridRowParams<Tenant>) => 220,
     []
   );

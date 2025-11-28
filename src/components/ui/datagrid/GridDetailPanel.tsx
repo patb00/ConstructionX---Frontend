@@ -1,6 +1,6 @@
-import * as React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import type { GridColDef, GridValidRowModel } from "@mui/x-data-grid-pro";
+import { useMemo } from "react";
 
 type GridDetailPanelProps<T extends GridValidRowModel> = {
   row: T;
@@ -13,7 +13,7 @@ export function GridDetailPanel<T extends GridValidRowModel>({
   columns,
   columnFilter,
 }: GridDetailPanelProps<T>) {
-  const detailColumns = React.useMemo(
+  const detailColumns = useMemo(
     () =>
       columns.filter((c) => {
         if (!c.field) return false;

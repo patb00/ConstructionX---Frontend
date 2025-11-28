@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Dialog,
   DialogTitle,
@@ -26,6 +25,7 @@ import { isValidRange, todayStr } from "../utils/dates";
 import { useAssignVehiclesToConstructionSite } from "../hooks/useAssignVehiclesToConstructionSite";
 import { fullName } from "../utils/name";
 import { useVehicles } from "../../vehicles/hooks/useVehicles";
+import { useEffect, useMemo, useState } from "react";
 
 type VehRange = {
   from: string;
@@ -60,15 +60,15 @@ export default function AssignVehiclesDialog({
   } = useVehicles();
   const assign = useAssignVehiclesToConstructionSite();
 
-  const [selected, setSelected] = React.useState<number[]>([]);
-  const [globalFrom, setGlobalFrom] = React.useState<string>(todayStr());
-  const [globalTo, setGlobalTo] = React.useState<string>(todayStr());
-  const [ranges, setRanges] = React.useState<Record<number, VehRange>>({});
-  const [touched, setTouched] = React.useState(false);
+  const [selected, setSelected] = useState<number[]>([]);
+  const [globalFrom, setGlobalFrom] = useState<string>(todayStr());
+  const [globalTo, setGlobalTo] = useState<string>(todayStr());
+  const [ranges, setRanges] = useState<Record<number, VehRange>>({});
+  const [touched, setTouched] = useState(false);
 
   const DETAIL_GRID_MD = "minmax(220px,1fr) 180px 180px minmax(220px,1fr) 48px";
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) {
       setSelected([]);
       setGlobalFrom(todayStr());
@@ -78,7 +78,7 @@ export default function AssignVehiclesDialog({
     }
   }, [open]);
 
-  const preselected = React.useMemo(() => {
+  const preselected = useMemo(() => {
     const prior = site?.constructionSiteVehicles ?? [];
     const resultIds: number[] = [];
     const resultMap: Record<number, VehRange> = {};
@@ -119,13 +119,13 @@ export default function AssignVehiclesDialog({
     return { ids: resultIds, map: resultMap };
   }, [site, employeeRows]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open || touched) return;
     setSelected(preselected.ids);
     setRanges(preselected.map);
   }, [open, preselected, touched]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open || selected.length === 0) return;
     const existing = new Set(vehiclesRows.map((x: any) => Number(x.id)));
     const filtered = selected.filter((id) => existing.has(id));
@@ -248,7 +248,7 @@ export default function AssignVehiclesDialog({
     });
   };
 
-  const allRangesValid = React.useMemo(() => {
+  const allRangesValid = useMemo(() => {
     if (!isValidRange(globalFrom, globalTo)) return false;
     for (const id of selected) {
       const r = ranges[id] ?? { from: globalFrom, to: globalTo };
@@ -286,7 +286,7 @@ export default function AssignVehiclesDialog({
   const loading = empLoading || vehLoading;
   const hasError = empError || vehError;
 
-  const isCustom = React.useMemo(() => {
+  const isCustom = useMemo(() => {
     if (selected.length === 0) return false;
     return selected.some((id) => {
       const r = ranges[id] ?? { from: globalFrom, to: globalTo };

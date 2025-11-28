@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Box,
   Typography,
@@ -9,7 +8,9 @@ import {
   Tooltip,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useTranslation } from "react-i18next";
+import { Fragment, useEffect, useMemo, useState } from "react";
 
 export type Lane = {
   id: string;
@@ -66,7 +67,30 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
   const barHeight = rowHeight - 12;
   const baseTopOffset = 6;
 
-  const headerDays = React.useMemo(() => {
+  const [expandedLanes, setExpandedLanes] = useState<Record<string, boolean>>(
+    {}
+  );
+
+  useEffect(() => {
+    setExpandedLanes((prev) => {
+      const next = { ...prev };
+      lanes.forEach((lane) => {
+        if (next[lane.id] === undefined) {
+          next[lane.id] = true;
+        }
+      });
+      return next;
+    });
+  }, [lanes]);
+
+  const toggleLane = (laneId: string) => {
+    setExpandedLanes((prev) => ({
+      ...prev,
+      [laneId]: !prev[laneId],
+    }));
+  };
+
+  const headerDays = useMemo(() => {
     const arr: { label: string; date: Date }[] = [];
     for (let i = 0; i < totalDays; i++) {
       const d = new Date(start);
@@ -93,32 +117,6 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
     return {
       left: `${left}%`,
       width: `${width}%`,
-    };
-  };
-
-  const getLaneChipColors = (index: number) => {
-    if (index === 0) {
-      return {
-        bg: alpha(theme.palette.success.light, 0.6),
-        text: theme.palette.success.dark,
-      };
-    }
-    if (index === 1) {
-      return {
-        bg: alpha(theme.palette.warning.light, 0.6),
-        text: theme.palette.warning.dark,
-      };
-    }
-    if (index === 2) {
-      return {
-        bg: alpha(theme.palette.error.light, 0.6),
-        text: theme.palette.error.dark,
-      };
-    }
-
-    return {
-      bg: alpha(theme.palette.grey[300], 0.7),
-      text: theme.palette.text.primary,
     };
   };
 
@@ -296,11 +294,15 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
       >
         {lanes.map((lane, laneIndex) => {
           const laneItems = items.filter((i) => i.laneId === lane.id);
-          const { bg, text } = getLaneChipColors(laneIndex);
           const barColors = getLaneBarColors(laneIndex);
+          const isExpanded = expandedLanes[lane.id] ?? true;
+
+          const expandedHeight = laneItems.length
+            ? laneItems.length * rowHeight
+            : rowHeight;
 
           return (
-            <React.Fragment key={lane.id}>
+            <Fragment key={lane.id}>
               <Box
                 sx={{
                   py: 0.75,
@@ -308,43 +310,40 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "flex-start",
+                  cursor: "pointer",
+                  userSelect: "none",
+                  gap: 0.5,
                 }}
+                onClick={() => toggleLane(lane.id)}
               >
-                <Box
+                <ExpandMoreIcon
+                  fontSize="small"
                   sx={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    px: 1.5,
-                    py: 0.5,
-                    borderRadius: 999,
-                    backgroundColor: bg,
-                    color: text,
-                    maxWidth: "100%",
-                    minWidth: 0,
+                    transition: "transform 0.2s ease",
+                    transform: isExpanded ? "rotate(0deg)" : "rotate(-90deg)",
+                    color: "#6D6D6D",
+                  }}
+                />
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 600,
+                    color: "#6D6D6D",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
                   }}
                 >
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      fontWeight: 600,
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      color: "inherit",
-                    }}
-                  >
-                    {lane.title}
-                  </Typography>
-                </Box>
+                  {lane.title}
+                </Typography>
               </Box>
 
               <Box
                 sx={{
                   position: "relative",
                   gridColumn: `2 / span ${totalDays}`,
-                  minHeight: laneItems.length
-                    ? laneItems.length * rowHeight
-                    : rowHeight,
+                  minHeight: isExpanded ? expandedHeight : rowHeight,
+                  transition: "min-height 0.25s ease",
                   borderBottom: (t) => `1px solid ${t.palette.divider}`,
                   "&::before": {
                     content: '""',
@@ -449,6 +448,12 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
                             "0 1px 2px rgba(15,23,42,0.10), 0 0 0 1px rgba(15,23,42,0.03)",
                           overflow: "hidden",
                           cursor: "pointer",
+                          transition: "opacity 0.2s ease, transform 0.2s ease",
+                          opacity: isExpanded ? 1 : 0,
+                          transform: isExpanded
+                            ? "translateY(0)"
+                            : "translateY(-4px)",
+                          pointerEvents: isExpanded ? "auto" : "none",
                         }}
                       >
                         {item.assigneeInitials && (
@@ -482,7 +487,7 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
                   );
                 })}
               </Box>
-            </React.Fragment>
+            </Fragment>
           );
         })}
       </Box>

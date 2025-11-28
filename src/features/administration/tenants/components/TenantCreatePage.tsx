@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Paper, Stack, Typography, Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import TenantForm from "./TenantForm";
 import { useTranslation } from "react-i18next";
 import { useUploadTenantLogo } from "../hooks/useUploadTenantLogo";
 import type { NewTenantRequest } from "..";
+import { useState } from "react";
 
 export default function TenantCreatePage() {
   const { t } = useTranslation();
@@ -16,9 +16,7 @@ export default function TenantCreatePage() {
   const { mutateAsync: uploadLogo, isPending: uploading } =
     useUploadTenantLogo();
 
-  const [selectedLogoFile, setSelectedLogoFile] = React.useState<File | null>(
-    null
-  );
+  const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
 
   const handleSubmit = async (values: NewTenantRequest) => {
     const result = await addTenant(values);

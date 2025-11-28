@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Box,
   Stack,
@@ -12,6 +11,7 @@ import {
 } from "@mui/material";
 
 import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 function toDateOnly(v?: string | Date | null) {
@@ -127,13 +127,13 @@ export function SmartForm<TValues extends Record<string, any>>({
   formProps,
   renderFooterActions,
 }: SmartFormProps<TValues>) {
-  const [values, setValues] = React.useState<TValues>(() =>
+  const [values, setValues] = useState<TValues>(() =>
     buildInitial(fields, defaultValues)
   );
   const { t } = useTranslation();
-  const [hasInteracted, setHasInteracted] = React.useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const hasDefaults =
       defaultValues && Object.keys(defaultValues as object).length > 0;
     if (!hasDefaults) return;
@@ -443,13 +443,13 @@ export function SmartForm<TValues extends Record<string, any>>({
     );
   };
 
-  const fieldsByName = React.useMemo(() => {
+  const fieldsByName = useMemo(() => {
     const map = new Map<string, FieldConfig<TValues>>();
     fields.forEach((f) => map.set(f.name, f));
     return map;
   }, [fields]);
 
-  const layoutRows: FieldConfig<TValues>[][] = React.useMemo(() => {
+  const layoutRows: FieldConfig<TValues>[][] = useMemo(() => {
     if (!rows || rows.length === 0) return fields.map((f) => [f]);
 
     return rows

@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import {
@@ -14,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { DataGridToolbar } from "./DatagridToolbar";
 import useColumnHeaderMappings from "./useColumnHeaderMappings";
 import { getGridLocaleText } from "./gridLocaleText";
+import { useEffect, useMemo, useState } from "react";
 
 type PinnedColumnsState = {
   left?: string[];
@@ -83,17 +83,17 @@ export default function ReusableDataGrid<
   const { t, i18n } = useTranslation();
   const headerMappings = useColumnHeaderMappings();
 
-  const [pinnedState, setPinnedState] = React.useState<
+  const [pinnedState, setPinnedState] = useState<
     PinnedColumnsState | undefined
   >(undefined);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const api = apiRef.current;
     if (!api) return;
     api.setDensity(isSmall ? "compact" : "standard");
   }, [isSmall, apiRef]);
 
-  const baseForScreen = React.useMemo<GridColDef<T>[]>(() => {
+  const baseForScreen = useMemo<GridColDef<T>[]>(() => {
     if (!isSmall) return columns;
 
     const actionsCol = columns.find((c) => c.field === "actions");
@@ -113,18 +113,15 @@ export default function ReusableDataGrid<
     }));
   }, [columns, isSmall]);
 
-  const columnsForScreen = React.useMemo<GridColDef<T>[]>(() => {
+  const columnsForScreen = useMemo<GridColDef<T>[]>(() => {
     return applyHeaderMappings(baseForScreen, headerMappings);
   }, [baseForScreen, headerMappings, i18n.language]);
 
-  const localeText = React.useMemo(
-    () => getGridLocaleText(t),
-    [t, i18n.language]
-  );
+  const localeText = useMemo(() => getGridLocaleText(t), [t, i18n.language]);
 
   const pinnedColumns = !isSmall ? pinnedState : undefined;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!pinnedRightField) return;
 
     setPinnedState((prev) => {

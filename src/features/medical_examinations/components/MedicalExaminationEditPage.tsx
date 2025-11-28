@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Paper, Stack, Typography, Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,6 +12,7 @@ import { useEmployees } from "../../administration/employees/hooks/useEmployees"
 import { useExaminationTypes } from "../../examination_types/hooks/useExaminationTypes";
 import { toEmployeeOptions } from "../../../lib/options/employees";
 import { toExaminationTypeOptions } from "../../../lib/options/examinationTypes";
+import { useState } from "react";
 
 export default function MedicalExaminationEditPage() {
   const { t } = useTranslation();
@@ -44,7 +44,7 @@ export default function MedicalExaminationEditPage() {
   const employeeOptions = toEmployeeOptions(employeeRows);
   const examinationTypeOptions = toExaminationTypeOptions(examinationTypesRows);
 
-  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const defaultValues: Partial<NewMedicalExaminationRequest> | undefined =
     examination && {

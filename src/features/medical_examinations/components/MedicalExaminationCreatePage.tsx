@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Button, Paper, Stack, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +11,7 @@ import { useExaminationTypes } from "../../examination_types/hooks/useExaminatio
 import type { NewMedicalExaminationRequest } from "..";
 import { toEmployeeOptions } from "../../../lib/options/employees";
 import { toExaminationTypeOptions } from "../../../lib/options/examinationTypes";
+import { useState } from "react";
 
 export default function MedicalExaminationCreatePage() {
   const { t } = useTranslation();
@@ -30,7 +30,7 @@ export default function MedicalExaminationCreatePage() {
   const employeeOptions = toEmployeeOptions(employeeRows);
   const examinationTypeOptions = toExaminationTypeOptions(examinationTypesRows);
 
-  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleSubmit = async (values: NewMedicalExaminationRequest) => {
     console.log(
