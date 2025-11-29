@@ -10,7 +10,6 @@ type Props = {
   onSubmit: (values: NewTenantRequest) => void | Promise<void>;
   busy?: boolean;
 
-  // 🆕 logo file props
   selectedLogoFile?: File | null;
   onLogoFileChange?: (file: File | null) => void;
   logoFileAccept?: string;
@@ -96,7 +95,6 @@ export default function TenantForm({
     { name: "addressState", label: t("tenants.form.field.addressState") },
     { name: "addressCountry", label: t("tenants.form.field.addressCountry") },
 
-    // 🆕 logo file field (not part of NewTenantRequest, so cast as any)
     {
       name: "logo" as any,
       label: t("tenants.form.field.logo", { defaultValue: "Logo" }),
@@ -125,7 +123,7 @@ export default function TenantForm({
           ["addressPostalCode", "addressCity"],
           ["addressState", "addressCountry"],
           ["isActive"],
-          ["logo" as any], // 🆕 logo row
+          ["logo" as any],
         ] as any
       }
       defaultValues={{

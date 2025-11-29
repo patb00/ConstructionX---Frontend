@@ -1,10 +1,13 @@
-import { Paper, Stack, Typography, Button, TextField } from "@mui/material";
+import { Paper, Stack, Typography, Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
-import { useState, useMemo } from "react";
 import { useTenant } from "../hooks/useTenant";
 import { useUpdateSubscription } from "../hooks/useUpdateSubscription";
 import { useTranslation } from "react-i18next";
+import {
+  SmartForm,
+  type FieldConfig,
+} from "../../../../components/ui/smartform/SmartForm";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 function isoToLocalInput(iso?: string | null): string {
@@ -18,6 +21,10 @@ function localInputToIso(local: string): string {
   return new Date(local).toISOString();
 }
 
+type TenantSubscriptionFormValues = {
+  validUpToDate: string;
+};
+
 export default function TenantEditPage() {
   const { t } = useTranslation();
   const { tenantId } = useParams<{ tenantId: string }>();
@@ -28,24 +35,31 @@ export default function TenantEditPage() {
   const { mutateAsync: updateSubscription, isPending } =
     useUpdateSubscription();
 
-  const initialValue = useMemo(
-    () => isoToLocalInput(tenant?.validUpToDate ?? null),
-    [tenant?.validUpToDate]
-  );
-  const [newExpirationLocal, setNewExpirationLocal] = useState<string>("");
+  if (error) return <div>{t("tenants.edit.loadError")}</div>;
 
-  const effectiveLocal = newExpirationLocal || initialValue;
+  const fields: FieldConfig<TenantSubscriptionFormValues>[] = [
+    {
+      name: "validUpToDate",
+      label: t("tenants.edit.validUntil"),
+      type: "datetime-local",
+      required: true,
+    },
+  ];
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!effectiveLocal) return;
+  const defaultValues: TenantSubscriptionFormValues | undefined = tenant && {
+    validUpToDate: isoToLocalInput(tenant.validUpToDate ?? null),
+  };
+
+  const handleSubmit = async (values: TenantSubscriptionFormValues) => {
+    if (!values.validUpToDate) return;
+
     await updateSubscription({
       tenantId,
-      newExpirationDate: localInputToIso(effectiveLocal),
+      newExpirationDate: localInputToIso(values.validUpToDate),
     });
   };
 
-  if (error) return <div>{t("tenants.edit.loadError")}</div>;
+  const busy = isLoading || isPending;
 
   return (
     <Stack spacing={2}>
@@ -77,34 +91,21 @@ export default function TenantEditPage() {
           width: "100%",
         }}
       >
-        <form onSubmit={handleSubmit}>
-          <Stack spacing={2}>
-            <Typography variant="subtitle1">
-              {t("tenants.edit.tenantLabel")}: <strong>{tenant?.name}</strong> (
-              {tenantId})
-            </Typography>
+        <Stack spacing={2}>
+          <Typography variant="subtitle1">
+            {t("tenants.edit.tenantLabel")}: <strong>{tenant?.name}</strong> (
+            {tenantId})
+          </Typography>
 
-            <TextField
-              size="small"
-              label={t("tenants.edit.validUntil")}
-              type="datetime-local"
-              value={effectiveLocal}
-              onChange={(e) => setNewExpirationLocal(e.target.value)}
-              disabled={isLoading || isPending}
-              inputProps={{ "aria-label": t("tenants.edit.validUntil") }}
-              sx={{ maxWidth: 320 }}
-            />
-
-            <Button
-              size="small"
-              type="submit"
-              variant="contained"
-              disabled={!effectiveLocal || isPending || isLoading}
-            >
-              {t("tenants.edit.save")}
-            </Button>
-          </Stack>
-        </form>
+          <SmartForm<TenantSubscriptionFormValues>
+            fields={fields}
+            rows={[["validUpToDate"]]}
+            defaultValues={defaultValues}
+            busy={busy}
+            submitLabel={t("tenants.edit.save")}
+            onSubmit={handleSubmit}
+          />
+        </Stack>
       </Paper>
     </Stack>
   );

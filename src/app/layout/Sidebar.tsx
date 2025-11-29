@@ -245,9 +245,12 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
     return mobileOpen ? (
       <Box
         sx={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 999999,
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: (t) => t.zIndex.drawer + 1,
           bgcolor: "white",
           display: "flex",
           flexDirection: "column",
@@ -259,7 +262,7 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
           </IconButton>
         </Box>
 
-        <Box sx={{ px: 0 }}>
+        <Box sx={{ flex: 1, overflowY: "auto", px: 0 }}>
           {ManagementContent}
           {SystemContent}
         </Box>

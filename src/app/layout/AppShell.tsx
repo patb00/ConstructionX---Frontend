@@ -9,19 +9,13 @@ import {
   MenuItem,
   ListItemIcon,
   ListItemText,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Stack,
-  Chip,
-  Divider,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Sidebar, { SIDEBAR_WIDTH } from "./Sidebar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { MdConstruction } from "react-icons/md";
@@ -31,12 +25,16 @@ import { useQueryClient } from "@tanstack/react-query";
 import LanguageSwitcher from "../../components/ui/languague-switch/LanguagueSwitcher";
 import { useUsers } from "../../features/administration/users/hooks/useUsers";
 import { useTranslation } from "react-i18next";
+import { ProfileDialog } from "../../components/ui/ProfileDialog";
 
 export default function AppShell() {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [profileOpen, setProfileOpen] = useState(false);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const menuOpen = Boolean(anchorEl);
   const navigate = useNavigate();
@@ -60,6 +58,20 @@ export default function AppShell() {
     return usersRows.find((u: any) => String(u.id) === String(userId)) ?? null;
   }, [usersRows, userId]);
 
+  const getUserInitials = (user: any | null) => {
+    if (!user) return "";
+
+    const first = (user.firstName || "").trim();
+    const last = (user.lastName || "").trim();
+
+    if (!first && !last) return "";
+
+    const firstInitial = first ? first[0] : "";
+    const lastInitial = last ? last[0] : "";
+
+    return `${firstInitial}${lastInitial}`.toUpperCase();
+  };
+
   const handleAvatarClick = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);
   };
@@ -77,6 +89,14 @@ export default function AppShell() {
     enqueueSnackbar(t("appShell.snackbar.loggedOut"), { variant: "info" });
     navigate("/");
   };
+
+  useEffect(() => {
+    if (!isMobile && open) {
+      setOpen(false);
+    }
+  }, [isMobile, open]);
+
+  console.log("loggedUser", loggedUser);
 
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
@@ -124,7 +144,6 @@ export default function AppShell() {
             <LanguageSwitcher />
             <Avatar
               alt={t("appShell.userAvatarAlt")}
-              src="/avatar-placeholder.png"
               onClick={handleAvatarClick}
               sx={{
                 width: 28,
@@ -132,12 +151,15 @@ export default function AppShell() {
                 cursor: "pointer",
                 bgcolor: "primary.main",
                 color: "white",
+                fontSize: 14,
                 "&:hover": { opacity: 0.85 },
               }}
               aria-controls={menuOpen ? "user-menu" : undefined}
               aria-haspopup="true"
               aria-expanded={menuOpen ? "true" : undefined}
-            />
+            >
+              {getUserInitials(loggedUser)}
+            </Avatar>
           </Box>
 
           <Menu
@@ -179,6 +201,7 @@ export default function AppShell() {
           width: "100%",
           maxWidth: "100%",
           overflowX: "clip",
+          overflowY: open ? "hidden" : "auto",
           p: 2,
           background: "#FDFDFD",
         }}
@@ -186,129 +209,17 @@ export default function AppShell() {
         <Outlet />
       </Box>
 
-      <Dialog
+      <ProfileDialog
         open={profileOpen}
         onClose={() => setProfileOpen(false)}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>{t("appShell.profile.title")}</DialogTitle>
-        <DialogContent dividers>
-          <Stack spacing={2}>
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Avatar
-                alt={t("appShell.userAvatarAlt")}
-                src="/avatar-placeholder.png"
-                sx={{ width: 48, height: 48 }}
-              />
-              <Stack>
-                <Typography variant="subtitle1" fontWeight={600}>
-                  {loggedUser
-                    ? `${loggedUser.firstName ?? ""} ${
-                        loggedUser.lastName ?? ""
-                      }`.trim() ||
-                      loggedUser.userName ||
-                      "—"
-                    : "—"}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {t("appShell.profile.userId")}: {userId ?? "—"}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {t("appShell.profile.tenant")}: {tenant ?? "—"}
-                </Typography>
-              </Stack>
-            </Stack>
-
-            <Divider />
-
-            <Stack spacing={0.5}>
-              <Typography variant="subtitle2" color="text.secondary">
-                {t("appShell.profile.userData")}
-              </Typography>
-              <Typography variant="body2">
-                {t("appShell.profile.firstName")}:{" "}
-                {loggedUser?.firstName ?? "—"}
-              </Typography>
-              <Typography variant="body2">
-                {t("appShell.profile.lastName")}: {loggedUser?.lastName ?? "—"}
-              </Typography>
-              <Typography variant="body2">
-                {t("appShell.profile.email")}: {loggedUser?.email ?? "—"}
-              </Typography>
-              <Typography variant="body2">
-                {t("appShell.profile.username")}: {loggedUser?.userName ?? "—"}
-              </Typography>
-              <Typography variant="body2">
-                {t("appShell.profile.phone")}: {loggedUser?.phoneNumber ?? "—"}
-              </Typography>
-              <Typography variant="body2">
-                {t("appShell.profile.status")}:{" "}
-                {loggedUser
-                  ? loggedUser.isActive
-                    ? t("appShell.profile.active")
-                    : t("appShell.profile.inactive")
-                  : "—"}
-              </Typography>
-            </Stack>
-
-            <Stack spacing={1}>
-              <Typography variant="subtitle2" color="text.secondary">
-                {t("appShell.profile.role")}
-              </Typography>
-              <Chip label={role ?? "—"} size="small" />
-            </Stack>
-
-            <Stack spacing={1}>
-              <Typography variant="subtitle2" color="text.secondary">
-                {t("appShell.profile.permissions", {
-                  count: permissions?.length ?? 0,
-                })}
-              </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                {(permissions ?? []).length > 0 ? (
-                  permissions.map((p) => (
-                    <Chip key={p} label={p} size="small" variant="outlined" />
-                  ))
-                ) : (
-                  <Typography variant="body2">—</Typography>
-                )}
-              </Box>
-            </Stack>
-
-            <Divider />
-
-            <Stack spacing={0.5}>
-              <Typography variant="subtitle2" color="text.secondary">
-                {t("appShell.profile.tokenStatus")}
-              </Typography>
-              <Typography variant="body2">
-                {t("appShell.profile.accessToken")}:{" "}
-                {isAccessExpired
-                  ? t("appShell.profile.expired")
-                  : t("appShell.profile.active")}
-              </Typography>
-              <Typography variant="body2">
-                {t("appShell.profile.refreshTokenExpires")}:{" "}
-                {refreshTokenExpirationDate
-                  ? new Date(refreshTokenExpirationDate).toLocaleString()
-                  : "—"}
-              </Typography>
-            </Stack>
-
-            {!loggedUser && (
-              <Typography variant="body2" color="warning.main">
-                {t("appShell.profile.notFound")}
-              </Typography>
-            )}
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setProfileOpen(false)}>
-            {t("appShell.profile.close")}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        loggedUser={loggedUser}
+        userId={userId}
+        tenant={tenant}
+        role={role}
+        permissions={permissions}
+        refreshTokenExpirationDate={refreshTokenExpirationDate}
+        isAccessExpired={isAccessExpired}
+      />
     </Box>
   );
 }

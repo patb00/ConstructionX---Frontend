@@ -9,7 +9,6 @@ import {
   Box,
   Typography,
   Stack,
-  TextField,
   Chip,
   IconButton,
   Tooltip,
@@ -25,6 +24,7 @@ import { getCommonRange } from "../utils/ranges";
 import { useTranslation } from "react-i18next";
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useMemo, useState } from "react";
+import { DatePicker } from "@mui/x-date-pickers";
 
 type EmpRange = { from: string; to: string; custom: boolean };
 
@@ -33,6 +33,15 @@ type Props = {
   open: boolean;
   onClose: () => void;
 };
+
+const toPickerValue = (value?: string | null): Date | null => {
+  if (!value) return null;
+
+  return new Date(value);
+};
+
+const fromPickerValue = (value: Date | null): string =>
+  value ? value.toISOString().slice(0, 10) : "";
 
 export default function AssignEmployeesDialog({
   constructionSiteId,
@@ -426,21 +435,30 @@ export default function AssignEmployeesDialog({
                   borderRadius: 1,
                 }}
               >
-                <TextField
+                <DatePicker
                   label={t("constructionSites.assign.global.startLabel")}
-                  type="date"
-                  size="small"
-                  value={globalFrom}
-                  onChange={(e) => onChangeGlobalFrom(e.target.value)}
-                  InputLabelProps={{ shrink: true }}
+                  value={toPickerValue(globalFrom)}
+                  onChange={(newValue) =>
+                    onChangeGlobalFrom(fromPickerValue(newValue))
+                  }
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                    },
+                  }}
                 />
-                <TextField
+
+                <DatePicker
                   label={t("constructionSites.assign.global.endLabel")}
-                  type="date"
-                  size="small"
-                  value={globalTo}
-                  onChange={(e) => onChangeGlobalTo(e.target.value)}
-                  InputLabelProps={{ shrink: true }}
+                  value={toPickerValue(globalTo)}
+                  onChange={(newValue) =>
+                    onChangeGlobalTo(fromPickerValue(newValue))
+                  }
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                    },
+                  }}
                 />
                 <Chip
                   label={
@@ -534,22 +552,30 @@ export default function AssignEmployeesDialog({
                           )}
                         </Box>
 
-                        <TextField
-                          type="date"
-                          size="small"
-                          value={r.from}
-                          onChange={(ev) => setEmpFrom(id, ev.target.value)}
-                          InputLabelProps={{ shrink: true }}
-                          error={!isValidRange(r.from, r.to)}
+                        <DatePicker
+                          value={toPickerValue(r.from)}
+                          onChange={(newValue) =>
+                            setEmpFrom(id, fromPickerValue(newValue))
+                          }
+                          slotProps={{
+                            textField: {
+                              size: "small",
+                              error: !isValidRange(r.from, r.to),
+                            },
+                          }}
                         />
 
-                        <TextField
-                          type="date"
-                          size="small"
-                          value={r.to}
-                          onChange={(ev) => setEmpTo(id, ev.target.value)}
-                          InputLabelProps={{ shrink: true }}
-                          error={!isValidRange(r.from, r.to)}
+                        <DatePicker
+                          value={toPickerValue(r.to)}
+                          onChange={(newValue) =>
+                            setEmpTo(id, fromPickerValue(newValue))
+                          }
+                          slotProps={{
+                            textField: {
+                              size: "small",
+                              error: !isValidRange(r.from, r.to),
+                            },
+                          }}
                         />
 
                         <Box sx={{ display: "flex", justifyContent: "center" }}>
