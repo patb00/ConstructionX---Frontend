@@ -32,7 +32,11 @@ export default function TenantForm({
   onLogoFileChange,
   logoFileAccept = "image/*",
 }: Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const rawLang = i18n.language?.split("-")[0] ?? "en";
+  const supported = ["en", "de", "hr"] as const;
+  const currentLang = supported.includes(rawLang as any) ? rawLang : "en";
 
   const fields: FieldConfig<NewTenantRequest>[] = [
     {
@@ -116,7 +120,7 @@ export default function TenantForm({
         { label: "Deutsch", value: "de" },
         { label: "Hrvatski", value: "hr" },
       ],
-      defaultValue: "en",
+      defaultValue: currentLang,
     },
     {},
   ];
@@ -162,7 +166,7 @@ export default function TenantForm({
         addressCity: "",
         addressState: "",
         addressCountry: "",
-        defaultLanguage: defaultValues?.defaultLanguage ?? "en",
+        defaultLanguage: defaultValues?.defaultLanguage ?? (currentLang as any),
         ...defaultValues,
       }}
       busy={busy}
