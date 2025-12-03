@@ -31,6 +31,7 @@ export type NewTenantRequest = {
   addressCity?: string | null;
   addressState?: string | null;
   addressCountry?: string | null;
+  defaultLanguage?: string | null;
 };
 
 export type UpdateSubscriptionRequest = {

@@ -18,6 +18,5 @@ export const medicalExaminationsRoutes: RouteObject = {
     { index: true, element: <MedicalExaminationsListPage /> },
     { path: "create", element: <MedicalExaminationCreatePage /> },
     { path: ":id/edit", element: <MedicalExaminationEditPage /> },
-    /* { path: ":id/details", element: <MedicalExaminationDetailsPage /> }, */
   ],
 };

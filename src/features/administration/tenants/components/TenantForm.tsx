@@ -105,6 +105,20 @@ export default function TenantForm({
         accept: logoFileAccept,
       },
     } as any,
+    {
+      name: "defaultLanguage",
+      label: t("tenants.form.field.defaultLanguage", {
+        defaultValue: "Default Language",
+      }),
+      type: "select",
+      options: [
+        { label: "English", value: "en" },
+        { label: "Deutsch", value: "de" },
+        { label: "Hrvatski", value: "hr" },
+      ],
+      defaultValue: "en",
+    },
+    {},
   ];
 
   return (
@@ -122,6 +136,7 @@ export default function TenantForm({
           ["addressStreet"],
           ["addressPostalCode", "addressCity"],
           ["addressState", "addressCountry"],
+          ["defaultLanguage"],
           ["isActive"],
           ["logo" as any],
         ] as any
@@ -147,7 +162,7 @@ export default function TenantForm({
         addressCity: "",
         addressState: "",
         addressCountry: "",
-
+        defaultLanguage: defaultValues?.defaultLanguage ?? "en",
         ...defaultValues,
       }}
       busy={busy}
