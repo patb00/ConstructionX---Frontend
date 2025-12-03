@@ -34,6 +34,27 @@ export type NewTenantRequest = {
   defaultLanguage?: string | null;
 };
 
+export type UpdateTenantRequest = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  oib: string;
+  vatNumber: string;
+  registrationNumber: string;
+  companyCode: string;
+  contactPhone: string;
+  websiteUrl: string;
+  addressStreet: string;
+  addressPostalCode: string;
+  addressCity: string;
+  addressState: string;
+  addressCountry: string;
+
+  defaultLanguage: string;
+  notes: string;
+};
+
 export type UpdateSubscriptionRequest = {
   tenantId: TenantId;
   newExpirationDate: string;
