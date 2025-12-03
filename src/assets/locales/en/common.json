@@ -566,7 +566,8 @@
         "addressPostalCode": "Postal Code",
         "addressCity": "City",
         "addressState": "State",
-        "addressCountry": "Country"
+        "addressCountry": "Country",
+        "defaultLanguage": "Default language"
       },
       "submit": "Save"
     },

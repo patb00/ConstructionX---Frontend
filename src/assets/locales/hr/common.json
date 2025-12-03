@@ -565,7 +565,8 @@
         "addressPostalCode": "Poštanski broj",
         "addressCity": "Grad",
         "addressState": "Županija",
-        "addressCountry": "Država"
+        "addressCountry": "Država",
+        "defaultLanguage": "Zadani jezik"
       },
       "submit": "Spremi"
     },

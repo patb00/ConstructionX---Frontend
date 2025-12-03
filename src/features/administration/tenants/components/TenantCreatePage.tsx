@@ -21,9 +21,8 @@ export default function TenantCreatePage() {
   const handleSubmit = async (values: NewTenantRequest) => {
     const result = await addTenant(values);
 
-    const tenant = (result as any)?.data;
     const tenantId: string | undefined =
-      tenant?.id ?? tenant?.identifier ?? tenant?.tenantId;
+      (result as any)?.data || (result as any)?.tenantId;
 
     if (!tenantId) {
       navigate("/app/administration/tenants");

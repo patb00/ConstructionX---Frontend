@@ -37,7 +37,7 @@ export default function LanguageSwitcher() {
         inputProps={{ "aria-label": "Language" }}
         sx={(theme) => ({
           height: 32,
-          bgcolor: "rgba(255,255,255,0.9)",
+          bgcolor: "#FDFDFD",
           boxShadow: "0 0 0 1px rgba(0,0,0,0.04)",
 
           "& .MuiOutlinedInput-notchedOutline": { border: "none" },

@@ -566,7 +566,8 @@
         "addressPostalCode": "Postleitzahl",
         "addressCity": "Stadt",
         "addressState": "Bundesland",
-        "addressCountry": "Land"
+        "addressCountry": "Land",
+        "defaultLanguage": "Standardsprache"
       },
       "submit": "Speichern"
     },
