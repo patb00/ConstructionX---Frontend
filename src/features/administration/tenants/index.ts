@@ -1,6 +1,7 @@
 export type TenantId = string;
 
 export type Tenant = {
+  id: string;
   identifier: string;
   name: string;
   connectionString: string | null;
@@ -9,6 +10,20 @@ export type Tenant = {
   lastName: string;
   validUpToDate: string;
   isActive: boolean;
+  oib: string;
+  vatNumber: string;
+  registrationNumber: string;
+  companyCode: string;
+  contactPhone: string;
+  websiteUrl: string;
+  addressStreet: string;
+  addressPostalCode: string;
+  addressCity: string;
+  addressState: string;
+  addressCountry: string;
+  defaultLanguage: string;
+  logoFileName: string;
+  notes: string;
 };
 
 export type NewTenantRequest = {
@@ -50,7 +65,6 @@ export type UpdateTenantRequest = {
   addressCity: string;
   addressState: string;
   addressCountry: string;
-
   defaultLanguage: string;
   notes: string;
 };

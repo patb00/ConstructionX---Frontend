@@ -8,6 +8,9 @@ import {
   SmartForm,
   type FieldConfig,
 } from "../../../../components/ui/smartform/SmartForm";
+import TenantEditForm, { type TenantEditFormValues } from "./TenantEditForm";
+import { useUpdateTenant } from "../hooks/useUpdateTenant";
+import type { UpdateTenantRequest } from "..";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 function isoToLocalInput(iso?: string | null): string {
@@ -34,6 +37,8 @@ export default function TenantEditPage() {
   const { data: tenant, isLoading, error } = useTenant(tenantId);
   const { mutateAsync: updateSubscription, isPending } =
     useUpdateSubscription();
+  const { mutateAsync: updateTenant, isPending: isUpdatingTenant } =
+    useUpdateTenant();
 
   if (error) return <div>{t("tenants.edit.loadError")}</div>;
 
@@ -50,6 +55,38 @@ export default function TenantEditPage() {
     validUpToDate: isoToLocalInput(tenant.validUpToDate ?? null),
   };
 
+  const editDefaultValues: Partial<TenantEditFormValues> | undefined =
+    tenant && {
+      email: tenant.email ?? "",
+      firstName: tenant.firstName ?? "",
+      lastName: tenant.lastName ?? "",
+      oib: tenant.oib ?? "",
+      vatNumber: tenant.vatNumber ?? "",
+      registrationNumber: tenant.registrationNumber ?? "",
+      companyCode: tenant.companyCode ?? "",
+      contactPhone: tenant.contactPhone ?? "",
+      websiteUrl: tenant.websiteUrl ?? "",
+      addressStreet: tenant.addressStreet ?? "",
+      addressPostalCode: tenant.addressPostalCode ?? "",
+      addressCity: tenant.addressCity ?? "",
+      addressState: tenant.addressState ?? "",
+      addressCountry: tenant.addressCountry ?? "",
+      defaultLanguage: tenant.defaultLanguage ?? "en",
+      notes: tenant.notes ?? "",
+    };
+
+  const handleEditSubmit = async (values: TenantEditFormValues) => {
+    const payload: UpdateTenantRequest = {
+      id: tenantId,
+      ...values,
+    };
+
+    await updateTenant({
+      tenantId,
+      payload,
+    });
+  };
+
   const handleSubmit = async (values: TenantSubscriptionFormValues) => {
     if (!values.validUpToDate) return;
 
@@ -60,6 +97,7 @@ export default function TenantEditPage() {
   };
 
   const busy = isLoading || isPending;
+  const busyEdit = isLoading || isUpdatingTenant;
 
   return (
     <Stack spacing={2}>
@@ -104,6 +142,23 @@ export default function TenantEditPage() {
             busy={busy}
             submitLabel={t("tenants.edit.save")}
             onSubmit={handleSubmit}
+          />
+        </Stack>
+      </Paper>
+      <Paper
+        elevation={0}
+        sx={{
+          border: (t) => `1px solid ${t.palette.divider}`,
+          p: 2,
+          width: "100%",
+        }}
+      >
+        <Stack spacing={2}>
+          {" "}
+          <TenantEditForm
+            defaultValues={editDefaultValues}
+            busy={busyEdit}
+            onSubmit={handleEditSubmit}
           />
         </Stack>
       </Paper>
