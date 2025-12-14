@@ -15,7 +15,15 @@ import { RowActions } from "../../../components/ui/datagrid/RowActions";
 
 export default function VehiclesTable() {
   const { t } = useTranslation();
-  const { vehiclesRows, vehiclesColumns, error, isLoading } = useVehicles();
+  const {
+    vehiclesRows,
+    vehiclesColumns,
+    total,
+    paginationModel,
+    setPaginationModel,
+    error,
+    isLoading,
+  } = useVehicles();
   const deleteVehicle = useDeleteVehicle();
   const navigate = useNavigate();
   const can = useCan();
@@ -126,6 +134,10 @@ export default function VehiclesTable() {
         getDetailPanelContent={renderDetailPanel}
         getDetailPanelHeight={getDetailPanelHeight}
         detailPanelMode="mobile-only"
+        paginationMode="server"
+        rowCount={total}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
       />
 
       <PermissionGate guard={{ permission: "Permission.Vehicles.Delete" }}>

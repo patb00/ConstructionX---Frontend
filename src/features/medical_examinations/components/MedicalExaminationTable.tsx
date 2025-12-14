@@ -19,6 +19,9 @@ export default function MedicalExaminationsTable() {
   const {
     medicalExaminationsRows,
     medicalExaminationsColumns,
+    total,
+    paginationModel,
+    setPaginationModel,
     error,
     isLoading,
   } = useMedicalExaminations();
@@ -158,6 +161,10 @@ export default function MedicalExaminationsTable() {
         getDetailPanelContent={renderDetailPanel}
         getDetailPanelHeight={getDetailPanelHeight}
         detailPanelMode="mobile-only"
+        paginationMode="server"
+        rowCount={total}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
       />
 
       <PermissionGate

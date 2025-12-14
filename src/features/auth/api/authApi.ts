@@ -1,4 +1,4 @@
-import { API_BASE, DEFAULT_TENANT } from "../../../lib/env";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export type LoginBody = { username: string; password: string };
 export type LoginResponse = {
@@ -14,14 +14,17 @@ export type LoginResponse = {
 
 export async function login(
   { username, password }: LoginBody,
-  tenant = DEFAULT_TENANT
+  tenant: string
 ): Promise<LoginResponse> {
+  const t = (tenant ?? "").trim();
+  if (!t) throw new Error("Tenant is required");
+
   const res = await fetch(`${API_BASE}/api/Token/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       accept: "application/json",
-      tenant,
+      tenant: t,
     },
     body: JSON.stringify({ username, password }),
   });
@@ -29,7 +32,10 @@ export async function login(
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
-    const message = data?.Messages?.[0];
+    const message =
+      data?.Messages?.[0] ||
+      data?.messages?.[0] ||
+      `Login failed (${res.status})`;
     throw new Error(message);
   }
 
@@ -39,11 +45,10 @@ export async function login(
     isSuccessfull: data.isSuccessfull ?? data.IsSuccessfull ?? false,
   };
 }
-
 export type RefreshBody = {
   currentJWT: string;
   currentRefreshToken: string;
-  refreshTokenExpirationDate: string; // ISO
+  refreshTokenExpirationDate: string;
 };
 
 export type RefreshResponse = {
@@ -70,7 +75,6 @@ export async function refreshToken(
     body: JSON.stringify(body),
   });
 
-  // Some servers return 200 + error object; we surface both cases
   const json = await res.json().catch(() => ({}));
   if (!res.ok) {
     const msg =

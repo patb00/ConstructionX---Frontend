@@ -2,8 +2,11 @@ import type {
   AssignEmployeesRequest,
   AssignToolsRequest,
   AssignVehiclesRequest,
+  ChangeConstructionSiteStatusRequest,
   ConstructionSite,
+  GetConstructionSitesQuery,
   NewConstructionSiteRequest,
+  PagedResult,
   UpdateConstructionSiteRequest,
 } from "..";
 import { authFetch } from "../../../lib/authFetch";
@@ -39,10 +42,41 @@ export const ConstructionSiteApi = {
     return res.data;
   },
 
-  getAll: async (): Promise<ConstructionSite[]> => {
-    const res = await authFetch<ApiEnvelope<ConstructionSite[]>>(
-      `${base}/get-all`
+  getAll: async (
+    query?: GetConstructionSitesQuery
+  ): Promise<PagedResult<ConstructionSite>> => {
+    const params = new URLSearchParams();
+
+    if (query?.startDate) params.append("StartDate", query.startDate);
+    if (query?.plannedEndDate)
+      params.append("PlannedEndDate", query.plannedEndDate);
+    if (query?.status !== undefined)
+      params.append("Status", String(query.status));
+
+    if (query?.location) params.append("Location", query.location);
+    if (query?.siteManagerId !== undefined)
+      params.append("SiteManagerId", String(query.siteManagerId));
+    if (query?.employeeId !== undefined)
+      params.append("EmployeeId", String(query.employeeId));
+    if (query?.toolId !== undefined)
+      params.append("ToolId", String(query.toolId));
+    if (query?.vehicleId !== undefined)
+      params.append("VehicleId", String(query.vehicleId));
+
+    if (query?.sortBy) params.append("SortBy", query.sortBy);
+    if (query?.sortDirection)
+      params.append("SortDirection", query.sortDirection);
+
+    params.append("Page", String(query?.page ?? 1));
+    params.append("PageSize", String(query?.pageSize ?? 20));
+
+    const qs = params.toString();
+    const url = qs ? `${base}/get-all?${qs}` : `${base}/get-all`;
+
+    const res = await authFetch<ApiEnvelope<PagedResult<ConstructionSite>>>(
+      url
     );
+
     return res.data;
   },
 
@@ -62,6 +96,12 @@ export const ConstructionSiteApi = {
 
   assignVehicles: async (payload: AssignVehiclesRequest) => {
     return authFetch<ApiEnvelope<number[]>>(`${base}/assign-vehicles`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+  },
+  changeStatus: async (payload: ChangeConstructionSiteStatusRequest) => {
+    return authFetch<ApiEnvelope<string>>(`${base}/status`, {
       method: "PUT",
       body: JSON.stringify(payload),
     });

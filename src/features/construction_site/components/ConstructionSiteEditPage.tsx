@@ -1,54 +1,70 @@
 import { Paper, Stack, Typography, Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+
 import ConstructionSiteForm from "./ConstructionSiteForm";
-import type { NewConstructionSiteRequest } from "..";
+
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { useConstructionSite } from "../hooks/useConstructionSite";
 import { useUpdateConstructionSite } from "../hooks/useUpdateConstructionSite";
-import { useTranslation } from "react-i18next";
+import type { ConstructionSiteFormValues } from "..";
 
 export default function ConstructionSiteEditPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const siteId = Number(id);
-  if (!Number.isFinite(siteId))
+
+  if (!Number.isFinite(siteId)) {
     return <div>{t("constructionSites.edit.invalidUrlId")}</div>;
+  }
 
   const navigate = useNavigate();
+
   const {
     data: site,
     isLoading: siteLoading,
     error,
   } = useConstructionSite(siteId);
-  const { mutate: updateSite, isPending } = useUpdateConstructionSite();
 
+  const { mutate: updateSite, isPending } = useUpdateConstructionSite();
   const { employeeRows = [], isLoading: employeesLoading } = useEmployees();
+
   const managerOptions = [
     { value: null, label: t("constructionSites.form.manager.none") },
-    ...(employeeRows ?? []).map((e: any) => ({
+    ...employeeRows.map((e: any) => ({
       value: e.id,
       label: `${e.firstName ?? ""} ${e.lastName ?? ""}`.trim(),
     })),
   ];
 
-  const defaultValues: NewConstructionSiteRequest | undefined = site && {
-    name: site.name ?? "",
-    location: site.location ?? "",
-    startDate: site.startDate ?? "",
-    plannedEndDate: site.plannedEndDate ?? "",
-    siteManagerId: site.siteManagerId ?? 0,
-    description: site.description ?? null,
+  const defaultValues: Partial<ConstructionSiteFormValues> | undefined =
+    site && {
+      name: site.name ?? "",
+      location: site.location ?? "",
+      startDate: site.startDate ?? "",
+      plannedEndDate: site.plannedEndDate ?? "",
+      siteManagerId: site.siteManagerId ?? null,
+      description: site.description ?? null,
+    };
+
+  const handleSubmit = (values: ConstructionSiteFormValues) => {
+    updateSite(
+      {
+        id: siteId,
+        ...values,
+      } as any,
+      {
+        onSuccess: () => navigate("/app/constructionSites"),
+      }
+    );
   };
 
-  const handleSubmit = (values: NewConstructionSiteRequest) => {
-    const idForUpdate = typeof site?.id === "number" ? site.id : siteId;
-    updateSite({ id: idForUpdate, ...values } as any, {
-      onSuccess: () => navigate("/app/constructionSites"),
-    });
-  };
+  if (error) {
+    return <div>{t("constructionSites.edit.loadError")}</div>;
+  }
 
-  if (error) return <div>{t("constructionSites.edit.loadError")}</div>;
+  const busy = siteLoading || isPending || employeesLoading;
 
   return (
     <Stack spacing={2}>
@@ -61,6 +77,7 @@ export default function ConstructionSiteEditPage() {
         <Typography variant="h5" fontWeight={600}>
           {t("constructionSites.edit.title")}
         </Typography>
+
         <Button
           size="small"
           variant="outlined"
@@ -79,8 +96,9 @@ export default function ConstructionSiteEditPage() {
         <ConstructionSiteForm
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
-          busy={siteLoading || isPending || employeesLoading}
+          busy={busy}
           managerOptions={managerOptions}
+          showStatus={false}
         />
       </Paper>
     </Stack>

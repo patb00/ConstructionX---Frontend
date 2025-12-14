@@ -19,3 +19,10 @@ export function isExpired(token: string, skewSeconds = 15): boolean {
   const now = Math.floor(Date.now() / 1000);
   return now >= claims.exp - skewSeconds;
 }
+
+export function getTenantFromJwt(jwt: string | null): string | null {
+  if (!jwt) return null;
+  const claims = decodeJwt(jwt);
+  const t = (claims?.tenant ?? "").toString().trim();
+  return t || null;
+}

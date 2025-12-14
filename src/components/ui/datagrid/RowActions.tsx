@@ -14,6 +14,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CheckIcon from "@mui/icons-material/Check";
 import BlockIcon from "@mui/icons-material/Block";
 import SecurityIcon from "@mui/icons-material/Security";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 
 export type RowActionsLabels = {
   view?: string;
@@ -22,6 +23,7 @@ export type RowActionsLabels = {
   activate?: string;
   deactivate?: string;
   roles?: string;
+  status?: string;
 };
 
 type RowActionsProps = {
@@ -32,6 +34,7 @@ type RowActionsProps = {
   isActive?: boolean;
   toggleLoading?: boolean;
   onManageRoles?: () => void;
+  onChangeStatus?: () => void;
   disabled?: boolean;
   color?: string;
   labels?: RowActionsLabels;
@@ -46,6 +49,7 @@ export function RowActions({
   isActive,
   toggleLoading,
   onManageRoles,
+  onChangeStatus,
   disabled,
   color = "#F1B103",
   labels,
@@ -53,8 +57,8 @@ export function RowActions({
 }: RowActionsProps) {
   const theme = useTheme();
 
-  const errorColor = theme.palette.error.main; // #FF6666
-  const successColor = theme.palette.success.main; // #21D191
+  const errorColor = theme.palette.error.main;
+  const successColor = theme.palette.success.main;
 
   const normalBg = alpha(color, 0.12);
   const normalBgHover = alpha(color, 0.2);
@@ -116,7 +120,12 @@ export function RowActions({
     };
 
   const hasAnyAction =
-    onView || onEdit || onDelete || onToggleActive || onManageRoles;
+    onView ||
+    onEdit ||
+    onDelete ||
+    onToggleActive ||
+    onManageRoles ||
+    onChangeStatus; // ⭐ updated
 
   if (!hasAnyAction) return null;
 
@@ -166,6 +175,24 @@ export function RowActions({
         </Tooltip>
       )}
 
+      {/* CHANGE STATUS  */}
+      {onChangeStatus && (
+        <Tooltip title={labels?.status ?? "Promijeni status"}>
+          <span>
+            <Button
+              variant="contained"
+              size="small"
+              sx={iconButtonSx}
+              disabled={disabled}
+              onClick={handleClick(onChangeStatus)}
+              {...buttonProps}
+            >
+              <AutorenewIcon sx={{ fontSize: 16 }} />
+            </Button>
+          </span>
+        </Tooltip>
+      )}
+
       {/* DELETE */}
       {onDelete && (
         <Tooltip title={labels?.delete ?? "Izbriši"}>
@@ -184,6 +211,7 @@ export function RowActions({
         </Tooltip>
       )}
 
+      {/* ACTIVATE / DEACTIVATE */}
       {onToggleActive && (
         <Tooltip
           title={
@@ -213,6 +241,7 @@ export function RowActions({
         </Tooltip>
       )}
 
+      {/* MANAGE ROLES */}
       {onManageRoles && (
         <Tooltip title={labels?.roles ?? "Role"}>
           <span>

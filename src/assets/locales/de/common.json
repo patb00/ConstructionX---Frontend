@@ -143,6 +143,7 @@
         "location": "Ort",
         "startDate": "Beginn",
         "plannedEndDate": "Geplantes Ende",
+        "status": "Status",
         "siteManagerId": "Bauleiter",
         "description": "Beschreibung"
       },
@@ -156,13 +157,23 @@
       "edit": "Bearbeiten",
       "assignEmployees": "Mitarbeiter zuweisen",
       "delete": "Löschen",
-      "detailView": "Baustelle anzeigen"
+      "detailView": "Baustelle anzeigen",
+      "changeStatus": "Status ändern"
     },
     "delete": {
       "title": "Baustelle löschen?",
       "description": "Sind Sie sicher, dass Sie diese Baustelle löschen möchten?",
       "confirm": "Löschen",
       "cancel": "Abbrechen"
+    },
+    "status": {
+      "planned": "Geplant",
+      "inProgress": "In Bearbeitung",
+      "onHold": "Pausiert",
+      "completed": "Abgeschlossen",
+      "cancelled": "Abgebrochen",
+      "dialogTitle": "Status ändern",
+      "dialogFieldLabel": "Status"
     }
   },
   "common": {

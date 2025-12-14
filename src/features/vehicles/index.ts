@@ -38,3 +38,13 @@ export interface NewVehicleRequest {
 export interface UpdateVehicleRequest extends NewVehicleRequest {
   id: number;
 }
+
+export interface PagedResult<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+}

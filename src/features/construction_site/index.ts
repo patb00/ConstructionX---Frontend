@@ -58,7 +58,7 @@ export interface ConstructionSite {
   siteManagerId: number | null;
   createdDate: string;
   siteManagerName: string;
-
+  status: number;
   constructionSiteEmployees: ConstructionSiteEmployee[];
   constructionSiteTools: ConstructionSiteTool[];
   constructionSiteVehicles: ConstructionSiteVehicle[];
@@ -70,6 +70,7 @@ export interface NewConstructionSiteRequest {
   startDate: string;
   plannedEndDate: string;
   description?: string | null;
+  status: number;
   siteManagerId: number | null;
 }
 
@@ -116,4 +117,44 @@ export interface AssignVehicleItem {
 export interface AssignVehiclesRequest {
   constructionSiteId: number;
   vehicles: AssignVehicleItem[];
+}
+
+export interface PagedResult<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+}
+
+export interface GetConstructionSitesQuery {
+  startDate?: string;
+  plannedEndDate?: string;
+  status?: number;
+  location?: string;
+  siteManagerId?: number;
+  employeeId?: number;
+  toolId?: number;
+  vehicleId?: number;
+  sortBy?: string;
+  sortDirection?: "asc" | "desc";
+  page?: number;
+  pageSize?: number;
+}
+
+export interface ChangeConstructionSiteStatusRequest {
+  id: number;
+  status: number;
+}
+
+export interface ConstructionSiteFormValues {
+  name: string;
+  location: string;
+  startDate: string;
+  plannedEndDate: string;
+  description?: string | null;
+  siteManagerId: number | null;
+  status?: number;
 }

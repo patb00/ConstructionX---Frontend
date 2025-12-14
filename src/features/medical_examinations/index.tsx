@@ -31,3 +31,13 @@ export interface UpdateMedicalExaminationRequest {
   result: string;
   note: string;
 }
+
+export interface PagedResult<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+}

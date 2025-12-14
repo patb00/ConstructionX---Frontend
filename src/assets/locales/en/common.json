@@ -143,6 +143,7 @@
         "location": "Location",
         "startDate": "Start",
         "plannedEndDate": "Planned end",
+        "status": "Status",
         "siteManagerId": "Construction site manager",
         "description": "Description"
       },
@@ -156,13 +157,23 @@
       "edit": "Edit",
       "assignEmployees": "Assign employees",
       "delete": "Delete",
-      "detailView": "View site"
+      "detailView": "View site",
+      "changeStatus": "Change status"
     },
     "delete": {
       "title": "Delete construction site?",
       "description": "Are you sure you want to delete this construction site?",
       "confirm": "Delete",
       "cancel": "Cancel"
+    },
+    "status": {
+      "planned": "Planned",
+      "inProgress": "In progress",
+      "onHold": "On hold",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "dialogTitle": "Change status",
+      "dialogFieldLabel": "Status"
     }
   },
   "common": {

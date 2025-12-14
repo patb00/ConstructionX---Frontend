@@ -8,6 +8,9 @@ import {
   type GridValidRowModel,
   useGridApiRef,
   type GridRowParams,
+  type GridPaginationModel,
+  type GridFilterModel,
+  type GridColumnVisibilityModel,
 } from "@mui/x-data-grid-pro";
 import { useTranslation } from "react-i18next";
 import { DataGridToolbar } from "./DatagridToolbar";
@@ -36,9 +39,20 @@ export type ReusableDataGridProps<
   renderListViewCell?: never;
   listViewColumns?: never;
 
+  paginationMode?: "client" | "server";
+  rowCount?: number;
+  paginationModel?: GridPaginationModel;
+  onPaginationModelChange?: (model: GridPaginationModel) => void;
+
+  columnVisibilityModel?: GridColumnVisibilityModel;
+
   getDetailPanelContent?: (params: GridRowParams<T>) => React.ReactNode;
   getDetailPanelHeight?: (params: GridRowParams<T>) => number;
-  detailPanelMode?: DetailPanelMode; // 👈 NEW
+  detailPanelMode?: DetailPanelMode;
+
+  filterMode?: "client" | "server";
+  filterModel?: GridFilterModel;
+  onFilterModelChange?: (model: GridFilterModel) => void;
 };
 
 function applyHeaderMappings<T extends GridValidRowModel>(
@@ -76,6 +90,14 @@ export default function ReusableDataGrid<
   getDetailPanelContent,
   getDetailPanelHeight,
   detailPanelMode = "all",
+  paginationMode = "client",
+  rowCount,
+  paginationModel,
+  onPaginationModelChange,
+  columnVisibilityModel,
+  filterMode,
+  filterModel,
+  onFilterModelChange,
 }: ReusableDataGridProps<T>) {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -156,11 +178,20 @@ export default function ReusableDataGrid<
       getRowId={getRowId}
       disableRowSelectionOnClick
       autoHeight={isSmall}
-      initialState={{
-        pagination: { paginationModel: { page: 0, pageSize } },
-      }}
-      pageSizeOptions={[5, 10, 25, 50]}
+      paginationMode={paginationMode}
+      rowCount={paginationMode === "server" ? rowCount : undefined}
+      paginationModel={paginationModel}
+      onPaginationModelChange={onPaginationModelChange}
+      initialState={
+        paginationModel
+          ? undefined
+          : {
+              pagination: { paginationModel: { page: 0, pageSize } },
+            }
+      }
+      pageSizeOptions={[5, 10, 25, 50, 100]}
       slots={{ toolbar: DataGridToolbar }}
+      pagination
       slotProps={{
         toolbar: {
           color: toolbarColor,
@@ -191,6 +222,10 @@ export default function ReusableDataGrid<
       getDetailPanelHeight={
         shouldUseDetailPanel ? getDetailPanelHeight : undefined
       }
+      filterMode={filterMode}
+      filterModel={filterModel}
+      onFilterModelChange={onFilterModelChange}
+      columnVisibilityModel={columnVisibilityModel}
       sx={{
         border: "none",
         backgroundColor: "#fff",

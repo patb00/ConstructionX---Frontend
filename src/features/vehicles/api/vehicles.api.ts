@@ -1,4 +1,9 @@
-import type { Vehicle, NewVehicleRequest, UpdateVehicleRequest } from "..";
+import type {
+  Vehicle,
+  NewVehicleRequest,
+  UpdateVehicleRequest,
+  PagedResult,
+} from "..";
 import { authFetch } from "../../../lib/authFetch";
 import type { ApiEnvelope } from "../../administration/tenants";
 
@@ -30,8 +35,10 @@ export const VehiclesApi = {
     return res.data;
   },
 
-  getAll: async (): Promise<Vehicle[]> => {
-    const res = await authFetch<ApiEnvelope<Vehicle[]>>(`${base}/get-all`);
+  getAll: async (page: number, pageSize: number) => {
+    const res = await authFetch<ApiEnvelope<PagedResult<Vehicle>>>(
+      `${base}/get-all?Page=${page}&PageSize=${pageSize}`
+    );
     return res.data;
   },
 };

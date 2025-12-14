@@ -7,17 +7,24 @@ export function useLogin(
 ): UseMutationResult<LoginResponse, Error, LoginBody> {
   const setTokens = useAuthStore((s) => s.setTokens);
   const setMustChangePassword = useAuthStore((s) => s.setMustChangePassword);
+
   return useMutation<LoginResponse, Error, LoginBody>({
-    mutationFn: (body) => login(body, tenant),
+    mutationFn: (body) => {
+      const t = (tenant ?? "").trim();
+      if (!t) throw new Error("Tenant is required");
+      return login(body, t);
+    },
     onSuccess: (data) => {
       if (!data.isSuccessfull)
         throw new Error(data.messages?.[0] || "Login failed");
+
       const {
         jwt,
         refreshToken,
         refreshTokenExpirationDate,
         mustChangePassword,
       } = data.data;
+
       setTokens(jwt, refreshToken, refreshTokenExpirationDate);
       setMustChangePassword(!!mustChangePassword);
     },

@@ -1,6 +1,7 @@
 import type {
   MedicalExamination,
   NewMedicalExaminationRequest,
+  PagedResult,
   UpdateMedicalExaminationRequest,
 } from "..";
 import { authFetch } from "../../../lib/authFetch";
@@ -38,9 +39,9 @@ export const MedicalExaminationsApi = {
     return res.data;
   },
 
-  getAll: async (): Promise<MedicalExamination[]> => {
-    const res = await authFetch<ApiEnvelope<MedicalExamination[]>>(
-      `${base}/get-all`
+  getAll: async (page: number, pageSize: number) => {
+    const res = await authFetch<ApiEnvelope<PagedResult<MedicalExamination>>>(
+      `${base}/get-all?Page=${page}&PageSize=${pageSize}`
     );
     return res.data;
   },

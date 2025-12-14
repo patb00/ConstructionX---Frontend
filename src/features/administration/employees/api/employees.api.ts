@@ -7,6 +7,7 @@ import type {
   Employee,
   NewEmployeeRequest,
   UpdateEmployeeRequest,
+  PagedResult,
 } from "..";
 import type { ApiEnvelope } from "../../tenants";
 
@@ -45,8 +46,11 @@ export const EmployeesApi = {
     return res.data;
   },
 
-  getAll: async (): Promise<Employee[]> => {
-    const res = await authFetch<ApiEnvelope<Employee[]>>(`${base}/get-all`);
+  // ✅ PAGED getAll like Tools
+  getAll: async (page: number, pageSize: number) => {
+    const res = await authFetch<ApiEnvelope<PagedResult<Employee>>>(
+      `${base}/get-all?Page=${page}&PageSize=${pageSize}`
+    );
     return res.data;
   },
 

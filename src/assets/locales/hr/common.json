@@ -143,6 +143,7 @@
         "location": "Lokacija",
         "startDate": "Početak",
         "plannedEndDate": "Planirani završetak",
+        "status": "Status",
         "siteManagerId": "Voditelj gradilišta",
         "description": "Opis"
       },
@@ -156,13 +157,23 @@
       "edit": "Uredi",
       "assignEmployees": "Dodijeli zaposlenike",
       "delete": "Izbriši",
-      "detailView": "Pregled gradilišta"
+      "detailView": "Pregled gradilišta",
+      "changeStatus": "Promijeni status"
     },
     "delete": {
       "title": "Izbriši gradilište?",
       "description": "Jeste li sigurni da želite izbrisati gradilište?",
       "confirm": "Obriši",
       "cancel": "Odustani"
+    },
+    "status": {
+      "planned": "Planirano",
+      "inProgress": "U tijeku",
+      "onHold": "Na čekanju",
+      "completed": "Završeno",
+      "cancelled": "Otkazano",
+      "dialogTitle": "Promijeni status",
+      "dialogFieldLabel": "Status"
     }
   },
   "common": {

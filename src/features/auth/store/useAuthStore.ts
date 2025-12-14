@@ -3,9 +3,6 @@ import { deleteCookie, getCookie, setCookie } from "../../../lib/cookie";
 import { isExpired, decodeJwt } from "../../../lib/jwt";
 
 const ACCESS_COOKIE = "auth_jwt";
-const REFRESH_COOKIE = "auth_rtok";
-const REFRESH_EXP_COOKIE = "auth_rtok_exp";
-const TENANT_COOKIE = "auth_tenant";
 const MCP_COOKIE = "auth_mcp";
 
 export type AuthState = {
@@ -19,7 +16,9 @@ export type AuthState = {
   userId: string | null;
   mustChangePassword: boolean;
   hasHydrated: boolean;
+
   setTenant: (tenant: string) => void;
+
   setPermissions: (perms: string[]) => void;
   setRole: (role: string | null) => void;
   setMustChangePassword: (v: boolean) => void;
@@ -42,12 +41,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   hasHydrated: false,
 
   setTenant: (tenant) => {
-    setCookie(TENANT_COOKIE, tenant, { days: 30 });
     set({ tenant });
   },
 
   setPermissions: (perms) => set({ permissions: perms ?? [] }),
-
   setRole: (role) => set({ role: role ?? null }),
 
   setMustChangePassword: (v) => {
@@ -58,12 +55,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   loadFromCookies: () => {
     const jwt = getCookie(ACCESS_COOKIE);
-    const rt = getCookie(REFRESH_COOKIE);
-    const exp = getCookie(REFRESH_EXP_COOKIE);
-    const tenantCookie = getCookie(TENANT_COOKIE);
     const mcp = getCookie(MCP_COOKIE);
 
-    let tenant = tenantCookie || null;
+    let tenant: string | null = null;
     let permissions: string[] = [];
     let userId: string | null = null;
     let role: string | null = null;
@@ -71,7 +65,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (jwt) {
       const claims = decodeJwt(jwt) as any;
       if (claims) {
-        tenant = tenant ?? claims.tenant ?? null;
+        tenant = claims.tenant ?? null;
         if (Array.isArray(claims.permission)) permissions = claims.permission;
 
         role =
@@ -92,8 +86,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     set({
       jwt: jwt || null,
-      refreshToken: rt || null,
-      refreshTokenExpirationDate: exp || null,
+      refreshToken: null,
+      refreshTokenExpirationDate: null,
       tenant,
       permissions,
       role,
@@ -106,10 +100,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   setTokens: (jwt, refreshToken, refreshExpISO) => {
     setCookie(ACCESS_COOKIE, jwt, { days: 7 });
-    setCookie(REFRESH_COOKIE, refreshToken, { days: 30 });
-    setCookie(REFRESH_EXP_COOKIE, refreshExpISO, { days: 30 });
 
     const claims = decodeJwt(jwt) as any;
+
+    const tenant = claims?.tenant ?? null;
     const perms = Array.isArray(claims?.permission) ? claims.permission : [];
 
     const role =
@@ -128,6 +122,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       jwt,
       refreshToken,
       refreshTokenExpirationDate: refreshExpISO,
+      tenant,
       permissions: perms,
       role,
       userId,
@@ -137,10 +132,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   clear: () => {
     deleteCookie(ACCESS_COOKIE);
-    deleteCookie(REFRESH_COOKIE);
-    deleteCookie(REFRESH_EXP_COOKIE);
-    deleteCookie(TENANT_COOKIE);
     deleteCookie(MCP_COOKIE);
+
     set({
       jwt: null,
       refreshToken: null,

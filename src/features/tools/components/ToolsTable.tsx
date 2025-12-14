@@ -16,7 +16,15 @@ import { RowActions } from "../../../components/ui/datagrid/RowActions";
 
 export default function ToolsTable() {
   const { t } = useTranslation();
-  const { toolsRows, toolsColumns, error, isLoading } = useTools();
+  const {
+    toolsRows,
+    toolsColumns,
+    total,
+    paginationModel,
+    setPaginationModel,
+    error,
+    isLoading,
+  } = useTools();
   const deleteTool = useDeleteTool();
   const navigate = useNavigate();
   const can = useCan();
@@ -147,6 +155,10 @@ export default function ToolsTable() {
         getDetailPanelContent={renderDetailPanel}
         getDetailPanelHeight={getDetailPanelHeight}
         detailPanelMode="mobile-only"
+        paginationMode="server"
+        rowCount={total}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
       />
 
       <PermissionGate guard={{ permission: "Permission.Tools.Delete" }}>

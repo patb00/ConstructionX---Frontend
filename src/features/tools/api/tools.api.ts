@@ -1,4 +1,4 @@
-import type { Tool, NewToolRequest, UpdateToolRequest } from "..";
+import type { Tool, NewToolRequest, UpdateToolRequest, PagedResult } from "..";
 import { authFetch } from "../../../lib/authFetch";
 import type { ApiEnvelope } from "../../administration/tenants";
 
@@ -30,8 +30,10 @@ export const ToolsApi = {
     return res.data;
   },
 
-  getAll: async (): Promise<Tool[]> => {
-    const res = await authFetch<ApiEnvelope<Tool[]>>(`${base}/get-all`);
+  getAll: async (page: number, pageSize: number) => {
+    const res = await authFetch<ApiEnvelope<PagedResult<Tool>>>(
+      `${base}/get-all?Page=${page}&PageSize=${pageSize}`
+    );
     return res.data;
   },
 };

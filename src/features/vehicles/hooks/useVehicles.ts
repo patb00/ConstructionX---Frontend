@@ -1,25 +1,34 @@
 import { useQuery } from "@tanstack/react-query";
-
+import { useState } from "react";
 import type { GridColDef } from "@mui/x-data-grid";
-import type { Vehicle } from "..";
+import type { Vehicle, PagedResult } from "..";
 import { vehiclesKeys } from "../api/vehicles.keys";
 import { VehiclesApi } from "../api/vehicles.api";
 
 interface TransformedVehiclesData {
   columnDefs: GridColDef<Vehicle>[];
   rowDefs: Vehicle[];
+  total: number;
 }
 
 export const useVehicles = () => {
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 25,
+  });
+
   const { data, error, isLoading, isError } = useQuery<
-    Vehicle[],
+    PagedResult<Vehicle>,
     Error,
     TransformedVehiclesData
   >({
-    queryKey: vehiclesKeys.list(),
-    queryFn: VehiclesApi.getAll,
-    select: (rows): TransformedVehiclesData => {
-      if (!rows?.length) return { columnDefs: [], rowDefs: [] };
+    queryKey: vehiclesKeys.list(paginationModel.page, paginationModel.pageSize),
+    queryFn: () =>
+      VehiclesApi.getAll(paginationModel.page + 1, paginationModel.pageSize),
+    select: (paged): TransformedVehiclesData => {
+      const rows = paged.items ?? [];
+      if (!rows.length)
+        return { columnDefs: [], rowDefs: [], total: paged.total };
 
       const allKeys = Array.from(new Set(rows.flatMap(Object.keys)));
 
@@ -35,14 +44,18 @@ export const useVehicles = () => {
         };
       });
 
-      const rowDefs = rows.map((r) => ({ ...r, id: r.id }));
-      return { columnDefs, rowDefs };
+      const rowDefs = rows.map((r) => ({ ...r, id: (r as any).id }));
+      return { columnDefs, rowDefs, total: paged.total };
     },
+    placeholderData: (prev) => prev,
   });
 
   return {
     vehiclesRows: data?.rowDefs ?? [],
     vehiclesColumns: data?.columnDefs ?? [],
+    total: data?.total ?? 0,
+    paginationModel,
+    setPaginationModel,
     error,
     isLoading,
     isError,

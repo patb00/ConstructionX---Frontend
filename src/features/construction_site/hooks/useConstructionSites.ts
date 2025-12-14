@@ -1,131 +1,100 @@
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import type { ConstructionSite } from "..";
-import type { GridColDef } from "@mui/x-data-grid";
+import type { GridFilterModel } from "@mui/x-data-grid";
+import type { GridPaginationModel } from "@mui/x-data-grid-pro";
+import type { GetConstructionSitesQuery } from "..";
 import { constructionSitesKeys } from "../api/construction-site.keys";
 import { ConstructionSiteApi } from "../api/construction-site.api";
-import { useTranslation } from "react-i18next";
 
-interface TransformedConstructionSitesData {
-  columnDefs: GridColDef<ConstructionSite>[];
-  rowDefs: ConstructionSite[];
+function toApiDate(value: unknown): string | undefined {
+  if (!value) return undefined;
+
+  const date = value instanceof Date ? value : new Date(String(value));
+
+  if (isNaN(date.getTime())) return undefined;
+
+  return date.toISOString().split("T")[0];
+}
+
+function mapFiltersToQuery(
+  filterModel: GridFilterModel
+): Partial<GetConstructionSitesQuery> {
+  const query: Partial<GetConstructionSitesQuery> = {};
+
+  for (const item of filterModel.items) {
+    if (item.value == null || item.value === "") continue;
+
+    switch (item.field) {
+      case "status":
+        query.status = Number(item.value);
+        break;
+
+      case "location":
+        query.location = String(item.value);
+        break;
+
+      case "siteManagerId":
+        query.siteManagerId = Number(item.value);
+        break;
+
+      case "employeeId":
+        query.employeeId = Number(item.value);
+        break;
+
+      case "toolId":
+        query.toolId = Number(item.value);
+        break;
+
+      case "vehicleId":
+        query.vehicleId = Number(item.value);
+        break;
+
+      case "startDate":
+        query.startDate = toApiDate(item.value);
+        break;
+
+      case "plannedEndDate":
+        query.plannedEndDate = toApiDate(item.value);
+        break;
+    }
+  }
+
+  return query;
 }
 
 export const useConstructionSites = () => {
-  const { t } = useTranslation();
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: 20,
+  });
 
-  const { data, error, isLoading } = useQuery<
-    ConstructionSite[],
-    Error,
-    TransformedConstructionSitesData
-  >({
-    queryKey: constructionSitesKeys.list(),
-    queryFn: ConstructionSiteApi.getAll,
-    select: (rows): TransformedConstructionSitesData => {
-      if (!rows?.length) return { columnDefs: [], rowDefs: [] };
+  const [filterModel, setFilterModel] = useState<GridFilterModel>({
+    items: [],
+  });
 
-      const allKeys = Array.from(new Set(rows.flatMap(Object.keys)));
+  const queryParams = useMemo(
+    () => ({
+      page: paginationModel.page + 1,
+      pageSize: paginationModel.pageSize,
+      ...mapFiltersToQuery(filterModel),
+    }),
+    [paginationModel, filterModel]
+  );
 
-      const columnDefs: GridColDef[] = allKeys.map((key) => {
-        const headerName = t(`common.columns.${key}`, {
-          defaultValue: key
-            .replace(/_/g, " ")
-            .replace(/\b\w/g, (l) => l.toUpperCase()),
-        });
-
-        if (key === "constructionSiteEmployees") {
-          return {
-            field: key,
-            headerName: t(
-              "common.columns.constructionSiteEmployees",
-              "Zaposlenici"
-            ),
-            width: 350,
-            renderCell: (params) => {
-              const employees = params.value;
-              if (!Array.isArray(employees) || employees.length === 0)
-                return "";
-              return employees
-                .map((e: any) => {
-                  const name = `${e.firstName ?? ""} ${
-                    e.lastName ?? ""
-                  }`.trim();
-                  const range =
-                    e.dateFrom && e.dateTo ? `(${e.dateFrom}–${e.dateTo})` : "";
-                  return `${name} ${range}`.trim();
-                })
-                .join(", ");
-            },
-          };
-        }
-
-        if (key === "constructionSiteTools") {
-          return {
-            field: key,
-            headerName: t("common.columns.constructionSiteTools", "Alati"),
-            width: 420,
-            renderCell: (params) => {
-              const tools = params.value;
-              if (!Array.isArray(tools) || tools.length === 0) return "";
-              return tools
-                .map((t: any) => {
-                  const title = t.name ?? t.model ?? t.description ?? "—";
-                  const inv = t.inventoryNumber
-                    ? ` (${t.inventoryNumber})`
-                    : "";
-                  const status = t.status ? ` – ${t.status}` : "";
-                  const range =
-                    t.dateFrom && t.dateTo ? ` ${t.dateFrom}–${t.dateTo}` : "";
-                  return `${title}${inv}${status}${range}`;
-                })
-                .join("; ");
-            },
-          };
-        }
-
-        if (key === "constructionSiteVehicles") {
-          return {
-            field: key,
-            headerName: t("common.columns.constructionSiteVehicles", "Vozila"),
-            width: 500,
-            renderCell: (params) => {
-              const vehicles = params.value;
-              if (!Array.isArray(vehicles) || vehicles.length === 0) return "";
-              return vehicles
-                .map((v: any) => {
-                  const title =
-                    v.name ??
-                    [v.brand, v.model].filter(Boolean).join(" ") ??
-                    "—";
-                  const reg = v.registrationNumber
-                    ? ` (${v.registrationNumber})`
-                    : "";
-                  const status = v.status ? ` – ${v.status}` : "";
-                  const range =
-                    v.dateFrom && v.dateTo ? ` ${v.dateFrom}–${v.dateTo}` : "";
-                  return `${title}${reg}${status}${range}`;
-                })
-                .join("; ");
-            },
-          };
-        }
-
-        return {
-          field: key,
-          headerName,
-          width: 180,
-        };
-      });
-
-      const rowDefs = rows.map((r) => ({ ...r, id: r.id }));
-
-      return { columnDefs, rowDefs };
-    },
+  const { data, isLoading, error } = useQuery({
+    queryKey: [...constructionSitesKeys.list(), paginationModel, filterModel],
+    queryFn: () => ConstructionSiteApi.getAll(queryParams),
+    placeholderData: (prev) => prev,
   });
 
   return {
-    constructionSitesRows: data?.rowDefs ?? [],
-    constructionSitesColumns: data?.columnDefs ?? [],
-    error,
+    rows: data?.items ?? [],
+    total: data?.total ?? 0,
+    paginationModel,
+    setPaginationModel,
+    filterModel,
+    setFilterModel,
     isLoading,
+    error,
   };
 };

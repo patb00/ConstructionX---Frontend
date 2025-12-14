@@ -1,10 +1,8 @@
 import { useAuthStore } from "../features/auth/store/useAuthStore";
 import { getCookie, setCookie, deleteCookie } from "./cookie";
+import { getTenantFromJwt } from "./jwt";
 
 const ACCESS_COOKIE = "auth_jwt";
-const REFRESH_COOKIE = "auth_rtok";
-const REFRESH_EXP_COOKIE = "auth_rtok_exp";
-const TENANT_COOKIE = "auth_tenant";
 
 let refreshInFlight: Promise<string | null> | null = null;
 
@@ -27,8 +25,7 @@ export async function authFetch<T = any>(
   options: RequestInit = {}
 ): Promise<T> {
   const jwt = getCookie(ACCESS_COOKIE);
-  const refreshToken = getCookie(REFRESH_COOKIE);
-  const tenant = getCookie(TENANT_COOKIE);
+  const refreshToken = useAuthStore.getState().refreshToken;
 
   const headers = new Headers(options.headers || {});
   if (!headers.has("Accept")) headers.set("Accept", "application/json");
@@ -38,34 +35,37 @@ export async function authFetch<T = any>(
     headers.set("Content-Type", "application/json");
   }
 
+  const tenant = getTenantFromJwt(jwt);
   if (tenant) headers.set("tenant", tenant);
   if (jwt) headers.set("Authorization", `Bearer ${jwt}`);
 
   let res = await fetch(url, { ...options, headers });
 
-  if (res.status === 401 && refreshToken) {
+  if (res.status === 401 && refreshToken && jwt) {
     if (!refreshInFlight) {
-      refreshInFlight = refreshTokens(jwt!, refreshToken);
+      refreshInFlight = refreshTokens(jwt, refreshToken);
     }
     const newJwt = await refreshInFlight;
 
     if (newJwt) {
       const retryHeaders = new Headers(options.headers || {});
-      if (!retryHeaders.has("Accept"))
+      if (!retryHeaders.has("Accept")) {
         retryHeaders.set("Accept", "application/json");
+      }
 
       const isRetryFormData = options.body instanceof FormData;
       if (!isRetryFormData && !retryHeaders.has("Content-Type")) {
         retryHeaders.set("Content-Type", "application/json");
       }
 
-      if (tenant) retryHeaders.set("tenant", tenant);
+      const retryTenant = getTenantFromJwt(newJwt);
+      if (retryTenant) retryHeaders.set("tenant", retryTenant);
+
       retryHeaders.set("Authorization", `Bearer ${newJwt}`);
 
       res = await fetch(url, { ...options, headers: retryHeaders });
     } else {
-      const store = useAuthStore.getState();
-      store.clear();
+      useAuthStore.getState().clear();
     }
   }
 
@@ -97,21 +97,22 @@ export async function authFetchBlob(
   options: RequestInit = {}
 ): Promise<Blob> {
   const jwt = getCookie(ACCESS_COOKIE);
-  const refreshToken = getCookie(REFRESH_COOKIE);
-  const tenant = getCookie(TENANT_COOKIE);
+  const refreshToken = useAuthStore.getState().refreshToken;
 
   const headers = new Headers(options.headers || {});
   if (!headers.has("Accept")) {
     headers.set("Accept", "application/octet-stream");
   }
+
+  const tenant = getTenantFromJwt(jwt);
   if (tenant) headers.set("tenant", tenant);
   if (jwt) headers.set("Authorization", `Bearer ${jwt}`);
 
   let res = await fetch(url, { ...options, headers });
 
-  if (res.status === 401 && refreshToken) {
+  if (res.status === 401 && refreshToken && jwt) {
     if (!refreshInFlight) {
-      refreshInFlight = refreshTokens(jwt!, refreshToken);
+      refreshInFlight = refreshTokens(jwt, refreshToken);
     }
     const newJwt = await refreshInFlight;
 
@@ -120,12 +121,15 @@ export async function authFetchBlob(
       if (!retryHeaders.has("Accept")) {
         retryHeaders.set("Accept", "application/octet-stream");
       }
-      if (tenant) retryHeaders.set("tenant", tenant);
+
+      const retryTenant = getTenantFromJwt(newJwt);
+      if (retryTenant) retryHeaders.set("tenant", retryTenant);
+
       retryHeaders.set("Authorization", `Bearer ${newJwt}`);
+
       res = await fetch(url, { ...options, headers: retryHeaders });
     } else {
-      const store = useAuthStore.getState();
-      store.clear();
+      useAuthStore.getState().clear();
     }
   }
 
@@ -153,6 +157,10 @@ export async function refreshTokens(
   currentRefreshToken: string
 ) {
   try {
+    const refreshTokenExpirationDate =
+      useAuthStore.getState().refreshTokenExpirationDate ??
+      new Date().toISOString();
+
     const res = await fetch("/api/Token/refresh-token", {
       method: "POST",
       headers: {
@@ -162,8 +170,7 @@ export async function refreshTokens(
       body: JSON.stringify({
         currentJWT: currentJwt,
         currentRefreshToken,
-        refreshTokenExpirationDate:
-          getCookie(REFRESH_EXP_COOKIE) ?? new Date().toISOString(),
+        refreshTokenExpirationDate,
       }),
     });
 
@@ -176,28 +183,19 @@ export async function refreshTokens(
       }
     })();
 
-    if (!res.ok) {
-      return null;
-    }
+    if (!res.ok) return null;
+    if (!json?.data?.jwt) return null;
 
-    if (!json?.data?.jwt) {
-      return null;
-    }
+    const { jwt, refreshToken, refreshTokenExpirationDate: newExp } = json.data;
 
-    const { jwt, refreshToken, refreshTokenExpirationDate } = json.data;
-
+    // only persist access token
     setCookie(ACCESS_COOKIE, jwt, { days: 7 });
-    setCookie(REFRESH_COOKIE, refreshToken, { days: 30 });
-    setCookie(REFRESH_EXP_COOKIE, refreshTokenExpirationDate, { days: 30 });
 
-    const store = useAuthStore.getState();
-    store.setTokens(jwt, refreshToken, refreshTokenExpirationDate);
-
+    useAuthStore.getState().setTokens(jwt, refreshToken, newExp);
     return jwt;
-  } catch (err) {
+  } catch {
     deleteCookie(ACCESS_COOKIE);
-    deleteCookie(REFRESH_COOKIE);
-    deleteCookie(REFRESH_EXP_COOKIE);
+    useAuthStore.getState().clear();
     return null;
   } finally {
     refreshInFlight = null;

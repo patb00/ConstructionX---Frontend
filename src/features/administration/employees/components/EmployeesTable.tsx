@@ -15,7 +15,15 @@ import { RowActions } from "../../../../components/ui/datagrid/RowActions";
 
 export default function EmployeesTable() {
   const { t } = useTranslation();
-  const { employeeColumns, employeeRows, error, isLoading } = useEmployees();
+  const {
+    employeeColumns,
+    employeeRows,
+    total,
+    paginationModel,
+    setPaginationModel,
+    error,
+    isLoading,
+  } = useEmployees();
   const {
     mutate: deleteEmployee,
     isPending: busy,
@@ -125,6 +133,10 @@ export default function EmployeesTable() {
         getDetailPanelContent={renderDetailPanel}
         getDetailPanelHeight={getDetailPanelHeight}
         detailPanelMode="mobile-only"
+        paginationMode="server"
+        rowCount={total}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
       />
 
       <PermissionGate guard={{ permission: "Permission.Employees.Delete" }}>

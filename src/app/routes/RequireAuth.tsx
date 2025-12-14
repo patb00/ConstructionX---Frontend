@@ -4,6 +4,7 @@ import { useAuthStore } from "../../features/auth/store/useAuthStore";
 import { getCookie } from "../../lib/cookie";
 import { isExpired } from "../../lib/jwt";
 import { refreshTokens } from "../../lib/authFetch";
+import { Box, CircularProgress } from "@mui/material";
 
 const ACCESS_COOKIE = "auth_jwt";
 const REFRESH_COOKIE = "auth_rtok";
@@ -62,7 +63,18 @@ export function RequireAuth({
   }, [jwt, hasHydrated, setTokens]);
 
   if (!hasHydrated || checking) {
-    return <div style={{ padding: 24 }}>Checking session…</div>;
+    return (
+      <Box
+        sx={{
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (!isAuthenticated) {
