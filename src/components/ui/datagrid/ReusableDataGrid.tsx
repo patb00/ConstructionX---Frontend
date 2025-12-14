@@ -1,3 +1,4 @@
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import {
@@ -11,17 +12,15 @@ import {
   type GridPaginationModel,
   type GridFilterModel,
   type GridColumnVisibilityModel,
+  type GridPinnedColumnFields,
 } from "@mui/x-data-grid-pro";
 import { useTranslation } from "react-i18next";
+
 import { DataGridToolbar } from "./DatagridToolbar";
 import useColumnHeaderMappings from "./useColumnHeaderMappings";
 import { getGridLocaleText } from "./gridLocaleText";
-import { useEffect, useMemo, useState } from "react";
 
-type PinnedColumnsState = {
-  left?: string[];
-  right?: string[];
-};
+import { useAuthStore } from "../../../features/auth/store/useAuthStore";
 
 export type DetailPanelMode = "all" | "mobile-only" | "desktop-only";
 
@@ -36,8 +35,6 @@ export type ReusableDataGridProps<
   toolbarColor?: string;
   pinnedRightField?: string;
   loading?: boolean;
-  renderListViewCell?: never;
-  listViewColumns?: never;
 
   paginationMode?: "client" | "server";
   rowCount?: number;
@@ -53,6 +50,9 @@ export type ReusableDataGridProps<
   filterMode?: "client" | "server";
   filterModel?: GridFilterModel;
   onFilterModelChange?: (model: GridFilterModel) => void;
+
+  storageKey?: string;
+  persistState?: boolean;
 };
 
 function applyHeaderMappings<T extends GridValidRowModel>(
@@ -62,18 +62,34 @@ function applyHeaderMappings<T extends GridValidRowModel>(
   if (!mappings.length) return columns;
 
   const map = new Map<string, string>();
-  for (const { original, translated } of mappings) {
+  for (const { original, translated } of mappings)
     map.set(original, translated);
-  }
 
   return columns.map((c) => {
     const current = (c.headerName ?? c.field) as string;
     const translated = map.get(current);
-    if (translated) {
-      return { ...c, headerName: translated };
-    }
-    return c;
+    return translated ? { ...c, headerName: translated } : c;
   });
+}
+
+type PersistedGridState = {
+  version: number;
+  columnVisibilityModel?: GridColumnVisibilityModel;
+  filterModel?: GridFilterModel;
+  pinnedColumns?: GridPinnedColumnFields;
+  columnWidths?: Record<string, number>;
+  columnOrder?: string[];
+};
+
+const GRID_STATE_VERSION = 1;
+
+function safeJsonParse<T>(value: string | null): T | null {
+  if (!value) return null;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return null;
+  }
 }
 
 export default function ReusableDataGrid<
@@ -98,6 +114,8 @@ export default function ReusableDataGrid<
   filterMode,
   filterModel,
   onFilterModelChange,
+  storageKey,
+  persistState = true,
 }: ReusableDataGridProps<T>) {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -105,15 +123,78 @@ export default function ReusableDataGrid<
   const { t, i18n } = useTranslation();
   const headerMappings = useColumnHeaderMappings();
 
-  const [pinnedState, setPinnedState] = useState<
-    PinnedColumnsState | undefined
-  >(undefined);
+  const userId = useAuthStore((s) => s.userId);
+  const effectiveStorageKey =
+    persistState && userId && storageKey ? `dg:${userId}:${storageKey}` : null;
+
+  const [pinnedState, setPinnedState] = useState<GridPinnedColumnFields>();
+
+  const [localVisibilityModel, setLocalVisibilityModel] = useState<
+    GridColumnVisibilityModel | undefined
+  >(columnVisibilityModel);
+
+  const [localFilterModel, setLocalFilterModel] = useState<
+    GridFilterModel | undefined
+  >(filterModel);
+
+  const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
+  const [columnOrder, setColumnOrder] = useState<string[]>([]);
 
   useEffect(() => {
     const api = apiRef.current;
     if (!api) return;
     api.setDensity(isSmall ? "compact" : "standard");
   }, [isSmall, apiRef]);
+
+  useEffect(() => {
+    if (!effectiveStorageKey) return;
+
+    const persisted = safeJsonParse<PersistedGridState>(
+      localStorage.getItem(effectiveStorageKey)
+    );
+
+    if (!persisted || persisted.version !== GRID_STATE_VERSION) return;
+
+    if (persisted.columnVisibilityModel)
+      setLocalVisibilityModel(persisted.columnVisibilityModel);
+    if (persisted.filterModel) setLocalFilterModel(persisted.filterModel);
+    if (persisted.pinnedColumns) setPinnedState(persisted.pinnedColumns);
+    if (persisted.columnWidths) setColumnWidths(persisted.columnWidths);
+    if (persisted.columnOrder?.length) setColumnOrder(persisted.columnOrder);
+  }, [effectiveStorageKey]);
+
+  useEffect(() => {
+    if (!effectiveStorageKey) return;
+
+    const handle = window.setTimeout(() => {
+      const next: PersistedGridState = {
+        version: GRID_STATE_VERSION,
+        columnVisibilityModel: localVisibilityModel,
+        filterModel: localFilterModel,
+        pinnedColumns: pinnedState,
+        columnWidths,
+        columnOrder,
+      };
+      localStorage.setItem(effectiveStorageKey, JSON.stringify(next));
+    }, 300);
+
+    return () => window.clearTimeout(handle);
+  }, [
+    effectiveStorageKey,
+    localVisibilityModel,
+    localFilterModel,
+    pinnedState,
+    columnWidths,
+    columnOrder,
+  ]);
+
+  useEffect(() => {
+    if (columnVisibilityModel) setLocalVisibilityModel(columnVisibilityModel);
+  }, [columnVisibilityModel]);
+
+  useEffect(() => {
+    if (filterModel) setLocalFilterModel(filterModel);
+  }, [filterModel]);
 
   const baseForScreen = useMemo<GridColDef<T>[]>(() => {
     if (!isSmall) return columns;
@@ -136,22 +217,53 @@ export default function ReusableDataGrid<
   }, [columns, isSmall]);
 
   const columnsForScreen = useMemo<GridColDef<T>[]>(() => {
-    return applyHeaderMappings(baseForScreen, headerMappings);
-  }, [baseForScreen, headerMappings, i18n.language]);
+    let cols = applyHeaderMappings(baseForScreen, headerMappings);
+
+    if (!isSmall && columnOrder.length) {
+      const byField = new Map(cols.map((c) => [c.field, c] as const));
+
+      const ordered: GridColDef<T>[] = [];
+      for (const f of columnOrder) {
+        const col = byField.get(f);
+        if (col) ordered.push(col);
+        byField.delete(f);
+      }
+
+      ordered.push(...Array.from(byField.values()));
+      cols = ordered;
+    }
+
+    if (!isSmall && Object.keys(columnWidths).length) {
+      cols = cols.map((c) => {
+        const w = columnWidths[c.field];
+        if (!w) return c;
+        return { ...c, width: w, flex: undefined };
+      });
+    }
+
+    return cols;
+  }, [
+    baseForScreen,
+    headerMappings,
+    i18n.language,
+    isSmall,
+    columnOrder,
+    columnWidths,
+  ]);
 
   const localeText = useMemo(() => getGridLocaleText(t), [t, i18n.language]);
 
   const pinnedColumns = !isSmall ? pinnedState : undefined;
 
   useEffect(() => {
-    if (!pinnedRightField) return;
+    if (!pinnedRightField || isSmall) return;
 
     setPinnedState((prev) => {
       const right = new Set(prev?.right ?? []);
-      if (!right.has(pinnedRightField)) right.add(pinnedRightField);
+      right.add(pinnedRightField);
       return { ...prev, right: Array.from(right) };
     });
-  }, [pinnedRightField]);
+  }, [pinnedRightField, isSmall]);
 
   const shouldUseDetailPanel =
     !!getDetailPanelContent &&
@@ -167,6 +279,27 @@ export default function ReusableDataGrid<
           return true;
       }
     })();
+
+  const handleColumnWidthChange = useCallback(
+    (params: any) => {
+      if (isSmall) return;
+      const field: string | undefined = params?.colDef?.field;
+      const width: number | undefined = params?.width;
+      if (!field || typeof width !== "number") return;
+
+      setColumnWidths((prev) => ({ ...prev, [field]: width }));
+    },
+    [isSmall]
+  );
+  const handleColumnOrderChange = useCallback(() => {
+    if (isSmall) return;
+
+    const api: any = apiRef.current;
+    if (!api?.getAllColumns) return;
+
+    const fields = api.getAllColumns().map((c: any) => c.field);
+    setColumnOrder(fields);
+  }, [apiRef, isSmall]);
 
   return (
     <DataGridPro
@@ -202,10 +335,7 @@ export default function ReusableDataGrid<
           },
           printOptions: { hideFooter: false, hideToolbar: false },
         },
-        loadingOverlay: {
-          variant: "skeleton",
-          noRowsVariant: "skeleton",
-        },
+        loadingOverlay: { variant: "skeleton", noRowsVariant: "skeleton" },
       }}
       sortingOrder={["asc", "desc"]}
       disableColumnMenu={isSmall}
@@ -214,7 +344,7 @@ export default function ReusableDataGrid<
       rowHeight={isSmall ? 56 : 52}
       pinnedColumns={pinnedColumns}
       onPinnedColumnsChange={(newPinned) =>
-        setPinnedState(newPinned as PinnedColumnsState)
+        setPinnedState(newPinned as GridPinnedColumnFields)
       }
       getDetailPanelContent={
         shouldUseDetailPanel ? getDetailPanelContent : undefined
@@ -223,9 +353,15 @@ export default function ReusableDataGrid<
         shouldUseDetailPanel ? getDetailPanelHeight : undefined
       }
       filterMode={filterMode}
-      filterModel={filterModel}
-      onFilterModelChange={onFilterModelChange}
-      columnVisibilityModel={columnVisibilityModel}
+      filterModel={filterModel ?? localFilterModel}
+      onFilterModelChange={(m) => {
+        setLocalFilterModel(m);
+        onFilterModelChange?.(m);
+      }}
+      columnVisibilityModel={columnVisibilityModel ?? localVisibilityModel}
+      onColumnVisibilityModelChange={(m) => setLocalVisibilityModel(m)}
+      onColumnWidthChange={handleColumnWidthChange}
+      onColumnOrderChange={handleColumnOrderChange}
       sx={{
         border: "none",
         backgroundColor: "#fff",
@@ -250,9 +386,7 @@ export default function ReusableDataGrid<
           borderTopRightRadius: 8,
         },
 
-        "& .MuiDataGrid-filler": {
-          backgroundColor: "#fff",
-        },
+        "& .MuiDataGrid-filler": { backgroundColor: "#fff" },
 
         "& .MuiDataGrid-columnHeaders .MuiDataGrid-filler": {
           backgroundColor: "#F4F6FF",

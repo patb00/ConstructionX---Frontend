@@ -147,6 +147,7 @@ export default function ToolsTable() {
   return (
     <>
       <ReusableDataGrid<Tool>
+        storageKey="tools"
         rows={toolsRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}
