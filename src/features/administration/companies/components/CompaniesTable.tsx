@@ -142,6 +142,7 @@ export default function CompaniesTable() {
   return (
     <>
       <ReusableDataGrid<Company>
+        storageKey="companies"
         rows={companiesRows}
         columns={columnsWithActions}
         getRowId={(r) => r.id}

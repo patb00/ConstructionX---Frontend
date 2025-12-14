@@ -255,6 +255,8 @@ export default function ReusableDataGrid<
 
   const pinnedColumns = !isSmall ? pinnedState : undefined;
 
+  const effectiveFilterModel = filterModel ?? localFilterModel;
+
   useEffect(() => {
     if (!pinnedRightField || isSmall) return;
 
@@ -352,12 +354,23 @@ export default function ReusableDataGrid<
       getDetailPanelHeight={
         shouldUseDetailPanel ? getDetailPanelHeight : undefined
       }
-      filterMode={filterMode}
-      filterModel={filterModel ?? localFilterModel}
+      filterMode={filterMode ?? "client"}
+      {...(effectiveFilterModel ? { filterModel: effectiveFilterModel } : {})}
       onFilterModelChange={(m) => {
-        setLocalFilterModel(m);
-        onFilterModelChange?.(m);
+        const normalized: GridFilterModel = {
+          ...m,
+          items: (m.items ?? []).map((it, idx) => ({
+            id: it.id ?? idx,
+            field: it.field,
+            operator: it.operator,
+            value: it.value,
+          })),
+        };
+
+        setLocalFilterModel(normalized);
+        onFilterModelChange?.(normalized);
       }}
+      disableColumnFilter={false}
       columnVisibilityModel={columnVisibilityModel ?? localVisibilityModel}
       onColumnVisibilityModelChange={(m) => setLocalVisibilityModel(m)}
       onColumnWidthChange={handleColumnWidthChange}
