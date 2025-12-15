@@ -1044,6 +1044,59 @@
       "confirmNewPassword": "Confirm new password",
       "currentPassword": "Current password",
       "submit": "Save password"
+    },
+    "fields": {
+      "tenant": "Tenant (OIB)",
+      "username": "Username",
+      "password": "Password",
+      "email": "Email"
+    },
+    "login": {
+      "title": "Sign in",
+      "submit": "Sign in",
+      "validation": {
+        "fillAll": "Please fill in all fields."
+      },
+      "success": "Successfully signed in!",
+      "error": "Sign in failed."
+    },
+    "forgot": {
+      "title": "Forgot your password?",
+      "submit": "Send instructions",
+      "validation": {
+        "tenantAndEmail": "Please enter tenant and email."
+      },
+      "success": "Password reset instructions have been sent.",
+      "error": "Failed to send password reset instructions."
+    },
+    "reset": {
+      "title": "Set a new password",
+      "invalidLink": "The link is invalid or incomplete. Please request a new password reset link.",
+      "tenantReadonly": "Tenant (OIB)",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "submit": "Save new password",
+      "back": "Back to sign in",
+      "success": "Password successfully changed.",
+      "error": "Password change failed.",
+      "validation": {
+        "missingParams": "Missing parameters in the link (tenant/email/token).",
+        "enterAndConfirm": "Please enter and confirm your new password.",
+        "noMatch": "Passwords do not match.",
+        "minLength": "Password must be at least {{count}} characters long."
+      }
+    },
+    "panels": {
+      "left": {
+        "title": "Forgot your password?",
+        "body": "Enter your email and we will send you reset instructions.",
+        "button": "Reset password"
+      },
+      "right": {
+        "title": "Welcome back!",
+        "body": "Sign in to continue using the application.",
+        "button": "Sign in"
+      }
     }
   },
   "assignments": {

@@ -23,6 +23,7 @@
     "examinationTypes": "Prüfarten",
     "medicalExaminations": "Medizinische Untersuchungen"
   },
+
   "constructionSites": {
     "list": {
       "title": "Baustellen",
@@ -1044,6 +1045,59 @@
       "confirmNewPassword": "Neues Passwort bestätigen",
       "currentPassword": "Aktuelles Passwort",
       "submit": "Passwort speichern"
+    },
+    "fields": {
+      "tenant": "Mandant (OIB)",
+      "username": "Benutzername",
+      "password": "Passwort",
+      "email": "E-Mail"
+    },
+    "login": {
+      "title": "Anmelden",
+      "submit": "Anmelden",
+      "validation": {
+        "fillAll": "Bitte füllen Sie alle Felder aus."
+      },
+      "success": "Erfolgreich angemeldet!",
+      "error": "Anmeldung fehlgeschlagen."
+    },
+    "forgot": {
+      "title": "Passwort vergessen?",
+      "submit": "Anweisungen senden",
+      "validation": {
+        "tenantAndEmail": "Bitte Mandant und E-Mail eingeben."
+      },
+      "success": "Anweisungen zum Zurücksetzen des Passworts wurden gesendet.",
+      "error": "Senden der Passwort-Zurücksetzen-Anweisungen fehlgeschlagen."
+    },
+    "reset": {
+      "title": "Neues Passwort festlegen",
+      "invalidLink": "Der Link ist ungültig oder unvollständig. Bitte fordern Sie einen neuen Link an.",
+      "tenantReadonly": "Mandant (OIB)",
+      "newPassword": "Neues Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "submit": "Neues Passwort speichern",
+      "back": "Zurück zur Anmeldung",
+      "success": "Passwort erfolgreich geändert.",
+      "error": "Passwortänderung fehlgeschlagen.",
+      "validation": {
+        "missingParams": "Fehlende Parameter im Link (Mandant/E-Mail/Token).",
+        "enterAndConfirm": "Bitte geben Sie das neue Passwort ein und bestätigen Sie es.",
+        "noMatch": "Passwörter stimmen nicht überein.",
+        "minLength": "Das Passwort muss mindestens {{count}} Zeichen lang sein."
+      }
+    },
+    "panels": {
+      "left": {
+        "title": "Passwort vergessen?",
+        "body": "Geben Sie Ihre E-Mail-Adresse ein, um Anweisungen zu erhalten.",
+        "button": "Passwort zurücksetzen"
+      },
+      "right": {
+        "title": "Willkommen zurück!",
+        "body": "Melden Sie sich an, um fortzufahren.",
+        "button": "Anmelden"
+      }
     }
   },
   "assignments": {

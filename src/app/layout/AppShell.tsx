@@ -96,8 +96,6 @@ export default function AppShell() {
     }
   }, [isMobile, open]);
 
-  console.log("loggedUser", loggedUser);
-
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
       <AppBar

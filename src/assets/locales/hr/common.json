@@ -1043,6 +1043,59 @@
       "confirmNewPassword": "Potvrdite novu lozinku",
       "currentPassword": "Trenutna lozinka",
       "submit": "Spremi lozinku"
+    },
+    "fields": {
+      "tenant": "OIB",
+      "username": "Korisničko ime",
+      "password": "Lozinka",
+      "email": "Email"
+    },
+    "login": {
+      "title": "Prijava",
+      "submit": "Prijava",
+      "validation": {
+        "fillAll": "Molimo ispunite sve podatke."
+      },
+      "success": "Prijava uspješna!",
+      "error": "Neuspjela prijava."
+    },
+    "forgot": {
+      "title": "Zaboravljena lozinka?",
+      "submit": "Pošalji upute",
+      "validation": {
+        "tenantAndEmail": "Molimo unesite tenant i email."
+      },
+      "success": "Upute za reset lozinke su poslane.",
+      "error": "Neuspjelo slanje uputa za reset lozinke."
+    },
+    "reset": {
+      "title": "Postavi novu lozinku",
+      "invalidLink": "Poveznica je nevažeća ili nepotpuna. Zatražite novu poveznicu za reset lozinke.",
+      "tenantReadonly": "OIB (tenant)",
+      "newPassword": "Nova lozinka",
+      "confirmPassword": "Potvrda lozinke",
+      "submit": "Spremi novu lozinku",
+      "back": "Povratak na prijavu",
+      "success": "Lozinka je uspješno promijenjena.",
+      "error": "Neuspješna promjena lozinke.",
+      "validation": {
+        "missingParams": "Nedostaju parametri u poveznici (tenant/email/token).",
+        "enterAndConfirm": "Unesite i potvrdite novu lozinku.",
+        "noMatch": "Lozinke se ne podudaraju.",
+        "minLength": "Lozinka mora imati najmanje {{count}} znakova."
+      }
+    },
+    "panels": {
+      "left": {
+        "title": "Zaboravljena lozinka?",
+        "body": "Unesite e-poštu i poslat ćemo vam upute za obnovu lozinke.",
+        "button": "Obnovi lozinku"
+      },
+      "right": {
+        "title": "Dobrodošli natrag!",
+        "body": "Prijavite se i nastavite koristiti aplikaciju.",
+        "button": "Prijava"
+      }
     }
   },
   "assignments": {

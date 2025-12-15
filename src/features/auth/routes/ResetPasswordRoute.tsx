@@ -7,8 +7,11 @@ import { AuthPanels } from "../components/AuthPanels";
 import { ResetPasswordForm } from "../components/ResetPasswordForm";
 import { useAuthStore } from "../store/useAuthStore";
 import { useResetPassword } from "../../administration/users/hooks/useResetPassword";
+import { useTranslation } from "react-i18next";
 
 export default function ResetPasswordRoute() {
+  const { t } = useTranslation();
+
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
@@ -41,23 +44,25 @@ export default function ResetPasswordRoute() {
     setServerError(undefined);
 
     if (!tenant || !email || !token) {
-      enqueueSnackbar("Nedostaju parametri u poveznici (tenant/email/token).", {
+      enqueueSnackbar(t("auth.reset.validation.missingParams"), {
         variant: "error",
       });
       return;
     }
     if (!password || !confirm) {
-      enqueueSnackbar("Unesite i potvrdite novu lozinku.", {
+      enqueueSnackbar(t("auth.reset.validation.enterAndConfirm"), {
         variant: "warning",
       });
       return;
     }
     if (password !== confirm) {
-      enqueueSnackbar("Lozinke se ne podudaraju.", { variant: "warning" });
+      enqueueSnackbar(t("auth.reset.validation.noMatch"), {
+        variant: "warning",
+      });
       return;
     }
     if (password.length < 8) {
-      enqueueSnackbar("Lozinka mora imati najmanje 8 znakova.", {
+      enqueueSnackbar(t("auth.reset.validation.minLength", { count: 8 }), {
         variant: "warning",
       });
       return;
@@ -72,13 +77,14 @@ export default function ResetPasswordRoute() {
 
     try {
       await resetPassword({ tenant, payload });
+      enqueueSnackbar(t("auth.reset.success"), { variant: "success" });
       navigate("/");
     } catch (err: any) {
       const msg =
         err?.message ||
         err?.Messages?.[0] ||
         err?.Message ||
-        "Neuspješan pokušaj promjene lozinke.";
+        t("auth.reset.error");
       setServerError(String(msg));
     }
   };
