@@ -156,6 +156,7 @@ export default function RolesTable() {
   return (
     <>
       <ReusableDataGrid<Role>
+        storageKey="roles"
         rows={rolesRows}
         columns={columnsWithActions}
         getRowId={(r) => r.id}

@@ -200,6 +200,7 @@ export default function TenantsTable() {
 
   return (
     <ReusableDataGrid<Tenant>
+      storageKey="tenants"
       rows={tenantsRows}
       columns={columnsWithActions}
       getRowId={(r) => r.identifier}

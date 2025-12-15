@@ -157,6 +157,7 @@ export default function JobPositionsTable() {
   return (
     <>
       <ReusableDataGrid<JobPosition>
+        storageKey="job_positions"
         rows={jobPositionsRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}

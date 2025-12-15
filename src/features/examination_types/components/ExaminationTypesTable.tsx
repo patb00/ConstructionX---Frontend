@@ -143,6 +143,7 @@ export default function ExaminationTypesTable() {
   return (
     <>
       <ReusableDataGrid<ExaminationType>
+        storageKey="examination_types"
         rows={examinationTypesRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}

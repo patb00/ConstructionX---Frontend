@@ -271,6 +271,7 @@ export default function ConstructionSitesTable() {
   return (
     <>
       <ReusableDataGrid<ConstructionSite>
+        storageKey="construction_sites"
         rows={rows}
         columns={columns}
         getRowId={(r) => String(r.id)}

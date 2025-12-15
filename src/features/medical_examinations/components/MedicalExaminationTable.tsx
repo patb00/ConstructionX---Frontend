@@ -153,6 +153,7 @@ export default function MedicalExaminationsTable() {
   return (
     <>
       <ReusableDataGrid<MedicalExamination>
+        storageKey="medical_examinations"
         rows={medicalExaminationsRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}

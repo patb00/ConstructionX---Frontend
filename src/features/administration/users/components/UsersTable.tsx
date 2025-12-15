@@ -214,6 +214,7 @@ export default function UsersTable() {
   return (
     <>
       <ReusableDataGrid<User>
+        storageKey="users"
         rows={usersRows}
         columns={columnsWithActions}
         getRowId={(r) => r.id}

@@ -125,6 +125,7 @@ export default function EmployeesTable() {
   return (
     <>
       <ReusableDataGrid<Employee>
+        storageKey="employees"
         rows={employeeRows}
         columns={columnsWithActions}
         getRowId={(r) => r.id}
