@@ -44,12 +44,6 @@ export default function AppShell() {
   const signOut = useAuthStore((s) => s.clear);
   const userId = useAuthStore((s) => s.userId);
   const tenant = useAuthStore((s) => s.tenant);
-  const role = useAuthStore((s) => s.role);
-  const permissions = useAuthStore((s) => s.permissions);
-  const refreshTokenExpirationDate = useAuthStore(
-    (s) => s.refreshTokenExpirationDate
-  );
-  const isAccessExpired = useAuthStore((s) => s.isAccessExpired)();
 
   const { usersRows } = useUsers();
 
@@ -213,10 +207,6 @@ export default function AppShell() {
         loggedUser={loggedUser}
         userId={userId}
         tenant={tenant}
-        role={role}
-        permissions={permissions}
-        refreshTokenExpirationDate={refreshTokenExpirationDate}
-        isAccessExpired={isAccessExpired}
       />
     </Box>
   );

@@ -1045,6 +1045,18 @@
       "currentPassword": "Current password",
       "submit": "Save password"
     },
+    "changePassword": {
+      "title": "Change password",
+      "description": "You can change your password here if you want.",
+      "open": "Change",
+      "close": "Cancel",
+      "submit": "Save",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmNewPassword": "Confirm new password",
+      "success": "Password has been changed successfully.",
+      "error": "Failed to change password."
+    },
     "fields": {
       "tenant": "Tenant (OIB)",
       "username": "Username",

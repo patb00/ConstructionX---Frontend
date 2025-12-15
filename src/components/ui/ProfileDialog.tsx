@@ -3,17 +3,21 @@ import {
   Box,
   Button,
   Chip,
+  Collapse,
   Dialog,
-  DialogActions,
   DialogContent,
-  DialogTitle,
-  Divider,
   IconButton,
   Stack,
+  TextField,
   Typography,
+  Divider,
+  Alert,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useChangePassword } from "../../features/administration/users/hooks/useChangePassword";
+import type { ChangePasswordRequest } from "../../features/administration/users";
 
 type LoggedUser = {
   id: string;
@@ -31,24 +35,13 @@ type ProfileDialogProps = {
   loggedUser: LoggedUser | null;
   userId: string | null;
   tenant: string | null;
-  role: string | null;
-  permissions: string[] | null | undefined;
-  refreshTokenExpirationDate: string | null;
-  isAccessExpired: boolean;
 };
 
 const getUserInitials = (user: LoggedUser | null) => {
   if (!user) return "";
-
-  const first = (user.firstName || "").trim();
-  const last = (user.lastName || "").trim();
-
-  if (!first && !last) return "";
-
-  const firstInitial = first ? first[0] : "";
-  const lastInitial = last ? last[0] : "";
-
-  return `${firstInitial}${lastInitial}`.toUpperCase();
+  return `${user.firstName?.[0] ?? ""}${
+    user.lastName?.[0] ?? ""
+  }`.toUpperCase();
 };
 
 export function ProfileDialog({
@@ -57,171 +50,228 @@ export function ProfileDialog({
   loggedUser,
   userId,
   tenant,
-  role,
-  permissions,
-  refreshTokenExpirationDate,
-  isAccessExpired,
 }: ProfileDialogProps) {
   const { t } = useTranslation();
+  const { mutateAsync: changePassword } = useChangePassword();
+
+  const fullName = useMemo(() => {
+    if (!loggedUser) return "—";
+    return (
+      `${loggedUser.firstName ?? ""} ${loggedUser.lastName ?? ""}`.trim() ||
+      loggedUser.userName ||
+      "—"
+    );
+  }, [loggedUser]);
+
+  const [openForm, setOpenForm] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const canSubmit =
+    Boolean(userId) &&
+    currentPassword &&
+    newPassword &&
+    confirmNewPassword &&
+    !saving;
+
+  const resetForm = () => {
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmNewPassword("");
+    setError(null);
+  };
+
+  const handleClose = () => {
+    resetForm();
+    setOpenForm(false);
+    onClose();
+  };
+
+  const handleSubmit = async () => {
+    setError(null);
+
+    if (newPassword !== confirmNewPassword) {
+      setError(t("auth.reset.validation.noMatch"));
+      return;
+    }
+
+    const payload: ChangePasswordRequest = {
+      userId: userId!,
+      currentPassword,
+      newPassword,
+      confirmNewPassword,
+    };
+
+    try {
+      setSaving(true);
+      await changePassword(payload);
+      handleClose();
+    } catch (e: any) {
+      setError(e?.message || t("auth.changePassword.error"));
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      {/* Close button like in DynamicDialog */}
-      <IconButton
-        onClick={onClose}
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+      {/* Header */}
+      <Box
         sx={{
-          position: "absolute",
-          top: 12,
-          right: 12,
-          backgroundColor: "#ffffff",
-          width: 32,
-          height: 32,
+          px: 2.25,
+          py: 1.75,
           display: "flex",
+          justifyContent: "space-between",
           alignItems: "center",
-          justifyContent: "center",
-          "&:hover": {
-            backgroundColor: "#EFF6FF",
-          },
+          borderBottom: (t) => `1px solid ${t.palette.divider}`,
+          background: "#FBFBFC",
         }}
       >
-        <CloseIcon sx={{ fontSize: 18, color: "#333" }} />
-      </IconButton>
+        <Typography fontWeight={700}>{t("appShell.menu.profile")}</Typography>
+        <IconButton onClick={handleClose} size="small">
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </Box>
 
-      <DialogTitle
-        sx={{
-          fontSize: 20,
-          fontWeight: 600,
-          pr: 6, // leave space for close button
-        }}
-      >
-        {t("appShell.profile.title")}
-      </DialogTitle>
-
-      <DialogContent dividers>
+      <DialogContent sx={{ p: 2.25 }}>
         <Stack spacing={2}>
-          {/* Header: avatar + basic info */}
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Avatar
-              alt={t("appShell.userAvatarAlt")}
-              sx={{
-                width: 48,
-                height: 48,
-                bgcolor: "primary.main",
-                color: "white",
-                fontSize: 20,
-              }}
-            >
-              {getUserInitials(loggedUser)}
-            </Avatar>
-            <Stack>
-              <Typography variant="subtitle1" fontWeight={600}>
-                {loggedUser
-                  ? `${loggedUser.firstName ?? ""} ${
-                      loggedUser.lastName ?? ""
-                    }`.trim() ||
-                    loggedUser.userName ||
-                    "—"
-                  : "—"}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {t("appShell.profile.userId")}: {userId ?? "—"}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {t("appShell.profile.tenant")}: {tenant ?? "—"}
-              </Typography>
+          {/* Profile card */}
+          <Box sx={{ border: (t) => `1px solid ${t.palette.divider}`, p: 2 }}>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Avatar sx={{ bgcolor: "primary.main", color: "white" }}>
+                {getUserInitials(loggedUser)}
+              </Avatar>
+
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography fontWeight={700}>{fullName}</Typography>
+                <Typography variant="body2" color="text.secondary" noWrap>
+                  {loggedUser?.email ?? "—"}
+                </Typography>
+              </Box>
+
+              <Chip
+                size="small"
+                label={
+                  loggedUser?.isActive
+                    ? t("appShell.profile.active")
+                    : t("appShell.profile.inactive")
+                }
+                sx={(theme) => ({
+                  fontWeight: 600,
+                  color: theme.palette.common.white,
+                  backgroundColor: loggedUser?.isActive
+                    ? theme.palette.success.main
+                    : theme.palette.error.main,
+                })}
+              />
             </Stack>
-          </Stack>
 
-          <Divider />
+            <Divider sx={{ my: 2 }} />
 
-          {/* User data */}
-          <Stack spacing={0.5}>
-            <Typography variant="subtitle2" color="text.secondary">
-              {t("appShell.profile.userData")}
-            </Typography>
-            <Typography variant="body2">
-              {t("appShell.profile.firstName")}: {loggedUser?.firstName ?? "—"}
-            </Typography>
-            <Typography variant="body2">
-              {t("appShell.profile.lastName")}: {loggedUser?.lastName ?? "—"}
-            </Typography>
-            <Typography variant="body2">
-              {t("appShell.profile.email")}: {loggedUser?.email ?? "—"}
-            </Typography>
-            <Typography variant="body2">
-              {t("appShell.profile.username")}: {loggedUser?.userName ?? "—"}
-            </Typography>
-            <Typography variant="body2">
-              {t("appShell.profile.phone")}: {loggedUser?.phoneNumber ?? "—"}
-            </Typography>
-            <Typography variant="body2">
-              {t("appShell.profile.status")}:{" "}
-              {loggedUser
-                ? loggedUser.isActive
-                  ? t("appShell.profile.active")
-                  : t("appShell.profile.inactive")
-                : "—"}
-            </Typography>
-          </Stack>
+            <Row
+              label={t("appShell.profile.username")}
+              value={loggedUser?.userName ?? "—"}
+            />
+            <Row
+              label={t("appShell.profile.phone")}
+              value={loggedUser?.phoneNumber ?? "—"}
+            />
+            <Row label={t("appShell.profile.tenant")} value={tenant ?? "—"} />
+          </Box>
 
-          {/* Role */}
-          <Stack spacing={1}>
-            <Typography variant="subtitle2" color="text.secondary">
-              {t("appShell.profile.role")}
-            </Typography>
-            <Chip label={role ?? "—"} size="small" />
-          </Stack>
+          {/* Change password */}
+          <Box sx={{ border: (t) => `1px solid ${t.palette.divider}` }}>
+            <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1 }}>
+              <Box sx={{ flex: 1 }}>
+                <Typography fontWeight={700}>
+                  {t("auth.changePassword.title")}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {t("auth.changePassword.description")}
+                </Typography>
+              </Box>
 
-          {/* Permissions */}
-          <Stack spacing={1}>
-            <Typography variant="subtitle2" color="text.secondary">
-              {t("appShell.profile.permissions", {
-                count: permissions?.length ?? 0,
-              })}
-            </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-              {(permissions ?? []).length > 0 ? (
-                permissions!.map((p) => (
-                  <Chip key={p} label={p} size="small" variant="outlined" />
-                ))
-              ) : (
-                <Typography variant="body2">—</Typography>
-              )}
+              <Button
+                size="small"
+                variant={openForm ? "outlined" : "contained"}
+                onClick={() => setOpenForm((v) => !v)}
+                sx={(theme) => ({
+                  ...(openForm && {
+                    color: theme.palette.primary.main,
+                    borderColor: theme.palette.primary.main,
+                    "&:hover": {
+                      borderColor: theme.palette.primary.dark,
+                      backgroundColor: theme.palette.action.hover,
+                    },
+                  }),
+                })}
+              >
+                {openForm
+                  ? t("auth.changePassword.close")
+                  : t("auth.changePassword.open")}
+              </Button>
             </Box>
-          </Stack>
 
-          <Divider />
+            <Collapse in={openForm} unmountOnExit>
+              <Divider />
+              <Box sx={{ p: 2 }}>
+                <Stack spacing={1.5}>
+                  {error && <Alert severity="error">{error}</Alert>}
 
-          {/* Token status */}
-          <Stack spacing={0.5}>
-            <Typography variant="subtitle2" color="text.secondary">
-              {t("appShell.profile.tokenStatus")}
-            </Typography>
-            <Typography variant="body2">
-              {t("appShell.profile.accessToken")}:{" "}
-              {isAccessExpired
-                ? t("appShell.profile.expired")
-                : t("appShell.profile.active")}
-            </Typography>
-            <Typography variant="body2">
-              {t("appShell.profile.refreshTokenExpires")}:{" "}
-              {refreshTokenExpirationDate
-                ? new Date(refreshTokenExpirationDate).toLocaleString()
-                : "—"}
-            </Typography>
-          </Stack>
+                  <TextField
+                    size="small"
+                    type="password"
+                    label={t("auth.changePassword.currentPassword")}
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                  />
+                  <TextField
+                    size="small"
+                    type="password"
+                    label={t("auth.changePassword.newPassword")}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                  <TextField
+                    size="small"
+                    type="password"
+                    label={t("auth.changePassword.confirmNewPassword")}
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  />
 
-          {!loggedUser && (
-            <Typography variant="body2" color="warning.main">
-              {t("appShell.profile.notFound")}
-            </Typography>
-          )}
+                  <Stack direction="row" justifyContent="flex-end">
+                    <Button
+                      size="small"
+                      variant="contained"
+                      disabled={!canSubmit}
+                      onClick={handleSubmit}
+                    >
+                      {t("auth.changePassword.submit")}
+                    </Button>
+                  </Stack>
+                </Stack>
+              </Box>
+            </Collapse>
+          </Box>
         </Stack>
       </DialogContent>
-
-      <DialogActions>
-        <Button onClick={onClose}>{t("appShell.profile.close")}</Button>
-      </DialogActions>
     </Dialog>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}>
+      <Typography variant="body2" color="text.secondary">
+        {label}
+      </Typography>
+      <Typography variant="body2" fontWeight={600}>
+        {value}
+      </Typography>
+    </Box>
   );
 }

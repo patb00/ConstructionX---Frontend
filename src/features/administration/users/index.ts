@@ -39,7 +39,6 @@ export type ChangePasswordRequest = {
   confirmNewPassword: string;
 };
 
-// ✅ New request types
 export type ForgotPasswordRequest = {
   email: string;
 };

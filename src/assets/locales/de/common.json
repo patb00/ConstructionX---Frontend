@@ -1046,6 +1046,18 @@
       "currentPassword": "Aktuelles Passwort",
       "submit": "Passwort speichern"
     },
+    "changePassword": {
+      "title": "Passwort ändern",
+      "description": "Hier können Sie Ihr Passwort ändern, wenn Sie möchten.",
+      "open": "Ändern",
+      "close": "Abbrechen",
+      "submit": "Speichern",
+      "currentPassword": "Aktuelles Passwort",
+      "newPassword": "Neues Passwort",
+      "confirmNewPassword": "Neues Passwort bestätigen",
+      "success": "Das Passwort wurde erfolgreich geändert.",
+      "error": "Passwortänderung fehlgeschlagen."
+    },
     "fields": {
       "tenant": "Mandant (OIB)",
       "username": "Benutzername",

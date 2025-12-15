@@ -1044,6 +1044,18 @@
       "currentPassword": "Trenutna lozinka",
       "submit": "Spremi lozinku"
     },
+    "changePassword": {
+      "title": "Promjena lozinke",
+      "description": "Ovdje možete promijeniti svoju lozinku ako to želite.",
+      "open": "Promijeni",
+      "close": "Odustani",
+      "submit": "Spremi",
+      "currentPassword": "Trenutna lozinka",
+      "newPassword": "Nova lozinka",
+      "confirmNewPassword": "Potvrdite novu lozinku",
+      "success": "Lozinka je uspješno promijenjena.",
+      "error": "Neuspješna promjena lozinke."
+    },
     "fields": {
       "tenant": "OIB",
       "username": "Korisničko ime",
