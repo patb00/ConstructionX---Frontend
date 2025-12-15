@@ -11,7 +11,7 @@ export function useDeleteTool() {
     mutationFn: (toolId: number) => ToolsApi.delete(toolId),
 
     onSuccess: (data: any) => {
-      qc.invalidateQueries({ queryKey: toolsKeys.list() });
+      qc.invalidateQueries({ queryKey: toolsKeys.lists() });
       enqueueSnackbar(data?.messages?.[0] || data?.messages, {
         variant: "success",
       });

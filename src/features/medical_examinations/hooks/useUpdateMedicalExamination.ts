@@ -15,7 +15,7 @@ export function useUpdateMedicalExamination() {
       MedicalExaminationsApi.update(payload),
 
     onSuccess: (data: any, variables) => {
-      qc.invalidateQueries({ queryKey: medicalExaminationsKeys.list() });
+      qc.invalidateQueries({ queryKey: medicalExaminationsKeys.lists() });
       qc.invalidateQueries({
         queryKey: medicalExaminationsKeys.detail(variables.id),
       });

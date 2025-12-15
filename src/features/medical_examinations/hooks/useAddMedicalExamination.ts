@@ -15,7 +15,7 @@ export function useAddMedicalExamination() {
 
     onSuccess: (data: any) => {
       console.log(data);
-      qc.invalidateQueries({ queryKey: medicalExaminationsKeys.list() });
+      qc.invalidateQueries({ queryKey: medicalExaminationsKeys.lists() });
       enqueueSnackbar(data.messages?.[0] || data?.messages, {
         variant: "success",
       });

@@ -15,7 +15,7 @@ export function useUpdateEmployee() {
       EmployeesApi.update(payload),
 
     onSuccess: (data) => {
-      qc.invalidateQueries({ queryKey: employeesKeys.list() });
+      qc.invalidateQueries({ queryKey: employeesKeys.lists() });
       enqueueSnackbar(data.messages[0] || data?.messages, {
         variant: "success",
       });

@@ -12,7 +12,7 @@ export function useDeleteMedicalExamination() {
       MedicalExaminationsApi.delete(medicalExaminationId),
 
     onSuccess: (data: any, medicalExaminationId) => {
-      qc.invalidateQueries({ queryKey: medicalExaminationsKeys.list() });
+      qc.invalidateQueries({ queryKey: medicalExaminationsKeys.lists() });
       qc.invalidateQueries({
         queryKey: medicalExaminationsKeys.detail(medicalExaminationId),
       });

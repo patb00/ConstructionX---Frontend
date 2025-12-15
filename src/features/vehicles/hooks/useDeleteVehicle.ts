@@ -10,7 +10,7 @@ export function useDeleteVehicle() {
   return useMutation({
     mutationFn: (vehicleId: number) => VehiclesApi.delete(vehicleId),
     onSuccess: (data: any) => {
-      qc.invalidateQueries({ queryKey: vehiclesKeys.list() });
+      qc.invalidateQueries({ queryKey: vehiclesKeys.lists() });
       enqueueSnackbar(data?.messages?.[0] || data?.messages || "Deleted", {
         variant: "success",
       });
