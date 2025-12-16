@@ -1,7 +1,10 @@
 import { useMemo, useState, useCallback } from "react";
-import { Box } from "@mui/material";
+import { alpha, Box, useTheme } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
-import { type GridRowParams } from "@mui/x-data-grid-pro";
+import type {
+  GridRowClassNameParams,
+  GridRowParams,
+} from "@mui/x-data-grid-pro";
 
 import type { MedicalExamination } from "..";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +19,8 @@ import { RowActions } from "../../../components/ui/datagrid/RowActions";
 
 export default function MedicalExaminationsTable() {
   const { t } = useTranslation();
+  const theme = useTheme();
+
   const {
     medicalExaminationsRows,
     medicalExaminationsColumns,
@@ -47,6 +52,7 @@ export default function MedicalExaminationsTable() {
   const handleConfirm = useCallback(() => {
     if (!pendingRow) return;
     const id = (pendingRow as any).id;
+
     deleteMedicalExamination.mutate(id, {
       onSuccess: () => {
         setConfirmOpen(false);
@@ -130,22 +136,78 @@ export default function MedicalExaminationsTable() {
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   const renderDetailPanel = useCallback(
-    (params: GridRowParams<MedicalExamination>) => {
-      return (
-        <GridDetailPanel<MedicalExamination>
-          row={params.row}
-          columns={
-            medicalExaminationsColumns as GridColDef<MedicalExamination>[]
-          }
-        />
-      );
-    },
+    (params: GridRowParams<MedicalExamination>) => (
+      <GridDetailPanel<MedicalExamination>
+        row={params.row}
+        columns={medicalExaminationsColumns as GridColDef<MedicalExamination>[]}
+      />
+    ),
     [medicalExaminationsColumns]
   );
 
   const getDetailPanelHeight = useCallback(
     (_params: GridRowParams<MedicalExamination>) => 220,
     []
+  );
+
+  const getRowClassName = useCallback(
+    (params: GridRowClassNameParams<MedicalExamination>) => {
+      const raw = (params.row as any)?.nextExaminationDate as
+        | string
+        | undefined;
+      if (!raw) return "";
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const next = new Date(raw);
+      if (Number.isNaN(next.getTime())) return "";
+      next.setHours(0, 0, 0, 0);
+
+      const diffDays =
+        (next.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+
+      return diffDays <= 30 ? "row--dueSoon" : "";
+    },
+    []
+  );
+  const dueSoonRowSx = useMemo(
+    () => ({
+      "@keyframes blink-row-error": {
+        "0%": {
+          backgroundColor: alpha(theme.palette.error.main, 0.15),
+        },
+        "50%": {
+          backgroundColor: alpha(theme.palette.error.main, 0.45),
+        },
+        "100%": {
+          backgroundColor: alpha(theme.palette.error.main, 0.15),
+        },
+      },
+
+      "& .MuiDataGrid-row.row--dueSoon": {
+        animation: "blink-row-error 1.2s infinite",
+      },
+
+      "& .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell": {
+        backgroundColor: "inherit",
+      },
+
+      "& .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell--pinnedLeft, \
+       & .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell--pinnedRight": {
+        backgroundColor: theme.palette.common.white,
+        animation: "none",
+      },
+
+      "& .MuiDataGrid-row.row--dueSoon:hover": {
+        animation: "blink-row-error 0.8s infinite",
+      },
+
+      "& .MuiDataGrid-row.row--dueSoon.Mui-selected": {
+        animation: "blink-row-error 1s infinite",
+      },
+    }),
+    [theme]
   );
 
   if (error) return <div>{t("medicalExaminations.list.error")}</div>;
@@ -166,6 +228,8 @@ export default function MedicalExaminationsTable() {
         rowCount={total}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
+        getRowClassName={getRowClassName}
+        sx={dueSoonRowSx}
       />
 
       <PermissionGate

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useMediaQuery } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { useTheme, type SxProps, type Theme } from "@mui/material/styles";
 import {
   DataGridPro,
   type GridColDef,
@@ -13,6 +13,7 @@ import {
   type GridFilterModel,
   type GridColumnVisibilityModel,
   type GridPinnedColumnFields,
+  type GridRowClassNameParams,
 } from "@mui/x-data-grid-pro";
 import { useTranslation } from "react-i18next";
 
@@ -53,6 +54,9 @@ export type ReusableDataGridProps<
 
   storageKey?: string;
   persistState?: boolean;
+
+  getRowClassName?: (params: GridRowClassNameParams<T>) => string;
+  sx?: SxProps<Theme>;
 };
 
 function applyHeaderMappings<T extends GridValidRowModel>(
@@ -116,6 +120,8 @@ export default function ReusableDataGrid<
   onFilterModelChange,
   storageKey,
   persistState = true,
+  getRowClassName,
+  sx,
 }: ReusableDataGridProps<T>) {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -375,6 +381,7 @@ export default function ReusableDataGrid<
       onColumnVisibilityModelChange={(m) => setLocalVisibilityModel(m)}
       onColumnWidthChange={handleColumnWidthChange}
       onColumnOrderChange={handleColumnOrderChange}
+      getRowClassName={getRowClassName}
       sx={{
         border: "none",
         backgroundColor: "#fff",
@@ -443,6 +450,7 @@ export default function ReusableDataGrid<
           borderBottom: "none",
           backgroundColor: "#fff",
         },
+        ...(sx ?? {}),
       }}
     />
   );
