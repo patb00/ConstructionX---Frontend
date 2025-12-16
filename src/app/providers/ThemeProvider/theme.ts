@@ -24,9 +24,15 @@ export const theme = createTheme({
         disableElevation: true,
       },
       styleOverrides: {
-        root: {
-          color: "#ffffff",
-        },
+        root: ({ ownerState, theme }) => ({
+          ...(ownerState.variant !== "contained" && {
+            color: theme.palette.primary.main,
+          }),
+
+          ...(ownerState.variant === "contained" && {
+            color: theme.palette.common.white,
+          }),
+        }),
       },
     },
 
