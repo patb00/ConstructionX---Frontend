@@ -1,5 +1,5 @@
 // signalR/TotalViews.tsx
-import { useUserHubViews } from "../signalR/hooks/useUserHubViews";
+import { useUserHubViews } from "./userHub/useUserHubViews";
 
 export function TotalViews() {
     const { totalViews, isConnected } = useUserHubViews();

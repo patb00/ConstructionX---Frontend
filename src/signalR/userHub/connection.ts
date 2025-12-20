@@ -1,18 +1,22 @@
 // signalR/userHub/connection.ts
-import { HttpTransportType, HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import {
+    HttpTransportType,
+    HubConnection,
+    HubConnectionBuilder,
+    LogLevel,
+} from "@microsoft/signalr";
+import { getSignalRJwt } from "../userHub/getSignalRJWT";
 
 let conn: HubConnection | null = null;
 
-export function getUserHubConnection(args: {
-    baseUrl: string;
-    getAccessToken: () => string;
-}): HubConnection {
+export function getUserHubConnection(baseUrl: string): HubConnection {
     if (conn) return conn;
 
     conn = new HubConnectionBuilder()
-        .withUrl(`${args.baseUrl}/hubs/user`, {
-            accessTokenFactory: args.getAccessToken,
+        .withUrl(`${baseUrl}/hubs/user`, {
+            accessTokenFactory: () => getSignalRJwt(),
             transport: HttpTransportType.WebSockets,
+            skipNegotiation: true,
         })
         .withAutomaticReconnect()
         .configureLogging(LogLevel.Information)
