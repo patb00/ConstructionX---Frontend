@@ -1,17 +1,11 @@
-// useUserHubViews.ts
-import { useEffect, useRef, useState } from "react";
-import {
-    HubConnection,
-    HubConnectionBuilder,
-    HubConnectionState,
-    HttpTransportType,
-} from "@microsoft/signalr";
-import type { View } from "../types.ts";
+// signalR/userHub/useUserHubViews.ts
+import { useEffect, useMemo, useState } from "react";
+import { HubConnectionState } from "@microsoft/signalr";
+import { getUserHubConnection } from "../connection";
+import type { ViewsState } from "../types";
 
-// prilagodi key ako token spremaš pod drugim imenom
 const getAccessToken = () => localStorage.getItem("access_token") ?? "";
 
-// eslint-safe: ne koristi any
 function getErrorMessage(err: unknown): string {
     if (err instanceof Error) return err.message;
     if (typeof err === "string") return err;
@@ -23,102 +17,78 @@ function getErrorMessage(err: unknown): string {
 }
 
 export function useUserHubViews() {
-    const [view, setView] = useState<View>({ totalViews: 0 });
+    const [view, setView] = useState<ViewsState>({ totalViews: 0 });
     const [isConnected, setIsConnected] = useState(false);
 
-    // opcionalno: ako želiš kasnije ručno stop/start
-    const connRef = useRef<HubConnection | null>(null);
+    const baseUrl = import.meta.env.VITE_API_BASE_URL as string;
+
+    const conn = useMemo(
+        () =>
+            getUserHubConnection({
+                baseUrl,
+                getAccessToken,
+            }),
+        [baseUrl]
+    );
 
     useEffect(() => {
-        const baseUrl = import.meta.env.VITE_API_BASE_URL as string;
+        let disposed = false;
 
-        const conn = new HubConnectionBuilder()
-            .withUrl(`${baseUrl}/hubs/user`, {
-                // JWT ide kao ?access_token=... (SignalR standard)
-                accessTokenFactory: getAccessToken,
-
-                // optional: forsira WS (ako želiš fallback, makni ovaj transport)
-                transport: HttpTransportType.WebSockets,
-            })
-            .withAutomaticReconnect()
-            .build();
-
-        connRef.current = conn;
-
-        const onUpdateTotalViews = (v: number) => {
-            setView({ totalViews: v });
-        };
+        const onUpdateTotalViews = (v: number) => setView({ totalViews: v });
 
         conn.on("UpdateTotalViews", onUpdateTotalViews);
 
         conn.onclose((err) => {
+            setIsConnected(false);
             console.log("[SignalR] CLOSED", {
-                hasError: !!err,
                 message: err?.message,
                 state: conn.state,
             });
-            setIsConnected(false);
         });
 
         conn.onreconnecting((err) => {
+            setIsConnected(false);
             console.log("[SignalR] RECONNECTING", {
-                hasError: !!err,
                 message: err?.message,
                 state: conn.state,
             });
-            setIsConnected(false);
         });
 
         conn.onreconnected((connectionId) => {
+            setIsConnected(true);
             console.log("[SignalR] RECONNECTED", {
                 connectionId,
                 state: conn.state,
             });
-            setIsConnected(true);
         });
-
-        let disposed = false;
 
         (async () => {
             try {
-                await conn.start();
+                if (conn.state === HubConnectionState.Disconnected) {
+                    await conn.start();
+                }
+
                 if (disposed) return;
 
-                console.log("[SignalR] CONNECTED", {
-                    connectionId: conn.connectionId,
-                    state:
-                        conn.state === HubConnectionState.Connected
-                            ? "Connected"
-                            : conn.state,
-                });
+                setIsConnected(conn.state === HubConnectionState.Connected);
 
-                setIsConnected(true);
-
-                // radi točno ono što tvoj hub trenutno radi (TotalViews++)
                 await conn.invoke("IsPageLoaded");
-            } catch (err: unknown) {
+            } catch (err) {
                 if (disposed) return;
 
-                console.log("[SignalR] START FAILED", {
+                setIsConnected(false);
+                console.log("[SignalR] START/INVOKE FAILED", {
                     message: getErrorMessage(err),
                     state: conn.state,
                 });
-
-                setIsConnected(false);
             }
         })();
 
         return () => {
             disposed = true;
-
             conn.off("UpdateTotalViews", onUpdateTotalViews);
-
-            console.log("[SignalR] STOP (cleanup)", { stateBeforeStop: conn.state });
-            void conn.stop();
-
-            connRef.current = null;
         };
-    }, []);
+    }, [conn]);
 
     return { view, totalViews: view.totalViews, isConnected };
 }
