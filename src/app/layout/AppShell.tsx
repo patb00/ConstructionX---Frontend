@@ -30,9 +30,7 @@ import { getUserInitials } from "../../utils/getUserInitials";
 import { ProfileDialog } from "../../components/ui/profile/ProfileDialog";
 import { NotificationsBootstrap } from "../../features/notifications/components/NotificationsBootstrap";
 import { NotificationsBell } from "../../features/notifications/components/NotificationsBell";
-
-
-import { stopNotificationsHubConnection } from "../../signalR/notificationsHub/connection";
+import { stopNotificationsHubConnection } from "../../lib/signalR/connection";
 
 export default function AppShell() {
   const { t } = useTranslation();
@@ -86,7 +84,6 @@ export default function AppShell() {
 
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
-      {/* NOTIFICATIONS HUB: /hubs/notifications */}
       <NotificationsBootstrap />
 
       <AppBar

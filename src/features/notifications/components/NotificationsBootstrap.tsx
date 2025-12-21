@@ -1,84 +1,76 @@
 import { useEffect, useMemo } from "react";
 import { HubConnectionState } from "@microsoft/signalr";
 import { useSnackbar } from "notistack";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { useAuthStore } from "../../auth/store/useAuthStore";
-import { getNotificationsHubConnection, stopNotificationsHubConnection } from "../../../signalR/notificationsHub/connection";
-import { useNotificationsStore } from "../store/useNotificationsStore";
-import type { NotificationDto } from "../../../signalR/notificationsHub/types";
+import {
+  getNotificationsHubConnection,
+  stopNotificationsHubConnection,
+} from "../../../lib/signalR/connection";
+import type { NotificationDto } from "../../../lib/signalR/types";
+import { notificationsKeys } from "../api/notifications.keys";
+import { NotificationToast } from "../../../components/ui/notification-toast/NotificationToast";
 
-function stripBearer(raw: string) {
-    return raw.startsWith("Bearer ") ? raw.slice(7) : raw;
-}
+const UNREAD_TAKE = 10;
 
 export function NotificationsBootstrap() {
-    const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
-    const jwt = useAuthStore((s) => s.jwt);
-    const baseUrl = import.meta.env.VITE_API_BASE_URL as string;
+  const baseUrl = import.meta.env.VITE_API_BASE_URL as string;
+  const conn = useMemo(() => getNotificationsHubConnection(baseUrl), [baseUrl]);
 
-    const conn = useMemo(() => getNotificationsHubConnection(baseUrl), [baseUrl]);
+  useEffect(() => {
+    const onReceiveNotification = (n: NotificationDto) => {
+      queryClient.setQueryData<NotificationDto[]>(
+        notificationsKeys.unread(UNREAD_TAKE),
+        (prev) => {
+          const current = prev ?? [];
+          if (current.some((x) => x.id === n.id)) return current;
+          return [n, ...current].slice(0, UNREAD_TAKE);
+        }
+      );
 
-    const upsertMany = useNotificationsStore((s) => s.upsertMany);
-    const push = useNotificationsStore((s) => s.push);
-    const reset = useNotificationsStore((s) => s.reset);
+      enqueueSnackbar("", {
+        variant: "default",
+        autoHideDuration: 15000,
+        content: (key) => (
+          <NotificationToast
+            id={key}
+            notification={n}
+            onClose={closeSnackbar}
+            onOpen={(notification) => {
+              console.log("open notification", notification.id);
+              closeSnackbar(key);
+            }}
+          />
+        ),
+      });
+    };
 
-    useEffect(() => {
-        let disposed = false;
+    conn.on("ReceiveNotification", onReceiveNotification);
 
-        const onReceiveNotification = (n: NotificationDto) => {
-            push(n);
-            const text = n.title ? `${n.title}: ${n.message}` : n.message;
-            enqueueSnackbar(text, { variant: "info" });
-            console.log("[NotificationsHub] ReceiveNotification", n);
-        };
+    (async () => {
+      try {
+        if (conn.state === HubConnectionState.Disconnected) {
+          await conn.start();
+          console.log("[NotificationsHub] connected", conn.connectionId);
+        }
+      } catch (err) {
+        console.error("[NotificationsHub] START FAILED", err);
+      }
+    })();
 
-        const onReceiveNotifications = (items: NotificationDto[]) => {
-            upsertMany(items);
-            console.log("[NotificationsHub] ReceiveNotifications(backlog)", items);
-        };
+    return () => {
+      conn.off("ReceiveNotification", onReceiveNotification);
+    };
+  }, [conn, enqueueSnackbar, closeSnackbar, queryClient]);
 
-        conn.on("ReceiveNotification", onReceiveNotification);
-        conn.on("ReceiveNotifications", onReceiveNotifications);
+  useEffect(() => {
+    return () => {
+      void stopNotificationsHubConnection();
+    };
+  }, []);
 
-        conn.onclose((err) => console.log("[NotificationsHub] closed", err));
-        conn.onreconnecting((err) => console.log("[NotificationsHub] reconnecting", err));
-        conn.onreconnected((id) => console.log("[NotificationsHub] reconnected", id));
-
-        (async () => {
-            try {
-                if (!jwt) {
-                    if (conn.state !== HubConnectionState.Disconnected) await conn.stop();
-                    if (!disposed) reset();
-                    return;
-                }
-
-                // token mora biti bez "Bearer "
-                const token = stripBearer(jwt);
-                if (!token) return;
-
-                if (conn.state === HubConnectionState.Disconnected) {
-                    await conn.start();
-                    console.log("[NotificationsHub] connected", conn.connectionId);
-                }
-            } catch (e) {
-                console.log("[NotificationsHub] START FAILED", e);
-            }
-        })();
-
-        return () => {
-            disposed = true;
-            conn.off("ReceiveNotification", onReceiveNotification);
-            conn.off("ReceiveNotifications", onReceiveNotifications);
-        };
-    }, [conn, jwt, enqueueSnackbar, push, upsertMany, reset]);
-
-    // opcionalno: na unmount stop
-    useEffect(() => {
-        return () => {
-            void stopNotificationsHubConnection();
-        };
-    }, []);
-
-    return null;
+  return null;
 }
