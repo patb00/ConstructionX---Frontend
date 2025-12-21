@@ -117,24 +117,7 @@ export default function VehicleForm({
         ["status", "condition"],
         ["description"],
       ]}
-      defaultValues={{
-        name: "",
-        registrationNumber: null as any,
-        vin: null as any,
-        brand: null as any,
-        model: null as any,
-        yearOfManufacturing: null as any,
-        vehicleType: null as any,
-        status: null as any,
-        purchaseDate: "",
-        purchasePrice: 0,
-        description: null as any,
-        condition: null as any,
-        horsePower: null as any,
-        averageConsumption: null as any,
-        weight: null as any,
-        ...defaultValues,
-      }}
+      defaultValues={defaultValues}
       busy={busy}
       submitLabel={t("vehicles.form.submit")}
       onSubmit={onSubmit}
