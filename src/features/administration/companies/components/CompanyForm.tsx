@@ -20,6 +20,7 @@ export default function CompanyForm({ defaultValues, onSubmit, busy }: Props) {
       name: "dateOfCreation",
       label: t("companies.form.field.dateOfCreation"),
       type: "datetime-local",
+      required: true,
     },
   ];
 

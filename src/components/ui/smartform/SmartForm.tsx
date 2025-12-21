@@ -153,6 +153,25 @@ export function SmartForm<TValues extends Record<string, any>>({
       setValues((v) => ({ ...v, [name]: next }));
     };
 
+  const isRequiredFilled = useMemo(() => {
+    return fields.every((f) => {
+      if (!f.required) return true;
+      if (f.type === "file") return true;
+
+      const value = (values as any)[f.name];
+
+      if (f.type === "checkbox") {
+        return value === true;
+      }
+
+      if (f.type === "number") {
+        return value !== null && value !== "";
+      }
+
+      return value !== null && value !== undefined && value !== "";
+    });
+  }, [fields, values]);
+
   const renderField = (f: FieldConfig<TValues>) => {
     const type = f.type ?? "text";
 
@@ -505,7 +524,7 @@ export function SmartForm<TValues extends Record<string, any>>({
           <Button
             type="submit"
             variant="contained"
-            disabled={busy}
+            disabled={busy || !isRequiredFilled}
             size="small"
           >
             {busy && (
