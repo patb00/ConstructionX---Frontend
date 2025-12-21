@@ -9,6 +9,7 @@ import {
   FaTasks,
   FaRegFileAlt,
   FaListUl,
+  FaHome,
 } from "react-icons/fa";
 import { IoIosBusiness } from "react-icons/io";
 import { HiUsers } from "react-icons/hi";
@@ -30,6 +31,7 @@ export type ModuleId =
   | "tools"
   | "toolCategories"
   | "vehicles"
+  | "condos"
   | "tenants"
   | "roles"
   | "users";
@@ -142,6 +144,14 @@ export const NAV_ITEMS: NavItem[] = [
     section: "SYSTEM",
     category: "CODEBOOK",
     guard: { permission: "Permission.Vehicles.Read" },
+  },
+  {
+    labelKey: "nav.condos",
+    to: "/app/condos",
+    icon: <FaHome />,
+    section: "SYSTEM",
+    category: "CODEBOOK",
+    guard: { permission: "Permission.Condos.Read" },
   },
 
   // IDENTITY group

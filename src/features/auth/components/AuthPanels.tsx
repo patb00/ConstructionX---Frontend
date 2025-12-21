@@ -23,7 +23,7 @@ export function AuthPanels({ onSignIn, onForgotPassword }: Props) {
           <Button
             size="small"
             variant="outlined"
-            sx={{ borderColor: "white", mt: 1 }}
+            sx={{ borderColor: "white", mt: 1, color: " white" }}
             onClick={onForgotPassword}
           >
             {t("auth.panels.left.button")}
@@ -39,7 +39,7 @@ export function AuthPanels({ onSignIn, onForgotPassword }: Props) {
           <Button
             size="small"
             variant="outlined"
-            sx={{ borderColor: "white", mt: 1 }}
+            sx={{ borderColor: "white", mt: 1, color: " white" }}
             onClick={onSignIn}
           >
             {t("auth.panels.right.button")}

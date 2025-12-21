@@ -21,7 +21,8 @@
     "assignments": "Zuweisungen",
     "reports": "Berichte",
     "examinationTypes": "Prüfarten",
-    "medicalExaminations": "Medizinische Untersuchungen"
+    "medicalExaminations": "Medizinische Untersuchungen",
+    "condos": "Wohnungen"
   },
 
   "constructionSites": {
@@ -534,7 +535,17 @@
       "examinationDate": "Untersuchungsdatum",
       "nextExaminationDate": "Nächstes Untersuchungsdatum",
       "result": "Ergebnis",
-      "note": "Notiz"
+      "note": "Notiz",
+
+      "address": "Adresse",
+      "capacity": "Kapazität",
+      "currentlyOccupied": "Derzeit belegt",
+      "leaseStartDate": "Mietbeginn",
+      "leaseEndDate": "Mietende",
+      "pricePerDay": "Preis pro Tag",
+      "pricePerMonth": "Preis pro Monat",
+      "currency": "Währung",
+      "notes": "Notizen"
     }
   },
   "tenants": {
@@ -1297,6 +1308,57 @@
       "description": "Sind Sie sicher, dass Sie diese medizinische Untersuchung löschen möchten?",
       "confirm": "Löschen",
       "cancel": "Abbrechen"
+    }
+  },
+  "condos": {
+    "list": {
+      "title": "Wohnungen",
+      "error": "Fehler beim Laden der Wohnungen."
+    },
+
+    "actions": "Aktionen",
+
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+
+    "create": {
+      "title": "Wohnung hinzufügen",
+      "back": "Zurück"
+    },
+
+    "edit": {
+      "title": "Wohnung bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (ID)",
+      "loadError": "Wohnung konnte nicht geladen werden."
+    },
+
+    "delete": {
+      "title": "Wohnung löschen?",
+      "description": "Möchten Sie diese Wohnung wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+
+    "form": {
+      "submit": "Speichern",
+      "responsible": {
+        "none": "— Keine verantwortliche Person —"
+      },
+      "field": {
+        "address": "Adresse",
+        "capacity": "Kapazität",
+        "currentlyOccupied": "Derzeit belegt",
+        "leaseStartDate": "Mietbeginn",
+        "leaseEndDate": "Mietende",
+        "responsibleEmployeeId": "Verantwortliche Person",
+        "pricePerDay": "Preis pro Tag",
+        "pricePerMonth": "Preis pro Monat",
+        "currency": "Währung",
+        "notes": "Notizen"
+      }
     }
   }
 }
