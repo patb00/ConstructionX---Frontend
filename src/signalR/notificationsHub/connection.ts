@@ -4,7 +4,7 @@ import {
     HubConnectionBuilder,
     LogLevel,
 } from "@microsoft/signalr";
-import { getSignalRJwt } from "../userHub/getSignalRJWT";
+import { getSignalRJwt } from "../notificationsHub/getSignalRJwt";
 
 let conn: HubConnection | null = null;
 

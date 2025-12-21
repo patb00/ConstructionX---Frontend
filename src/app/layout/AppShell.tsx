@@ -29,8 +29,9 @@ import { useTranslation } from "react-i18next";
 import { getUserInitials } from "../../utils/getUserInitials";
 import { ProfileDialog } from "../../components/ui/profile/ProfileDialog";
 import { NotificationsBootstrap } from "../../features/notifications/components/NotificationsBootstrap";
+import { NotificationsBell } from "../../features/notifications/components/NotificationsBell";
 
-import { stopUserHubConnection } from "../../signalR/userHub/connection";
+
 import { stopNotificationsHubConnection } from "../../signalR/notificationsHub/connection";
 
 export default function AppShell() {
@@ -71,7 +72,7 @@ export default function AppShell() {
     handleMenuClose();
 
     // prekini hubove prije čišćenja state-a
-    await Promise.allSettled([stopUserHubConnection(), stopNotificationsHubConnection()]);
+    await Promise.allSettled([stopNotificationsHubConnection()]);
 
     clear();
     queryClient.clear();
@@ -131,6 +132,7 @@ export default function AppShell() {
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <LanguageSwitcher />
+            <NotificationsBell />
             <Avatar
               alt={t("appShell.userAvatarAlt")}
               onClick={handleAvatarClick}
