@@ -8,6 +8,8 @@ import { useAddConstructionSite } from "../hooks/useAddConstructionSite";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { useConstructionSiteStatusOptions } from "../hooks/useConstructionSiteStatusOptions";
 import type { ConstructionSiteFormValues } from "..";
+import { useMemo } from "react";
+import { buildEmployeeSelectOptions } from "../utils/options";
 
 export default function ConstructionSiteCreatePage() {
   const { t } = useTranslation();
@@ -17,13 +19,14 @@ export default function ConstructionSiteCreatePage() {
   const { employeeRows = [] } = useEmployees();
   const statusOptions = useConstructionSiteStatusOptions();
 
-  const managerOptions = [
-    { value: null, label: t("constructionSites.form.manager.none") },
-    ...employeeRows.map((e: any) => ({
-      value: e.id,
-      label: `${e.firstName ?? ""} ${e.lastName ?? ""}`.trim(),
-    })),
-  ];
+  const managerOptions = useMemo(
+    () =>
+      buildEmployeeSelectOptions(
+        employeeRows,
+        t("constructionSites.form.manager.none")
+      ),
+    [employeeRows, t]
+  );
 
   const handleSubmit = async (values: ConstructionSiteFormValues) => {
     await createSite(values as any);

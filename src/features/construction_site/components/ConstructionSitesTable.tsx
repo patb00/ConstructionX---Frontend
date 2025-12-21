@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from "react";
-import { Box } from "@mui/material";
+
 import type { GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -29,17 +29,6 @@ export default function ConstructionSitesTable() {
   const navigate = useNavigate();
   const can = useCan();
 
-  const {
-    rows,
-    total,
-    paginationModel,
-    setPaginationModel,
-    filterModel,
-    setFilterModel,
-    isLoading,
-    error,
-  } = useConstructionSites();
-
   const deleteConstructionSite = useDeleteConstructionSite();
   const changeStatus = useChangeConstructionSiteStatus();
 
@@ -50,7 +39,7 @@ export default function ConstructionSitesTable() {
 
   const employeeOptions = useMemo(
     () =>
-      (employeeRows ?? []).map((e) => ({
+      (employeeRows ?? []).map((e: any) => ({
         value: e.id,
         label: `${e.firstName} ${e.lastName}`.trim(),
       })),
@@ -59,22 +48,39 @@ export default function ConstructionSitesTable() {
 
   const toolOptions = useMemo(
     () =>
-      (toolsRows ?? []).map((t) => ({
-        value: t.id,
-        label: t.name ?? t.model ?? `#${t.id}`,
+      (toolsRows ?? []).map((tool: any) => ({
+        value: tool.id,
+        label: tool.name ?? tool.model ?? `#${tool.id}`,
       })),
     [toolsRows]
   );
 
   const vehicleOptions = useMemo(
     () =>
-      (vehiclesRows ?? []).map((v) => ({
+      (vehiclesRows ?? []).map((v: any) => ({
         value: v.id,
         label:
           v.name ?? [v.brand, v.model].filter(Boolean).join(" ") ?? `#${v.id}`,
       })),
     [vehiclesRows]
   );
+
+  const {
+    constructionSitesRows,
+    constructionSitesColumns,
+    total,
+    paginationModel,
+    setPaginationModel,
+    filterModel,
+    setFilterModel,
+    isLoading,
+    error,
+  } = useConstructionSites({
+    statusOptions,
+    employeeOptions,
+    toolOptions,
+    vehicleOptions,
+  });
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingRow, setPendingRow] = useState<ConstructionSite | null>(null);
@@ -131,73 +137,7 @@ export default function ConstructionSitesTable() {
   );
 
   const columns = useMemo<GridColDef<ConstructionSite>[]>(() => {
-    const base: GridColDef<ConstructionSite>[] = [
-      { field: "name", headerName: t("common.columns.name"), width: 200 },
-      {
-        field: "location",
-        headerName: t("common.columns.location"),
-        width: 200,
-      },
-
-      {
-        field: "status",
-        headerName: t("common.columns.status"),
-        type: "singleSelect",
-        valueOptions: statusOptions,
-        width: 140,
-      },
-
-      {
-        field: "startDate",
-        headerName: t("common.columns.startDate"),
-        type: "date",
-        width: 160,
-        valueGetter: (value) => (value ? new Date(value as string) : null),
-      },
-      {
-        field: "plannedEndDate",
-        headerName: t("common.columns.plannedEndDate"),
-        type: "date",
-        width: 180,
-        valueGetter: (value) => (value ? new Date(value as string) : null),
-      },
-
-      {
-        field: "description",
-        headerName: t("common.columns.description"),
-        flex: 1,
-        renderCell: (params) => (
-          <Box sx={{ display: "flex", alignItems: "center", height: "100%" }}>
-            <span>{params.value ?? ""}</span>
-          </Box>
-        ),
-      },
-
-      {
-        field: "siteManagerId",
-        headerName: t("common.columns.siteManagerId"),
-        type: "singleSelect",
-        valueOptions: employeeOptions,
-      },
-      {
-        field: "employeeId",
-        headerName: t("common.columns.employeeId"),
-        type: "singleSelect",
-        valueOptions: employeeOptions,
-      },
-      {
-        field: "toolId",
-        headerName: t("common.columns.toolId"),
-        type: "singleSelect",
-        valueOptions: toolOptions,
-      },
-      {
-        field: "vehicleId",
-        headerName: t("common.columns.vehicleId"),
-        type: "singleSelect",
-        valueOptions: vehicleOptions,
-      },
-    ];
+    const base = constructionSitesColumns;
 
     const canEdit = can({ permission: "Permission.ConstructionSites.Update" });
     const canDelete = can({
@@ -248,13 +188,10 @@ export default function ConstructionSitesTable() {
       },
     ];
   }, [
-    t,
+    constructionSitesColumns,
     can,
+    t,
     navigate,
-    statusOptions,
-    employeeOptions,
-    toolOptions,
-    vehicleOptions,
     deleteConstructionSite.isPending,
     changeStatus.isPending,
     requestDelete,
@@ -268,11 +205,13 @@ export default function ConstructionSitesTable() {
 
   if (error) return <div>{t("constructionSites.list.error")}</div>;
 
+  console.log("constructionSitesRows", constructionSitesRows);
+
   return (
     <>
       <ReusableDataGrid<ConstructionSite>
         storageKey="construction_sites"
-        rows={rows}
+        rows={constructionSitesRows}
         columns={columns}
         getRowId={(r) => String(r.id)}
         loading={isLoading}

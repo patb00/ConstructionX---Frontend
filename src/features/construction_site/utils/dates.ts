@@ -21,3 +21,11 @@ export const formatDate = (d?: string | null) => {
 };
 export const formatDateRange = (from?: string | null, to?: string | null) =>
   `${formatDate(from)} — ${formatDate(to)}`;
+
+export const toPickerValue = (value?: string | null): Date | null => {
+  if (!value) return null;
+  return new Date(value);
+};
+
+export const fromPickerValue = (value: Date | null): string =>
+  value ? value.toISOString().slice(0, 10) : "";

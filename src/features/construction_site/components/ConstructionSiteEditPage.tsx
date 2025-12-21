@@ -9,6 +9,8 @@ import { useEmployees } from "../../administration/employees/hooks/useEmployees"
 import { useConstructionSite } from "../hooks/useConstructionSite";
 import { useUpdateConstructionSite } from "../hooks/useUpdateConstructionSite";
 import type { ConstructionSiteFormValues } from "..";
+import { buildEmployeeSelectOptions } from "../utils/options";
+import { useMemo } from "react";
 
 export default function ConstructionSiteEditPage() {
   const { t } = useTranslation();
@@ -30,13 +32,14 @@ export default function ConstructionSiteEditPage() {
   const { mutate: updateSite, isPending } = useUpdateConstructionSite();
   const { employeeRows = [], isLoading: employeesLoading } = useEmployees();
 
-  const managerOptions = [
-    { value: null, label: t("constructionSites.form.manager.none") },
-    ...employeeRows.map((e: any) => ({
-      value: e.id,
-      label: `${e.firstName ?? ""} ${e.lastName ?? ""}`.trim(),
-    })),
-  ];
+  const managerOptions = useMemo(
+    () =>
+      buildEmployeeSelectOptions(
+        employeeRows,
+        t("constructionSites.form.manager.none")
+      ),
+    [employeeRows, t]
+  );
 
   const defaultValues: Partial<ConstructionSiteFormValues> | undefined =
     site && {
