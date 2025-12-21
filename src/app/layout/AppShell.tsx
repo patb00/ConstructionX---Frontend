@@ -1,3 +1,4 @@
+// AppShell.tsx
 import {
   AppBar,
   Box,
@@ -26,6 +27,69 @@ import LanguageSwitcher from "../../components/ui/languague-switch/LanguagueSwit
 import { useUsers } from "../../features/administration/users/hooks/useUsers";
 import { useTranslation } from "react-i18next";
 import { ProfileDialog } from "../../components/ui/ProfileDialog";
+import { HubConnectionState } from "@microsoft/signalr";
+
+import {
+  getUserHubConnection,
+  stopUserHubConnection,
+} from "../../signalR/userHub/connection";
+import { getSignalRJwt } from "../../signalR/userHub/getSignalRJWT";
+
+type NotificationResponse = {
+  id: number;
+  title: string;
+  message: string;
+  actionUrl?: string | null;
+  entityType?: string | null;
+  entityId?: string | null;
+  isRead: boolean;
+  createdDate: string;
+  readDate?: string | null;
+};
+
+function SignalRNotificationsBootstrap() {
+  const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
+  const jwt = useAuthStore((s) => s.jwt);
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL as string;
+  const conn = useMemo(() => getUserHubConnection(baseUrl), [baseUrl]);
+
+  useEffect(() => {
+    let disposed = false;
+
+    const onReceiveNotification = (n: NotificationResponse) => {
+      const text = n.title ? `${n.title}: ${n.message}` : n.message;
+      enqueueSnackbar(text, { variant: "info" });
+
+      // ako kasnije imaš react-query listu notifikacija, ovo će ju osvježiti (ako key postoji)
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["my-notifications"] });
+    };
+
+    conn.on("ReceiveNotification", onReceiveNotification);
+
+    (async () => {
+      const token = getSignalRJwt();
+      if (!token) return;
+
+      try {
+        if (conn.state === HubConnectionState.Disconnected) {
+          await conn.start();
+        }
+      } catch (e) {
+        if (!disposed) console.log("[SignalR] NOTIFICATIONS START FAILED", e);
+      }
+    })();
+
+    return () => {
+      disposed = true;
+      conn.off("ReceiveNotification", onReceiveNotification);
+    };
+  }, [conn, jwt, enqueueSnackbar, queryClient]);
+
+  return null;
+}
 
 export default function AppShell() {
   const { t } = useTranslation();
@@ -76,8 +140,12 @@ export default function AppShell() {
     setProfileOpen(true);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     handleMenuClose();
+
+    // prekini SignalR odmah na logout (da ne ostane “stara” auth sesija)
+    await stopUserHubConnection().catch(() => undefined);
+
     signOut();
     queryClient.clear();
     enqueueSnackbar(t("appShell.snackbar.loggedOut"), { variant: "info" });
@@ -85,13 +153,13 @@ export default function AppShell() {
   };
 
   useEffect(() => {
-    if (!isMobile && open) {
-      setOpen(false);
-    }
+    if (!isMobile && open) setOpen(false);
   }, [isMobile, open]);
 
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
+      <SignalRNotificationsBootstrap />
+      <h1>ddddd</h1>
       <AppBar
         position="fixed"
         elevation={0}
