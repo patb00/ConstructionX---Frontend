@@ -28,69 +28,10 @@ import { useUsers } from "../../features/administration/users/hooks/useUsers";
 import { useTranslation } from "react-i18next";
 import { getUserInitials } from "../../utils/getUserInitials";
 import { ProfileDialog } from "../../components/ui/profile/ProfileDialog";
-import { HubConnectionState } from "@microsoft/signalr";
+import { NotificationsBootstrap } from "../../features/notifications/components/NotificationsBootstrap";
 
-import {
-  getUserHubConnection,
-  stopUserHubConnection,
-} from "../../signalR/userHub/connection";
-import { getSignalRJwt } from "../../signalR/userHub/getSignalRJWT";
-
-type NotificationResponse = {
-  id: number;
-  title: string;
-  message: string;
-  actionUrl?: string | null;
-  entityType?: string | null;
-  entityId?: string | null;
-  isRead: boolean;
-  createdDate: string;
-  readDate?: string | null;
-};
-
-function SignalRNotificationsBootstrap() {
-  const { enqueueSnackbar } = useSnackbar();
-  const queryClient = useQueryClient();
-  const jwt = useAuthStore((s) => s.jwt);
-
-  const baseUrl = import.meta.env.VITE_API_BASE_URL as string;
-  const conn = useMemo(() => getUserHubConnection(baseUrl), [baseUrl]);
-
-  useEffect(() => {
-    let disposed = false;
-
-    const onReceiveNotification = (n: NotificationResponse) => {
-      const text = n.title ? `${n.title}: ${n.message}` : n.message;
-      enqueueSnackbar(text, { variant: "info" });
-
-      // ako kasnije imaš react-query listu notifikacija, ovo će ju osvježiti (ako key postoji)
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["my-notifications"] });
-    };
-
-    conn.on("ReceiveNotification", onReceiveNotification);
-
-    (async () => {
-      const token = getSignalRJwt();
-      if (!token) return;
-
-      try {
-        if (conn.state === HubConnectionState.Disconnected) {
-          await conn.start();
-        }
-      } catch (e) {
-        if (!disposed) console.log("[SignalR] NOTIFICATIONS START FAILED", e);
-      }
-    })();
-
-    return () => {
-      disposed = true;
-      conn.off("ReceiveNotification", onReceiveNotification);
-    };
-  }, [conn, jwt, enqueueSnackbar, queryClient]);
-
-  return null;
-}
+import { stopUserHubConnection } from "../../signalR/userHub/connection";
+import { stopNotificationsHubConnection } from "../../signalR/notificationsHub/connection";
 
 export default function AppShell() {
   const { t } = useTranslation();
@@ -118,6 +59,7 @@ export default function AppShell() {
   const handleAvatarClick = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);
   };
+
   const handleMenuClose = () => setAnchorEl(null);
 
   const handleOpenProfile = () => {
@@ -127,10 +69,9 @@ export default function AppShell() {
 
   const handleLogout = async () => {
     handleMenuClose();
-    clear();
 
-    // prekini SignalR odmah na logout (da ne ostane “stara” auth sesija)
-    await stopUserHubConnection().catch(() => undefined);
+    // prekini hubove prije čišćenja state-a
+    await Promise.allSettled([stopUserHubConnection(), stopNotificationsHubConnection()]);
 
     clear();
     queryClient.clear();
@@ -144,8 +85,9 @@ export default function AppShell() {
 
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
-      <SignalRNotificationsBootstrap />
-      <h1>ddddd</h1>
+      {/* NOTIFICATIONS HUB: /hubs/notifications */}
+      <NotificationsBootstrap />
+
       <AppBar
         position="fixed"
         elevation={0}
@@ -174,6 +116,7 @@ export default function AppShell() {
                 color: theme.palette.primary.main,
               })}
             />
+
             <Typography
               variant="body1"
               sx={{

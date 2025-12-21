@@ -1,6 +1,5 @@
 // signalR/notificationsHub/connection.ts
 import {
-    HttpTransportType,
     HubConnection,
     HubConnectionBuilder,
     LogLevel,
@@ -15,9 +14,7 @@ export function getNotificationsHubConnection(baseUrl: string): HubConnection {
     conn = new HubConnectionBuilder()
         // uskladi path s backendom: MapHub<NotificationHub>("/hubs/notifications")
         .withUrl(`${baseUrl}/hubs/notifications`, {
-            accessTokenFactory: () => getSignalRJwt(),
-            transport: HttpTransportType.WebSockets,
-            skipNegotiation: true,
+            accessTokenFactory: () => getSignalRJwt()
         })
         .withAutomaticReconnect()
         .configureLogging(LogLevel.Information)
