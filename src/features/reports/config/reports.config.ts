@@ -1,4 +1,4 @@
-import type { ModuleId } from "../../../app/routes/config";
+import type { ModuleId } from "../../../app/routes/navigation";
 
 export type ReportId = "employee-list";
 

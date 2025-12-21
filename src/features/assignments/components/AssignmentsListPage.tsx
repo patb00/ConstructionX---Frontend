@@ -41,6 +41,10 @@ import {
 } from "../../../components/ui/views/TimelineView";
 import { ViewSelect } from "../../../components/ui/select/ViewSelect";
 
+import { dedupeByKey } from "../utils/collections";
+import { getEmployeeInitials, getEmployeeLabel } from "../utils/employee";
+import { formatIsoDate } from "../utils/date";
+
 type ViewMode = "board" | "timeline";
 
 const AssignmentsListPage = () => {
@@ -73,31 +77,15 @@ const AssignmentsListPage = () => {
         : null
       : myUserId;
 
-  const dedupeByKey = <T, K extends string | number>(
-    rows: T[],
-    getKey: (row: T) => K
-  ): T[] => {
-    const map = new Map<K, T>();
-    for (const r of rows) {
-      const key = getKey(r);
-      if (!map.has(key)) {
-        map.set(key, r);
-      }
-    }
-    return Array.from(map.values());
-  };
-
   const constructionRowsForBoard = useMemo<AssignedConstructionSite[]>(() => {
     const rows =
       effectiveEmployeeId == null
         ? acsRows
         : acsRows.filter((r) => r.employeeId === effectiveEmployeeId);
 
-    if (effectiveEmployeeId == null) {
-      return dedupeByKey(rows, (r) => r.constructionSiteId);
-    }
-
-    return rows;
+    return effectiveEmployeeId == null
+      ? dedupeByKey(rows, (r) => r.constructionSiteId)
+      : rows;
   }, [acsRows, effectiveEmployeeId]);
 
   const vehicleRowsForBoard = useMemo<AssignedVehicle[]>(() => {
@@ -108,11 +96,9 @@ const AssignmentsListPage = () => {
             (r) => r.responsibleEmployeeId === effectiveEmployeeId
           );
 
-    if (effectiveEmployeeId == null) {
-      return dedupeByKey(rows, (r) => r.vehicleId);
-    }
-
-    return rows;
+    return effectiveEmployeeId == null
+      ? dedupeByKey(rows, (r) => r.vehicleId)
+      : rows;
   }, [vehicleRows, effectiveEmployeeId]);
 
   const toolRowsForBoard = useMemo<AssignedTool[]>(() => {
@@ -123,31 +109,20 @@ const AssignmentsListPage = () => {
             (r) => r.responsibleEmployeeId === effectiveEmployeeId
           );
 
-    if (effectiveEmployeeId == null) {
-      return dedupeByKey(rows, (r) => r.toolId);
-    }
-
-    return rows;
+    return effectiveEmployeeId == null
+      ? dedupeByKey(rows, (r) => r.toolId)
+      : rows;
   }, [toolRows, effectiveEmployeeId]);
-
-  const getEmployeeLabel = (e: any) =>
-    [e?.firstName, e?.lastName].filter(Boolean).join(" ") || `#${e?.id}`;
-
-  const getEmployeeInitials = (e: any) => {
-    const first = e?.firstName?.[0] ?? "";
-    const last = e?.lastName?.[0] ?? "";
-    const initials = `${first}${last}`.trim();
-    return initials || (e?.id != null ? String(e.id).slice(-2) : "?");
-  };
 
   const handleSelectChange = (e: SelectChangeEvent<number | "">) => {
     const v = e.target.value;
     if (v === "" || v === undefined || v === null) {
       setSelectedEmployeeId("");
-    } else {
-      const num = typeof v === "number" ? v : Number(v);
-      setSelectedEmployeeId(Number.isFinite(num) ? num : "");
+      return;
     }
+
+    const num = typeof v === "number" ? v : Number(v);
+    setSelectedEmployeeId(Number.isFinite(num) ? num : "");
   };
 
   const selectedEmployee = useMemo(
@@ -157,18 +132,6 @@ const AssignmentsListPage = () => {
         : null,
     [selectedEmployeeId, employeeRows]
   );
-
-  const formatIso = (iso?: string | null) => {
-    if (!iso) return "—";
-    const d = new Date(iso);
-    return Number.isNaN(d.getTime())
-      ? iso
-      : d.toLocaleDateString(undefined, {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        });
-  };
 
   const employeeAssignmentsCount = selectedEmployee
     ? {
@@ -228,22 +191,12 @@ const AssignmentsListPage = () => {
     const todayIso = new Date().toISOString().slice(0, 10);
 
     const lanes: Lane[] = [
-      {
-        id: "construction",
-        title: t("assignments.timeline.laneConstruction"),
-      },
-      {
-        id: "vehicles",
-        title: t("assignments.timeline.laneVehicles"),
-      },
-      {
-        id: "tools",
-        title: t("assignments.timeline.laneTools"),
-      },
+      { id: "construction", title: t("assignments.timeline.laneConstruction") },
+      { id: "vehicles", title: t("assignments.timeline.laneVehicles") },
+      { id: "tools", title: t("assignments.timeline.laneTools") },
     ];
 
     const items: TimelineItem[] = [];
-
     const addItem = (item: TimelineItem) => items.push(item);
 
     const findEmployee = (id?: number | null) =>
@@ -340,7 +293,6 @@ const AssignmentsListPage = () => {
       });
     });
 
-    // compute overall date range
     let minDate: Date | null = null;
     let maxDate: Date | null = null;
 
@@ -407,17 +359,12 @@ const AssignmentsListPage = () => {
 
       {role === "Admin" && (
         <>
-          <Box
-            sx={{
-              display: "flex",
-              gap: 2,
-              alignItems: "center",
-            }}
-          >
+          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
             <FormControl size="small" sx={{ minWidth: 280 }} variant="outlined">
               <InputLabel id="employee-select-label" shrink>
                 {t("assignments.filterByEmployee")}
               </InputLabel>
+
               <Select<number | "">
                 labelId="employee-select-label"
                 id="employee-select"
@@ -436,6 +383,7 @@ const AssignmentsListPage = () => {
                 <MenuItem value="">
                   <em>{t("assignments.allEmployees")}</em>
                 </MenuItem>
+
                 {employeeRows.map((e) => (
                   <MenuItem key={e.id} value={e.id}>
                     {getEmployeeLabel(e)}
@@ -447,24 +395,7 @@ const AssignmentsListPage = () => {
 
           {selectedEmployee && (
             <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-              <Box
-                sx={{
-                  ...cardBoxSx,
-                  "@keyframes slideDownFadeIn": {
-                    "0%": {
-                      opacity: 0,
-                      transform: "translateY(-12px)",
-                    },
-                    "100%": {
-                      opacity: 1,
-                      transform: "translateY(0)",
-                    },
-                  },
-                  animation: "slideDownFadeIn 0.25s ease-out",
-                  animationFillMode: "backwards",
-                  animationDelay: "0ms",
-                }}
-              >
+              <Box sx={{ ...cardBoxSx }}>
                 <StatCard
                   icon={<BadgeIcon />}
                   label={t("assignments.employee.info")}
@@ -477,62 +408,28 @@ const AssignmentsListPage = () => {
                 />
               </Box>
 
-              <Box
-                sx={{
-                  ...cardBoxSx,
-                  "@keyframes slideDownFadeIn2": {
-                    "0%": {
-                      opacity: 0,
-                      transform: "translateY(-12px)",
-                    },
-                    "100%": {
-                      opacity: 1,
-                      transform: "translateY(0)",
-                    },
-                  },
-                  animation: "slideDownFadeIn2 0.30s ease-out",
-                  animationFillMode: "backwards",
-                  animationDelay: "80ms",
-                }}
-              >
+              <Box sx={{ ...cardBoxSx }}>
                 <StatCard
                   icon={<CalendarTodayIcon />}
                   label={t("assignments.employee.dates")}
                   value={
                     selectedEmployee.dateOfBirth
-                      ? `${t("assignments.employee.birthDate")} ${formatIso(
+                      ? `${t("assignments.employee.birthDate")} ${formatIsoDate(
                           selectedEmployee.dateOfBirth
                         )}`
                       : t("assignments.employee.birthDateUnknown")
                   }
                   caption={
                     selectedEmployee.employmentDate
-                      ? `${t("assignments.employee.employedFrom")} ${formatIso(
-                          selectedEmployee.employmentDate
-                        )}`
+                      ? `${t(
+                          "assignments.employee.employedFrom"
+                        )} ${formatIsoDate(selectedEmployee.employmentDate)}`
                       : t("assignments.employee.notEmployed")
                   }
                 />
               </Box>
 
-              <Box
-                sx={{
-                  ...cardBoxSx,
-                  "@keyframes slideDownFadeIn3": {
-                    "0%": {
-                      opacity: 0,
-                      transform: "translateY(-12px)",
-                    },
-                    "100%": {
-                      opacity: 1,
-                      transform: "translateY(0)",
-                    },
-                  },
-                  animation: "slideDownFadeIn3 0.35s ease-out",
-                  animationFillMode: "backwards",
-                  animationDelay: "140ms",
-                }}
-              >
+              <Box sx={{ ...cardBoxSx }}>
                 <StatCard
                   icon={<AssignmentTurnedInIcon />}
                   label={t("assignments.employee.assignments")}
@@ -551,14 +448,8 @@ const AssignmentsListPage = () => {
             rows: constructionRowsForBoard,
             loading: isLoadingSites,
           }}
-          vehicles={{
-            rows: vehicleRowsForBoard,
-            loading: isLoadingVehicles,
-          }}
-          tools={{
-            rows: toolRowsForBoard,
-            loading: isLoadingTools,
-          }}
+          vehicles={{ rows: vehicleRowsForBoard, loading: isLoadingVehicles }}
+          tools={{ rows: toolRowsForBoard, loading: isLoadingTools }}
         />
       ) : isLoadingTimeline ? (
         <Box

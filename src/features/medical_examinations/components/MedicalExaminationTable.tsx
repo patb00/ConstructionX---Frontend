@@ -173,38 +173,25 @@ export default function MedicalExaminationsTable() {
   );
   const dueSoonRowSx = useMemo(
     () => ({
-      "@keyframes blink-row-error": {
-        "0%": {
-          backgroundColor: alpha(theme.palette.error.main, 0.15),
-        },
-        "50%": {
-          backgroundColor: alpha(theme.palette.error.main, 0.45),
-        },
-        "100%": {
-          backgroundColor: alpha(theme.palette.error.main, 0.15),
-        },
+      "& .MuiDataGrid-row.row--dueSoon": {
+        backgroundColor: alpha(theme.palette.error.main, 0.12),
       },
 
-      "& .MuiDataGrid-row.row--dueSoon": {
-        animation: "blink-row-error 1.2s infinite",
+      "& .MuiDataGrid-row.row--dueSoon:hover": {
+        backgroundColor: alpha(theme.palette.error.main, 0.18),
+      },
+
+      "& .MuiDataGrid-row.row--dueSoon.Mui-selected": {
+        backgroundColor: alpha(theme.palette.error.main, 0.22),
       },
 
       "& .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell": {
         backgroundColor: "inherit",
       },
 
-      "& .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell--pinnedLeft, \
-       & .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell--pinnedRight": {
+      "& .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell--pinnedLeft,\
+     & .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell--pinnedRight": {
         backgroundColor: theme.palette.common.white,
-        animation: "none",
-      },
-
-      "& .MuiDataGrid-row.row--dueSoon:hover": {
-        animation: "blink-row-error 0.8s infinite",
-      },
-
-      "& .MuiDataGrid-row.row--dueSoon.Mui-selected": {
-        animation: "blink-row-error 1s infinite",
       },
     }),
     [theme]

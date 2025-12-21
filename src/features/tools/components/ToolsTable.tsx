@@ -1,12 +1,11 @@
 import { useMemo, useState, useCallback } from "react";
-import { Box } from "@mui/material";
 import { type GridColDef } from "@mui/x-data-grid";
 import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 import { useDeleteTool } from "../hooks/useDeleteTool";
 import { useTools } from "../hooks/useTools";
-import { useNavigate } from "react-router-dom";
 import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { Tool } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
@@ -25,6 +24,7 @@ export default function ToolsTable() {
     error,
     isLoading,
   } = useTools();
+
   const deleteTool = useDeleteTool();
   const navigate = useNavigate();
   const can = useCan();
@@ -46,6 +46,7 @@ export default function ToolsTable() {
   const handleConfirm = useCallback(() => {
     if (!pendingRow) return;
     const id = (pendingRow as any).id;
+
     deleteTool.mutate(id, {
       onSuccess: () => {
         setConfirmOpen(false);
@@ -55,35 +56,7 @@ export default function ToolsTable() {
   }, [deleteTool, pendingRow]);
 
   const columnsWithActions = useMemo<GridColDef<Tool>[]>(() => {
-    const base = toolsColumns.map((c) => {
-      if (
-        c.field === "name" ||
-        c.field === "inventoryNumber" ||
-        c.field === "serialNumber" ||
-        c.field === "manufacturer" ||
-        c.field === "model" ||
-        c.field === "status" ||
-        c.field === "condition" ||
-        c.field === "description"
-      ) {
-        return {
-          ...c,
-          renderCell: (params) => (
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <span>{(params.value as string) ?? ""}</span>
-            </Box>
-          ),
-        } as GridColDef<Tool>;
-      }
-      return c;
-    });
+    const base = [...toolsColumns];
 
     const canEdit = can({ permission: "Permission.Tools.Update" });
     const canDelete = can({ permission: "Permission.Tools.Delete" });
@@ -126,21 +99,16 @@ export default function ToolsTable() {
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   const renderDetailPanel = useCallback(
-    (params: GridRowParams<Tool>) => {
-      return (
-        <GridDetailPanel<Tool>
-          row={params.row}
-          columns={toolsColumns as GridColDef<Tool>[]}
-        />
-      );
-    },
+    (params: GridRowParams<Tool>) => (
+      <GridDetailPanel<Tool>
+        row={params.row}
+        columns={toolsColumns as GridColDef<Tool>[]}
+      />
+    ),
     [toolsColumns]
   );
 
-  const getDetailPanelHeight = useCallback(
-    (_params: GridRowParams<Tool>) => 220,
-    []
-  );
+  const getDetailPanelHeight = useCallback(() => 220, []);
 
   if (error) return <div>{t("tools.list.error")}</div>;
 

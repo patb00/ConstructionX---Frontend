@@ -2,28 +2,32 @@ import { Paper, Stack, Typography, Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 import type { NewMedicalExaminationRequest } from "..";
 import { useMedicalExamination } from "../hooks/useMedicalExamination";
 import { useUpdateMedicalExamination } from "../hooks/useUpdateMedicalExamination";
 import { useUploadMedicalExaminationCertificate } from "../hooks/useUploadMedicalExaminationCertificate";
-import MedicalExaminationForm from "./MedicalExaminationForm";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { useExaminationTypes } from "../../examination_types/hooks/useExaminationTypes";
-import { toEmployeeOptions } from "../../../lib/options/employees";
-import { toExaminationTypeOptions } from "../../../lib/options/examinationTypes";
-import { useState } from "react";
+
+import MedicalExaminationForm from "./MedicalExaminationForm";
+import { toEmployeeOptions, toExaminationTypeOptions } from "../utils/options";
+import {
+  medicalExaminationToDefaultValues,
+  medicalExaminationToUpdatePayload,
+} from "../utils/medicalExaminationForm";
 
 export default function MedicalExaminationEditPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const medicalExaminationId = Number(id);
 
+  const navigate = useNavigate();
+
   if (!Number.isFinite(medicalExaminationId)) {
     return <div>{t("medicalExaminations.edit.invalidUrlId")}</div>;
   }
-
-  const navigate = useNavigate();
 
   const {
     data: examination,
@@ -31,7 +35,7 @@ export default function MedicalExaminationEditPage() {
     error,
   } = useMedicalExamination(medicalExaminationId);
 
-  const { mutate: updateExamination, isPending } =
+  const { mutate: updateExamination, isPending: updating } =
     useUpdateMedicalExamination();
 
   const { mutateAsync: uploadCertificate, isPending: uploading } =
@@ -46,35 +50,15 @@ export default function MedicalExaminationEditPage() {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const defaultValues: Partial<NewMedicalExaminationRequest> | undefined =
-    examination && {
-      examinationTypeId: examination.examinationTypeId,
-      examinationDate: examination.examinationDate ?? "",
-      nextExaminationDate: examination.nextExaminationDate ?? "",
-      result: examination.result ?? "",
-      note: examination.note ?? "",
-    };
-
-  console.log("[EditPage] Computed defaultValues (EDIT):", defaultValues);
+  const defaultValues = medicalExaminationToDefaultValues(examination);
 
   const handleSubmit = (values: NewMedicalExaminationRequest) => {
     const idForUpdate =
-      typeof examination?.id === "number"
-        ? examination.id
+      typeof (examination as any)?.id === "number"
+        ? (examination as any).id
         : medicalExaminationId;
 
-    console.log(
-      "%c[EditPage] Submitted values (with employeeId in form-type):",
-      "color: green; font-weight: bold;",
-      values
-    );
-
-    const { employeeId: _ignored, ...rest } = values;
-
-    const payload = {
-      id: idForUpdate,
-      ...rest,
-    };
+    const payload = medicalExaminationToUpdatePayload(idForUpdate, values);
 
     updateExamination(payload as any, {
       onSuccess: async () => {
@@ -94,11 +78,9 @@ export default function MedicalExaminationEditPage() {
     return <div>{t("medicalExaminations.edit.loadError")}</div>;
   }
 
-  console.log("examination", examination);
-
   const busy =
     examinationLoading ||
-    isPending ||
+    updating ||
     uploading ||
     employeesLoading ||
     examinationTypesLoading;
@@ -114,6 +96,7 @@ export default function MedicalExaminationEditPage() {
         <Typography variant="h5" fontWeight={600}>
           {t("medicalExaminations.edit.title")}
         </Typography>
+
         <Button
           size="small"
           variant="outlined"

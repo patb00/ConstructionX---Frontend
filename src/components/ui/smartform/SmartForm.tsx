@@ -278,7 +278,6 @@ export function SmartForm<TValues extends Record<string, any>>({
       );
     }
 
-    // DATE
     if (type === "date") {
       const raw = (values as any)[f.name];
       const dateValue =
@@ -327,7 +326,6 @@ export function SmartForm<TValues extends Record<string, any>>({
       );
     }
 
-    // DATETIME
     if (type === "datetime-local") {
       const raw = (values as any)[f.name];
       const dateValue =
@@ -376,7 +374,6 @@ export function SmartForm<TValues extends Record<string, any>>({
       );
     }
 
-    // SELECT
     if (type === "select") {
       return (
         <Box key={f.name} sx={{ flex: 1, minWidth: 0 }}>
@@ -411,7 +408,6 @@ export function SmartForm<TValues extends Record<string, any>>({
       );
     }
 
-    // DEFAULT INPUT
     return (
       <Box key={f.name} sx={{ flex: 1, minWidth: 0 }}>
         <Typography
@@ -463,7 +459,7 @@ export function SmartForm<TValues extends Record<string, any>>({
     const out: Record<string, any> = {};
 
     for (const f of fields) {
-      if (f.type === "file") continue; // file/attachment handled separately
+      if (f.type === "file") continue;
 
       const raw = (values as any)[f.name];
 

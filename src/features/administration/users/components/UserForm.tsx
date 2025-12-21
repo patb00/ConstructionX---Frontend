@@ -5,13 +5,21 @@ import {
 import type { RegisterUserRequest } from "..";
 import { useTranslation } from "react-i18next";
 
+type RoleOption = { label: string; value: string };
+
 type Props = {
   defaultValues?: Partial<RegisterUserRequest>;
   onSubmit: (values: RegisterUserRequest) => void;
   busy?: boolean;
+  roleOptions: RoleOption[];
 };
 
-export default function UserForm({ defaultValues, onSubmit, busy }: Props) {
+export default function UserForm({
+  defaultValues,
+  onSubmit,
+  busy,
+  roleOptions,
+}: Props) {
   const { t } = useTranslation();
 
   const fields: FieldConfig<RegisterUserRequest>[] = [
@@ -41,6 +49,13 @@ export default function UserForm({ defaultValues, onSubmit, busy }: Props) {
       required: true,
     },
     {
+      name: "roleId",
+      label: t("users.form.field.role"),
+      type: "select",
+      required: true,
+      options: roleOptions,
+    },
+    {
       name: "isActive",
       label: t("users.form.field.isActive"),
       type: "checkbox",
@@ -54,6 +69,7 @@ export default function UserForm({ defaultValues, onSubmit, busy }: Props) {
         ["firstName", "lastName"],
         ["email", "phoneNumber"],
         ["password", "confirmPassword"],
+        ["roleId"],
         ["isActive"],
       ]}
       defaultValues={{
@@ -63,6 +79,7 @@ export default function UserForm({ defaultValues, onSubmit, busy }: Props) {
         phoneNumber: "",
         password: "",
         confirmPassword: "",
+        roleId: "",
         isActive: true,
         ...defaultValues,
       }}

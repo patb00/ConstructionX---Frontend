@@ -18,7 +18,7 @@ import { useTheme } from "@mui/material/styles";
 import { useMemo, useState } from "react";
 import { useTenants } from "../../administration/tenants/hooks/useTenants";
 import type { Tenant } from "../../administration/tenants";
-import { StatsRow } from "../../../components/ui/StatsRows";
+import { StatsRow } from "../../../components/ui/stats/StatsRows";
 import { useTenantStats } from "../hooks/useTenantsStats";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { LineChart } from "@mui/x-charts/LineChart";

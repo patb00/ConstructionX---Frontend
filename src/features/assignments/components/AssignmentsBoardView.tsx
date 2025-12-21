@@ -8,10 +8,13 @@ import type {
   AssignedTool,
   AssignedVehicle,
 } from "../../administration/employees";
+
 import {
   BoardView,
   type BoardColumnConfig,
 } from "../../../components/ui/views/BoardView";
+
+import { renderIsoDateRange } from "../utils/date";
 
 type BoardSlice<T> = {
   rows: T[];
@@ -30,14 +33,6 @@ export const AssignmentsBoardView: React.FC<Props> = ({
   tools,
 }) => {
   const { t } = useTranslation();
-
-  const renderDates = (from?: string | null, to?: string | null) => {
-    if (!from && !to) return "—";
-    if (from && !to) return from;
-    if (!from && to) return to;
-    if (from === to) return from;
-    return `${from} – ${to}`;
-  };
 
   const columns: BoardColumnConfig[] = [
     {
@@ -77,7 +72,7 @@ export const AssignmentsBoardView: React.FC<Props> = ({
             sx={{ display: "block", mb: 0.25 }}
           >
             {t("assignments.assignmentRange")}{" "}
-            {renderDates(row.dateFrom, row.dateTo)}
+            {renderIsoDateRange(row.dateFrom, row.dateTo)}
           </Typography>
 
           <Typography
@@ -86,7 +81,7 @@ export const AssignmentsBoardView: React.FC<Props> = ({
             sx={{ display: "block", mb: 0.25 }}
           >
             {t("assignments.siteRange")}{" "}
-            {renderDates(row.startDate, row.plannedEndDate)}
+            {renderIsoDateRange(row.startDate, row.plannedEndDate)}
           </Typography>
 
           {row.siteManagerName && (
@@ -103,7 +98,6 @@ export const AssignmentsBoardView: React.FC<Props> = ({
       ),
     },
 
-    // 🔹 Vehicles column
     {
       id: "vehicles",
       icon: <DirectionsCar color="primary" fontSize="small" />,
@@ -169,19 +163,14 @@ export const AssignmentsBoardView: React.FC<Props> = ({
               <Chip size="small" label={row.responsibleEmployeeFullName} />
             )}
 
-            <Typography
-              variant="caption"
-              color="primary.main"
-              sx={{ display: "block" }}
-            >
-              {renderDates(row.dateFrom, row.dateTo)}
+            <Typography variant="caption" color="primary.main">
+              {renderIsoDateRange(row.dateFrom, row.dateTo)}
             </Typography>
           </Box>
         </Card>
       ),
     },
 
-    // 🔹 Tools column
     {
       id: "tools",
       icon: <Handyman color="primary" fontSize="small" />,
@@ -240,12 +229,8 @@ export const AssignmentsBoardView: React.FC<Props> = ({
               <Chip size="small" label={row.responsibleEmployeeFullName} />
             )}
 
-            <Typography
-              variant="caption"
-              color="primary.main"
-              sx={{ display: "block" }}
-            >
-              {renderDates(row.dateFrom, row.dateTo)}
+            <Typography variant="caption" color="primary.main">
+              {renderIsoDateRange(row.dateFrom, row.dateTo)}
             </Typography>
           </Box>
         </Card>

@@ -1,16 +1,21 @@
 import { Button, Paper, Stack, Typography } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
-import EmployeeForm from "./EmployeeForm";
-import { useUpdateEmployee } from "../hooks/useUpdateEmployee";
-import { useEmployee } from "../hooks/useEmployee";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import type { EmployeeFormValues } from "..";
-import { useAssignJobPosition } from "../hooks/useAssignJobPosition";
 import { useTranslation } from "react-i18next";
+import EmployeeForm from "./EmployeeForm";
+import type { EmployeeFormValues } from "..";
+import { useEmployee } from "../hooks/useEmployee";
+import { useUpdateEmployee } from "../hooks/useUpdateEmployee";
+import { useAssignJobPosition } from "../hooks/useAssignJobPosition";
+import {
+  employeeToDefaultValues,
+  employeeInitialJobPositionId,
+} from "../utils/employeeForm";
 
 export default function EmployeeEditPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
   const { id } = useParams<{ id: string }>();
   const employeeId = Number(id);
   if (!Number.isFinite(employeeId))
@@ -20,37 +25,7 @@ export default function EmployeeEditPage() {
   const update = useUpdateEmployee();
   const assign = useAssignJobPosition();
 
-  const toYMD = (s?: string | null) => (s ? s.slice(0, 10) : undefined);
-
-  const initialJobPositionId =
-    (emp as any)?.jobPositionId ?? (emp as any)?.jobPosition?.id ?? "";
-
-  const rawJobPositionId =
-    (emp as any)?.jobPositionId ?? (emp as any)?.jobPosition?.id ?? undefined;
-
-  const normalizedJobPositionId: number | "" =
-    rawJobPositionId == null || rawJobPositionId === ""
-      ? ""
-      : typeof rawJobPositionId === "number"
-      ? rawJobPositionId
-      : Number(rawJobPositionId);
-
-  const defaultValues = emp && {
-    firstName: emp.firstName,
-    lastName: emp.lastName,
-    oib: emp.oib,
-    dateOfBirth: toYMD(emp.dateOfBirth),
-    employmentDate: toYMD(emp.employmentDate),
-    terminationDate: toYMD(emp.terminationDate),
-    hasMachineryLicense: !!emp.hasMachineryLicense,
-    clothingSize: emp.clothingSize ?? "",
-    gloveSize: emp.gloveSize ?? "",
-    shoeSize:
-      typeof emp.shoeSize === "number"
-        ? emp.shoeSize
-        : ("" as unknown as number),
-    jobPositionId: normalizedJobPositionId,
-  };
+  const initialJobPositionId = emp ? employeeInitialJobPositionId(emp) : "";
 
   const handleSubmit = async (values: EmployeeFormValues) => {
     const { jobPositionId, ...employeeFields } = values;
@@ -88,6 +63,7 @@ export default function EmployeeEditPage() {
           {t("employees.edit.back")}
         </Button>
       </Stack>
+
       <Paper
         elevation={0}
         sx={{
@@ -97,7 +73,7 @@ export default function EmployeeEditPage() {
         }}
       >
         <EmployeeForm
-          defaultValues={defaultValues}
+          defaultValues={emp ? employeeToDefaultValues(emp) : undefined}
           onSubmit={handleSubmit}
           busy={update.isPending || isLoading || assign.isPending}
         />

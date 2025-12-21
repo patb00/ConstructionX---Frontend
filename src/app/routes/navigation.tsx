@@ -170,9 +170,3 @@ export const NAV_ITEMS: NavItem[] = [
     guard: { permission: "Permission.Users.Read" },
   },
 ];
-
-export const getModuleIdFromNavItem = (item: NavItem): string =>
-  item.labelKey.replace(/^nav\./, "");
-
-export const getNavItemByModuleId = (moduleId: string): NavItem | undefined =>
-  NAV_ITEMS.find((item) => getModuleIdFromNavItem(item) === moduleId);

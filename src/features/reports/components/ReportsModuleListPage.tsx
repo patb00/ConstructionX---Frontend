@@ -1,24 +1,15 @@
 import { Link as RouterLink } from "react-router-dom";
 import { Box, Card, Stack, Typography, Divider } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { getModuleIdFromNavItem, NAV_ITEMS } from "../../../app/routes/config";
+
+import { getModuleIdFromNavItem } from "../../../app/routes/navigationUtils";
+import { reportsCardColumnSx } from "../utils/layout";
+import { getReportModules } from "../utils/modules";
 
 const ReportsModulesListPage = () => {
   const { t } = useTranslation();
 
-  const modules = NAV_ITEMS.filter(
-    (item) => getModuleIdFromNavItem(item) === "employees"
-  );
-
-  const cardColumnSx = {
-    flexGrow: 1,
-    flexBasis: {
-      xs: "100%",
-      sm: "calc(50% - 16px)",
-      md: "calc(33.333% - 16px)",
-    },
-    minWidth: 0,
-  } as const;
+  const modules = getReportModules();
 
   return (
     <Box
@@ -51,7 +42,7 @@ const ReportsModulesListPage = () => {
           const moduleId = getModuleIdFromNavItem(item);
 
           return (
-            <Box sx={cardColumnSx} key={moduleId}>
+            <Box sx={reportsCardColumnSx} key={moduleId}>
               <Card
                 component={RouterLink}
                 to={`/app/izvjestaji/${moduleId}`}

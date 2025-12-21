@@ -46,7 +46,6 @@ export const EmployeesApi = {
     return res.data;
   },
 
-  // ✅ PAGED getAll like Tools
   getAll: async (page: number, pageSize: number) => {
     const res = await authFetch<ApiEnvelope<PagedResult<Employee>>>(
       `${base}/get-all?Page=${page}&PageSize=${pageSize}`

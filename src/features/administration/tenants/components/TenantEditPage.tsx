@@ -1,32 +1,27 @@
 import { Paper, Stack, Typography, Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
-import { useTenant } from "../hooks/useTenant";
-import { useUpdateSubscription } from "../hooks/useUpdateSubscription";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+
 import {
   SmartForm,
   type FieldConfig,
 } from "../../../../components/ui/smartform/SmartForm";
-import TenantEditForm, { type TenantEditFormValues } from "./TenantEditForm";
+import TenantForm, { type TenantFormValues } from "./TenantForm";
+
+import { useTenant } from "../hooks/useTenant";
+import { useUpdateSubscription } from "../hooks/useUpdateSubscription";
 import { useUpdateTenant } from "../hooks/useUpdateTenant";
-import type { UpdateTenantRequest } from "..";
+import { useUploadTenantLogo } from "../hooks/useUploadTenantLogo";
 
-const pad = (n: number) => String(n).padStart(2, "0");
-function isoToLocalInput(iso?: string | null): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
-    d.getHours()
-  )}:${pad(d.getMinutes())}`;
-}
-function localInputToIso(local: string): string {
-  return new Date(local).toISOString();
-}
-
-type TenantSubscriptionFormValues = {
-  validUpToDate: string;
-};
+import {
+  type TenantSubscriptionFormValues,
+  tenantToSubscriptionDefaults,
+  tenantToEditDefaults,
+  localInputToIso,
+  buildUpdateTenantPayload,
+} from "../utils/tenantForm";
 
 export default function TenantEditPage() {
   const { t } = useTranslation();
@@ -35,10 +30,15 @@ export default function TenantEditPage() {
 
   const navigate = useNavigate();
   const { data: tenant, isLoading, error } = useTenant(tenantId);
-  const { mutateAsync: updateSubscription, isPending } =
+
+  const { mutateAsync: updateSubscription, isPending: updatingSub } =
     useUpdateSubscription();
-  const { mutateAsync: updateTenant, isPending: isUpdatingTenant } =
+  const { mutateAsync: updateTenant, isPending: updatingTenant } =
     useUpdateTenant();
+  const { mutateAsync: uploadLogo, isPending: uploadingLogo } =
+    useUploadTenantLogo();
+
+  const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
 
   if (error) return <div>{t("tenants.edit.loadError")}</div>;
 
@@ -51,40 +51,21 @@ export default function TenantEditPage() {
     },
   ];
 
-  const defaultValues: TenantSubscriptionFormValues | undefined = tenant && {
-    validUpToDate: isoToLocalInput(tenant.validUpToDate ?? null),
-  };
+  const defaultValues = tenantToSubscriptionDefaults(tenant);
+  const editDefaultValues = tenantToEditDefaults(tenant);
 
-  const editDefaultValues: Partial<TenantEditFormValues> | undefined =
-    tenant && {
-      email: tenant.email ?? "",
-      firstName: tenant.firstName ?? "",
-      lastName: tenant.lastName ?? "",
-      oib: tenant.oib ?? "",
-      vatNumber: tenant.vatNumber ?? "",
-      registrationNumber: tenant.registrationNumber ?? "",
-      companyCode: tenant.companyCode ?? "",
-      contactPhone: tenant.contactPhone ?? "",
-      websiteUrl: tenant.websiteUrl ?? "",
-      addressStreet: tenant.addressStreet ?? "",
-      addressPostalCode: tenant.addressPostalCode ?? "",
-      addressCity: tenant.addressCity ?? "",
-      addressState: tenant.addressState ?? "",
-      addressCountry: tenant.addressCountry ?? "",
-      defaultLanguage: tenant.defaultLanguage ?? "en",
-      notes: tenant.notes ?? "",
-    };
-
-  const handleEditSubmit = async (values: TenantEditFormValues) => {
-    const payload: UpdateTenantRequest = {
-      id: tenantId,
-      ...values,
-    };
-
-    await updateTenant({
+  const handleEditSubmit = async (values: TenantFormValues<"edit">) => {
+    const { tenantId: id, payload } = buildUpdateTenantPayload(
       tenantId,
-      payload,
-    });
+      values
+    );
+
+    await updateTenant({ tenantId: id, payload });
+
+    if (selectedLogoFile) {
+      await uploadLogo({ tenantId: id, file: selectedLogoFile });
+      setSelectedLogoFile(null);
+    }
   };
 
   const handleSubmit = async (values: TenantSubscriptionFormValues) => {
@@ -96,8 +77,8 @@ export default function TenantEditPage() {
     });
   };
 
-  const busy = isLoading || isPending;
-  const busyEdit = isLoading || isUpdatingTenant;
+  const busySub = isLoading || updatingSub;
+  const busyEdit = isLoading || updatingTenant || uploadingLogo;
 
   return (
     <Stack spacing={2}>
@@ -139,12 +120,13 @@ export default function TenantEditPage() {
             fields={fields}
             rows={[["validUpToDate"]]}
             defaultValues={defaultValues}
-            busy={busy}
+            busy={busySub}
             submitLabel={t("tenants.edit.save")}
             onSubmit={handleSubmit}
           />
         </Stack>
       </Paper>
+
       <Paper
         elevation={0}
         sx={{
@@ -154,11 +136,15 @@ export default function TenantEditPage() {
         }}
       >
         <Stack spacing={2}>
-          {" "}
-          <TenantEditForm
+          <TenantForm
+            mode="edit"
             defaultValues={editDefaultValues}
-            busy={busyEdit}
             onSubmit={handleEditSubmit}
+            busy={busyEdit}
+            selectedLogoFile={selectedLogoFile}
+            onLogoFileChange={setSelectedLogoFile}
+            logoFileAccept="image/*"
+            existingLogoFileName={tenant?.logoFileName ?? null}
           />
         </Stack>
       </Paper>

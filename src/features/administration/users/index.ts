@@ -18,6 +18,7 @@ export type RegisterUserRequest = {
   confirmPassword: string;
   phoneNumber: string;
   isActive: boolean;
+  roleId: string;
 };
 
 export type UpdateUserRequest = {
