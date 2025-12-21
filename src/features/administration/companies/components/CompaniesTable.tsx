@@ -3,7 +3,6 @@ import { Box } from "@mui/material";
 import { type GridColDef } from "@mui/x-data-grid";
 import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
-
 import { useCompanies } from "../hooks/useCompanies";
 import { useDeleteCompany } from "../hooks/useDeleteCompany";
 import type { Company } from "..";
@@ -151,6 +150,7 @@ export default function CompaniesTable() {
         getDetailPanelContent={renderDetailPanel}
         getDetailPanelHeight={getDetailPanelHeight}
         detailPanelMode="mobile-only"
+        mobilePrimaryField="name"
       />
 
       <PermissionGate guard={{ permission: "Permission.Companies.Delete" }}>
