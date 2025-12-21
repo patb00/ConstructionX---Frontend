@@ -26,9 +26,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import LanguageSwitcher from "../../components/ui/languague-switch/LanguagueSwitcher";
 import { useUsers } from "../../features/administration/users/hooks/useUsers";
 import { useTranslation } from "react-i18next";
-import { ProfileDialog } from "../../components/ui/profile/ProfileDialog";
 import { getUserInitials } from "../../utils/getUserInitials";
-import { ProfileDialog } from "../../components/ui/ProfileDialog";
+import { ProfileDialog } from "../../components/ui/profile/ProfileDialog";
 import { HubConnectionState } from "@microsoft/signalr";
 
 import {
@@ -133,7 +132,7 @@ export default function AppShell() {
     // prekini SignalR odmah na logout (da ne ostane “stara” auth sesija)
     await stopUserHubConnection().catch(() => undefined);
 
-    signOut();
+    clear();
     queryClient.clear();
     enqueueSnackbar(t("appShell.snackbar.loggedOut"), { variant: "info" });
     navigate("/");
