@@ -1,39 +1,19 @@
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Checkbox,
-  CircularProgress,
-  Box,
-  Typography,
-  Stack,
-  TextField,
-  Chip,
-  IconButton,
-  Tooltip,
-  Divider,
-  Autocomplete,
-} from "@mui/material";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import { Autocomplete, TextField } from "@mui/material";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import CloseIcon from "@mui/icons-material/Close";
+import { useConstructionSite } from "../hooks/useConstructionSite";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { useTools } from "../../tools/hooks/useTools";
-import { useConstructionSite } from "../hooks/useConstructionSite";
-import { isValidRange, todayStr } from "../utils/dates";
 import { useAssignToolsToConstructionSite } from "../hooks/useAssignToolsToConstructionSite";
+import { todayStr } from "../utils/dates";
 import { fullName } from "../utils/name";
-import { useEffect, useMemo, useState } from "react";
-import { DatePicker } from "@mui/x-date-pickers";
+import {
+  ReusableAssignDialog,
+  type AssignBaseRange,
+} from "../../../components/ui/assign-dialog/AssignDialog";
+import { normalizeText } from "../utils/normalize";
 
-type ToolRange = {
-  from: string;
-  to: string;
-  custom: boolean;
-  responsibleEmployeeId?: number | null;
-};
+type ToolRange = AssignBaseRange & { responsibleEmployeeId?: number | null };
 
 type Props = {
   constructionSiteId: number;
@@ -41,701 +21,135 @@ type Props = {
   onClose: () => void;
 };
 
-const toPickerValue = (value?: string | null): Date | null => {
-  if (!value) return null;
-
-  return new Date(value);
-};
-
-const fromPickerValue = (value: Date | null): string =>
-  value ? value.toISOString().slice(0, 10) : "";
-
 export default function AssignToolsDialog({
   constructionSiteId,
   open,
   onClose,
 }: Props) {
   const { t } = useTranslation();
-
   const { data: site } = useConstructionSite(constructionSiteId);
   const {
-    employeeRows,
+    employeeRows = [],
     isLoading: empLoading,
     isError: empError,
   } = useEmployees();
-  const { toolsRows, isLoading: toolLoading, isError: toolError } = useTools();
-
+  const {
+    toolsRows = [],
+    isLoading: toolLoading,
+    isError: toolError,
+  } = useTools();
   const assign = useAssignToolsToConstructionSite();
-
-  const [selected, setSelected] = useState<number[]>([]);
-  const [globalFrom, setGlobalFrom] = useState<string>(todayStr());
-  const [globalTo, setGlobalTo] = useState<string>(todayStr());
-  const [ranges, setRanges] = useState<Record<number, ToolRange>>({});
-  const [touched, setTouched] = useState(false);
-
-  const DETAIL_GRID_MD = "minmax(220px,1fr) 180px 180px minmax(220px,1fr) 48px";
-
-  useEffect(() => {
-    if (!open) {
-      setSelected([]);
-      setGlobalFrom(todayStr());
-      setGlobalTo(todayStr());
-      setRanges({});
-      setTouched(false);
-    }
-  }, [open]);
 
   const preselected = useMemo(() => {
     const prior = site?.constructionSiteTools ?? [];
-    const resultIds: number[] = [];
-    const resultMap: Record<number, ToolRange> = {};
-    if (!prior.length) return { ids: resultIds, map: resultMap };
+    const ids: number[] = [];
+    const map: Record<number, ToolRange> = {};
+    if (!prior.length) return { ids, map };
 
-    const norm = (s: string) =>
-      s
-        ?.normalize?.("NFKD")
-        ?.replace(/\p{Diacritic}/gu, "")
-        ?.trim()
-        ?.toLowerCase?.() ?? "";
     const byName = new Map(
-      (employeeRows ?? []).map((e: any) => [
-        norm(fullName(e.firstName, e.lastName)),
+      employeeRows.map((e: any) => [
+        normalizeText(fullName(e.firstName, e.lastName)),
         Number(e.id),
       ])
     );
 
-    for (const t of prior) {
-      const toolId = Number((t as any).id);
+    for (const item of prior as any[]) {
+      const toolId = Number(item.id);
       if (!Number.isFinite(toolId)) continue;
-      resultIds.push(toolId);
+      ids.push(toolId);
 
-      let respId: number | null | undefined = t.responsibleEmployeeId;
-      if (respId == null && t.responsibleEmployeeName) {
-        respId = byName.get(norm(t.responsibleEmployeeName));
+      let respId: number | null | undefined = item.responsibleEmployeeId;
+      if (respId == null && item.responsibleEmployeeName) {
+        respId = byName.get(normalizeText(item.responsibleEmployeeName));
       }
 
-      resultMap[toolId] = {
-        from: t.dateFrom ?? todayStr(),
-        to: t.dateTo ?? todayStr(),
+      map[toolId] = {
+        from: item.dateFrom ?? todayStr(),
+        to: item.dateTo ?? todayStr(),
         custom: true,
         responsibleEmployeeId: Number.isFinite(Number(respId))
           ? Number(respId)
           : null,
       };
     }
-    return { ids: resultIds, map: resultMap };
+
+    return { ids, map };
   }, [site, employeeRows]);
 
-  useEffect(() => {
-    if (!open || touched) return;
-    setSelected(preselected.ids);
-    setRanges(preselected.map);
-  }, [open, preselected, touched]);
-
-  useEffect(() => {
-    if (!open || selected.length === 0) return;
-    const existing = new Set(toolsRows.map((t: any) => Number(t.id)));
-    const filtered = selected.filter((id) => existing.has(id));
-    if (filtered.length !== selected.length) {
-      setSelected(filtered);
-      setRanges((old) => {
-        const next: Record<number, ToolRange> = {};
-        filtered.forEach((id) => {
-          if (old[id]) next[id] = old[id];
-        });
-        return next;
-      });
-    }
-  }, [toolsRows, open, selected]);
-
-  const markTouched = () => setTouched(true);
-
-  const toggleTool = (id: number) => {
-    markTouched();
-    setSelected((prev) => {
-      const next = prev.includes(id)
-        ? prev.filter((x) => x !== id)
-        : [...prev, id];
-      setRanges((old) => {
-        const has = old[id];
-        if (next.includes(id) && !has) {
-          return {
-            ...old,
-            [id]: {
-              from: globalFrom,
-              to: globalTo,
-              custom: false,
-              responsibleEmployeeId: null,
-            },
-          };
-        }
-        return old;
-      });
-      return next;
-    });
-  };
-
-  const applyGlobal = (nextFrom: string, nextTo: string) => {
-    setRanges((old) => {
-      const updated: Record<number, ToolRange> = { ...old };
-      selected.forEach((id) => {
-        const r = updated[id] ?? {
-          from: globalFrom,
-          to: globalTo,
-          custom: false,
-          responsibleEmployeeId: null,
-        };
-        if (!r.custom) updated[id] = { ...r, from: nextFrom, to: nextTo };
-      });
-      return updated;
-    });
-  };
-
-  const onChangeGlobalFrom = (v: string) => {
-    markTouched();
-    setGlobalFrom(v);
-    applyGlobal(v, globalTo);
-  };
-  const onChangeGlobalTo = (v: string) => {
-    markTouched();
-    setGlobalTo(v);
-    applyGlobal(globalFrom, v);
-  };
-
-  const setToolFrom = (id: number, v: string) => {
-    markTouched();
-    setRanges((old) => {
-      const prev = old[id] ?? {
-        from: globalFrom,
-        to: globalTo,
-        custom: false,
-        responsibleEmployeeId: null,
-      };
-      return { ...old, [id]: { ...prev, from: v, custom: true } };
-    });
-  };
-  const setToolTo = (id: number, v: string) => {
-    markTouched();
-    setRanges((old) => {
-      const prev = old[id] ?? {
-        from: globalFrom,
-        to: globalTo,
-        custom: false,
-        responsibleEmployeeId: null,
-      };
-      return { ...old, [id]: { ...prev, to: v, custom: true } };
-    });
-  };
-  const resetToolToGlobal = (id: number) => {
-    markTouched();
-    setRanges((old) => {
-      const r = old[id] ?? {
-        from: globalFrom,
-        to: globalTo,
-        custom: false,
-        responsibleEmployeeId: null,
-      };
-      return {
-        ...old,
-        [id]: { ...r, from: globalFrom, to: globalTo, custom: false },
-      };
-    });
-  };
-
-  const setResponsible = (id: number, employeeId: number | null) => {
-    markTouched();
-    setRanges((old) => {
-      const prev = old[id] ?? {
-        from: globalFrom,
-        to: globalTo,
-        custom: false,
-        responsibleEmployeeId: null,
-      };
-      return { ...old, [id]: { ...prev, responsibleEmployeeId: employeeId } };
-    });
-  };
-
-  const allRangesValid = useMemo(() => {
-    if (!isValidRange(globalFrom, globalTo)) return false;
-    for (const id of selected) {
-      const r = ranges[id] ?? { from: globalFrom, to: globalTo };
-      if (!isValidRange(r.from, r.to)) return false;
-    }
-    return true;
-  }, [selected, ranges, globalFrom, globalTo]);
-
-  const handleSave = () => {
-    if (selected.length > 0 && !allRangesValid) return;
-
-    const payload = {
-      constructionSiteId,
-      tools:
-        selected.length === 0
-          ? []
-          : selected.map((toolId) => {
-              const r = ranges[toolId] ?? {
-                from: globalFrom,
-                to: globalTo,
-                responsibleEmployeeId: null,
-              };
-              return {
-                toolId,
-                dateFrom: r.from,
-                dateTo: r.to,
-                responsibleEmployeeId: r.responsibleEmployeeId ?? 0,
-              };
-            }),
-    };
-
-    assign.mutate(payload as any, { onSuccess: onClose });
-  };
-
-  const loading = empLoading || toolLoading;
-  const hasError = empError || toolError;
-
-  const isCustom = useMemo(() => {
-    if (selected.length === 0) return false;
-    return selected.some((id) => {
-      const r = ranges[id] ?? { from: globalFrom, to: globalTo };
-      return r.from !== globalFrom || r.to !== globalTo;
-    });
-  }, [selected, ranges, globalFrom, globalTo]);
-
   return (
-    <Dialog
+    <ReusableAssignDialog<any, ToolRange, any>
       open={open}
-      onClose={(_e, _reason) => {
+      title={t("constructionSites.assign.toolsTitle")}
+      onClose={() => {
         if (assign.isPending) return;
         onClose();
       }}
-      fullWidth
-      maxWidth="xl"
-      PaperProps={{
-        sx: {
-          position: "relative",
-          p: 2.5,
-          pt: 2.25,
-          pb: 2.5,
-        },
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          mb: 2,
-        }}
-      >
-        <DialogTitle
-          sx={{
-            m: 0,
-            p: 0,
-            fontSize: 16,
-            fontWeight: 600,
-            color: "#111827",
-          }}
-        >
-          {t("constructionSites.assign.toolsTitle")}
-        </DialogTitle>
-
-        <IconButton
-          onClick={() => {
-            if (assign.isPending) return;
-            onClose();
-          }}
-          disabled={assign.isPending}
-          sx={{
-            width: 32,
-            height: 32,
-            borderRadius: "999px",
-            p: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            "&:hover": {
-              backgroundColor: "#EFF6FF",
-            },
-          }}
-        >
-          <CloseIcon sx={{ fontSize: 16, color: "#111827" }} />
-        </IconButton>
-      </Box>
-
-      <DialogContent sx={{ p: 0, mb: 2 }}>
-        {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
-            <CircularProgress />
-          </Box>
-        ) : hasError ? (
-          <Box sx={{ p: 2 }}>
-            <Typography color="error">
-              {t("constructionSites.assign.loadError")}
-            </Typography>
-          </Box>
-        ) : toolsRows.length === 0 ? (
-          <Box sx={{ p: 2 }}>
-            <Typography color="text.secondary">
-              {t("constructionSites.assign.noTools")}
-            </Typography>
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "260px 1fr" },
-              minHeight: 420,
-            }}
-          >
-            <Box
-              sx={{
-                borderRight: (t) => ({ md: `1px solid ${t.palette.divider}` }),
-                p: 2,
-                overflowY: "auto",
-                maxHeight: 560,
-              }}
-            >
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-                sx={{ mb: 1 }}
-              >
-                <Typography variant="subtitle2" color="text.secondary">
-                  {t("constructionSites.assign.left.toolsCount")}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {t("constructionSites.assign.left.selectedCount", {
-                    count: selected.length,
-                  })}
-                </Typography>
-              </Stack>
-              <Divider sx={{ mb: 1 }} />
-
-              <Stack spacing={0.5}>
-                {toolsRows.map((tool: any) => {
-                  const id = Number(tool.id);
-                  const checked = selected.includes(id);
-                  const name = tool.name ?? `ID ${id}`;
-                  const inv = tool.inventoryNumber
-                    ? ` • ${tool.inventoryNumber}`
-                    : "";
-
-                  return (
-                    <Box
-                      key={id}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        px: 1,
-                        py: 0.5,
-                        borderRadius: 1,
-                        "&:hover": { backgroundColor: "action.hover" },
-                      }}
-                    >
-                      <Checkbox
-                        size="small"
-                        checked={checked}
-                        onChange={() => toggleTool(id)}
-                        sx={{ mr: 1 }}
-                      />
-                      <Box
-                        onClick={() => toggleTool(id)}
-                        sx={{ cursor: "pointer", minWidth: 0, flex: 1 }}
-                        title={name}
-                      >
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            fontWeight: 600,
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          {name}
-                        </Typography>
-                        {inv && (
-                          <Typography variant="caption" color="text.secondary">
-                            {inv}
-                          </Typography>
-                        )}
-                      </Box>
-                    </Box>
-                  );
-                })}
-              </Stack>
-            </Box>
-
-            <Box sx={{ p: 2 }}>
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                spacing={2}
-                alignItems={{ xs: "stretch", sm: "center" }}
-                sx={{
-                  p: 2,
-                  mb: 2,
-                  border: (t) => `1px dashed ${t.palette.divider}`,
-                  borderRadius: 1,
-                }}
-              >
-                <DatePicker
-                  label={t("constructionSites.assign.global.startLabel")}
-                  value={toPickerValue(globalFrom)}
-                  onChange={(newValue) =>
-                    onChangeGlobalFrom(fromPickerValue(newValue))
-                  }
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                    },
-                  }}
-                />
-
-                <DatePicker
-                  label={t("constructionSites.assign.global.endLabel")}
-                  value={toPickerValue(globalTo)}
-                  onChange={(newValue) =>
-                    onChangeGlobalTo(fromPickerValue(newValue))
-                  }
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                    },
-                  }}
-                />
-                <Chip
-                  label={
-                    isCustom
-                      ? t("constructionSites.assign.chip.custom")
-                      : t("constructionSites.assign.chip.global")
-                  }
-                  color={isCustom ? "warning" : "default"}
-                  sx={{ ml: { sm: "auto" } }}
-                />
-              </Stack>
-
-              {selected.length > 0 && (
-                <Box
-                  sx={{
-                    display: { xs: "none", md: "grid" },
-                    gridTemplateColumns: DETAIL_GRID_MD,
-                    gap: 1,
-                    px: 1,
-                    pb: 1,
-                    color: "text.secondary",
-                    fontSize: "0.75rem",
-                  }}
-                >
-                  <Box>{t("constructionSites.assign.grid.tool")}</Box>
-                  <Box>{t("constructionSites.assign.grid.start")}</Box>
-                  <Box>{t("constructionSites.assign.grid.end")}</Box>
-                  <Box>{t("constructionSites.assign.grid.responsible")}</Box>
-                  <Box>{t("constructionSites.assign.grid.reset")}</Box>
-                </Box>
-              )}
-
-              {selected.length === 0 ? (
-                <Typography color="text.secondary">
-                  {t("constructionSites.assign.pickToolHint")}
-                </Typography>
-              ) : (
-                <Stack spacing={1} sx={{ maxHeight: 420, overflowY: "auto" }}>
-                  {selected.map((id) => {
-                    const tool = toolsRows.find(
-                      (x: any) => Number(x.id) === id
-                    );
-                    const title = tool?.name ?? `ID ${id}`;
-                    const r = ranges[id] ?? {
-                      from: globalFrom,
-                      to: globalTo,
-                      custom: false,
-                      responsibleEmployeeId: null,
-                    };
-                    const isRowGloballySynced =
-                      r.from === globalFrom && r.to === globalTo;
-
-                    return (
-                      <Box
-                        key={id}
-                        sx={{
-                          p: 1,
-                          border: (t) => `1px solid ${t.palette.divider}`,
-                          borderRadius: 1,
-                          display: "grid",
-                          gridTemplateColumns: {
-                            xs: "1fr",
-                            md: DETAIL_GRID_MD,
-                          },
-                          gap: 1,
-                          alignItems: "center",
-                        }}
-                      >
-                        <Box sx={{ minWidth: 0 }}>
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              fontWeight: 600,
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                            }}
-                            title={title}
-                          >
-                            {title}
-                          </Typography>
-                          {tool?.inventoryNumber && (
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                              sx={{ display: "block", mt: 0.25 }}
-                            >
-                              Inv. br.: {tool.inventoryNumber}
-                            </Typography>
-                          )}
-                        </Box>
-
-                        <DatePicker
-                          value={toPickerValue(r.from)}
-                          onChange={(newValue) =>
-                            setToolFrom(id, fromPickerValue(newValue))
-                          }
-                          slotProps={{
-                            textField: {
-                              size: "small",
-                              error: !isValidRange(r.from, r.to),
-                            },
-                          }}
-                        />
-
-                        <DatePicker
-                          value={toPickerValue(r.to)}
-                          onChange={(newValue) =>
-                            setToolTo(id, fromPickerValue(newValue))
-                          }
-                          slotProps={{
-                            textField: {
-                              size: "small",
-                              error: !isValidRange(r.from, r.to),
-                            },
-                          }}
-                        />
-
-                        <Autocomplete
-                          size="small"
-                          options={(employeeRows as any[]) ?? []}
-                          getOptionLabel={(e: any) =>
-                            e ? fullName(e.firstName, e.lastName) : ""
-                          }
-                          isOptionEqualToValue={(opt: any, val: any) =>
-                            Number(opt?.id) === Number(val?.id)
-                          }
-                          value={
-                            r.responsibleEmployeeId != null
-                              ? (employeeRows as any[]).find(
-                                  (e) =>
-                                    Number(e.id) ===
-                                    Number(r.responsibleEmployeeId)
-                                ) ?? null
-                              : null
-                          }
-                          onChange={(_, val: any | null) =>
-                            setResponsible(id, val ? Number(val.id) : null)
-                          }
-                          renderInput={(params) => <TextField {...params} />}
-                        />
-
-                        <Box sx={{ display: "flex", justifyContent: "center" }}>
-                          <Tooltip
-                            title={t(
-                              "constructionSites.assign.tooltip.resetToGlobal"
-                            )}
-                          >
-                            <span>
-                              <IconButton
-                                size="small"
-                                onClick={() => resetToolToGlobal(id)}
-                                disabled={isRowGloballySynced}
-                              >
-                                <RestartAltIcon fontSize="small" />
-                              </IconButton>
-                            </span>
-                          </Tooltip>
-                        </Box>
-                      </Box>
-                    );
-                  })}
-                </Stack>
-              )}
-            </Box>
-          </Box>
-        )}
-      </DialogContent>
-
-      <DialogActions
-        sx={{
-          p: 0,
-          mt: 1,
-          display: "flex",
-          justifyContent: "flex-end",
-          gap: 1.5,
-        }}
-      >
-        {selected.length > 0 && !allRangesValid && (
-          <Typography
-            variant="caption"
-            color="error"
-            sx={{ mr: "auto", pl: 0.5 }}
-          >
-            {t("constructionSites.assign.validation.invalidRange")}
-          </Typography>
-        )}
-
-        <Button
-          onClick={() => {
-            if (assign.isPending) return;
-            onClose();
-          }}
-          disabled={assign.isPending}
+      items={toolsRows}
+      loading={empLoading || toolLoading}
+      error={empError || toolError}
+      emptyText={t("constructionSites.assign.noTools")}
+      loadErrorText={t("constructionSites.assign.loadError")}
+      busy={assign.isPending}
+      preselected={preselected}
+      getItemId={(tool) => Number(tool.id)}
+      getItemPrimary={(tool) => tool.name ?? tool.model ?? `#${tool.id}`}
+      getItemSecondary={(tool) =>
+        tool.inventoryNumber ? `Inv. br.: ${tool.inventoryNumber}` : null
+      }
+      detailGridMd="minmax(220px,1fr) 180px 180px minmax(220px,1fr) 48px"
+      createRange={({ globalFrom, globalTo }) => ({
+        from: globalFrom,
+        to: globalTo,
+        custom: false,
+        responsibleEmployeeId: null,
+      })}
+      renderRowExtra={({ range, setRangePatch }) => (
+        <Autocomplete
           size="small"
-          variant="outlined"
-          sx={{
-            textTransform: "none",
-            fontWeight: 500,
-            px: 2.5,
-            borderColor: "#E5E7EB",
-            color: "#111827",
-            backgroundColor: "#ffffff",
-            "&:hover": {
-              backgroundColor: "#F9FAFB",
-              borderColor: "#D1D5DB",
-            },
-          }}
-        >
-          {t("constructionSites.assign.actions.cancel")}
-        </Button>
-
-        <Button
-          onClick={handleSave}
-          size="small"
-          variant="contained"
-          disabled={
-            assign.isPending ||
-            loading ||
-            hasError ||
-            (selected.length > 0 && !allRangesValid)
+          options={employeeRows as any[]}
+          getOptionLabel={(e: any) =>
+            e ? fullName(e.firstName, e.lastName) : ""
           }
-          sx={{
-            textTransform: "none",
-            fontWeight: 600,
-            px: 2.5,
-          }}
-        >
-          {assign.isPending
-            ? t("constructionSites.assign.actions.saving")
-            : t("constructionSites.assign.actions.save")}
-        </Button>
-      </DialogActions>
-    </Dialog>
+          isOptionEqualToValue={(opt: any, val: any) =>
+            Number(opt?.id) === Number(val?.id)
+          }
+          value={
+            range.responsibleEmployeeId != null
+              ? (employeeRows as any[]).find(
+                  (e) => Number(e.id) === Number(range.responsibleEmployeeId)
+                ) ?? null
+              : null
+          }
+          onChange={(_, val: any | null) =>
+            setRangePatch({
+              responsibleEmployeeId: val ? Number(val.id) : null,
+            })
+          }
+          renderInput={(params) => <TextField {...params} />}
+        />
+      )}
+      buildPayload={({ selected, ranges, globalFrom, globalTo }) => ({
+        constructionSiteId,
+        tools:
+          selected.length === 0
+            ? []
+            : selected.map((toolId) => {
+                const r = ranges[toolId] ?? {
+                  from: globalFrom,
+                  to: globalTo,
+                  responsibleEmployeeId: null,
+                };
+                return {
+                  toolId,
+                  dateFrom: r.from,
+                  dateTo: r.to,
+                  responsibleEmployeeId: r.responsibleEmployeeId ?? 0,
+                };
+              }),
+      })}
+      onSave={(payload) =>
+        assign.mutate(payload as any, { onSuccess: onClose })
+      }
+    />
   );
 }

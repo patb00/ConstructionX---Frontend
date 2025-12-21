@@ -17,8 +17,8 @@ import { useTranslation } from "react-i18next";
 
 import { useConstructionSite } from "../hooks/useConstructionSite";
 import type { ConstructionSite } from "..";
+import { formatDate } from "../utils/dates";
 
-// Helper types from your main type
 type SiteEmployee = ConstructionSite["constructionSiteEmployees"][number];
 type SiteVehicle = ConstructionSite["constructionSiteVehicles"][number];
 type SiteTool = ConstructionSite["constructionSiteTools"][number];
@@ -26,17 +26,6 @@ type SiteTool = ConstructionSite["constructionSiteTools"][number];
 type Props = {
   constructionSiteId: number;
 };
-
-function formatDate(iso?: string | null) {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-}
 
 export function ConstructionSiteDetailPanel({ constructionSiteId }: Props) {
   const theme = useTheme();
@@ -255,7 +244,6 @@ export function ConstructionSiteDetailPanel({ constructionSiteId }: Props) {
           )}
         </Box>
 
-        {/* Vehicles */}
         <Box>
           <Stack
             direction="row"

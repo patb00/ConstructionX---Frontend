@@ -57,6 +57,8 @@ export type ReusableDataGridProps<
 
   getRowClassName?: (params: GridRowClassNameParams<T>) => string;
   sx?: SxProps<Theme>;
+
+  mobilePrimaryField?: string;
 };
 
 function applyHeaderMappings<T extends GridValidRowModel>(
@@ -122,6 +124,7 @@ export default function ReusableDataGrid<
   persistState = true,
   getRowClassName,
   sx,
+  mobilePrimaryField,
 }: ReusableDataGridProps<T>) {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -206,7 +209,10 @@ export default function ReusableDataGrid<
     if (!isSmall) return columns;
 
     const actionsCol = columns.find((c) => c.field === "actions");
-    const firstDataCol = columns.find((c) => c.field !== "actions");
+    const firstDataCol =
+      (mobilePrimaryField
+        ? columns.find((c) => c.field === mobilePrimaryField)
+        : undefined) ?? columns.find((c) => c.field !== "actions");
 
     const mobileCols: GridColDef<T>[] = [];
     if (firstDataCol) mobileCols.push(firstDataCol);

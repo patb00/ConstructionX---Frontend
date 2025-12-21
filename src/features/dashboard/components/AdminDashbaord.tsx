@@ -57,8 +57,16 @@ export default function AdminDashboard() {
   const isXs = useMediaQuery(theme.breakpoints.down("sm"));
   const year = 2025;
 
-  const { rows } = useConstructionSites();
-  const sites = Array.isArray(rows) ? rows : [];
+  const { constructionSitesRows } = useConstructionSites({
+    statusOptions: [],
+    employeeOptions: [],
+    toolOptions: [],
+    vehicleOptions: [],
+  });
+
+  const sites = Array.isArray(constructionSitesRows)
+    ? constructionSitesRows
+    : [];
 
   const totals = useMemo(() => {
     let employees = 0,

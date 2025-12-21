@@ -1,47 +1,24 @@
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Checkbox,
-  CircularProgress,
-  Box,
-  Typography,
-  Stack,
-  Chip,
-  IconButton,
-  Tooltip,
-  Divider,
-} from "@mui/material";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { useAssignEmployeesToConstructionSite } from "../hooks/useAssignEmployeesToConstructionSite";
 import { useConstructionSite } from "../hooks/useConstructionSite";
-import { isValidRange, todayStr } from "../utils/dates";
+import { todayStr } from "../utils/dates";
 import { fullName } from "../utils/name";
 import { getCommonRange } from "../utils/ranges";
-import { useTranslation } from "react-i18next";
-import CloseIcon from "@mui/icons-material/Close";
-import { useEffect, useMemo, useState } from "react";
-import { DatePicker } from "@mui/x-date-pickers";
+import {
+  ReusableAssignDialog,
+  type AssignBaseRange,
+} from "../../../components/ui/assign-dialog/AssignDialog";
 
-type EmpRange = { from: string; to: string; custom: boolean };
+type EmpRange = AssignBaseRange;
 
 type Props = {
   constructionSiteId: number;
   open: boolean;
   onClose: () => void;
 };
-
-const toPickerValue = (value?: string | null): Date | null => {
-  if (!value) return null;
-
-  return new Date(value);
-};
-
-const fromPickerValue = (value: Date | null): string =>
-  value ? value.toISOString().slice(0, 10) : "";
 
 export default function AssignEmployeesDialog({
   constructionSiteId,
@@ -53,22 +30,7 @@ export default function AssignEmployeesDialog({
   const { data: site } = useConstructionSite(constructionSiteId);
   const assign = useAssignEmployeesToConstructionSite();
 
-  const [selected, setSelected] = useState<number[]>([]);
-  const [globalFrom, setGlobalFrom] = useState<string>(todayStr());
-  const [globalTo, setGlobalTo] = useState<string>(todayStr());
-  const [ranges, setRanges] = useState<Record<number, EmpRange>>({});
-  const [touched, setTouched] = useState(false);
-
-  useEffect(() => {
-    if (!open) {
-      setSelected([]);
-      setGlobalFrom(todayStr());
-      setGlobalTo(todayStr());
-      setRanges({});
-      setTouched(false);
-    }
-  }, [open]);
-
+  // ---------- preselected mapping (same logic as your original) ----------
   const preselected = useMemo(() => {
     type Prior = {
       firstName?: string;
@@ -76,599 +38,117 @@ export default function AssignEmployeesDialog({
       dateFrom?: string;
       dateTo?: string;
     };
+
     const prior = (site as any)?.constructionSiteEmployees as
       | Prior[]
       | undefined;
 
-    const resultIds: number[] = [];
-    const resultMap: Record<number, EmpRange> = {};
+    const ids: number[] = [];
+    const map: Record<number, EmpRange> = {};
 
-    if (!prior?.length || !employeeRows.length) {
-      return { ids: resultIds, map: resultMap };
-    }
+    if (!prior?.length || !employeeRows.length) return { ids, map };
 
     const bucket = new Map<string, Array<{ from: string; to: string }>>();
     for (const p of prior) {
       const key = fullName(p.firstName, p.lastName);
       if (!bucket.has(key)) bucket.set(key, []);
-      bucket
-        .get(key)!
-        .push({ from: p.dateFrom ?? todayStr(), to: p.dateTo ?? todayStr() });
+      bucket.get(key)!.push({
+        from: p.dateFrom ?? todayStr(),
+        to: p.dateTo ?? todayStr(),
+      });
     }
 
-    for (const e of employeeRows) {
+    for (const e of employeeRows as any[]) {
       const id = Number(e?.id);
       if (!Number.isFinite(id)) continue;
+
       const key = fullName(e?.firstName, e?.lastName);
       const list = bucket.get(key);
+
       if (list?.length) {
         const { from, to } = list.shift()!;
-        resultIds.push(id);
-        resultMap[id] = { from, to, custom: false };
+        ids.push(id);
+        map[id] = { from, to, custom: false };
       }
     }
 
-    return { ids: resultIds, map: resultMap };
+    return { ids, map };
   }, [site, employeeRows]);
 
-  useEffect(() => {
-    if (!open) return;
-    if (!touched) {
-      setSelected(preselected.ids);
-      setRanges(preselected.map);
-      const common = getCommonRange(preselected.ids, preselected.map);
-      if (common) {
-        setGlobalFrom(common.from);
-        setGlobalTo(common.to);
-      } else {
-        setGlobalFrom(todayStr());
-        setGlobalTo(todayStr());
-      }
-    }
-  }, [open, preselected, touched]);
-
-  useEffect(() => {
-    if (!open || selected.length === 0) return;
-    const existing = new Set(employeeRows.map((e: any) => Number(e.id)));
-    const filtered = selected.filter((id) => existing.has(id));
-    if (filtered.length !== selected.length) {
-      setSelected(filtered);
-      setRanges((old) => {
-        const next: Record<number, EmpRange> = {};
-        filtered.forEach((id) => {
-          if (old[id]) next[id] = old[id];
-        });
-        return next;
-      });
-    }
-  }, [employeeRows, open, selected]);
-
-  const markTouched = () => setTouched(true);
-
-  const toggleEmp = (id: number) => {
-    markTouched();
-    setSelected((prev) => {
-      const next = prev.includes(id)
-        ? prev.filter((x) => x !== id)
-        : [...prev, id];
-      setRanges((old) => {
-        const has = old[id];
-        if (next.includes(id) && !has) {
-          return {
-            ...old,
-            [id]: { from: globalFrom, to: globalTo, custom: false },
-          };
-        }
-        return old;
-      });
-      return next;
-    });
-  };
-
-  const applyGlobal = (nextFrom: string, nextTo: string) => {
-    setRanges((old) => {
-      const updated: Record<number, EmpRange> = { ...old };
-      selected.forEach((id) => {
-        const r = updated[id] ?? {
-          from: globalFrom,
-          to: globalTo,
-          custom: false,
-        };
-        if (!r.custom) updated[id] = { ...r, from: nextFrom, to: nextTo };
-      });
-      return updated;
-    });
-  };
-
-  const onChangeGlobalFrom = (v: string) => {
-    markTouched();
-    setGlobalFrom(v);
-    applyGlobal(v, globalTo);
-  };
-  const onChangeGlobalTo = (v: string) => {
-    markTouched();
-    setGlobalTo(v);
-    applyGlobal(globalFrom, v);
-  };
-
-  const setEmpFrom = (id: number, v: string) => {
-    markTouched();
-    setRanges((old) => {
-      const prev = old[id] ?? { from: globalFrom, to: globalTo, custom: false };
-      return { ...old, [id]: { ...prev, from: v, custom: true } };
-    });
-  };
-  const setEmpTo = (id: number, v: string) => {
-    markTouched();
-    setRanges((old) => {
-      const prev = old[id] ?? { from: globalFrom, to: globalTo, custom: false };
-      return { ...old, [id]: { ...prev, to: v, custom: true } };
-    });
-  };
-  const resetEmpToGlobal = (id: number) => {
-    markTouched();
-    setRanges((old) => {
-      const r = old[id] ?? { from: globalFrom, to: globalTo, custom: false };
-      return {
-        ...old,
-        [id]: { ...r, from: globalFrom, to: globalTo, custom: false },
-      };
-    });
-  };
-
-  const isCustom = useMemo(() => {
-    if (selected.length === 0) return false;
-    return selected.some((id) => {
-      const r = ranges[id] ?? { from: globalFrom, to: globalTo };
-      return r.from !== globalFrom || r.to !== globalTo;
-    });
-  }, [selected, ranges, globalFrom, globalTo]);
-
-  const allRangesValid = useMemo(() => {
-    if (!isValidRange(globalFrom, globalTo)) return false;
-    for (const id of selected) {
-      const r = ranges[id] ?? { from: globalFrom, to: globalTo, custom: false };
-      if (!isValidRange(r.from, r.to)) return false;
-    }
-    return true;
-  }, [selected, ranges, globalFrom, globalTo]);
-
-  const handleSave = () => {
-    if (selected.length > 0 && !allRangesValid) return;
-
-    const payload = {
-      constructionSiteId,
-      employees:
-        selected.length === 0
-          ? []
-          : selected.map((employeeId) => {
-              const r = ranges[employeeId] ?? {
-                from: globalFrom,
-                to: globalTo,
-                custom: false,
-              };
-              return { employeeId, dateFrom: r.from, dateTo: r.to };
-            }),
-    };
-
-    assign.mutate(payload, { onSuccess: onClose });
-  };
-
-  const DETAIL_GRID_MD = "minmax(220px,1fr) 180px 180px 48px";
+  // Employees dialog had special: set global range based on common range
+  const initialGlobalRange = useMemo(() => {
+    const common = getCommonRange(preselected.ids, preselected.map);
+    return common ? { from: common.from, to: common.to } : null;
+  }, [preselected]);
 
   return (
-    <Dialog
+    <ReusableAssignDialog<any, EmpRange, any>
       open={open}
-      onClose={(_e, _reason) => {
+      title={t("constructionSites.assign.title")}
+      onClose={() => {
         if (assign.isPending) return;
         onClose();
       }}
-      fullWidth
-      maxWidth="xl"
-      PaperProps={{
-        sx: {
-          position: "relative",
-          p: 2.5,
-          pt: 2.25,
-          pb: 2.5,
-        },
+      items={employeeRows as any[]}
+      loading={isLoading}
+      error={isError}
+      emptyText={t("constructionSites.assign.empty")}
+      loadErrorText={t("constructionSites.assign.loadError")}
+      busy={assign.isPending}
+      preselected={preselected}
+      initialGlobalRange={initialGlobalRange}
+      leftWidthMd="320px"
+      detailGridMd="minmax(220px,1fr) 180px 180px 48px"
+      getItemId={(e) => Number(e.id)}
+      getItemPrimary={(e) =>
+        `${e.firstName ?? ""} ${e.lastName ?? ""}`.trim() || `ID ${e.id}`
+      }
+      getItemSecondary={(e) => (e.oib ? `OIB: ${e.oib}` : null)}
+      createRange={({ globalFrom, globalTo }) => ({
+        from: globalFrom,
+        to: globalTo,
+        custom: false,
+      })}
+      labels={{
+        startLabel: t("constructionSites.assign.global.startLabel"),
+        endLabel: t("constructionSites.assign.global.endLabel"),
+        cancel: t("constructionSites.assign.actions.cancel"),
+        save: t("constructionSites.assign.actions.save"),
+        saving: t("constructionSites.assign.actions.saving"),
+        invalidRange: t("constructionSites.assign.validation.invalidRange"),
+        pickHint: t("constructionSites.assign.pickHint"),
+        itemsCountLabel: (count: number) =>
+          t("constructionSites.assign.left.employeesCount", { count }),
+        selectedCountLabel: (count: number) =>
+          t("constructionSites.assign.left.selectedCount", { count }),
+        chipGlobal: t("constructionSites.assign.chip.global"),
+        chipCustom: t("constructionSites.assign.chip.custom"),
+        resetToGlobalTooltip: t(
+          "constructionSites.assign.tooltip.resetToGlobal"
+        ),
       }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          mb: 2,
-        }}
-      >
-        <DialogTitle
-          sx={{
-            m: 0,
-            p: 0,
-            fontSize: 16,
-            fontWeight: 600,
-            color: "#111827",
-          }}
-        >
-          {t("constructionSites.assign.title")}
-        </DialogTitle>
+      buildPayload={({ selected, ranges, globalFrom, globalTo }) => ({
+        constructionSiteId,
+        employees:
+          selected.length === 0
+            ? []
+            : selected.map((employeeId) => {
+                const r =
+                  ranges[employeeId] ??
+                  ({
+                    from: globalFrom,
+                    to: globalTo,
+                    custom: false,
+                  } as EmpRange);
 
-        <IconButton
-          onClick={() => {
-            if (assign.isPending) return;
-            onClose();
-          }}
-          disabled={assign.isPending}
-          sx={{
-            width: 32,
-            height: 32,
-            borderRadius: "999px",
-            p: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            "&:hover": {
-              backgroundColor: "#EFF6FF",
-            },
-          }}
-        >
-          <CloseIcon sx={{ fontSize: 16, color: "#111827" }} />
-        </IconButton>
-      </Box>
-
-      <DialogContent sx={{ p: 0, mb: 2 }}>
-        {isLoading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
-            <CircularProgress />
-          </Box>
-        ) : isError ? (
-          <Box sx={{ p: 2 }}>
-            <Typography color="error">
-              {t("constructionSites.assign.loadError")}
-            </Typography>
-          </Box>
-        ) : employeeRows.length === 0 ? (
-          <Box sx={{ p: 2 }}>
-            <Typography color="text.secondary">
-              {t("constructionSites.assign.empty")}
-            </Typography>
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "320px 1fr" },
-              minHeight: 420,
-            }}
-          >
-            <Box
-              sx={{
-                borderRight: (t) => ({ md: `1px solid ${t.palette.divider}` }),
-                p: 2,
-                overflowY: "auto",
-                maxHeight: 560,
-              }}
-            >
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-                sx={{ mb: 1 }}
-              >
-                <Typography variant="subtitle2" color="text.secondary">
-                  {t("constructionSites.assign.left.employeesCount", {
-                    count: employeeRows.length,
-                  })}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {t("constructionSites.assign.left.selectedCount", {
-                    count: selected.length,
-                  })}
-                </Typography>
-              </Stack>
-              <Divider sx={{ mb: 1 }} />
-
-              <Stack spacing={0.5}>
-                {employeeRows.map((e: any) => {
-                  const id = Number(e.id);
-                  const full = `${e.firstName ?? ""} ${
-                    e.lastName ?? ""
-                  }`.trim();
-                  const checked = selected.includes(id);
-
-                  return (
-                    <Box
-                      key={id}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        px: 1,
-                        py: 0.5,
-                        borderRadius: 1,
-                        "&:hover": { backgroundColor: "action.hover" },
-                      }}
-                    >
-                      <Checkbox
-                        size="small"
-                        checked={checked}
-                        onChange={() => toggleEmp(id)}
-                        sx={{ mr: 1 }}
-                      />
-                      <Box
-                        onClick={() => toggleEmp(id)}
-                        sx={{ cursor: "pointer", minWidth: 0, flex: 1 }}
-                        title={full || `ID ${id}`}
-                      >
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            fontWeight: 600,
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          {full || `ID ${id}`}
-                        </Typography>
-                        {e.oib && (
-                          <Typography variant="caption" color="text.secondary">
-                            OIB: {e.oib}
-                          </Typography>
-                        )}
-                      </Box>
-                    </Box>
-                  );
-                })}
-              </Stack>
-            </Box>
-
-            <Box sx={{ p: 2 }}>
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                spacing={2}
-                alignItems={{ xs: "stretch", sm: "center" }}
-                sx={{
-                  p: 2,
-                  mb: 2,
-                  border: (t) => `1px dashed ${t.palette.divider}`,
-                  borderRadius: 1,
-                }}
-              >
-                <DatePicker
-                  label={t("constructionSites.assign.global.startLabel")}
-                  value={toPickerValue(globalFrom)}
-                  onChange={(newValue) =>
-                    onChangeGlobalFrom(fromPickerValue(newValue))
-                  }
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                    },
-                  }}
-                />
-
-                <DatePicker
-                  label={t("constructionSites.assign.global.endLabel")}
-                  value={toPickerValue(globalTo)}
-                  onChange={(newValue) =>
-                    onChangeGlobalTo(fromPickerValue(newValue))
-                  }
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                    },
-                  }}
-                />
-                <Chip
-                  label={
-                    isCustom
-                      ? t("constructionSites.assign.chip.custom")
-                      : t("constructionSites.assign.chip.global")
-                  }
-                  color={isCustom ? "warning" : "default"}
-                  sx={{ ml: { sm: "auto" } }}
-                />
-              </Stack>
-
-              {selected.length > 0 && (
-                <Box
-                  sx={{
-                    display: { xs: "none", md: "grid" },
-                    gridTemplateColumns: DETAIL_GRID_MD,
-                    gap: 1,
-                    px: 1,
-                    pb: 1,
-                    color: "text.secondary",
-                    fontSize: "0.75rem",
-                  }}
-                >
-                  <Box>{t("constructionSites.assign.grid.employee")}</Box>
-                  <Box>{t("constructionSites.assign.grid.start")}</Box>
-                  <Box>{t("constructionSites.assign.grid.end")}</Box>
-                  <Box>{t("constructionSites.assign.grid.reset")}</Box>
-                </Box>
-              )}
-
-              {selected.length === 0 ? (
-                <Typography color="text.secondary">
-                  {t("constructionSites.assign.pickHint")}
-                </Typography>
-              ) : (
-                <Stack spacing={1} sx={{ maxHeight: 420, overflowY: "auto" }}>
-                  {selected.map((id) => {
-                    const e = employeeRows.find(
-                      (x: any) => Number(x.id) === id
-                    );
-                    const full = e
-                      ? `${e.firstName ?? ""} ${e.lastName ?? ""}`.trim()
-                      : `ID ${id}`;
-                    const r = ranges[id] ?? {
-                      from: globalFrom,
-                      to: globalTo,
-                      custom: false,
-                    };
-
-                    const isRowGloballySynced =
-                      r.from === globalFrom && r.to === globalTo;
-
-                    return (
-                      <Box
-                        key={id}
-                        sx={{
-                          p: 1,
-                          border: (t) => `1px solid ${t.palette.divider}`,
-                          borderRadius: 1,
-                          display: "grid",
-                          gridTemplateColumns: {
-                            xs: "1fr",
-                            md: DETAIL_GRID_MD,
-                          },
-                          gap: 1,
-                          alignItems: "center",
-                        }}
-                      >
-                        <Box sx={{ minWidth: 0 }}>
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              fontWeight: 600,
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                            }}
-                            title={full}
-                          >
-                            {full}
-                          </Typography>
-                          {e?.oib && (
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                              sx={{ display: "block", mt: 0.25 }}
-                            >
-                              OIB: {e.oib}
-                            </Typography>
-                          )}
-                        </Box>
-
-                        <DatePicker
-                          value={toPickerValue(r.from)}
-                          onChange={(newValue) =>
-                            setEmpFrom(id, fromPickerValue(newValue))
-                          }
-                          slotProps={{
-                            textField: {
-                              size: "small",
-                              error: !isValidRange(r.from, r.to),
-                            },
-                          }}
-                        />
-
-                        <DatePicker
-                          value={toPickerValue(r.to)}
-                          onChange={(newValue) =>
-                            setEmpTo(id, fromPickerValue(newValue))
-                          }
-                          slotProps={{
-                            textField: {
-                              size: "small",
-                              error: !isValidRange(r.from, r.to),
-                            },
-                          }}
-                        />
-
-                        <Box sx={{ display: "flex", justifyContent: "center" }}>
-                          <Tooltip
-                            title={t(
-                              "constructionSites.assign.tooltip.resetToGlobal"
-                            )}
-                          >
-                            <span>
-                              <IconButton
-                                size="small"
-                                onClick={() => resetEmpToGlobal(id)}
-                                disabled={isRowGloballySynced}
-                              >
-                                <RestartAltIcon fontSize="small" />
-                              </IconButton>
-                            </span>
-                          </Tooltip>
-                        </Box>
-                      </Box>
-                    );
-                  })}
-                </Stack>
-              )}
-            </Box>
-          </Box>
-        )}
-      </DialogContent>
-
-      <DialogActions
-        sx={{
-          p: 0,
-          mt: 1,
-          display: "flex",
-          justifyContent: "flex-end",
-          gap: 1.5,
-        }}
-      >
-        {selected.length > 0 && !allRangesValid && (
-          <Typography
-            variant="caption"
-            color="error"
-            sx={{ mr: "auto", pl: 0.5 }}
-          >
-            {t("constructionSites.assign.validation.invalidRange")}
-          </Typography>
-        )}
-
-        <Button
-          onClick={() => {
-            if (assign.isPending) return;
-            onClose();
-          }}
-          disabled={assign.isPending}
-          size="small"
-          variant="outlined"
-          sx={{
-            textTransform: "none",
-            fontWeight: 500,
-            px: 2.5,
-            borderColor: "#E5E7EB",
-            color: "#111827",
-            backgroundColor: "#ffffff",
-            "&:hover": {
-              backgroundColor: "#F9FAFB",
-              borderColor: "#D1D5DB",
-            },
-          }}
-        >
-          {t("constructionSites.assign.actions.cancel")}
-        </Button>
-
-        <Button
-          onClick={handleSave}
-          size="small"
-          variant="contained"
-          disabled={
-            assign.isPending ||
-            isLoading ||
-            isError ||
-            (selected.length > 0 && !allRangesValid)
-          }
-          sx={{
-            textTransform: "none",
-            fontWeight: 600,
-            px: 2.5,
-          }}
-        >
-          {assign.isPending
-            ? t("constructionSites.assign.actions.saving")
-            : t("constructionSites.assign.actions.save")}
-        </Button>
-      </DialogActions>
-    </Dialog>
+                return {
+                  employeeId,
+                  dateFrom: r.from,
+                  dateTo: r.to,
+                };
+              }),
+      })}
+      onSave={(payload) => assign.mutate(payload, { onSuccess: onClose })}
+    />
   );
 }

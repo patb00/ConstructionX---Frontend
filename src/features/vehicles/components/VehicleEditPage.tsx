@@ -2,8 +2,8 @@ import { Button, Paper, Stack, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import VehicleForm from "./VehicleForm";
 
+import VehicleForm from "./VehicleForm";
 import type { NewVehicleRequest } from "..";
 import { useVehicle } from "../hooks/useVehicle";
 import { useUpdateVehicle } from "../hooks/useUpdateVehicles";
@@ -11,52 +11,54 @@ import { useVehicleStatuses } from "../constants/hooks/useVehicleStatus";
 import { useVehicleConditions } from "../constants/hooks/useVehicleConditions";
 import { useVehicleTypes } from "../constants/hooks/useVehiclesTypes";
 
+import { toStringOptions } from "../utils/options";
+import { vehicleToDefaultValues } from "../utils/vehicleForm";
+
 export default function VehicleEditPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const vehicleId = Number(id);
-  if (!Number.isFinite(vehicleId))
+
+  if (!Number.isFinite(vehicleId)) {
     return <div>{t("vehicles.edit.invalidUrlId")}</div>;
+  }
 
   const navigate = useNavigate();
-  const { data: vehicle, isLoading: vL, error } = useVehicle(vehicleId);
-  const { mutate: updateVehicle, isPending } = useUpdateVehicle();
+  const {
+    data: vehicle,
+    isLoading: vehicleLoading,
+    error,
+  } = useVehicle(vehicleId);
+  const { mutate: updateVehicle, isPending: updating } = useUpdateVehicle();
 
-  const { data: statuses = [], isLoading: sL } = useVehicleStatuses();
-  const { data: conditions = [], isLoading: cL } = useVehicleConditions();
-  const { data: types = [], isLoading: tL } = useVehicleTypes();
-  const toOptions = (arr: string[]) => arr.map((x) => ({ value: x, label: x }));
+  const { data: statuses = [], isLoading: statusesLoading } =
+    useVehicleStatuses();
+  const { data: conditions = [], isLoading: conditionsLoading } =
+    useVehicleConditions();
+  const { data: types = [], isLoading: typesLoading } = useVehicleTypes();
 
   if (error) return <div>{t("vehicles.edit.loadError")}</div>;
 
-  const defaultValues: NewVehicleRequest | undefined = vehicle && {
-    name: vehicle.name ?? "",
-    registrationNumber: vehicle.registrationNumber ?? null,
-    vin: vehicle.vin ?? null,
-    brand: vehicle.brand ?? null,
-    model: vehicle.model ?? null,
-    yearOfManufacturing: vehicle.yearOfManufacturing ?? null,
-    vehicleType: vehicle.vehicleType ?? null,
-    status: vehicle.status ?? null,
-    purchaseDate: vehicle.purchaseDate ?? "",
-    purchasePrice: vehicle.purchasePrice ?? 0,
-    description: vehicle.description ?? null,
-    condition: vehicle.condition ?? null,
-    horsePower: vehicle.horsePower ?? null,
-    averageConsumption: vehicle.averageConsumption ?? null,
-    weight: vehicle.weight ?? null,
-  };
+  const defaultValues: NewVehicleRequest | undefined =
+    vehicleToDefaultValues(vehicle);
 
   const handleSubmit = (values: NewVehicleRequest) => {
     const idForUpdate =
-      typeof vehicle?.id === "number" ? vehicle.id : vehicleId;
-    updateVehicle(
-      { id: idForUpdate, ...values },
-      {
-        onSuccess: () => navigate("/app/vehicles"),
-      }
-    );
+      typeof (vehicle as any)?.id === "number"
+        ? (vehicle as any).id
+        : vehicleId;
+
+    updateVehicle({ id: idForUpdate, ...values } as any, {
+      onSuccess: () => navigate("/app/vehicles"),
+    });
   };
+
+  const busy =
+    vehicleLoading ||
+    updating ||
+    statusesLoading ||
+    conditionsLoading ||
+    typesLoading;
 
   return (
     <Stack spacing={2}>
@@ -82,10 +84,10 @@ export default function VehicleEditPage() {
         <VehicleForm
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
-          busy={vL || isPending || sL || cL || tL}
-          statusOptions={toOptions(statuses)}
-          conditionOptions={toOptions(conditions)}
-          typeOptions={toOptions(types)}
+          busy={busy}
+          statusOptions={toStringOptions(statuses)}
+          conditionOptions={toStringOptions(conditions)}
+          typeOptions={toStringOptions(types)}
         />
       </Paper>
     </Stack>

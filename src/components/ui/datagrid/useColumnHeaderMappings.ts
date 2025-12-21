@@ -195,5 +195,38 @@ export default function useColumnHeaderMappings(): MapItem[] {
     },
     { original: "Result", translated: t("common.columns.result") },
     { original: "Note", translated: t("common.columns.note") },
+
+    { original: "Address", translated: t("common.columns.address") },
+    { original: "Capacity", translated: t("common.columns.capacity") },
+    {
+      original: "CurrentlyOccupied",
+      translated: t("common.columns.currentlyOccupied"),
+    },
+    {
+      original: "LeaseStartDate",
+      translated: t("common.columns.leaseStartDate"),
+    },
+    {
+      original: "LeaseEndDate",
+      translated: t("common.columns.leaseEndDate"),
+    },
+    {
+      original: "ResponsibleEmployeeId",
+      translated: t("common.columns.responsibleEmployeeId"),
+    },
+    {
+      original: "ResponsibleEmployeeName",
+      translated: t("common.columns.responsibleEmployeeName"),
+    },
+    {
+      original: "PricePerDay",
+      translated: t("common.columns.pricePerDay"),
+    },
+    {
+      original: "PricePerMonth",
+      translated: t("common.columns.pricePerMonth"),
+    },
+    { original: "Currency", translated: t("common.columns.currency") },
+    { original: "Notes", translated: t("common.columns.notes") },
   ];
 }
