@@ -91,6 +91,7 @@ export default function UserEditPage() {
             />
 
             <Button
+              size="small"
               type="submit"
               variant="contained"
               disabled={isPending || isLoading}

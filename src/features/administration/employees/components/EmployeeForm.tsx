@@ -28,6 +28,14 @@ export default function EmployeeForm({ defaultValues, onSubmit, busy }: Props) {
       required: true,
     },
     {
+      name: "email",
+      label: t("employees.form.field.email"),
+      required: true,
+      props: {
+        inputProps: { type: "email", inputMode: "email" },
+      },
+    },
+    {
       name: "oib",
       label: t("employees.form.field.oib"),
       required: true,
@@ -106,32 +114,14 @@ export default function EmployeeForm({ defaultValues, onSubmit, busy }: Props) {
       fields={fields}
       rows={[
         ["firstName", "lastName"],
+        ["email"],
         ["oib"],
         ["dateOfBirth", "employmentDate", "terminationDate"],
         ["hasMachineryLicense"],
         ["clothingSize", "gloveSize", "shoeSize"],
         ["jobPositionId"],
       ]}
-      defaultValues={{
-        firstName: "",
-        lastName: "",
-        oib: "",
-        dateOfBirth: defaultValues?.dateOfBirth,
-        employmentDate: defaultValues?.employmentDate,
-        terminationDate: defaultValues?.terminationDate,
-        hasMachineryLicense: defaultValues?.hasMachineryLicense ?? false,
-        clothingSize: defaultValues?.clothingSize ?? "",
-        gloveSize: defaultValues?.gloveSize ?? "",
-        shoeSize:
-          typeof defaultValues?.shoeSize === "number"
-            ? defaultValues.shoeSize
-            : ("" as unknown as number),
-        jobPositionId:
-          typeof defaultValues?.jobPositionId === "number"
-            ? defaultValues.jobPositionId
-            : "",
-        ...defaultValues,
-      }}
+      defaultValues={defaultValues}
       busy={busy}
       submitLabel={t("employees.form.submit")}
       onSubmit={onSubmit}

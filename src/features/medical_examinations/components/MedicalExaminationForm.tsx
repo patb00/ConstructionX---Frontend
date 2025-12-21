@@ -109,17 +109,7 @@ export default function MedicalExaminationForm({
     <SmartForm<NewMedicalExaminationRequest>
       fields={fields}
       rows={rows}
-      defaultValues={{
-        ...(showEmployeeField && {
-          employeeId: employeeOptions?.[0]?.value ?? 0,
-        }),
-        examinationTypeId: examinationTypeOptions?.[0]?.value ?? 0,
-        examinationDate: "",
-        nextExaminationDate: "",
-        result: "",
-        note: "",
-        ...defaultValues,
-      }}
+      defaultValues={defaultValues}
       busy={busy}
       submitLabel={t("medicalExaminations.form.submit")}
       onSubmit={onSubmit}

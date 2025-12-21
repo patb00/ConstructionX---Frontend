@@ -19,7 +19,7 @@ import { useMemo, useState } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useConstructionSites } from "../../construction_site/hooks/useConstructionSites";
-import { StatCard } from "../../../components/ui/StatCard";
+import { StatCard } from "../../../components/ui/stats/StatCard";
 import { useTranslation } from "react-i18next";
 
 type Filter = "sites" | "employees" | "tools" | "vehicles";
@@ -371,7 +371,6 @@ export default function AdminDashboard() {
                 const tools = (s?.constructionSiteTools ?? []).length;
                 const veh = (s?.constructionSiteVehicles ?? []).length;
 
-                // Simple status: if plannedEndDate < today → Past, else Active
                 const today = new Date();
                 const plannedEnd = s?.plannedEndDate
                   ? new Date(s.plannedEndDate)

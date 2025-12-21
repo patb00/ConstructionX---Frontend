@@ -9,9 +9,8 @@ import MedicalExaminationForm from "./MedicalExaminationForm";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { useExaminationTypes } from "../../examination_types/hooks/useExaminationTypes";
 import type { NewMedicalExaminationRequest } from "..";
-import { toEmployeeOptions } from "../../../lib/options/employees";
-import { toExaminationTypeOptions } from "../../../lib/options/examinationTypes";
 import { useState } from "react";
+import { toEmployeeOptions, toExaminationTypeOptions } from "../utils/options";
 
 export default function MedicalExaminationCreatePage() {
   const { t } = useTranslation();
@@ -33,13 +32,6 @@ export default function MedicalExaminationCreatePage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleSubmit = async (values: NewMedicalExaminationRequest) => {
-    console.log(
-      "%c[CreatePage] Submitted values:",
-      "color: green; font-weight: bold;",
-      values
-    );
-
-    // 1) create exam
     const result = await createExam(values);
     const newId = (result as any)?.data as number | undefined;
 

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuthStore } from "../../features/auth/store/useAuthStore";
-import { getCookie } from "../../lib/cookie";
-import { isExpired } from "../../lib/jwt";
-import { refreshTokens } from "../../lib/authFetch";
 import { Box, CircularProgress } from "@mui/material";
+import { useAuthStore } from "../../features/auth/store/useAuthStore";
+import { isExpired } from "../../lib/jwt";
+import { getCookie } from "../../lib/cookie";
+import { refreshTokens } from "../../lib/authFetch";
 
 const ACCESS_COOKIE = "auth_jwt";
 const REFRESH_COOKIE = "auth_rtok";
@@ -25,6 +25,7 @@ export function RequireAuth({
 
     async function go() {
       if (!hasHydrated) return;
+
       if (jwt && !isExpired(jwt)) {
         setChecking(false);
         return;

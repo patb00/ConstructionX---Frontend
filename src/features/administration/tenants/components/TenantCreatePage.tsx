@@ -1,12 +1,14 @@
 import { Paper, Stack, Typography, Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
-import { useAddTenant } from "../hooks/useAddTenant";
-import TenantForm from "./TenantForm";
 import { useTranslation } from "react-i18next";
-import { useUploadTenantLogo } from "../hooks/useUploadTenantLogo";
-import type { NewTenantRequest } from "..";
 import { useState } from "react";
+
+import TenantForm from "./TenantForm";
+import { useAddTenant } from "../hooks/useAddTenant";
+import { useUploadTenantLogo } from "../hooks/useUploadTenantLogo";
+import type { TenantFormValues } from "./TenantForm";
+import { extractTenantIdFromCreateResult } from "../utils/tenantForm";
 
 export default function TenantCreatePage() {
   const { t } = useTranslation();
@@ -18,12 +20,10 @@ export default function TenantCreatePage() {
 
   const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
 
-  const handleSubmit = async (values: NewTenantRequest) => {
-    const result = await addTenant(values);
+  const handleSubmit = async (values: TenantFormValues<"create">) => {
+    const result = await addTenant(values as any);
 
-    const tenantId: string | undefined =
-      (result as any)?.data || (result as any)?.tenantId;
-
+    const tenantId = extractTenantIdFromCreateResult(result);
     if (!tenantId) {
       navigate("/app/administration/tenants");
       return;
@@ -69,6 +69,7 @@ export default function TenantCreatePage() {
         }}
       >
         <TenantForm
+          mode="create"
           onSubmit={handleSubmit}
           busy={busy}
           selectedLogoFile={selectedLogoFile}

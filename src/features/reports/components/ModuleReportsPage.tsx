@@ -5,15 +5,15 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useTranslation } from "react-i18next";
 
 import {
-  getNavItemByModuleId,
-  type ModuleId,
-} from "../../../app/routes/config";
-
-import { REPORT_HANDLERS } from "../config/reportHandlers";
-import {
   getReportsByModuleId,
   type ReportDefinition,
 } from "../config/reports.config";
+import type { ModuleId } from "../../../app/routes/navigation";
+import { getNavItemByModuleId } from "../../../app/routes/navigationUtils";
+
+import { languageToCulture } from "../utils/culture";
+import { reportsCardColumnSx } from "../utils/layout";
+import { openReport } from "../utils/openReport";
 
 const ModuleReportsPage = () => {
   const { moduleId } = useParams<{ moduleId: ModuleId }>();
@@ -25,15 +25,10 @@ const ModuleReportsPage = () => {
     [moduleId]
   );
 
-  const culture = useMemo(() => {
-    const lng = i18n.language?.split("-")[0] ?? "en";
-    const map: Record<string, string> = {
-      en: "en-GB",
-      hr: "hr-HR",
-      de: "de-DE",
-    };
-    return map[lng] ?? "en-GB";
-  }, [i18n.language]);
+  const culture = useMemo(
+    () => languageToCulture(i18n.language),
+    [i18n.language]
+  );
 
   const [openingReportId, setOpeningReportId] = useState<string | null>(null);
 
@@ -58,30 +53,10 @@ const ModuleReportsPage = () => {
 
   const reports: ReportDefinition[] = getReportsByModuleId(moduleId);
 
-  const cardColumnSx = {
-    flexGrow: 1,
-    flexBasis: {
-      xs: "100%",
-      sm: "calc(50% - 16px)",
-      md: "calc(33.333% - 16px)",
-    },
-    minWidth: 0,
-  } as const;
-
   const handleReportClick = async (reportId: string) => {
-    if (!moduleId) return;
-
     setOpeningReportId(reportId);
     try {
-      const handler = REPORT_HANDLERS[reportId as keyof typeof REPORT_HANDLERS];
-
-      if (!handler) {
-        console.warn("Nema handlera za report:", moduleId, reportId);
-        alert("Nema definiranog handlera za ovaj izvještaj.");
-        return;
-      }
-
-      await handler({ culture });
+      await openReport(reportId, { culture });
     } catch (error) {
       console.error("Greška pri otvaranju izvještaja", error);
       alert("Greška pri otvaranju izvještaja.");
@@ -147,7 +122,7 @@ const ModuleReportsPage = () => {
             const isOpening = openingReportId === report.id;
 
             return (
-              <Box key={report.id} sx={cardColumnSx}>
+              <Box key={report.id} sx={reportsCardColumnSx}>
                 <Card
                   elevation={0}
                   sx={{

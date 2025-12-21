@@ -15,16 +15,7 @@ import { useUpdateRolePermissions } from "../hooks/useUpdateRolePermission";
 import { usePermissions } from "../hooks/usePermissions";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useTranslation } from "react-i18next";
-
-function groupPermissions(perms: string[] = []) {
-  const groups: Record<string, string[]> = {};
-  perms.forEach((p) => {
-    const [, group] = p.split(".");
-    if (!groups[group]) groups[group] = [];
-    groups[group].push(p);
-  });
-  return groups;
-}
+import { groupPermissions } from "../utils/permissions";
 
 export default function RolePermissionsPage() {
   const { t } = useTranslation();

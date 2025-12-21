@@ -19,7 +19,7 @@ export default function CompanyEditPage() {
 
   const defaultValues = company && {
     name: company.name,
-    dateOfCreation: company.dateOfCreation?.slice(0, 16), // keep 'YYYY-MM-DDTHH:mm' for datetime-local
+    dateOfCreation: company.dateOfCreation?.slice(0, 16),
   };
 
   const handleSubmit = async (values: any) => {

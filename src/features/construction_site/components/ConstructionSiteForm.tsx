@@ -74,7 +74,6 @@ export default function ConstructionSiteForm({
     },
   ];
 
-  // 👇 SAME APPROACH AS MEDICAL FORM
   const rows = showStatus
     ? ([
         ["name", "location"],
@@ -93,16 +92,7 @@ export default function ConstructionSiteForm({
     <SmartForm<ConstructionSiteFormValues>
       fields={fields}
       rows={rows}
-      defaultValues={{
-        name: "",
-        location: "",
-        startDate: "",
-        plannedEndDate: "",
-        siteManagerId: null,
-        ...(showStatus ? { status: 1 } : {}),
-        description: null,
-        ...defaultValues,
-      }}
+      defaultValues={defaultValues}
       busy={busy}
       submitLabel={t("constructionSites.form.submit")}
       onSubmit={onSubmit}

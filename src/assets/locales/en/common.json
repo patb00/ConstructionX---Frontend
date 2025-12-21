@@ -652,6 +652,7 @@
       "field": {
         "firstName": "First name",
         "lastName": "Last name",
+        "email": "Email",
         "oib": "OIB",
         "dateOfBirth": "Date of birth",
         "employmentDate": "Employment date",
@@ -788,6 +789,7 @@
         "phoneNumber": "Phone number",
         "password": "Password",
         "confirmPassword": "Confirm password",
+        "role": "Role",
         "isActive": "Active"
       },
       "submit": "Save"

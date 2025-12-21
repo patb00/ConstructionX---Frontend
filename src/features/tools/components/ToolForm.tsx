@@ -87,21 +87,7 @@ export default function ToolForm({
         ["status", "condition"],
         ["responsibleEmployeeId", "description"],
       ]}
-      defaultValues={{
-        name: "",
-        inventoryNumber: null as any,
-        serialNumber: null as any,
-        manufacturer: null as any,
-        model: null as any,
-        purchaseDate: "",
-        purchasePrice: 0,
-        status: null as any,
-        condition: null as any,
-        description: null as any,
-        toolCategoryId: categoryOptions?.[0]?.value ?? 0,
-        responsibleEmployeeId: null as any,
-        ...defaultValues,
-      }}
+      defaultValues={defaultValues}
       busy={busy}
       submitLabel={t("tools.form.submit")}
       onSubmit={onSubmit}

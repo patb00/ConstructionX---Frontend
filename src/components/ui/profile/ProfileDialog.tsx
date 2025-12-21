@@ -16,8 +16,9 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useChangePassword } from "../../features/administration/users/hooks/useChangePassword";
-import type { ChangePasswordRequest } from "../../features/administration/users";
+import { useChangePassword } from "../../../features/administration/users/hooks/useChangePassword";
+import type { ChangePasswordRequest } from "../../../features/administration/users";
+import { getUserInitials } from "../../../utils/getUserInitials";
 
 type LoggedUser = {
   id: string;
@@ -35,13 +36,6 @@ type ProfileDialogProps = {
   loggedUser: LoggedUser | null;
   userId: string | null;
   tenant: string | null;
-};
-
-const getUserInitials = (user: LoggedUser | null) => {
-  if (!user) return "";
-  return `${user.firstName?.[0] ?? ""}${
-    user.lastName?.[0] ?? ""
-  }`.toUpperCase();
 };
 
 export function ProfileDialog({

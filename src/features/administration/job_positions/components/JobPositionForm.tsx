@@ -27,10 +27,7 @@ export default function JobPositionForm({
     <SmartForm<NewJobPositionRequest>
       fields={fields}
       rows={[["name", "description"]]}
-      defaultValues={{
-        name: "",
-        ...defaultValues,
-      }}
+      defaultValues={defaultValues}
       busy={busy}
       submitLabel={t("jobPositions.form.submit")}
       onSubmit={onSubmit}

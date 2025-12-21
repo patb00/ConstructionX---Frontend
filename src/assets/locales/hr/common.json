@@ -651,6 +651,7 @@
       "field": {
         "firstName": "Ime",
         "lastName": "Prezime",
+        "email": "E-mail",
         "oib": "OIB",
         "dateOfBirth": "Datum rođenja",
         "employmentDate": "Datum zaposlenja",
@@ -787,6 +788,7 @@
         "phoneNumber": "Broj telefona",
         "password": "Lozinka",
         "confirmPassword": "Potvrdi lozinku",
+        "role": "Uloga",
         "isActive": "Aktivan"
       },
       "submit": "Spremi"

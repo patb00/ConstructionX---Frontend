@@ -16,7 +16,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useEffect, useMemo, useState } from "react";
-import Sidebar, { SIDEBAR_WIDTH } from "./Sidebar";
+import Sidebar, { SIDEBAR_WIDTH } from "./sidebar/Sidebar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { MdConstruction } from "react-icons/md";
 import { useSnackbar } from "notistack";
@@ -25,7 +25,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import LanguageSwitcher from "../../components/ui/languague-switch/LanguagueSwitcher";
 import { useUsers } from "../../features/administration/users/hooks/useUsers";
 import { useTranslation } from "react-i18next";
-import { ProfileDialog } from "../../components/ui/ProfileDialog";
+import { ProfileDialog } from "../../components/ui/profile/ProfileDialog";
+import { getUserInitials } from "../../utils/getUserInitials";
 
 export default function AppShell() {
   const { t } = useTranslation();
@@ -41,9 +42,7 @@ export default function AppShell() {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
 
-  const signOut = useAuthStore((s) => s.clear);
-  const userId = useAuthStore((s) => s.userId);
-  const tenant = useAuthStore((s) => s.tenant);
+  const { clear, userId, tenant } = useAuthStore();
 
   const { usersRows } = useUsers();
 
@@ -51,20 +50,6 @@ export default function AppShell() {
     if (!usersRows || !userId) return null;
     return usersRows.find((u: any) => String(u.id) === String(userId)) ?? null;
   }, [usersRows, userId]);
-
-  const getUserInitials = (user: any | null) => {
-    if (!user) return "";
-
-    const first = (user.firstName || "").trim();
-    const last = (user.lastName || "").trim();
-
-    if (!first && !last) return "";
-
-    const firstInitial = first ? first[0] : "";
-    const lastInitial = last ? last[0] : "";
-
-    return `${firstInitial}${lastInitial}`.toUpperCase();
-  };
 
   const handleAvatarClick = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);
@@ -78,7 +63,7 @@ export default function AppShell() {
 
   const handleLogout = () => {
     handleMenuClose();
-    signOut();
+    clear();
     queryClient.clear();
     enqueueSnackbar(t("appShell.snackbar.loggedOut"), { variant: "info" });
     navigate("/");

@@ -653,6 +653,7 @@
       "field": {
         "firstName": "Vorname",
         "lastName": "Nachname",
+        "email": "E-Mail",
         "oib": "OIB",
         "dateOfBirth": "Geburtsdatum",
         "employmentDate": "Beschäftigungsbeginn",
@@ -789,6 +790,7 @@
         "phoneNumber": "Telefonnummer",
         "password": "Passwort",
         "confirmPassword": "Passwort bestätigen",
+        "role": "Rolle",
         "isActive": "Aktiv"
       },
       "submit": "Speichern"
