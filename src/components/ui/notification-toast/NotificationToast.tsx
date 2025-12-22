@@ -62,6 +62,19 @@ export const NotificationToast = React.forwardRef<HTMLDivElement, Props>(
                 </Typography>
               ) : null}
 
+              {notification.createdByName ? (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "text.secondary",
+                    fontWeight: 600,
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {notification.createdByName}
+                </Typography>
+              ) : null}
+
               <Typography
                 variant="body2"
                 sx={{ color: "text.secondary", lineHeight: 1.4 }}

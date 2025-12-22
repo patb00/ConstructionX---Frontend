@@ -16,6 +16,7 @@ function mapApiNotificationToDto(n: any): NotificationDto {
     isRead: Boolean(n.isRead),
     createdDate: n.createdDate,
     readDate: n.readDate ?? null,
+    createdByName: n.createdByName ?? null,
   };
 }
 

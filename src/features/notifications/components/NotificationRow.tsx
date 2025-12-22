@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   ListItemIcon,
   ListItemText,
@@ -9,6 +10,7 @@ import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 
 import type { NotificationDto } from "../../../lib/signalR/types";
 import { formatNotificationDate } from "../utils/formatNotificationDate";
+import { getInitials } from "../utils/getInitals";
 
 type Props = {
   notification: NotificationDto;
@@ -24,15 +26,20 @@ export function NotificationRow({
   const content = (
     <>
       <ListItemIcon sx={{ minWidth: 44, mt: 0.25 }}>
-        <Box
-          sx={{
-            width: 36,
-            height: 36,
-            borderRadius: "50%",
-            bgcolor: "grey.300",
-            position: "relative",
-          }}
-        >
+        <Box sx={{ position: "relative" }}>
+          <Avatar
+            sx={{
+              width: 36,
+              height: 36,
+              bgcolor: "grey.300",
+              color: "text.primary",
+              fontWeight: 800,
+              fontSize: 12,
+            }}
+          >
+            {n.createdByName ? getInitials(n.createdByName) : "?"}
+          </Avatar>
+
           <Box
             sx={{
               position: "absolute",
@@ -48,7 +55,6 @@ export function NotificationRow({
         </Box>
       </ListItemIcon>
 
-      {/* Text */}
       <ListItemText
         primary={
           <Typography variant="body2" fontWeight={n.isRead ? 500 : 800}>

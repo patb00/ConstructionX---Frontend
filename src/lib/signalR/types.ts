@@ -7,6 +7,7 @@ export type NotificationDto = {
   entityId?: string | null;
   isRead: boolean;
   createdDate: string;
+  createdByName?: string | null;
   readDate?: string | null;
 };
 
