@@ -231,7 +231,7 @@ export function NotificationsBell() {
                   justifyContent: "space-between",
                 }}
               >
-                <Typography fontWeight={800}>
+                <Typography fontWeight={400}>
                   {t("notifications.sections.earlier")}
                 </Typography>
                 <Button
@@ -240,7 +240,7 @@ export function NotificationsBell() {
                     handleClose();
                     navigate("notifications");
                   }}
-                  sx={{ textTransform: "none", fontWeight: 700 }}
+                  sx={{ textTransform: "none", fontWeight: 500 }}
                 >
                   {t("notifications.actions.showAll")}
                 </Button>
@@ -272,7 +272,7 @@ export function NotificationsBell() {
                   }
                   sx={{
                     textTransform: "none",
-                    fontWeight: 800,
+                    fontWeight: 500,
                     bgcolor: "grey.200",
                     color: "text.primary",
                     "&:hover": { bgcolor: "grey.300" },

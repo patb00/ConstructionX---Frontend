@@ -229,7 +229,7 @@ const NotificationsListPage = () => {
             disabled={!hasNext || query.isFetching}
             sx={{
               textTransform: "none",
-              fontWeight: 800,
+              fontWeight: 500,
               bgcolor: "grey.200",
               color: "text.primary",
               "&:hover": { bgcolor: "grey.300" },
