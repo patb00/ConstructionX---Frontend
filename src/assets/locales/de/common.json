@@ -22,7 +22,8 @@
     "reports": "Berichte",
     "examinationTypes": "Prüfarten",
     "medicalExaminations": "Medizinische Untersuchungen",
-    "condos": "Wohnungen"
+    "condos": "Wohnungen",
+    "notifications": "Benachrichtigungen"
   },
 
   "constructionSites": {
@@ -1359,6 +1360,34 @@
         "currency": "Währung",
         "notes": "Notizen"
       }
+    }
+  },
+  "notifications": {
+    "title": "Benachrichtigungen",
+    "tabs": {
+      "all": "Alle",
+      "unread": "Ungelesen"
+    },
+    "empty": {
+      "unread": "Keine ungelesenen Benachrichtigungen",
+      "earlier": "Keine älteren Benachrichtigungen",
+      "noneAll": "Keine Benachrichtigungen.",
+      "noneUnread": "Keine ungelesenen Benachrichtigungen."
+    },
+    "sections": {
+      "earlier": "Älter"
+    },
+    "actions": {
+      "showAll": "Alle anzeigen",
+      "loadEarlier": "Ältere Benachrichtigungen laden",
+      "markAllRead": "Alle als gelesen markieren"
+    },
+    "page": {
+      "subtitle": "Übersicht aller Benachrichtigungen und ungelesenen Nachrichten.",
+      "loadingMore": "Laden..."
+    },
+    "toast": {
+      "open": "Öffnen"
     }
   }
 }

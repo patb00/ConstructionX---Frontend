@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import type { PagedResult } from "../api/notifications.api";
+
 import { NotificationsApi } from "../api/notifications.api";
 import { notificationsKeys } from "../api/notifications.keys";
 import type { NotificationDto } from "../../../lib/signalR/types";
+import type { PagedResult } from "..";
 
 function mapApiNotificationToDto(n: any): NotificationDto {
   return {

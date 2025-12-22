@@ -1,19 +1,16 @@
+import type { PagedResult } from "..";
 import { authFetch } from "../../../lib/authFetch";
 import type { ApiEnvelope } from "../../administration/tenants";
-
-export interface PagedResult<T> {
-  items: T[];
-  page: number;
-  pageSize: number;
-  total: number;
-  totalPages: number;
-  hasPrevious: boolean;
-  hasNext: boolean;
-}
 
 const base = "/api/Notifications";
 
 export const NotificationsApi = {
+  read: async (notificationId: number) => {
+    return authFetch<ApiEnvelope<string>>(`${base}/${notificationId}/read`, {
+      method: "POST",
+    });
+  },
+
   readAll: async () => {
     return authFetch<ApiEnvelope<string>>(`${base}/read-all`, {
       method: "POST",
@@ -28,7 +25,6 @@ export const NotificationsApi = {
     const res = await authFetch<ApiEnvelope<PagedResult<Notification>>>(
       `${base}/my?IncludeRead=${includeRead}&Page=${page}&PageSize=${pageSize}`
     );
-
     return res.data;
   },
 

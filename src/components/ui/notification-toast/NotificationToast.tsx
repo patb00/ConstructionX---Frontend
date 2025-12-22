@@ -3,6 +3,8 @@ import { IconButton, Stack, Typography, Paper } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import type { SnackbarKey } from "notistack";
 import { SnackbarContent } from "notistack";
+import { useTranslation } from "react-i18next";
+
 import type { NotificationDto } from "../../../lib/signalR/types";
 
 type Props = {
@@ -14,6 +16,8 @@ type Props = {
 
 export const NotificationToast = React.forwardRef<HTMLDivElement, Props>(
   function NotificationToast({ id, notification, onClose, onOpen }, ref) {
+    const { t } = useTranslation();
+
     return (
       <SnackbarContent ref={ref}>
         <Paper
@@ -23,20 +27,14 @@ export const NotificationToast = React.forwardRef<HTMLDivElement, Props>(
             p: 2,
             bgcolor: "#fff",
             color: theme.palette.text.primary,
-
-            // Accent border
             borderLeft: `4px solid ${theme.palette.primary.main}`,
-
-            // 💎 deep shadow + soft primary glow
             boxShadow: `
               0px 10px 28px rgba(0, 0, 0, 0.12),
               0px 4px 12px rgba(0, 0, 0, 0.08),
               0px 0px 0px 1px ${theme.palette.primary.main}20,
               0px 0px 12px ${theme.palette.primary.main}25
             `,
-
             transition: "transform 0.15s ease, box-shadow 0.15s ease",
-
             "&:hover": {
               transform: "translateY(-1px)",
               boxShadow: `
@@ -103,13 +101,10 @@ export const NotificationToast = React.forwardRef<HTMLDivElement, Props>(
                 color: theme.palette.primary.main,
                 cursor: "pointer",
                 alignSelf: "flex-start",
-
-                "&:hover": {
-                  textDecoration: "underline",
-                },
+                "&:hover": { textDecoration: "underline" },
               })}
             >
-              Open
+              {t("notifications.toast.open")}
             </Typography>
           ) : null}
         </Paper>

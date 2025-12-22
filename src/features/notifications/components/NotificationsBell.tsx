@@ -5,7 +5,6 @@ import {
   Button,
   Divider,
   IconButton,
-  ListItemIcon,
   ListItemText,
   Menu,
   MenuItem,
@@ -14,42 +13,32 @@ import {
   Typography,
 } from "@mui/material";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import DoneAllIcon from "@mui/icons-material/DoneAll";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 import type { NotificationDto } from "../../../lib/signalR/types";
-import { useReadAllNotifications } from "../hooks/useReadAllNotifications";
 import { useMyUnreadNotifications } from "../hooks/useMyUnreadNotifications";
 import { useMyNotifications } from "../hooks/useMyNotifications";
+import { useReadNotification } from "../hooks/useReadNotification";
 import { notificationsKeys } from "../api/notifications.keys";
+import { useQueryClient } from "@tanstack/react-query";
 
-function fmt(dt: string) {
-  const d = new Date(dt);
-  if (Number.isNaN(d.getTime())) return "";
-  return new Intl.DateTimeFormat(undefined, {
-    day: "2-digit",
-    month: "2-digit",
-    year: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(d);
-}
+import { NotificationRow } from "./NotificationRow";
+import { NotificationsActionsMenu } from "./NotificationsActionsMenu";
 
 type TabKey = "all" | "unread";
 
+const UNREAD_TAKE = 10;
+const UNREAD_TOP_TAKE = 6;
+
+const EARLIER_PAGE_SIZE = 6;
+
 export function NotificationsBell() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const unreadTake = 10;
-  const unreadTopTake = 6;
-
-  const earlierPageSize = 6;
-
-  const unreadQuery = useMyUnreadNotifications(unreadTake);
+  const unreadQuery = useMyUnreadNotifications(UNREAD_TAKE);
   const unreadItems = unreadQuery.data ?? [];
   const unreadCount = unreadItems.length;
 
@@ -61,7 +50,7 @@ export function NotificationsBell() {
   const [earlierPage, setEarlierPage] = useState(1);
   const [earlierAll, setEarlierAll] = useState<NotificationDto[]>([]);
 
-  const earlierQuery = useMyNotifications(true, earlierPage, earlierPageSize);
+  const earlierQuery = useMyNotifications(true, earlierPage, EARLIER_PAGE_SIZE);
 
   useEffect(() => {
     const pageItems = earlierQuery.data?.items ?? [];
@@ -79,7 +68,7 @@ export function NotificationsBell() {
   }, [earlierQuery.data, earlierPage]);
 
   const unreadTop = useMemo(
-    () => unreadItems.slice(0, unreadTopTake),
+    () => unreadItems.slice(0, UNREAD_TOP_TAKE),
     [unreadItems]
   );
 
@@ -93,7 +82,7 @@ export function NotificationsBell() {
     [earlierAll, unreadTopIds]
   );
 
-  const readAllMutation = useReadAllNotifications();
+  const readOneMutation = useReadNotification();
 
   const handleOpen = (e: React.MouseEvent<HTMLElement>) =>
     setAnchorEl(e.currentTarget);
@@ -104,24 +93,22 @@ export function NotificationsBell() {
     handleClose();
 
     queryClient.setQueryData<NotificationDto[]>(
-      notificationsKeys.unread(unreadTake),
+      notificationsKeys.unread(UNREAD_TAKE),
       (prev) => (prev ?? []).filter((x) => x.id !== n.id)
     );
 
-    if (n.actionUrl) navigate(n.actionUrl);
-  };
+    if (!n.isRead) {
+      readOneMutation.mutate(n.id);
+    }
 
-  const handleMarkAllRead = () => {
-    handleClose();
+    if (n.actionUrl) {
+      const normalized = n.actionUrl.replace(
+        /^\/?construction-sites\/(\d+)/,
+        "/app/constructionSites/$1"
+      );
 
-    readAllMutation.mutate(undefined, {
-      onSuccess: () => {
-        queryClient.setQueryData<NotificationDto[]>(
-          notificationsKeys.unread(unreadTake),
-          []
-        );
-      },
-    });
+      navigate(`${normalized}/details`);
+    }
   };
 
   const handleLoadEarlier = () => {
@@ -129,76 +116,6 @@ export function NotificationsBell() {
     if (!earlierQuery.data?.hasNext) return;
     setEarlierPage((p) => p + 1);
   };
-
-  const renderRow = (n: NotificationDto) => (
-    <MenuItem
-      key={n.id}
-      onClick={() => handleClickItem(n)}
-      sx={{
-        alignItems: "flex-start",
-        py: 1,
-        px: 1.25,
-
-        mx: 1,
-        my: 0.25,
-        "&:hover": { bgcolor: "action.hover" },
-      }}
-    >
-      <ListItemIcon sx={{ minWidth: 44, mt: 0.25 }}>
-        <Box
-          sx={{
-            width: 36,
-            height: 36,
-            borderRadius: "50%",
-            bgcolor: "grey.300",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          <Box
-            sx={{
-              position: "absolute",
-              right: -2,
-              bottom: -2,
-              width: 16,
-              height: 16,
-              borderRadius: "50%",
-              bgcolor: "primary.main",
-              border: "2px solid #fff",
-            }}
-          />
-        </Box>
-      </ListItemIcon>
-
-      <ListItemText
-        primary={
-          <Typography variant="body2" sx={{ fontWeight: n.isRead ? 500 : 800 }}>
-            {n.title}
-          </Typography>
-        }
-        secondary={
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 0.25 }}>
-            <Typography variant="body2" color="text.secondary">
-              {n.message}
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{ color: "primary.main", fontWeight: 600 }}
-            >
-              {fmt(n.createdDate)}
-            </Typography>
-          </Box>
-        }
-      />
-
-      <Box sx={{ pt: 0.75, pl: 1 }}>
-        <FiberManualRecordIcon
-          sx={{ fontSize: 10 }}
-          color={n.isRead ? "disabled" : "primary"}
-        />
-      </Box>
-    </MenuItem>
-  );
 
   return (
     <>
@@ -231,13 +148,14 @@ export function NotificationsBell() {
               mb: 1,
             }}
           >
-            <Typography fontWeight={800} fontSize={22}>
-              Obavijesti
+            <Typography fontWeight={500} fontSize={22}>
+              {t("notifications.title")}
             </Typography>
 
-            <IconButton size="small">
-              <MoreHorizIcon fontSize="small" />
-            </IconButton>
+            <NotificationsActionsMenu
+              unreadTake={UNREAD_TAKE}
+              onAction={handleClose}
+            />
           </Box>
 
           <Tabs
@@ -261,8 +179,8 @@ export function NotificationsBell() {
               "& .MuiTabs-flexContainer": { gap: 1 },
             }}
           >
-            <Tab value="all" label="Sve" />
-            <Tab value="unread" label="Nepročitano" />
+            <Tab value="all" label={t("notifications.tabs.all")} />
+            <Tab value="unread" label={t("notifications.tabs.unread")} />
           </Tabs>
         </Box>
 
@@ -273,10 +191,17 @@ export function NotificationsBell() {
             <>
               {unreadTop.length === 0 ? (
                 <MenuItem disabled sx={{ mx: 1, borderRadius: 1.5 }}>
-                  <ListItemText primary="Nema nepročitanih obavijesti" />
+                  <ListItemText primary={t("notifications.empty.unread")} />
                 </MenuItem>
               ) : (
-                unreadTop.map(renderRow)
+                unreadTop.map((n) => (
+                  <NotificationRow
+                    key={n.id}
+                    notification={n}
+                    onClick={handleClickItem}
+                    variant="menu"
+                  />
+                ))
               )}
             </>
           )}
@@ -285,7 +210,14 @@ export function NotificationsBell() {
             <>
               {unreadTop.length > 0 && (
                 <>
-                  {unreadTop.map(renderRow)}
+                  {unreadTop.map((n) => (
+                    <NotificationRow
+                      key={n.id}
+                      notification={n}
+                      onClick={handleClickItem}
+                      variant="menu"
+                    />
+                  ))}
                   <Divider sx={{ my: 1 }} />
                 </>
               )}
@@ -299,25 +231,34 @@ export function NotificationsBell() {
                   justifyContent: "space-between",
                 }}
               >
-                <Typography fontWeight={800}>Starije</Typography>
+                <Typography fontWeight={800}>
+                  {t("notifications.sections.earlier")}
+                </Typography>
                 <Button
                   size="small"
                   onClick={() => {
                     handleClose();
-                    navigate("/notifications");
+                    navigate("notifications");
                   }}
                   sx={{ textTransform: "none", fontWeight: 700 }}
                 >
-                  Prikaži sve
+                  {t("notifications.actions.showAll")}
                 </Button>
               </Box>
 
               {earlierFiltered.length === 0 ? (
                 <MenuItem disabled sx={{ mx: 1, borderRadius: 1.5 }}>
-                  <ListItemText primary="Nema starijih obavijesti" />
+                  <ListItemText primary={t("notifications.empty.earlier")} />
                 </MenuItem>
               ) : (
-                earlierFiltered.map(renderRow)
+                earlierFiltered.map((n) => (
+                  <NotificationRow
+                    key={n.id}
+                    notification={n}
+                    onClick={handleClickItem}
+                    variant="menu"
+                  />
+                ))
               )}
 
               <Box sx={{ px: 2, pt: 1, pb: 1.5 }}>
@@ -337,21 +278,12 @@ export function NotificationsBell() {
                     "&:hover": { bgcolor: "grey.300" },
                   }}
                 >
-                  Prikaži prethodne obavijesti
+                  {t("notifications.actions.loadEarlier")}
                 </Button>
               </Box>
             </>
           )}
         </Box>
-
-        <Divider />
-
-        <MenuItem onClick={handleMarkAllRead} disabled={unreadCount === 0}>
-          <ListItemIcon>
-            <DoneAllIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary="Označi sve kao pročitano" />
-        </MenuItem>
       </Menu>
     </>
   );

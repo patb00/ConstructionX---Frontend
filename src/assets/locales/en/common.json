@@ -22,7 +22,8 @@
     "reports": "Reports",
     "examinationTypes": "Examination Types",
     "medicalExaminations": "Medical Examinations",
-    "condos": "Condos"
+    "condos": "Condos",
+    "notifications": "Notifications"
   },
   "constructionSites": {
     "list": {
@@ -1358,6 +1359,34 @@
         "currency": "Currency",
         "notes": "Notes"
       }
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "tabs": {
+      "all": "All",
+      "unread": "Unread"
+    },
+    "empty": {
+      "unread": "No unread notifications",
+      "earlier": "No earlier notifications",
+      "noneAll": "No notifications.",
+      "noneUnread": "No unread notifications."
+    },
+    "sections": {
+      "earlier": "Earlier"
+    },
+    "actions": {
+      "showAll": "Show all",
+      "loadEarlier": "Load earlier notifications",
+      "markAllRead": "Mark all as read"
+    },
+    "page": {
+      "subtitle": "View all notifications and unread messages.",
+      "loadingMore": "Loading..."
+    },
+    "toast": {
+      "open": "Open"
     }
   }
 }

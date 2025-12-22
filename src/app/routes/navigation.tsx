@@ -10,6 +10,7 @@ import {
   FaRegFileAlt,
   FaListUl,
   FaHome,
+  FaBell,
 } from "react-icons/fa";
 import { IoIosBusiness } from "react-icons/io";
 import { HiUsers } from "react-icons/hi";
@@ -76,6 +77,13 @@ export const NAV_ITEMS: NavItem[] = [
     labelKey: "nav.reports",
     to: "/app/izvjestaji",
     icon: <FaRegFileAlt />,
+    section: "MANAGEMENT",
+    category: "CONSTRUCTION",
+  },
+  {
+    labelKey: "nav.notifications",
+    to: "/app/notifications",
+    icon: <FaBell />,
     section: "MANAGEMENT",
     category: "CONSTRUCTION",
   },

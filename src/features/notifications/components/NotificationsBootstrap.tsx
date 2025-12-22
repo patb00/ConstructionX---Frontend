@@ -10,6 +10,7 @@ import {
 import type { NotificationDto } from "../../../lib/signalR/types";
 import { notificationsKeys } from "../api/notifications.keys";
 import { NotificationToast } from "../../../components/ui/notification-toast/NotificationToast";
+import { NotificationsApi } from "../api/notifications.api";
 
 const UNREAD_TAKE = 10;
 
@@ -40,8 +41,25 @@ export function NotificationsBootstrap() {
             notification={n}
             onClose={closeSnackbar}
             onOpen={(notification) => {
-              console.log("open notification", notification.id);
               closeSnackbar(key);
+
+              queryClient.setQueryData<NotificationDto[]>(
+                notificationsKeys.unread(UNREAD_TAKE),
+                (prev) => (prev ?? []).filter((x) => x.id !== notification.id)
+              );
+
+              if (!notification.isRead) {
+                void NotificationsApi.read(notification.id);
+              }
+
+              if (notification.actionUrl) {
+                const normalized = notification.actionUrl.replace(
+                  /^\/?construction-sites\/(\d+)/,
+                  "/app/constructionSites/$1"
+                );
+
+                window.location.href = `${normalized}/details`;
+              }
             }}
           />
         ),
