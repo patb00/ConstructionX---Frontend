@@ -33,7 +33,7 @@ export function NotificationRow({
               height: 36,
               bgcolor: "grey.300",
               color: "text.primary",
-              fontWeight: 800,
+              fontWeight: 600,
               fontSize: 12,
             }}
           >
@@ -56,6 +56,7 @@ export function NotificationRow({
       </ListItemIcon>
 
       <ListItemText
+        secondaryTypographyProps={{ component: "div" }}
         primary={
           <Typography variant="body2" fontWeight={n.isRead ? 500 : 800}>
             {n.title}

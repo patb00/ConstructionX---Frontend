@@ -46,7 +46,7 @@ export default function AppShell() {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
 
-  const { clear, userId, tenant } = useAuthStore();
+  const { clear, userId, tenant, isAuthenticated } = useAuthStore();
 
   const { usersRows } = useUsers();
 
@@ -84,7 +84,7 @@ export default function AppShell() {
 
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
-      <NotificationsBootstrap />
+      {isAuthenticated && <NotificationsBootstrap />}
 
       <AppBar
         position="fixed"
