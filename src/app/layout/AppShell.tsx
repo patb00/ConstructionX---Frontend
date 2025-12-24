@@ -1,3 +1,4 @@
+// AppShell.tsx
 import {
   AppBar,
   Box,
@@ -25,8 +26,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import LanguageSwitcher from "../../components/ui/languague-switch/LanguagueSwitcher";
 import { useUsers } from "../../features/administration/users/hooks/useUsers";
 import { useTranslation } from "react-i18next";
-import { ProfileDialog } from "../../components/ui/profile/ProfileDialog";
 import { getUserInitials } from "../../utils/getUserInitials";
+import { ProfileDialog } from "../../components/ui/profile/ProfileDialog";
+import { NotificationsBootstrap } from "../../features/notifications/components/NotificationsBootstrap";
+import { NotificationsBell } from "../../features/notifications/components/NotificationsBell";
+import { stopNotificationsHubConnection } from "../../lib/signalR/connection";
 
 export default function AppShell() {
   const { t } = useTranslation();
@@ -42,7 +46,7 @@ export default function AppShell() {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
 
-  const { clear, userId, tenant } = useAuthStore();
+  const { clear, userId, tenant, isAuthenticated } = useAuthStore();
 
   const { usersRows } = useUsers();
 
@@ -54,6 +58,7 @@ export default function AppShell() {
   const handleAvatarClick = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);
   };
+
   const handleMenuClose = () => setAnchorEl(null);
 
   const handleOpenProfile = () => {
@@ -61,8 +66,12 @@ export default function AppShell() {
     setProfileOpen(true);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     handleMenuClose();
+
+    // prekini hubove prije čišćenja state-a
+    await Promise.allSettled([stopNotificationsHubConnection()]);
+
     clear();
     queryClient.clear();
     enqueueSnackbar(t("appShell.snackbar.loggedOut"), { variant: "info" });
@@ -70,13 +79,13 @@ export default function AppShell() {
   };
 
   useEffect(() => {
-    if (!isMobile && open) {
-      setOpen(false);
-    }
+    if (!isMobile && open) setOpen(false);
   }, [isMobile, open]);
 
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
+      {isAuthenticated && <NotificationsBootstrap />}
+
       <AppBar
         position="fixed"
         elevation={0}
@@ -105,6 +114,7 @@ export default function AppShell() {
                 color: theme.palette.primary.main,
               })}
             />
+
             <Typography
               variant="body1"
               sx={{
@@ -119,6 +129,7 @@ export default function AppShell() {
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <LanguageSwitcher />
+            <NotificationsBell />
             <Avatar
               alt={t("appShell.userAvatarAlt")}
               onClick={handleAvatarClick}

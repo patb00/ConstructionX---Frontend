@@ -22,7 +22,8 @@
     "reports": "Izvještaji",
     "examinationTypes": "Tipovi pregleda",
     "medicalExaminations": "Zdravstveni pregledi",
-    "condos": "Stanovi"
+    "condos": "Stanovi",
+    "notifications": "Obavijesti"
   },
   "constructionSites": {
     "detail": {
@@ -1357,6 +1358,34 @@
         "currency": "Valuta",
         "notes": "Napomena"
       }
+    }
+  },
+  "notifications": {
+    "title": "Obavijesti",
+    "tabs": {
+      "all": "Sve",
+      "unread": "Nepročitano"
+    },
+    "empty": {
+      "unread": "Nema nepročitanih obavijesti",
+      "earlier": "Nema starijih obavijesti",
+      "noneAll": "Nema obavijesti.",
+      "noneUnread": "Nema nepročitanih obavijesti."
+    },
+    "sections": {
+      "earlier": "Starije"
+    },
+    "actions": {
+      "showAll": "Prikaži sve",
+      "loadEarlier": "Prikaži prethodne obavijesti",
+      "markAllRead": "Označi sve kao pročitano"
+    },
+    "page": {
+      "subtitle": "Pregled svih obavijesti i nepročitanih poruka.",
+      "loadingMore": "Učitavanje..."
+    },
+    "toast": {
+      "open": "Otvori"
     }
   }
 }

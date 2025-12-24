@@ -19,6 +19,7 @@ import { reportsRoutes } from "../../features/reports/routes";
 import { medicalExaminationsRoutes } from "../../features/medical_examinations/routes";
 import { examinationTypesRoutes } from "../../features/examination_types/routes";
 import { condosRoutes } from "../../features/condos/routes";
+import { notificationsRoutes } from "../../features/notifications/routes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <LoginRoute /> },
@@ -51,6 +52,8 @@ export const router = createBrowserRouter([
       reportsRoutes,
       medicalExaminationsRoutes,
       examinationTypesRoutes,
+
+      notificationsRoutes,
     ],
   },
 ]);

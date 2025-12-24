@@ -6,6 +6,7 @@ import {
   Card,
   Chip,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -15,13 +16,14 @@ import AddIcon from "@mui/icons-material/Add";
 import GroupIcon from "@mui/icons-material/Group";
 import HandymanIcon from "@mui/icons-material/Handyman";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import RemoveIcon from "@mui/icons-material/PersonRemove";
 
 import StatCard from "./StatCard";
 import { formatDate, formatDateRange } from "../utils/dates";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useConstructionSite } from "../hooks/useConstructionSite";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 
 import AssignEmployeesDialog from "./AssignEmployeesDialog";
 import AssignToolsDialog from "./AssignToolsDialog";
@@ -30,6 +32,14 @@ import {
   BoardView,
   type BoardColumnConfig,
 } from "../../../components/ui/views/BoardView";
+
+import { useAssignEmployeesToConstructionSite } from "../hooks/useAssignEmployeesToConstructionSite";
+import { useAssignToolsToConstructionSite } from "../hooks/useAssignToolsToConstructionSite";
+import { useAssignVehiclesToConstructionSite } from "../hooks/useAssignVehiclesToConstructionSite";
+
+import { useEmployees } from "../../administration/employees/hooks/useEmployees";
+import { fullName } from "../utils/name";
+import { normalizeText } from "../utils/normalize";
 
 type Employee = {
   id: number;
@@ -51,6 +61,7 @@ type Tool = {
   dateFrom?: string | null;
   dateTo?: string | null;
   responsibleEmployeeName?: string | null;
+  responsibleEmployeeId?: number | null;
 };
 
 type Vehicle = {
@@ -64,6 +75,7 @@ type Vehicle = {
   dateFrom?: string | null;
   dateTo?: string | null;
   responsibleEmployeeName?: string | null;
+  responsibleEmployeeId?: number | null;
 };
 
 export default function ConstructionSiteDetailsPage() {
@@ -76,14 +88,118 @@ export default function ConstructionSiteDetailsPage() {
     return <div>{t("constructionSites.edit.invalidUrlId")}</div>;
 
   const { data } = useConstructionSite(siteId);
+  const { employeeRows = [] } = useEmployees();
 
   const [openEmp, setOpenEmp] = useState(false);
   const [openTools, setOpenTools] = useState(false);
   const [openVeh, setOpenVeh] = useState(false);
 
+  const assignEmp = useAssignEmployeesToConstructionSite();
+  const assignTools = useAssignToolsToConstructionSite();
+  const assignVeh = useAssignVehiclesToConstructionSite();
+
   const employees = (data?.constructionSiteEmployees ?? []) as Employee[];
   const tools = (data?.constructionSiteTools ?? []) as Tool[];
   const vehicles = (data?.constructionSiteVehicles ?? []) as Vehicle[];
+
+  const removeBtnSx = {
+    position: "absolute" as const,
+    bottom: 6,
+    right: 6,
+    opacity: 0.75,
+    "&:hover": { opacity: 1 },
+  };
+
+  const employeeIdByName = useMemo(() => {
+    return new Map(
+      (employeeRows as any[]).map((e: any) => [
+        normalizeText(fullName(e.firstName, e.lastName)),
+        Number(e.id),
+      ])
+    );
+  }, [employeeRows]);
+
+  const resolveResponsibleEmployeeId = useCallback(
+    (item: {
+      responsibleEmployeeId?: number | null;
+      responsibleEmployeeName?: string | null;
+    }) => {
+      const direct = item.responsibleEmployeeId;
+      if (Number.isFinite(Number(direct))) return Number(direct);
+
+      const name = item.responsibleEmployeeName;
+      if (name) {
+        const mapped = employeeIdByName.get(normalizeText(name));
+        if (Number.isFinite(Number(mapped))) return Number(mapped);
+      }
+
+      return null;
+    },
+    [employeeIdByName]
+  );
+
+  const unassignEmployee = useCallback(
+    (employeeIdToRemove: number) => {
+      const remaining = employees
+        .filter((e) => e.id !== employeeIdToRemove)
+        .map((e) => ({
+          employeeId: e.id,
+          dateFrom: e.dateFrom ?? null,
+          dateTo: e.dateTo ?? null,
+        }));
+
+      assignEmp.mutate({
+        constructionSiteId: siteId,
+        employees: remaining,
+      } as any);
+    },
+    [assignEmp, employees, siteId]
+  );
+
+  const unassignTool = useCallback(
+    (toolIdToRemove: number) => {
+      const remaining = tools
+        .filter((x) => x.id !== toolIdToRemove)
+        .map((x) => {
+          const respId = resolveResponsibleEmployeeId(x);
+          return {
+            toolId: x.id,
+            dateFrom: x.dateFrom ?? null,
+            dateTo: x.dateTo ?? null,
+
+            responsibleEmployeeId: respId,
+          };
+        });
+
+      assignTools.mutate({
+        constructionSiteId: siteId,
+        tools: remaining,
+      } as any);
+    },
+    [assignTools, tools, siteId, resolveResponsibleEmployeeId]
+  );
+
+  const unassignVehicle = useCallback(
+    (vehicleIdToRemove: number) => {
+      const remaining = vehicles
+        .filter((x) => x.id !== vehicleIdToRemove)
+        .map((x) => {
+          const respId = resolveResponsibleEmployeeId(x);
+          return {
+            vehicleId: x.id,
+            dateFrom: x.dateFrom ?? null,
+            dateTo: x.dateTo ?? null,
+            responsibleEmployeeId: respId,
+          };
+        });
+
+      assignVeh.mutate({
+        constructionSiteId: siteId,
+        vehicles: remaining,
+      } as any);
+    },
+    [assignVeh, vehicles, siteId, resolveResponsibleEmployeeId]
+  );
 
   const columns: BoardColumnConfig[] = useMemo(() => {
     const employeeCount = employees.length;
@@ -182,10 +298,7 @@ export default function ConstructionSiteDetailsPage() {
           sx={{
             p: 0.25,
             color: "primary.main",
-            "&:hover": {
-              backgroundColor: "transparent",
-              opacity: 0.8,
-            },
+            "&:hover": { backgroundColor: "transparent", opacity: 0.8 },
           }}
         >
           <AddIcon fontSize="small" />
@@ -193,19 +306,33 @@ export default function ConstructionSiteDetailsPage() {
       ),
       emptyContent: employeeEmpty,
       renderRow: (e) => {
-        const fullName = `${e.firstName} ${e.lastName}`.trim();
+        const fullNameTxt = `${e.firstName} ${e.lastName}`.trim();
         const position = e.jobPositionName || t("common.notAvailable");
         const dateRange = formatDateRange(e.dateFrom, e.dateTo);
 
         return (
-          <Card key={e.id} sx={{ p: 1.5 }}>
+          <Card key={e.id} sx={{ p: 1.5, position: "relative" }}>
+            <Tooltip title={t("common.unassign")}>
+              <IconButton
+                size="small"
+                onClick={(evt) => {
+                  evt.stopPropagation();
+                  unassignEmployee(e.id);
+                }}
+                disabled={assignEmp.isPending}
+                sx={removeBtnSx}
+              >
+                <RemoveIcon fontSize="small" color="error" />
+              </IconButton>
+            </Tooltip>
+
             <Typography
               variant="body2"
               fontWeight={600}
               sx={{ mb: 0.25 }}
               noWrap
             >
-              {fullName}
+              {fullNameTxt}
             </Typography>
 
             <Typography
@@ -245,10 +372,7 @@ export default function ConstructionSiteDetailsPage() {
           sx={{
             p: 0.25,
             color: "primary.main",
-            "&:hover": {
-              backgroundColor: "transparent",
-              opacity: 0.8,
-            },
+            "&:hover": { backgroundColor: "transparent", opacity: 0.8 },
           }}
         >
           <AddIcon fontSize="small" />
@@ -282,7 +406,21 @@ export default function ConstructionSiteDetailsPage() {
         const dateRange = formatDateRange(tool.dateFrom, tool.dateTo);
 
         return (
-          <Card key={tool.id} sx={{ p: 1.5 }}>
+          <Card key={tool.id} sx={{ p: 1.5, position: "relative" }}>
+            <Tooltip title={t("common.unassign")}>
+              <IconButton
+                size="small"
+                onClick={(evt) => {
+                  evt.stopPropagation();
+                  unassignTool(tool.id);
+                }}
+                disabled={assignTools.isPending}
+                sx={removeBtnSx}
+              >
+                <RemoveIcon fontSize="small" color="error" />
+              </IconButton>
+            </Tooltip>
+
             <Box
               sx={{
                 display: "flex",
@@ -349,10 +487,7 @@ export default function ConstructionSiteDetailsPage() {
           sx={{
             p: 0.25,
             color: "primary.main",
-            "&:hover": {
-              backgroundColor: "transparent",
-              opacity: 0.8,
-            },
+            "&:hover": { backgroundColor: "transparent", opacity: 0.8 },
           }}
         >
           <AddIcon fontSize="small" />
@@ -384,7 +519,21 @@ export default function ConstructionSiteDetailsPage() {
         const dateRange = formatDateRange(v.dateFrom, v.dateTo);
 
         return (
-          <Card key={v.id} sx={{ p: 1.5 }}>
+          <Card key={v.id} sx={{ p: 1.5, position: "relative" }}>
+            <Tooltip title={t("common.unassign")}>
+              <IconButton
+                size="small"
+                onClick={(evt) => {
+                  evt.stopPropagation();
+                  unassignVehicle(v.id);
+                }}
+                disabled={assignVeh.isPending}
+                sx={removeBtnSx}
+              >
+                <RemoveIcon fontSize="small" color="error" />
+              </IconButton>
+            </Tooltip>
+
             <Box
               sx={{
                 display: "flex",
@@ -445,7 +594,19 @@ export default function ConstructionSiteDetailsPage() {
     };
 
     return [employeeColumn, vehiclesColumn, toolsColumn];
-  }, [employees, tools, vehicles, t]);
+  }, [
+    employees,
+    tools,
+    vehicles,
+    t,
+    assignEmp.isPending,
+    assignTools.isPending,
+    assignVeh.isPending,
+    unassignEmployee,
+    unassignTool,
+    unassignVehicle,
+    removeBtnSx,
+  ]);
 
   return (
     <Stack spacing={2} sx={{ width: "100%", minWidth: 0 }}>
