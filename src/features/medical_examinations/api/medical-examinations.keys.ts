@@ -7,4 +7,10 @@ export const medicalExaminationsKeys = {
     [...medicalExaminationsKeys.all, "detail", id] as const,
   byEmployee: (employeeId: number) =>
     [...medicalExaminationsKeys.all, "by-employee", employeeId] as const,
+  byExaminationType: (examinationTypeId: number) =>
+    [
+      ...medicalExaminationsKeys.all,
+      "by-examination-type",
+      examinationTypeId,
+    ] as const,
 };

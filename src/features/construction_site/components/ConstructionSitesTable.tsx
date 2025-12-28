@@ -203,9 +203,9 @@ export default function ConstructionSitesTable() {
     [columns]
   );
 
-  if (error) return <div>{t("constructionSites.list.error")}</div>;
+  const getDetailPanelHeight = useCallback(() => "auto" as const, []);
 
-  console.log("constructionSitesRows", constructionSitesRows);
+  if (error) return <div>{t("constructionSites.list.error")}</div>;
 
   return (
     <>
@@ -226,7 +226,7 @@ export default function ConstructionSitesTable() {
         getDetailPanelContent={(params) => (
           <ConstructionSiteDetailPanel constructionSiteId={params.row.id} />
         )}
-        getDetailPanelHeight={() => 400}
+        getDetailPanelHeight={getDetailPanelHeight}
       />
 
       <PermissionGate

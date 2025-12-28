@@ -23,7 +23,9 @@
     "examinationTypes": "Examination Types",
     "medicalExaminations": "Medical Examinations",
     "condos": "Condos",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "vehicleRegistrations": "Vehicle Registrations",
+    "vehicleInsurances": "Vehicle Insurances"
   },
   "constructionSites": {
     "list": {
@@ -78,7 +80,8 @@
       "manager": "Site manager",
       "id": "ID",
       "location": "Location",
-      "name": "Name"
+      "name": "Name",
+      "status": "Status"
     },
     "create": {
       "title": "Create construction site",
@@ -179,6 +182,7 @@
     }
   },
   "common": {
+    "unassign": "Unassign",
     "notAvailable": "Not available",
     "loading": "Loading…",
     "fileInput": {
@@ -545,7 +549,21 @@
       "pricePerDay": "Price per day",
       "pricePerMonth": "Price per month",
       "currency": "Currency",
-      "notes": "Notes"
+      "notes": "Notes",
+
+      "validFrom": "Valid from",
+      "validTo": "Valid to",
+      "totalCostAmount": "Total cost",
+      "costCurrency": "Currency",
+      "registrationStationName": "Registration station",
+      "registrationStationLocation": "Station location",
+      "reportNumber": "Report number",
+      "documentPath": "Document",
+
+      "insurer": "Insurer",
+      "policyNumber": "Policy number",
+      "policyType": "Policy type",
+      "costAmount": "Cost amount"
     }
   },
   "tenants": {
@@ -693,7 +711,10 @@
       "description": "Are you sure you want to delete this employee?",
       "confirm": "Delete",
       "cancel": "Cancel"
-    }
+    },
+    "byEmployee": "By employee",
+    "employee": "Employee",
+    "unknown": "Unknown employee"
   },
   "jobPositions": {
     "list": {
@@ -1387,6 +1408,114 @@
     },
     "toast": {
       "open": "Open"
+    }
+  },
+  "vehicleRegistrations": {
+    "list": {
+      "title": "Vehicle Registrations",
+      "error": "Error loading vehicle registrations"
+    },
+    "actions": "Actions",
+    "table": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "create": {
+      "title": "Add Vehicle Registration",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit Vehicle Registration",
+      "back": "Back",
+      "loadError": "Failed to load vehicle registration",
+      "invalidUrlId": "Invalid registration id",
+      "submit": "Save changes"
+    },
+    "delete": {
+      "title": "Delete Vehicle Registration",
+      "description": "Are you sure you want to delete this registration?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "form": {
+      "submit": "Save",
+      "field": {
+        "vehicleId": "Vehicle",
+        "validFrom": "Valid from",
+        "validTo": "Valid to",
+        "totalCostAmount": "Total cost",
+        "costCurrency": "Currency",
+        "registrationStationName": "Registration station",
+        "registrationStationLocation": "Station location",
+        "reportNumber": "Report number",
+        "documentPath": "Document",
+        "note": "Note"
+      }
+    }
+  },
+  "vehicleInsurances": {
+    "list": {
+      "title": "Vehicle Insurances",
+      "error": "Error loading vehicle insurances"
+    },
+    "actions": "Actions",
+    "table": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "create": {
+      "title": "Add Vehicle Insurance",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit Vehicle Insurance",
+      "back": "Back",
+      "loadError": "Failed to load vehicle insurance",
+      "invalidUrlId": "Invalid insurance id",
+      "submit": "Save changes"
+    },
+    "delete": {
+      "title": "Delete Vehicle Insurance",
+      "description": "Are you sure you want to delete this insurance?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "form": {
+      "submit": "Save",
+      "field": {
+        "vehicleId": "Vehicle",
+        "insurer": "Insurer",
+        "policyNumber": "Policy number",
+        "policyType": "Policy type",
+        "costAmount": "Cost amount",
+        "costCurrency": "Currency",
+        "validFrom": "Valid from",
+        "validTo": "Valid to",
+        "documentPath": "Document"
+      }
+    }
+  },
+  "history": {
+    "tool": {
+      "title": "Tool history"
+    },
+    "vehicle": {
+      "title": "Vehicle history"
+    },
+    "common": {
+      "assigned": "Assigned",
+      "updated": "Updated",
+      "event": "Event",
+      "ongoing": "ongoing",
+      "loadMore": "Load more"
+    },
+    "meta": {
+      "siteId": "Site ID",
+      "employee": "Employee",
+      "employeeId": "Employee ID",
+      "dateRange": "Date range",
+      "changedAt": "Changed at",
+      "changedBy": "Changed by"
     }
   }
 }

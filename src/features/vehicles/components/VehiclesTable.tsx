@@ -9,9 +9,9 @@ import { useDeleteVehicle } from "../hooks/useDeleteVehicle";
 import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { Vehicle } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
-import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
+import { VehicleHistoryDetails } from "./VehicleHistoryDetails";
 
 export default function VehiclesTable() {
   const { t } = useTranslation();
@@ -24,6 +24,7 @@ export default function VehiclesTable() {
     error,
     isLoading,
   } = useVehicles();
+
   const deleteVehicle = useDeleteVehicle();
   const navigate = useNavigate();
   const can = useCan();
@@ -45,6 +46,7 @@ export default function VehiclesTable() {
   const handleConfirm = useCallback(() => {
     if (!pendingRow) return;
     const id = (pendingRow as any).id;
+
     deleteVehicle.mutate(id, {
       onSuccess: () => {
         setConfirmOpen(false);
@@ -102,22 +104,12 @@ export default function VehiclesTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
-  const renderDetailPanel = useCallback(
-    (params: GridRowParams<Vehicle>) => {
-      return (
-        <GridDetailPanel<Vehicle>
-          row={params.row}
-          columns={vehiclesColumns as GridColDef<Vehicle>[]}
-        />
-      );
-    },
-    [vehiclesColumns]
-  );
+  const renderDetailPanel = useCallback((params: GridRowParams<Vehicle>) => {
+    const vehicleId = Number((params.row as any).id);
+    return <VehicleHistoryDetails vehicleId={vehicleId} />;
+  }, []);
 
-  const getDetailPanelHeight = useCallback(
-    (_params: GridRowParams<Vehicle>) => 220,
-    []
-  );
+  const getDetailPanelHeight = useCallback(() => "auto" as const, []);
 
   if (error) {
     return <div>{t("vehicles.list.error")}</div>;
@@ -133,7 +125,7 @@ export default function VehiclesTable() {
         loading={!!isLoading}
         getDetailPanelContent={renderDetailPanel}
         getDetailPanelHeight={getDetailPanelHeight}
-        detailPanelMode="mobile-only"
+        detailPanelMode="desktop-only"
         paginationMode="server"
         rowCount={total}
         paginationModel={paginationModel}

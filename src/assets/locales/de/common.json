@@ -23,7 +23,9 @@
     "examinationTypes": "Prüfarten",
     "medicalExaminations": "Medizinische Untersuchungen",
     "condos": "Wohnungen",
-    "notifications": "Benachrichtigungen"
+    "notifications": "Benachrichtigungen",
+    "vehicleRegistrations": "Fahrzeugzulassungen",
+    "vehicleInsurances": "Fahrzeugversicherungen"
   },
 
   "constructionSites": {
@@ -79,7 +81,8 @@
       "manager": "Bauleiter",
       "id": "ID",
       "location": "Standort",
-      "name": "Name"
+      "name": "Name",
+      "status": "Status"
     },
     "create": {
       "title": "Baustelle erstellen",
@@ -180,6 +183,7 @@
     }
   },
   "common": {
+    "unassign": "Zuweisung entfernen",
     "notAvailable": "Nicht verfügbar",
     "loading": "Wird geladen…",
     "fileInput": {
@@ -546,7 +550,21 @@
       "pricePerDay": "Preis pro Tag",
       "pricePerMonth": "Preis pro Monat",
       "currency": "Währung",
-      "notes": "Notizen"
+      "notes": "Notizen",
+
+      "validFrom": "Gültig ab",
+      "validTo": "Gültig bis",
+      "totalCostAmount": "Gesamtkosten",
+      "costCurrency": "Währung",
+      "registrationStationName": "Zulassungsstelle",
+      "registrationStationLocation": "Standort der Zulassungsstelle",
+      "reportNumber": "Berichtsnummer",
+      "documentPath": "Dokument",
+
+      "insurer": "Versicherer",
+      "policyNumber": "Policennummer",
+      "policyType": "Policeart",
+      "costAmount": "Kostenbetrag"
     }
   },
   "tenants": {
@@ -694,7 +712,10 @@
       "description": "Möchten Sie diesen Mitarbeiter wirklich löschen?",
       "confirm": "Löschen",
       "cancel": "Abbrechen"
-    }
+    },
+    "byEmployee": "Nach Mitarbeiter",
+    "employee": "Mitarbeiter",
+    "unknown": "Unbekannter Mitarbeiter"
   },
   "jobPositions": {
     "list": {
@@ -1388,6 +1409,114 @@
     },
     "toast": {
       "open": "Öffnen"
+    }
+  },
+  "vehicleRegistrations": {
+    "list": {
+      "title": "Fahrzeugzulassungen",
+      "error": "Fehler beim Laden der Fahrzeugzulassungen"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "create": {
+      "title": "Fahrzeugzulassung hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Fahrzeugzulassung bearbeiten",
+      "back": "Zurück",
+      "loadError": "Fahrzeugzulassung konnte nicht geladen werden",
+      "invalidUrlId": "Ungültige Zulassungs-ID",
+      "submit": "Änderungen speichern"
+    },
+    "delete": {
+      "title": "Fahrzeugzulassung löschen",
+      "description": "Möchten Sie diese Zulassung wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "vehicleId": "Fahrzeug",
+        "validFrom": "Gültig ab",
+        "validTo": "Gültig bis",
+        "totalCostAmount": "Gesamtkosten",
+        "costCurrency": "Währung",
+        "registrationStationName": "Zulassungsstelle",
+        "registrationStationLocation": "Standort der Zulassungsstelle",
+        "reportNumber": "Berichtsnummer",
+        "documentPath": "Dokument",
+        "note": "Notiz"
+      }
+    }
+  },
+  "vehicleInsurances": {
+    "list": {
+      "title": "Fahrzeugversicherungen",
+      "error": "Fehler beim Laden der Fahrzeugversicherungen"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "create": {
+      "title": "Fahrzeugversicherung hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Fahrzeugversicherung bearbeiten",
+      "back": "Zurück",
+      "loadError": "Fahrzeugversicherung konnte nicht geladen werden",
+      "invalidUrlId": "Ungültige Versicherungs-ID",
+      "submit": "Änderungen speichern"
+    },
+    "delete": {
+      "title": "Fahrzeugversicherung löschen",
+      "description": "Möchten Sie diese Versicherung wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "vehicleId": "Fahrzeug",
+        "insurer": "Versicherer",
+        "policyNumber": "Policennummer",
+        "policyType": "Policeart",
+        "costAmount": "Kostenbetrag",
+        "costCurrency": "Währung",
+        "validFrom": "Gültig ab",
+        "validTo": "Gültig bis",
+        "documentPath": "Dokument"
+      }
+    }
+  },
+  "history": {
+    "tool": {
+      "title": "Werkzeughistorie"
+    },
+    "vehicle": {
+      "title": "Fahrzeughistorie"
+    },
+    "common": {
+      "assigned": "Zugewiesen",
+      "updated": "Aktualisiert",
+      "event": "Ereignis",
+      "ongoing": "laufend",
+      "loadMore": "Mehr laden"
+    },
+    "meta": {
+      "siteId": "Baustellen-ID",
+      "employee": "Mitarbeiter",
+      "employeeId": "Mitarbeiter-ID",
+      "dateRange": "Zeitraum",
+      "changedAt": "Geändert am",
+      "changedBy": "Geändert von"
     }
   }
 }

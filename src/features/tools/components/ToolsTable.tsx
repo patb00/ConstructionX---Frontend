@@ -9,9 +9,9 @@ import { useTools } from "../hooks/useTools";
 import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { Tool } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
-import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
+import { ToolHistoryDetails } from "./ToolsHistoryDetails";
 
 export default function ToolsTable() {
   const { t } = useTranslation();
@@ -98,18 +98,12 @@ export default function ToolsTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
-  const renderDetailPanel = useCallback(
-    (params: GridRowParams<Tool>) => (
-      <GridDetailPanel<Tool>
-        row={params.row}
-        columns={toolsColumns as GridColDef<Tool>[]}
-      />
-    ),
-    [toolsColumns]
-  );
+  const renderDetailPanel = useCallback((params: GridRowParams<Tool>) => {
+    const toolId = Number((params.row as any).id);
+    return <ToolHistoryDetails toolId={toolId} />;
+  }, []);
 
-  const getDetailPanelHeight = useCallback(() => 220, []);
-
+  const getDetailPanelHeight = useCallback(() => "auto" as const, []);
   if (error) return <div>{t("tools.list.error")}</div>;
 
   return (
@@ -123,7 +117,7 @@ export default function ToolsTable() {
         loading={!!isLoading}
         getDetailPanelContent={renderDetailPanel}
         getDetailPanelHeight={getDetailPanelHeight}
-        detailPanelMode="mobile-only"
+        detailPanelMode="desktop-only"
         paginationMode="server"
         rowCount={total}
         paginationModel={paginationModel}

@@ -14,6 +14,7 @@ import {
   type GridColumnVisibilityModel,
   type GridPinnedColumnFields,
   type GridRowClassNameParams,
+  type GridGroupingColDefOverride,
 } from "@mui/x-data-grid-pro";
 import { useTranslation } from "react-i18next";
 
@@ -45,7 +46,7 @@ export type ReusableDataGridProps<
   columnVisibilityModel?: GridColumnVisibilityModel;
 
   getDetailPanelContent?: (params: GridRowParams<T>) => React.ReactNode;
-  getDetailPanelHeight?: (params: GridRowParams<T>) => number;
+  getDetailPanelHeight?: (params: GridRowParams<T>) => number | "auto";
   detailPanelMode?: DetailPanelMode;
 
   filterMode?: "client" | "server";
@@ -59,6 +60,12 @@ export type ReusableDataGridProps<
   sx?: SxProps<Theme>;
 
   mobilePrimaryField?: string;
+
+  treeData?: boolean;
+  getTreeDataPath?: (row: T) => string[];
+  groupingColDef?: GridGroupingColDefOverride;
+  defaultGroupingExpansionDepth?: number;
+  isGroupExpandedByDefault?: (node: any) => boolean;
 };
 
 function applyHeaderMappings<T extends GridValidRowModel>(
@@ -125,6 +132,11 @@ export default function ReusableDataGrid<
   getRowClassName,
   sx,
   mobilePrimaryField,
+  treeData,
+  getTreeDataPath,
+  groupingColDef,
+  defaultGroupingExpansionDepth,
+  isGroupExpandedByDefault,
 }: ReusableDataGridProps<T>) {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -388,6 +400,11 @@ export default function ReusableDataGrid<
       onColumnWidthChange={handleColumnWidthChange}
       onColumnOrderChange={handleColumnOrderChange}
       getRowClassName={getRowClassName}
+      treeData={treeData}
+      getTreeDataPath={getTreeDataPath}
+      groupingColDef={groupingColDef}
+      defaultGroupingExpansionDepth={defaultGroupingExpansionDepth}
+      isGroupExpandedByDefault={isGroupExpandedByDefault}
       sx={{
         border: "none",
         backgroundColor: "#fff",

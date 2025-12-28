@@ -16,7 +16,10 @@ import AddIcon from "@mui/icons-material/Add";
 import GroupIcon from "@mui/icons-material/Group";
 import HandymanIcon from "@mui/icons-material/Handyman";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import RemoveIcon from "@mui/icons-material/PersonRemove";
+
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+
+import { FaTools, FaCarSide, FaMinusCircle, FaUser } from "react-icons/fa";
 
 import StatCard from "./StatCard";
 import { formatDate, formatDateRange } from "../utils/dates";
@@ -40,6 +43,7 @@ import { useAssignVehiclesToConstructionSite } from "../hooks/useAssignVehiclesT
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { fullName } from "../utils/name";
 import { normalizeText } from "../utils/normalize";
+import { useConstructionSiteStatusOptions } from "../hooks/useConstructionSiteStatusOptions";
 
 type Employee = {
   id: number;
@@ -78,6 +82,29 @@ type Vehicle = {
   responsibleEmployeeId?: number | null;
 };
 
+type RemoveBadgeIconProps = {
+  icon: React.ReactNode;
+};
+
+function RemoveBadgeIcon({ icon }: RemoveBadgeIconProps) {
+  return (
+    <Box sx={{ position: "relative", width: 16, height: 16 }}>
+      {icon}
+      <FaMinusCircle
+        size={10}
+        color="#d32f2f"
+        style={{
+          position: "absolute",
+          bottom: -4,
+          right: -4,
+          background: "white",
+          borderRadius: "50%",
+        }}
+      />
+    </Box>
+  );
+}
+
 export default function ConstructionSiteDetailsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -98,9 +125,16 @@ export default function ConstructionSiteDetailsPage() {
   const assignTools = useAssignToolsToConstructionSite();
   const assignVeh = useAssignVehiclesToConstructionSite();
 
+  const statusOptions = useConstructionSiteStatusOptions();
+
   const employees = (data?.constructionSiteEmployees ?? []) as Employee[];
   const tools = (data?.constructionSiteTools ?? []) as Tool[];
   const vehicles = (data?.constructionSiteVehicles ?? []) as Vehicle[];
+
+  const statusLabel = useMemo(() => {
+    if (data?.status == null) return "—";
+    return statusOptions.find((opt) => opt.value === data.status)?.label ?? "—";
+  }, [data?.status, statusOptions]);
 
   const removeBtnSx = {
     position: "absolute" as const,
@@ -166,7 +200,6 @@ export default function ConstructionSiteDetailsPage() {
             toolId: x.id,
             dateFrom: x.dateFrom ?? null,
             dateTo: x.dateTo ?? null,
-
             responsibleEmployeeId: respId,
           };
         });
@@ -322,7 +355,7 @@ export default function ConstructionSiteDetailsPage() {
                 disabled={assignEmp.isPending}
                 sx={removeBtnSx}
               >
-                <RemoveIcon fontSize="small" color="error" />
+                <RemoveBadgeIcon icon={<FaUser size={14} />} />
               </IconButton>
             </Tooltip>
 
@@ -417,7 +450,7 @@ export default function ConstructionSiteDetailsPage() {
                 disabled={assignTools.isPending}
                 sx={removeBtnSx}
               >
-                <RemoveIcon fontSize="small" color="error" />
+                <RemoveBadgeIcon icon={<FaTools size={14} />} />
               </IconButton>
             </Tooltip>
 
@@ -530,7 +563,7 @@ export default function ConstructionSiteDetailsPage() {
                 disabled={assignVeh.isPending}
                 sx={removeBtnSx}
               >
-                <RemoveIcon fontSize="small" color="error" />
+                <RemoveBadgeIcon icon={<FaCarSide size={14} />} />
               </IconButton>
             </Tooltip>
 
@@ -606,6 +639,9 @@ export default function ConstructionSiteDetailsPage() {
     unassignTool,
     unassignVehicle,
     removeBtnSx,
+    setOpenEmp,
+    setOpenTools,
+    setOpenVeh,
   ]);
 
   return (
@@ -649,6 +685,12 @@ export default function ConstructionSiteDetailsPage() {
           caption={`${t("constructionSites.fields.name")}: ${
             data?.name || "—"
           }`}
+        />
+        <StatCard
+          icon={<InfoOutlinedIcon />}
+          label={t("constructionSites.fields.status")}
+          value={statusLabel}
+          caption={`${t("constructionSites.fields.id")}: ${data?.id ?? "—"}`}
         />
       </Box>
 

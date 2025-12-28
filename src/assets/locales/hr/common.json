@@ -23,7 +23,9 @@
     "examinationTypes": "Tipovi pregleda",
     "medicalExaminations": "Zdravstveni pregledi",
     "condos": "Stanovi",
-    "notifications": "Obavijesti"
+    "notifications": "Obavijesti",
+    "vehicleRegistrations": "Registracije vozila",
+    "vehicleInsurances": "Osiguranja vozila"
   },
   "constructionSites": {
     "detail": {
@@ -74,7 +76,8 @@
       "manager": "Voditelj gradilišta",
       "id": "ID",
       "location": "Lokacija",
-      "name": "Naziv"
+      "name": "Naziv",
+      "status": "Status"
     },
     "list": {
       "title": "Gradilišta",
@@ -179,6 +182,7 @@
     }
   },
   "common": {
+    "unassign": "Ukloni dodjelu",
     "notAvailable": "Nije definirano",
     "loading": "Učitavanje…",
     "fileInput": {
@@ -544,7 +548,21 @@
       "pricePerDay": "Cijena po danu",
       "pricePerMonth": "Cijena po mjesecu",
       "currency": "Valuta",
-      "notes": "Napomena"
+      "notes": "Napomena",
+
+      "validFrom": "Vrijedi od",
+      "validTo": "Vrijedi do",
+      "totalCostAmount": "Ukupan trošak",
+      "costCurrency": "Valuta",
+      "registrationStationName": "Stanica registracije",
+      "registrationStationLocation": "Lokacija stanice",
+      "reportNumber": "Broj izvješća",
+      "documentPath": "Dokument",
+
+      "insurer": "Osiguravatelj",
+      "policyNumber": "Broj police",
+      "policyType": "Vrsta police",
+      "costAmount": "Iznos"
     }
   },
   "tenants": {
@@ -692,7 +710,10 @@
       "description": "Jeste li sigurni da želite izbrisati zaposlenika?",
       "confirm": "Obriši",
       "cancel": "Odustani"
-    }
+    },
+    "byEmployee": "Po zaposleniku",
+    "employee": "Zaposlenik",
+    "unknown": "Nepoznati zaposlenik"
   },
   "jobPositions": {
     "list": {
@@ -1386,6 +1407,113 @@
     },
     "toast": {
       "open": "Otvori"
+    }
+  },
+  "vehicleRegistrations": {
+    "list": {
+      "title": "Registracije vozila",
+      "error": "Greška kod učitavanja registracija vozila"
+    },
+    "actions": "Akcije",
+    "table": {
+      "edit": "Uredi",
+      "delete": "Obriši"
+    },
+    "create": {
+      "title": "Dodaj registraciju vozila",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi registraciju vozila",
+      "back": "Natrag",
+      "loadError": "Neuspješno učitavanje registracije vozila",
+      "invalidUrlId": "Nevažeći ID registracije",
+      "submit": "Spremi promjene"
+    },
+    "delete": {
+      "title": "Brisanje registracije",
+      "description": "Jeste li sigurni da želite obrisati ovu registraciju?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    },
+    "form": {
+      "submit": "Spremi",
+      "field": {
+        "vehicleId": "Vozilo",
+        "validFrom": "Vrijedi od",
+        "validTo": "Vrijedi do",
+        "totalCostAmount": "Ukupan trošak",
+        "costCurrency": "Valuta",
+        "registrationStationName": "Stanica registracije",
+        "registrationStationLocation": "Lokacija stanice",
+        "reportNumber": "Broj izvješća",
+        "documentPath": "Dokument",
+        "note": "Napomena"
+      }
+    }
+  },
+  "vehicleInsurances": {
+    "list": {
+      "title": "Osiguranja vozila",
+      "error": "Pogreška pri učitavanju osiguranja vozila."
+    },
+    "actions": "Akcije",
+    "table": {
+      "edit": "Uredi",
+      "delete": "Izbriši"
+    },
+    "create": {
+      "title": "Dodaj osiguranje vozila",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi osiguranje vozila",
+      "back": "Natrag",
+      "invalidUrlId": "Neispravan ID osiguranja",
+      "loadError": "Neuspjelo učitavanje osiguranja"
+    },
+    "delete": {
+      "title": "Izbriši osiguranje?",
+      "description": "Jeste li sigurni da želite izbrisati ovo osiguranje?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    },
+    "form": {
+      "submit": "Spremi",
+      "field": {
+        "vehicleId": "Vozilo",
+        "insurer": "Osiguravatelj",
+        "policyNumber": "Broj police",
+        "policyType": "Vrsta police",
+        "costAmount": "Iznos",
+        "costCurrency": "Valuta",
+        "validFrom": "Vrijedi od",
+        "validTo": "Vrijedi do",
+        "documentPath": "Dokument"
+      }
+    }
+  },
+  "history": {
+    "tool": {
+      "title": "Povijest alata"
+    },
+    "vehicle": {
+      "title": "Povijest vozila"
+    },
+    "common": {
+      "assigned": "Dodijeljeno",
+      "updated": "Ažurirano",
+      "event": "Događaj",
+      "ongoing": "u tijeku",
+      "loadMore": "Učitaj više"
+    },
+    "meta": {
+      "siteId": "ID gradilišta",
+      "employee": "Zaposlenik",
+      "employeeId": "ID zaposlenika",
+      "dateRange": "Raspon datuma",
+      "changedAt": "Promijenjeno",
+      "changedBy": "Promijenio"
     }
   }
 }

@@ -53,6 +53,15 @@ export const MedicalExaminationsApi = {
     return res.data;
   },
 
+  getByExaminationType: async (
+    examinationTypeId: number
+  ): Promise<MedicalExamination[]> => {
+    const res = await authFetch<ApiEnvelope<MedicalExamination[]>>(
+      `${base}/by-examination-type/${examinationTypeId}`
+    );
+    return res.data;
+  },
+
   uploadCertificate: async (medicalExaminationId: number, file: File) => {
     const formData = new FormData();
 

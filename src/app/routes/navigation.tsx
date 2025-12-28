@@ -32,6 +32,8 @@ export type ModuleId =
   | "tools"
   | "toolCategories"
   | "vehicles"
+  | "vehicleRegistrations"
+  | "vehicleInsurances"
   | "condos"
   | "tenants"
   | "roles"
@@ -149,6 +151,22 @@ export const NAV_ITEMS: NavItem[] = [
     labelKey: "nav.vehicles",
     to: "/app/vehicles",
     icon: <FaCarSide />,
+    section: "SYSTEM",
+    category: "CODEBOOK",
+    guard: { permission: "Permission.Vehicles.Read" },
+  },
+  {
+    labelKey: "nav.vehicleRegistrations",
+    to: "/app/vehicle-registrations",
+    icon: <FaRegFileAlt />,
+    section: "SYSTEM",
+    category: "CODEBOOK",
+    guard: { permission: "Permission.Vehicles.Read" },
+  },
+  {
+    labelKey: "nav.vehicleInsurances",
+    to: "/app/vehicle-insurances",
+    icon: <FaRegFileAlt />,
     section: "SYSTEM",
     category: "CODEBOOK",
     guard: { permission: "Permission.Vehicles.Read" },

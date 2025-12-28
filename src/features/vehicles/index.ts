@@ -48,3 +48,13 @@ export interface PagedResult<T> {
   hasPrevious: boolean;
   hasNext: boolean;
 }
+
+export interface VehicleHistoryItem {
+  constructionSiteId: number;
+  constructionSiteName: string;
+  constructionSiteLocation: string;
+  dateFrom: string;
+  dateTo: string | null;
+  responsibleEmployeeId: number;
+  responsibleEmployeeName: string;
+}

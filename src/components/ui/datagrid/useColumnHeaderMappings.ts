@@ -228,5 +228,34 @@ export default function useColumnHeaderMappings(): MapItem[] {
     },
     { original: "Currency", translated: t("common.columns.currency") },
     { original: "Notes", translated: t("common.columns.notes") },
+
+    // VEHICLE REGISTRATIONS
+    { original: "ValidFrom", translated: t("common.columns.validFrom") },
+    { original: "ValidTo", translated: t("common.columns.validTo") },
+    {
+      original: "TotalCostAmount",
+      translated: t("common.columns.totalCostAmount"),
+    },
+    { original: "CostCurrency", translated: t("common.columns.costCurrency") },
+    {
+      original: "RegistrationStationName",
+      translated: t("common.columns.registrationStationName"),
+    },
+    {
+      original: "RegistrationStationLocation",
+      translated: t("common.columns.registrationStationLocation"),
+    },
+    { original: "ReportNumber", translated: t("common.columns.reportNumber") },
+    { original: "DocumentPath", translated: t("common.columns.documentPath") },
+
+    // VEHICLE INSURANCES
+    { original: "Insurer", translated: t("common.columns.insurer") },
+    { original: "PolicyNumber", translated: t("common.columns.policyNumber") },
+    { original: "PolicyType", translated: t("common.columns.policyType") },
+    { original: "CostAmount", translated: t("common.columns.costAmount") },
+    { original: "CostCurrency", translated: t("common.columns.costCurrency") },
+    { original: "ValidFrom", translated: t("common.columns.validFrom") },
+    { original: "ValidTo", translated: t("common.columns.validTo") },
+    { original: "DocumentPath", translated: t("common.columns.documentPath") },
   ];
 }

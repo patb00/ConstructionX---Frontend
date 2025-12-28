@@ -3,6 +3,7 @@ import type {
   NewVehicleRequest,
   UpdateVehicleRequest,
   PagedResult,
+  VehicleHistoryItem,
 } from "..";
 import { authFetch } from "../../../lib/authFetch";
 import type { ApiEnvelope } from "../../administration/tenants";
@@ -38,6 +39,12 @@ export const VehiclesApi = {
   getAll: async (page: number, pageSize: number) => {
     const res = await authFetch<ApiEnvelope<PagedResult<Vehicle>>>(
       `${base}/get-all?Page=${page}&PageSize=${pageSize}`
+    );
+    return res.data;
+  },
+  history: async (vehicleId: number, page: number, pageSize: number) => {
+    const res = await authFetch<ApiEnvelope<PagedResult<VehicleHistoryItem>>>(
+      `${base}/history/${vehicleId}?Page=${page}&PageSize=${pageSize}`
     );
     return res.data;
   },

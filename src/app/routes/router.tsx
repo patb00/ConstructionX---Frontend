@@ -20,6 +20,8 @@ import { medicalExaminationsRoutes } from "../../features/medical_examinations/r
 import { examinationTypesRoutes } from "../../features/examination_types/routes";
 import { condosRoutes } from "../../features/condos/routes";
 import { notificationsRoutes } from "../../features/notifications/routes";
+import { vehicleRegistrationsRoutes } from "../../features/vehicle_registrations/routes";
+import { vehicleInsurancesRoutes } from "../../features/vehicle_insurance/routes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <LoginRoute /> },
@@ -45,6 +47,8 @@ export const router = createBrowserRouter([
       toolCategoriesRoutes,
       constructionSitesRoutes,
       vehiclesRoutes,
+      vehicleRegistrationsRoutes,
+      vehicleInsurancesRoutes,
 
       condosRoutes,
       assignmentsRoutes,
