@@ -1,4 +1,3 @@
-// AppShell.tsx
 import {
   AppBar,
   Box,

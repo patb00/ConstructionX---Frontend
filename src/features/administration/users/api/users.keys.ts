@@ -5,4 +5,5 @@ export const usersKeys = {
   permissions: (userId: string) =>
     [...usersKeys.all, "permissions", userId] as const,
   roles: (userId: string) => [...usersKeys.all, "roles", userId] as const,
+  mePermissions: () => [...usersKeys.all, "me", "permissions"] as const,
 };
