@@ -50,6 +50,8 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
       !i.category || (i.category !== "CODEBOOK" && i.category !== "IDENTITY")
   );
 
+  console.log("permissions", permissions);
+
   const ManagementContent = (
     <SidebarSection
       sectionLabelKey="sidebar.management"

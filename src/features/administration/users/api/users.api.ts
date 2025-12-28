@@ -107,4 +107,11 @@ export const UsersApi = {
       body: JSON.stringify(payload),
     });
   },
+
+  getMyPermissions: async (): Promise<UserPermissionsResponse> => {
+    const res = await authFetch<ApiEnvelope<UserPermissionsResponse>>(
+      `${base}/me/permissions`
+    );
+    return res.data;
+  },
 };

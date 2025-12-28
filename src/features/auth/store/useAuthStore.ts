@@ -20,10 +20,14 @@ export type AuthState = {
   setTenant: (tenant: string) => void;
 
   setPermissions: (perms: string[]) => void;
+
   setRole: (role: string | null) => void;
   setMustChangePassword: (v: boolean) => void;
+
   loadFromCookies: () => void;
+
   setTokens: (jwt: string, refreshToken: string, refreshExpISO: string) => void;
+
   clear: () => void;
   isAccessExpired: () => boolean;
 };
@@ -58,25 +62,24 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const mcp = getCookie(MCP_COOKIE);
 
     let tenant: string | null = null;
-    let permissions: string[] = [];
     let userId: string | null = null;
     let role: string | null = null;
 
     if (jwt) {
       const claims = decodeJwt(jwt) as any;
+
       if (claims) {
         tenant = claims.tenant ?? null;
-        if (Array.isArray(claims.permission)) permissions = claims.permission;
 
         role =
-          claims[
+          claims?.[
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
           ] ??
-          claims["role"] ??
+          claims?.["role"] ??
           null;
 
         userId =
-          claims[
+          claims?.[
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
           ] ?? null;
       }
@@ -89,7 +92,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       refreshToken: null,
       refreshTokenExpirationDate: null,
       tenant,
-      permissions,
+      permissions: [],
       role,
       userId,
       isAuthenticated: ok,
@@ -104,7 +107,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const claims = decodeJwt(jwt) as any;
 
     const tenant = claims?.tenant ?? null;
-    const perms = Array.isArray(claims?.permission) ? claims.permission : [];
 
     const role =
       claims?.[
@@ -123,7 +125,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       refreshToken,
       refreshTokenExpirationDate: refreshExpISO,
       tenant,
-      permissions: perms,
+      permissions: [],
       role,
       userId,
       isAuthenticated: !isExpired(jwt),
@@ -144,6 +146,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       userId: null,
       mustChangePassword: false,
       isAuthenticated: false,
+      hasHydrated: true,
     });
   },
 
