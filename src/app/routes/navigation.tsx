@@ -18,7 +18,7 @@ import { LuConstruction } from "react-icons/lu";
 import { MdCategory, MdMedicalServices } from "react-icons/md";
 import type { ReactNode } from "react";
 
-export type NavCategory = "CODEBOOK" | "CONSTRUCTION" | "IDENTITY";
+export type NavCategory = "CODEBOOK" | "CONSTRUCTION" | "IDENTITY" | "VEHICLES";
 
 export type ModuleId =
   | "dashboard"
@@ -34,6 +34,7 @@ export type ModuleId =
   | "vehicles"
   | "vehicleRegistrations"
   | "vehicleInsurances"
+  | "vehicleBusinessTrips"
   | "condos"
   | "tenants"
   | "roles"
@@ -152,7 +153,7 @@ export const NAV_ITEMS: NavItem[] = [
     to: "/app/vehicles",
     icon: <FaCarSide />,
     section: "SYSTEM",
-    category: "CODEBOOK",
+    category: "VEHICLES",
     guard: { permission: "Permission.Vehicles.Read" },
   },
   {
@@ -160,7 +161,7 @@ export const NAV_ITEMS: NavItem[] = [
     to: "/app/vehicle-registrations",
     icon: <FaRegFileAlt />,
     section: "SYSTEM",
-    category: "CODEBOOK",
+    category: "VEHICLES",
     guard: { permission: "Permission.Vehicles.Read" },
   },
   {
@@ -168,7 +169,15 @@ export const NAV_ITEMS: NavItem[] = [
     to: "/app/vehicle-insurances",
     icon: <FaRegFileAlt />,
     section: "SYSTEM",
-    category: "CODEBOOK",
+    category: "VEHICLES",
+    guard: { permission: "Permission.Vehicles.Read" },
+  },
+  {
+    labelKey: "nav.vehicleBusinessTrips",
+    to: "/app/vehicle-business-trips",
+    icon: <FaTasks />, // or FaCarSide / FaRegFileAlt if you prefer
+    section: "SYSTEM",
+    category: "VEHICLES",
     guard: { permission: "Permission.Vehicles.Read" },
   },
   {

@@ -43,14 +43,17 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
     (i) => i.category !== "CONSTRUCTION"
   );
 
+  const SYSTEM_VEHICLES = SYSTEM.filter((i) => i.category === "VEHICLES");
+
   const SYSTEM_SIFRARNIK = SYSTEM.filter((i) => i.category === "CODEBOOK");
   const SYSTEM_IDENTITET = SYSTEM.filter((i) => i.category === "IDENTITY");
   const SYSTEM_OSTALO = SYSTEM.filter(
     (i) =>
-      !i.category || (i.category !== "CODEBOOK" && i.category !== "IDENTITY")
+      !i.category ||
+      (i.category !== "CODEBOOK" &&
+        i.category !== "IDENTITY" &&
+        i.category !== "VEHICLES")
   );
-
-  console.log("permissions", permissions);
 
   const ManagementContent = (
     <SidebarSection
@@ -66,12 +69,13 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
       onClose={onClose}
     />
   );
-
   const SystemContent = (
     <SidebarSection
       sectionLabelKey="sidebar.system"
       accordion={[
+        { title: t("sidebar.vehiclesGroup"), items: SYSTEM_VEHICLES },
         { title: t("sidebar.codebookGroup"), items: SYSTEM_SIFRARNIK },
+
         { title: t("sidebar.identityGroup"), items: SYSTEM_IDENTITET },
       ]}
       listItems={SYSTEM_OSTALO}

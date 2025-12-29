@@ -22,6 +22,7 @@ import { condosRoutes } from "../../features/condos/routes";
 import { notificationsRoutes } from "../../features/notifications/routes";
 import { vehicleRegistrationsRoutes } from "../../features/vehicle_registrations/routes";
 import { vehicleInsurancesRoutes } from "../../features/vehicle_insurance/routes";
+import { vehicleBusinessTripsRoutes } from "../../features/vehicle_business_trips/routes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <LoginRoute /> },
@@ -49,6 +50,7 @@ export const router = createBrowserRouter([
       vehiclesRoutes,
       vehicleRegistrationsRoutes,
       vehicleInsurancesRoutes,
+      vehicleBusinessTripsRoutes,
 
       condosRoutes,
       assignmentsRoutes,

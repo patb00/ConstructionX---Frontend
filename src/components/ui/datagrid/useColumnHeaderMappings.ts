@@ -257,5 +257,63 @@ export default function useColumnHeaderMappings(): MapItem[] {
     { original: "ValidFrom", translated: t("common.columns.validFrom") },
     { original: "ValidTo", translated: t("common.columns.validTo") },
     { original: "DocumentPath", translated: t("common.columns.documentPath") },
+
+    // VEHICLE BUSINESS TRIPS
+    {
+      original: "VehicleId",
+      translated: t("common.columns.vehicleId"),
+    },
+    {
+      original: "EmployeeId",
+      translated: t("common.columns.employeeId"),
+    },
+    {
+      original: "StartLocationText",
+      translated: t("common.columns.startLocationText"),
+    },
+    {
+      original: "EndLocationText",
+      translated: t("common.columns.endLocationText"),
+    },
+    {
+      original: "StartAt",
+      translated: t("common.columns.startAt"),
+    },
+    {
+      original: "EndAt",
+      translated: t("common.columns.endAt"),
+    },
+    {
+      original: "StartKilometers",
+      translated: t("common.columns.startKilometers"),
+    },
+    {
+      original: "EndKilometers",
+      translated: t("common.columns.endKilometers"),
+    },
+    {
+      original: "Refueled",
+      translated: t("common.columns.refueled"),
+    },
+    {
+      original: "FuelLiters",
+      translated: t("common.columns.fuelLiters"),
+    },
+    {
+      original: "FuelAmount",
+      translated: t("common.columns.fuelAmount"),
+    },
+    {
+      original: "FuelCurrency",
+      translated: t("common.columns.fuelCurrency"),
+    },
+    {
+      original: "TripStatus",
+      translated: t("common.columns.tripStatus"),
+    },
+    {
+      original: "Note",
+      translated: t("common.columns.note"),
+    },
   ];
 }

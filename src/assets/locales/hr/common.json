@@ -4,7 +4,8 @@
     "system": "Sustav",
     "constructionGroup": "Gradilišta",
     "codebookGroup": "Šifrarnik",
-    "identityGroup": "Identitet"
+    "identityGroup": "Identitet",
+    "vehiclesGroup": "Vozila"
   },
   "nav": {
     "dashboard": "Nadzorna ploča",
@@ -25,7 +26,8 @@
     "condos": "Stanovi",
     "notifications": "Obavijesti",
     "vehicleRegistrations": "Registracije vozila",
-    "vehicleInsurances": "Osiguranja vozila"
+    "vehicleInsurances": "Osiguranja vozila",
+    "vehicleBusinessTrips": "Službena putovanja "
   },
   "constructionSites": {
     "detail": {
@@ -558,11 +560,22 @@
       "registrationStationLocation": "Lokacija stanice",
       "reportNumber": "Broj izvješća",
       "documentPath": "Dokument",
-
       "insurer": "Osiguravatelj",
       "policyNumber": "Broj police",
       "policyType": "Vrsta police",
-      "costAmount": "Iznos"
+      "costAmount": "Iznos",
+
+      "startLocationText": "Početna lokacija",
+      "endLocationText": "Završna lokacija",
+      "startAt": "Vrijeme početka",
+      "endAt": "Vrijeme završetka",
+      "startKilometers": "Kilometri (početak)",
+      "endKilometers": "Kilometri (kraj)",
+      "refueled": "Točeno gorivo",
+      "fuelLiters": "Gorivo (litre)",
+      "fuelAmount": "Iznos goriva",
+      "fuelCurrency": "Valuta",
+      "tripStatus": "Status putovanja"
     }
   },
   "tenants": {
@@ -1517,6 +1530,57 @@
       "dateRange": "Raspon datuma",
       "changedAt": "Promijenjeno",
       "changedBy": "Promijenio"
+    }
+  },
+  "vehicleBusinessTrips": {
+    "list": {
+      "title": "Službena putovanja vozila",
+      "error": "Greška pri učitavanju službenih putovanja."
+    },
+
+    "create": {
+      "title": "Dodaj službeno putovanje",
+      "back": "Natrag"
+    },
+
+    "edit": {
+      "title": "Uredi službeno putovanje",
+      "back": "Natrag",
+      "invalidUrlId": "Neispravan ID u URL-u",
+      "loadError": "Neuspješno učitavanje službenog putovanja."
+    },
+
+    "actions": "Akcije",
+
+    "table": {
+      "edit": "Uredi",
+      "delete": "Obriši"
+    },
+
+    "delete": {
+      "title": "Obrisati službeno putovanje?",
+      "description": "Jeste li sigurni da želite obrisati ovo službeno putovanje?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    },
+
+    "form": {
+      "submit": "Spremi",
+      "field": {
+        "vehicleId": "Vozilo",
+        "employeeId": "Zaposlenik",
+        "startLocationText": "Početna lokacija",
+        "endLocationText": "Završna lokacija",
+        "startAt": "Vrijeme početka",
+        "endAt": "Vrijeme završetka",
+        "startKilometers": "Početno stanje kilometara",
+        "endKilometers": "Završno stanje kilometara",
+        "refueled": "Točeno gorivo",
+        "fuelLiters": "Količina goriva (l)",
+        "fuelAmount": "Iznos goriva",
+        "fuelCurrency": "Valuta",
+        "note": "Napomena"
+      }
     }
   }
 }

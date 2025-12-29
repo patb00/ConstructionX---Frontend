@@ -209,9 +209,7 @@ export function HistoryPanel<TItem>({
                       bgcolor: isActive
                         ? theme.palette.primary.main
                         : theme.palette.background.paper,
-                      color: isActive
-                        ? theme.palette.primary.contrastText
-                        : theme.palette.text.primary,
+                      color: "white",
                       boxShadow: isActive
                         ? "0 2px 8px rgba(0,0,0,0.18)"
                         : "0 1px 4px rgba(0,0,0,0.08)",

@@ -336,7 +336,6 @@ export default function ReusableDataGrid<
       columns={columnsForScreen}
       getRowId={getRowId}
       disableRowSelectionOnClick
-      autoHeight={isSmall}
       paginationMode={paginationMode}
       rowCount={paginationMode === "server" ? rowCount : undefined}
       paginationModel={paginationModel}

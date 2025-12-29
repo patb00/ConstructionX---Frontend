@@ -55,6 +55,7 @@ export function Tabs<T extends string | number>({
         scrollButtons="auto"
         aria-label={ariaLabel}
         TabIndicatorProps={{ style: { display: "none" } }}
+        allowScrollButtonsMobile
         sx={{
           minHeight: 40,
           "& .MuiTabs-flexContainer": { gap: 1 },

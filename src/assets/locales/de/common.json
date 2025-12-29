@@ -4,7 +4,8 @@
     "system": "System",
     "constructionGroup": "Baustellen",
     "codebookGroup": "Stammdaten",
-    "identityGroup": "Identität"
+    "identityGroup": "Identität",
+    "vehiclesGroup": "Fahrzeuge"
   },
   "nav": {
     "dashboard": "Übersicht",
@@ -25,7 +26,8 @@
     "condos": "Wohnungen",
     "notifications": "Benachrichtigungen",
     "vehicleRegistrations": "Fahrzeugzulassungen",
-    "vehicleInsurances": "Fahrzeugversicherungen"
+    "vehicleInsurances": "Fahrzeugversicherungen",
+    "vehicleBusinessTrips": "Dienstfahrten"
   },
 
   "constructionSites": {
@@ -564,7 +566,19 @@
       "insurer": "Versicherer",
       "policyNumber": "Policennummer",
       "policyType": "Policeart",
-      "costAmount": "Kostenbetrag"
+      "costAmount": "Kostenbetrag",
+
+      "startLocationText": "Startort",
+      "endLocationText": "Zielort",
+      "startAt": "Startzeit",
+      "endAt": "Endzeit",
+      "startKilometers": "Kilometerstand Start",
+      "endKilometers": "Kilometerstand Ende",
+      "refueled": "Getankt",
+      "fuelLiters": "Kraftstoff (Liter)",
+      "fuelAmount": "Kraftstoffkosten",
+      "fuelCurrency": "Währung",
+      "tripStatus": "Fahrtstatus"
     }
   },
   "tenants": {
@@ -1520,6 +1534,57 @@
       "dateRange": "Zeitraum",
       "changedAt": "Geändert am",
       "changedBy": "Geändert von"
+    }
+  },
+  "vehicleBusinessTrips": {
+    "list": {
+      "title": "Dienstfahrten",
+      "error": "Fehler beim Laden der Dienstfahrten."
+    },
+
+    "create": {
+      "title": "Dienstfahrt hinzufügen",
+      "back": "Zurück"
+    },
+
+    "edit": {
+      "title": "Dienstfahrt bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (ID)",
+      "loadError": "Dienstfahrt konnte nicht geladen werden."
+    },
+
+    "actions": "Aktionen",
+
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+
+    "delete": {
+      "title": "Dienstfahrt löschen?",
+      "description": "Möchten Sie diese Dienstfahrt wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "vehicleId": "Fahrzeug",
+        "employeeId": "Mitarbeiter",
+        "startLocationText": "Startort",
+        "endLocationText": "Zielort",
+        "startAt": "Startzeit",
+        "endAt": "Endzeit",
+        "startKilometers": "Kilometerstand (Start)",
+        "endKilometers": "Kilometerstand (Ende)",
+        "refueled": "Getankt",
+        "fuelLiters": "Getankte Liter",
+        "fuelAmount": "Kraftstoffkosten",
+        "fuelCurrency": "Währung",
+        "note": "Notiz"
+      }
     }
   }
 }

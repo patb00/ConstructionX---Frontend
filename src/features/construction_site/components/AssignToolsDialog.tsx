@@ -128,6 +128,24 @@ export default function AssignToolsDialog({
           renderInput={(params) => <TextField {...params} />}
         />
       )}
+      labels={{
+        startLabel: t("constructionSites.assign.global.startLabel"),
+        endLabel: t("constructionSites.assign.global.endLabel"),
+        cancel: t("constructionSites.assign.actions.cancel"),
+        save: t("constructionSites.assign.actions.save"),
+        saving: t("constructionSites.assign.actions.saving"),
+        invalidRange: t("constructionSites.assign.validation.invalidRange"),
+        pickHint: t("constructionSites.assign.pickVehicleHint"),
+        itemsCountLabel: (count: number) =>
+          t("constructionSites.assign.left.vehiclesCount", { count }),
+        selectedCountLabel: (count: number) =>
+          t("constructionSites.assign.left.selectedCount", { count }),
+        chipGlobal: t("constructionSites.assign.chip.global"),
+        chipCustom: t("constructionSites.assign.chip.custom"),
+        resetToGlobalTooltip: t(
+          "constructionSites.assign.tooltip.resetToGlobal"
+        ),
+      }}
       buildPayload={({ selected, ranges, globalFrom, globalTo }) => ({
         constructionSiteId,
         tools:
