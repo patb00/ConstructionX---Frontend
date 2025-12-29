@@ -1,4 +1,4 @@
-import { Button, Stack, Typography, Paper } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import ConstructionSitesTable from "./ConstructionSitesTable";
 import { PermissionGate } from "../../../lib/permissions";
@@ -28,9 +28,7 @@ const ConstructionSitesListPage = () => {
         </PermissionGate>
       </Stack>
 
-      <Paper elevation={0} sx={{ flexGrow: 1, mt: 1, p: 0 }}>
-        <ConstructionSitesTable />
-      </Paper>
+      <ConstructionSitesTable />
     </Stack>
   );
 };

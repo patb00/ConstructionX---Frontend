@@ -1,4 +1,4 @@
-import { Button, Paper, Stack, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import VehicleInsurancesTable from "./VehicleInsurancesTable";
@@ -26,9 +26,7 @@ export default function VehicleInsurancesListPage() {
         </PermissionGate>
       </Stack>
 
-      <Paper elevation={0} sx={{ flexGrow: 1, mt: 1, p: 0 }}>
-        <VehicleInsurancesTable />
-      </Paper>
+      <VehicleInsurancesTable />
     </Stack>
   );
 }

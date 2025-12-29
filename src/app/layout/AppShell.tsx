@@ -11,17 +11,18 @@ import {
   ListItemText,
   useTheme,
   useMediaQuery,
+  CircularProgress,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useEffect, useMemo, useState } from "react";
-import Sidebar, { SIDEBAR_WIDTH } from "./sidebar/Sidebar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { MdConstruction } from "react-icons/md";
 import { useSnackbar } from "notistack";
-import { useAuthStore } from "../../features/auth/store/useAuthStore";
 import { useQueryClient } from "@tanstack/react-query";
+
+import Sidebar, { SIDEBAR_WIDTH } from "./sidebar/Sidebar";
 import LanguageSwitcher from "../../components/ui/languague-switch/LanguagueSwitcher";
 import { useUsers } from "../../features/administration/users/hooks/useUsers";
 import { useTranslation } from "react-i18next";
@@ -31,21 +32,26 @@ import { NotificationsBootstrap } from "../../features/notifications/components/
 import { NotificationsBell } from "../../features/notifications/components/NotificationsBell";
 import { stopNotificationsHubConnection } from "../../lib/signalR/connection";
 
-export default function AppShell() {
-  const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [profileOpen, setProfileOpen] = useState(false);
+import { useAuthStore } from "../../features/auth/store/useAuthStore";
+import { useAuthBootstrap } from "../../features/auth/hooks/useAuthBootstrap";
 
+export default function AppShell() {
+  useAuthBootstrap();
+
+  const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  const menuOpen = Boolean(anchorEl);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
 
-  const { clear, userId, tenant, isAuthenticated } = useAuthStore();
+  const [open, setOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  const { clear, userId, tenant, isAuthenticated, permissionsLoaded } =
+    useAuthStore();
 
   const { usersRows } = useUsers();
 
@@ -53,6 +59,12 @@ export default function AppShell() {
     if (!usersRows || !userId) return null;
     return usersRows.find((u: any) => String(u.id) === String(userId)) ?? null;
   }, [usersRows, userId]);
+
+  const menuOpen = Boolean(anchorEl);
+
+  useEffect(() => {
+    if (!isMobile && open) setOpen(false);
+  }, [isMobile, open]);
 
   const handleAvatarClick = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);
@@ -67,33 +79,42 @@ export default function AppShell() {
 
   const handleLogout = async () => {
     handleMenuClose();
-
-    // prekini hubove prije čišćenja state-a
     await Promise.allSettled([stopNotificationsHubConnection()]);
-
     clear();
     queryClient.clear();
     enqueueSnackbar(t("appShell.snackbar.loggedOut"), { variant: "info" });
     navigate("/");
   };
 
-  useEffect(() => {
-    if (!isMobile && open) setOpen(false);
-  }, [isMobile, open]);
-
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
+      {isAuthenticated && !permissionsLoaded && (
+        <Box
+          sx={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 3000,
+            bgcolor: "background.default",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
+
       {isAuthenticated && <NotificationsBootstrap />}
 
       <AppBar
         position="fixed"
         elevation={0}
-        sx={(theme) => ({
+        sx={{
           bgcolor: "#F7F7F8",
           borderBottom: `1px solid ${theme.palette.divider}`,
           color: theme.palette.text.primary,
           zIndex: (t) => t.zIndex.drawer + 1,
-        })}
+        }}
       >
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -108,19 +129,12 @@ export default function AppShell() {
 
             <Box
               component={MdConstruction}
-              sx={(theme) => ({
-                fontSize: 24,
-                color: theme.palette.primary.main,
-              })}
+              sx={{ fontSize: 24, color: "primary.main" }}
             />
 
             <Typography
               variant="body1"
-              sx={{
-                fontWeight: 600,
-                whiteSpace: "nowrap",
-                color: "primary.main",
-              }}
+              sx={{ fontWeight: 600, color: "primary.main" }}
             >
               ConstructionX
             </Typography>
@@ -129,35 +143,27 @@ export default function AppShell() {
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <LanguageSwitcher />
             <NotificationsBell />
+
             <Avatar
-              alt={t("appShell.userAvatarAlt")}
               onClick={handleAvatarClick}
               sx={{
                 width: 28,
                 height: 28,
                 cursor: "pointer",
                 bgcolor: "primary.main",
-                color: "white",
                 fontSize: 14,
-                "&:hover": { opacity: 0.85 },
               }}
-              aria-controls={menuOpen ? "user-menu" : undefined}
-              aria-haspopup="true"
-              aria-expanded={menuOpen ? "true" : undefined}
             >
               {getUserInitials(loggedUser)}
             </Avatar>
           </Box>
 
           <Menu
-            id="user-menu"
             anchorEl={anchorEl}
             open={menuOpen}
             onClose={handleMenuClose}
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             transformOrigin={{ vertical: "top", horizontal: "right" }}
-            MenuListProps={{ dense: true, autoFocusItem: false }}
-            sx={{ "& .MuiPaper-root": { borderRadius: 0.15 } }}
           >
             <MenuItem onClick={handleOpenProfile}>
               <ListItemIcon>
@@ -185,12 +191,7 @@ export default function AppShell() {
           minWidth: 0,
           mt: "64px",
           ml: { md: `${SIDEBAR_WIDTH}px` },
-          width: "100%",
-          maxWidth: "100%",
-          overflowX: "clip",
-          overflowY: open ? "hidden" : "auto",
           p: 2,
-          background: "#FDFDFD",
         }}
       >
         <Outlet />

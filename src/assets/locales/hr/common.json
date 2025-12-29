@@ -1328,6 +1328,9 @@
       "description": "Jeste li sigurni da želite obrisati ovaj zdravstveni pregled?",
       "confirm": "Obriši",
       "cancel": "Odustani"
+    },
+    "tree": {
+      "exam": "Pregled {{id}}"
     }
   },
   "condos": {

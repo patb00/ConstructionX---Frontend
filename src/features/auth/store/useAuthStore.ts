@@ -13,21 +13,18 @@ export type AuthState = {
   tenant: string | null;
   role: string | null;
   permissions: string[];
+  permissionsLoaded: boolean;
   userId: string | null;
   mustChangePassword: boolean;
   hasHydrated: boolean;
 
   setTenant: (tenant: string) => void;
-
   setPermissions: (perms: string[]) => void;
-
   setRole: (role: string | null) => void;
   setMustChangePassword: (v: boolean) => void;
 
   loadFromCookies: () => void;
-
   setTokens: (jwt: string, refreshToken: string, refreshExpISO: string) => void;
-
   clear: () => void;
   isAccessExpired: () => boolean;
 };
@@ -39,16 +36,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isAuthenticated: false,
   tenant: null,
   permissions: [],
+  permissionsLoaded: false,
   role: null,
   userId: null,
   mustChangePassword: false,
   hasHydrated: false,
 
-  setTenant: (tenant) => {
-    set({ tenant });
-  },
+  setTenant: (tenant) => set({ tenant }),
 
-  setPermissions: (perms) => set({ permissions: perms ?? [] }),
+  setPermissions: (perms) =>
+    set({
+      permissions: perms ?? [],
+      permissionsLoaded: true,
+    }),
+
   setRole: (role) => set({ role: role ?? null }),
 
   setMustChangePassword: (v) => {
@@ -67,17 +68,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     if (jwt) {
       const claims = decodeJwt(jwt) as any;
-
       if (claims) {
         tenant = claims.tenant ?? null;
-
         role =
           claims?.[
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
           ] ??
           claims?.["role"] ??
           null;
-
         userId =
           claims?.[
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
@@ -93,6 +91,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       refreshTokenExpirationDate: null,
       tenant,
       permissions: [],
+      permissionsLoaded: false,
       role,
       userId,
       isAuthenticated: ok,
@@ -106,28 +105,23 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     const claims = decodeJwt(jwt) as any;
 
-    const tenant = claims?.tenant ?? null;
-
-    const role =
-      claims?.[
-        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-      ] ??
-      claims?.["role"] ??
-      null;
-
-    const userId =
-      claims?.[
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-      ] ?? null;
-
     set({
       jwt,
       refreshToken,
       refreshTokenExpirationDate: refreshExpISO,
-      tenant,
+      tenant: claims?.tenant ?? null,
       permissions: [],
-      role,
-      userId,
+      permissionsLoaded: false,
+      role:
+        claims?.[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        ] ??
+        claims?.["role"] ??
+        null,
+      userId:
+        claims?.[
+          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+        ] ?? null,
       isAuthenticated: !isExpired(jwt),
     });
   },
@@ -142,6 +136,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       refreshTokenExpirationDate: null,
       tenant: null,
       permissions: [],
+      permissionsLoaded: false,
       role: null,
       userId: null,
       mustChangePassword: false,

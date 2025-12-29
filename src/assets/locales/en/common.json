@@ -1329,6 +1329,9 @@
       "description": "Are you sure you want to delete this medical examination?",
       "confirm": "Delete",
       "cancel": "Cancel"
+    },
+    "tree": {
+      "exam": "Exam {{id}}"
     }
   },
   "condos": {

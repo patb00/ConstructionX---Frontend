@@ -195,8 +195,10 @@ export default function MedicalExaminationsTable({
               treeData: true,
               getTreeDataPath: (row) => [
                 employeeNameById.get((row as any).employeeId) ??
-                  t("employees.unknown", "Unknown employee"),
-                `Exam ${(row as any).id}`,
+                  t("employees.unknown"),
+                t("medicalExaminations.tree.exam", {
+                  id: (row as any).id,
+                }),
               ],
               groupingColDef: {
                 headerName: t("employees.employee"),

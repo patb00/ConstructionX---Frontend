@@ -2,7 +2,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { Box, Card, Stack, Typography, Divider } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-import { getModuleIdFromNavItem } from "../../../app/routes/navigationUtils";
+import { getModuleIdFromNavItem } from "../../../utils/navigationUtils";
 import { reportsCardColumnSx } from "../utils/layout";
 import { getReportModules } from "../utils/modules";
 

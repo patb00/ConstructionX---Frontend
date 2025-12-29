@@ -1,4 +1,4 @@
-import { Button, Stack, Typography, Paper } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import EmployeesTable from "./EmployeesTable";
 import { PermissionGate } from "../../../../lib/permissions";
@@ -26,9 +26,7 @@ const EmployeesListPage = () => {
         </PermissionGate>
       </Stack>
 
-      <Paper elevation={0} sx={{ flexGrow: 1, mt: 1, p: 0 }}>
-        <EmployeesTable />
-      </Paper>
+      <EmployeesTable />
     </Stack>
   );
 };

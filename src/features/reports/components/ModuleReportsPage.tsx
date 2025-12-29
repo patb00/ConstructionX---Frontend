@@ -9,7 +9,7 @@ import {
   type ReportDefinition,
 } from "../config/reports.config";
 import type { ModuleId } from "../../../app/routes/navigation";
-import { getNavItemByModuleId } from "../../../app/routes/navigationUtils";
+import { getNavItemByModuleId } from "../../../utils/navigationUtils";
 
 import { languageToCulture } from "../utils/culture";
 import { reportsCardColumnSx } from "../utils/layout";

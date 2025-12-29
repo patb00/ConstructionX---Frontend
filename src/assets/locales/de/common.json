@@ -1330,6 +1330,9 @@
       "description": "Sind Sie sicher, dass Sie diese medizinische Untersuchung löschen möchten?",
       "confirm": "Löschen",
       "cancel": "Abbrechen"
+    },
+    "tree": {
+      "exam": "Untersuchung {{id}}"
     }
   },
   "condos": {

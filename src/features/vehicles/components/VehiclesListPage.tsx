@@ -1,5 +1,4 @@
-// VehiclesListPage.tsx
-import { Button, Paper, Stack, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import VehiclesTable from "./VehiclesTable";
@@ -29,9 +28,7 @@ export default function VehiclesListPage() {
         </PermissionGate>
       </Stack>
 
-      <Paper elevation={0} sx={{ flexGrow: 1, mt: 1, p: 0 }}>
-        <VehiclesTable />
-      </Paper>
+      <VehiclesTable />
     </Stack>
   );
 }

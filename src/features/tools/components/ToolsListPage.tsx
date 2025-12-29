@@ -1,4 +1,4 @@
-import { Button, Stack, Typography, Paper } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import ToolsTable from "./ToolsTable";
 import { useTranslation } from "react-i18next";
@@ -26,9 +26,7 @@ const ToolsListPage = () => {
         </PermissionGate>
       </Stack>
 
-      <Paper elevation={0} sx={{ flexGrow: 1, mt: 1, p: 0 }}>
-        <ToolsTable />
-      </Paper>
+      <ToolsTable />
     </Stack>
   );
 };
