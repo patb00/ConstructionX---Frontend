@@ -8,7 +8,7 @@ import type { ConstructionSite } from "..";
 import { useConstructionSites } from "../hooks/useConstructionSites";
 import { useDeleteConstructionSite } from "../hooks/useDeleteConstructionSite";
 import { useChangeConstructionSiteStatus } from "../hooks/useChangeConstructionSiteStatus";
-import { useConstructionSiteStatusOptions } from "../hooks/useConstructionSiteStatusOptions";
+import { useConstructionSiteStatusOptions } from "../../constants/enum/useConstructionSiteStatusOptions";
 
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { useTools } from "../../tools/hooks/useTools";

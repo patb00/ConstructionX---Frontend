@@ -181,10 +181,12 @@
       "completed": "Abgeschlossen",
       "cancelled": "Abgebrochen",
       "dialogTitle": "Status ändern",
-      "dialogFieldLabel": "Status"
+      "dialogFieldLabel": "Status",
+      "label": "Status"
     }
   },
   "common": {
+    "all": "Alle Status",
     "unassign": "Zuweisung entfernen",
     "notAvailable": "Nicht verfügbar",
     "loading": "Wird geladen…",
@@ -1515,17 +1517,38 @@
   },
   "history": {
     "tool": {
-      "title": "Werkzeughistorie"
+      "title": "Werkzeughistorie",
+      "assignments": "Zuweisungen",
+      "emptyAssignments": "Keine Zuweisungen."
     },
     "vehicle": {
-      "title": "Fahrzeughistorie"
+      "title": "Fahrzeughistorie",
+      "assignments": "Zuweisungen",
+      "emptyAssignments": "Keine Zuweisungen.",
+
+      "registrations": "Registrierungen",
+      "emptyRegistrations": "Keine Registrierungen.",
+      "registrationFallback": "Registrierungsstelle",
+
+      "trips": "Dienstreisen",
+      "emptyTrips": "Keine Dienstreisen.",
+      "tripFallback": "Reise",
+      "refueled": "Getankt",
+
+      "insurance": "Versicherung",
+      "emptyInsurance": "Keine Versicherungen.",
+      "insuranceFallback": "Versicherung"
     },
     "common": {
       "assigned": "Zugewiesen",
       "updated": "Aktualisiert",
       "event": "Ereignis",
       "ongoing": "laufend",
-      "loadMore": "Mehr laden"
+      "loadMore": "Mehr laden",
+      "vehicleId": "Fahrzeug-ID",
+      "loading": "Lädt…",
+      "loadError": "Fehler beim Laden.",
+      "toolId": "Werkzeug-ID"
     },
     "meta": {
       "siteId": "Baustellen-ID",

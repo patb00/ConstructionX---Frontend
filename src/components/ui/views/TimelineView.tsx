@@ -57,12 +57,15 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const { t } = useTranslation();
 
+  const DAYS_PER_BLOCK = 5;
+
   const start = normalizeDate(startDate);
   const end = normalizeDate(endDate);
   const totalDays = daysBetween(start, end);
+  const totalBlocks = Math.ceil(totalDays / DAYS_PER_BLOCK);
 
   const labelColWidth = 140;
-  const dayMinWidth = 20;
+  const dayMinWidth = 10;
   const rowHeight = isSmall ? 44 : 40;
   const barHeight = rowHeight - 12;
   const baseTopOffset = 6;
@@ -90,29 +93,51 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
     }));
   };
 
-  const headerDays = useMemo(() => {
-    const arr: { label: string; date: Date }[] = [];
-    for (let i = 0; i < totalDays; i++) {
-      const d = new Date(start);
-      d.setDate(start.getDate() + i);
-      arr.push({
-        date: d,
-        label: d.getDate().toString(),
+  const headerBlocks = useMemo(() => {
+    const blocks: {
+      startIndex: number;
+      endIndex: number;
+      startDate: Date;
+      endDate: Date;
+      label: string;
+    }[] = [];
+
+    for (let i = 0; i < totalDays; i += DAYS_PER_BLOCK) {
+      const startIndex = i;
+      const endIndex = Math.min(i + DAYS_PER_BLOCK - 1, totalDays - 1);
+
+      const s = new Date(start);
+      s.setDate(start.getDate() + startIndex);
+
+      const e = new Date(start);
+      e.setDate(start.getDate() + endIndex);
+
+      blocks.push({
+        startIndex,
+        endIndex,
+        startDate: s,
+        endDate: e,
+        label: `${s.getDate()}–${e.getDate()}`,
       });
     }
-    return arr;
+
+    return blocks;
   }, [start, totalDays]);
 
-  const dayWidthPercent = 100 / totalDays;
+  const blockWidthPercent = 100 / totalBlocks;
 
   const getItemStyle = (item: TimelineItem) => {
     const s = normalizeDate(item.startDate);
     const e = normalizeDate(item.endDate);
+
     const offsetDays = Math.max(0, daysBetween(start, s) - 1);
     const lengthDays = Math.max(1, daysBetween(s, e));
 
-    const left = offsetDays * dayWidthPercent;
-    const width = lengthDays * dayWidthPercent;
+    const leftBlocks = offsetDays / DAYS_PER_BLOCK;
+    const widthBlocks = lengthDays / DAYS_PER_BLOCK;
+
+    const left = leftBlocks * blockWidthPercent;
+    const width = widthBlocks * blockWidthPercent;
 
     return {
       left: `${left}%`,
@@ -152,13 +177,22 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
 
   const weekendColor = "#F2F5FF";
 
-  const weekendGradients = headerDays
-    .map((d, idx) => {
-      const day = d.date.getDay();
-      if (day !== 0 && day !== 6) return null;
+  const blockHasWeekend = (blockStart: Date, blockEnd: Date) => {
+    const d = new Date(blockStart);
+    while (d <= blockEnd) {
+      const day = d.getDay();
+      if (day === 0 || day === 6) return true;
+      d.setDate(d.getDate() + 1);
+    }
+    return false;
+  };
 
-      const left = idx * dayWidthPercent;
-      const right = (idx + 1) * dayWidthPercent;
+  const weekendGradients = headerBlocks
+    .map((b, idx) => {
+      if (!blockHasWeekend(b.startDate, b.endDate)) return null;
+
+      const left = idx * blockWidthPercent;
+      const right = (idx + 1) * blockWidthPercent;
 
       return `linear-gradient(to right,
         transparent 0%,
@@ -172,10 +206,6 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
 
   const bgImages = weekendGradients.join(", ");
   const bgSizes = Array(weekendGradients.length).fill("100% 100%").join(", ");
-
-  const saturdayIndexes = headerDays
-    .map((d, idx) => (d.date.getDay() === 6 ? idx : -1))
-    .filter((idx) => idx !== -1);
 
   const formatDate = (iso: string) => {
     const d = new Date(iso);
@@ -197,7 +227,9 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: `${labelColWidth}px repeat(${totalDays}, minmax(${dayMinWidth}px, 1fr))`,
+          gridTemplateColumns: `${labelColWidth}px repeat(${totalBlocks}, minmax(${
+            dayMinWidth * DAYS_PER_BLOCK
+          }px, 1fr))`,
         }}
       >
         <Box />
@@ -209,17 +241,16 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
             span: number;
           }[] = [];
 
-          let currentMonth = headerDays[0].date.getMonth();
+          let currentMonth = headerBlocks[0]?.startDate.getMonth() ?? 0;
           let startIndex = 0;
 
-          headerDays.forEach((d, i) => {
-            const month = d.date.getMonth();
+          headerBlocks.forEach((b, i) => {
+            const month = b.startDate.getMonth();
             if (month !== currentMonth) {
               monthBlocks.push({
-                name: new Date(headerDays[i - 1].date).toLocaleString(
-                  undefined,
-                  { month: "long" }
-                ),
+                name: headerBlocks[i - 1].startDate.toLocaleString(undefined, {
+                  month: "long",
+                }),
                 startIndex,
                 span: i - startIndex,
               });
@@ -229,14 +260,15 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
             }
           });
 
-          monthBlocks.push({
-            name: headerDays[headerDays.length - 1].date.toLocaleString(
-              undefined,
-              { month: "long" }
-            ),
-            startIndex,
-            span: headerDays.length - startIndex,
-          });
+          if (headerBlocks.length) {
+            monthBlocks.push({
+              name: headerBlocks[
+                headerBlocks.length - 1
+              ].startDate.toLocaleString(undefined, { month: "long" }),
+              startIndex,
+              span: headerBlocks.length - startIndex,
+            });
+          }
 
           return monthBlocks.map((m, idx) => (
             <Box
@@ -262,7 +294,9 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: `${labelColWidth}px repeat(${totalDays}, minmax(${dayMinWidth}px, 1fr))`,
+          gridTemplateColumns: `${labelColWidth}px repeat(${totalBlocks}, minmax(${
+            dayMinWidth * DAYS_PER_BLOCK
+          }px, 1fr))`,
           alignItems: "center",
           columnGap: 0,
           rowGap: 0,
@@ -270,7 +304,7 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
       >
         <Box />
 
-        {headerDays.map((d, idx) => (
+        {headerBlocks.map((b, idx) => (
           <Box
             key={idx}
             sx={{
@@ -280,7 +314,7 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
             }}
           >
             <Typography variant="caption" color="text.secondary">
-              {d.label}
+              {b.label}
             </Typography>
           </Box>
         ))}
@@ -289,7 +323,9 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: `${labelColWidth}px repeat(${totalDays}, minmax(${dayMinWidth}px, 1fr))`,
+          gridTemplateColumns: `${labelColWidth}px repeat(${totalBlocks}, minmax(${
+            dayMinWidth * DAYS_PER_BLOCK
+          }px, 1fr))`,
         }}
       >
         {lanes.map((lane, laneIndex) => {
@@ -341,7 +377,7 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
               <Box
                 sx={{
                   position: "relative",
-                  gridColumn: `2 / span ${totalDays}`,
+                  gridColumn: `2 / span ${totalBlocks}`,
                   minHeight: isExpanded ? expandedHeight : rowHeight,
                   transition: "min-height 0.25s ease",
                   borderBottom: (t) => `1px solid ${t.palette.divider}`,
@@ -357,26 +393,6 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
                   },
                 }}
               >
-                {saturdayIndexes.map((idx) => {
-                  const left = (idx + 1) * dayWidthPercent;
-                  return (
-                    <Box
-                      key={`sat-divider-${idx}`}
-                      sx={{
-                        position: "absolute",
-                        top: 0,
-                        bottom: 0,
-                        left: `${left}%`,
-                        width: "1px",
-                        bgcolor: "#FFFFFF",
-                        pointerEvents: "none",
-                        zIndex: 0,
-                        transform: "translateX(-0.5px)",
-                      }}
-                    />
-                  );
-                })}
-
                 {laneItems.map((item, idx) => {
                   const style = getItemStyle(item);
                   const top = baseTopOffset + idx * rowHeight;

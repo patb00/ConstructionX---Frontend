@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from "react";
-import { type GridColDef } from "@mui/x-data-grid";
+import { type GridColDef, type GridRowId } from "@mui/x-data-grid";
 import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +31,10 @@ export default function ToolsTable() {
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingRow, setPendingRow] = useState<Tool | null>(null);
+
+  const [expandedIds, setExpandedIds] = useState<Set<GridRowId>>(
+    () => new Set()
+  );
 
   const requestDelete = useCallback((row: Tool) => {
     setPendingRow(row);
@@ -104,6 +108,7 @@ export default function ToolsTable() {
   }, []);
 
   const getDetailPanelHeight = useCallback(() => "auto" as const, []);
+
   if (error) return <div>{t("tools.list.error")}</div>;
 
   return (
@@ -122,6 +127,11 @@ export default function ToolsTable() {
         rowCount={total}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
+        detailPanelExpandedRowIds={expandedIds}
+        onDetailPanelExpandedRowIdsChange={(ids) => {
+          const arr = Array.from(ids as Set<GridRowId>);
+          setExpandedIds(new Set(arr.slice(-1)));
+        }}
       />
 
       <PermissionGate guard={{ permission: "Permission.Tools.Delete" }}>

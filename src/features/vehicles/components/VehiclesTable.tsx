@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from "react";
-import { type GridColDef } from "@mui/x-data-grid";
+import { type GridColDef, type GridRowId } from "@mui/x-data-grid";
 import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -12,6 +12,7 @@ import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
 import { VehicleHistoryDetails } from "./VehicleHistoryDetails";
+import { Box } from "@mui/material";
 
 export default function VehiclesTable() {
   const { t } = useTranslation();
@@ -31,6 +32,10 @@ export default function VehiclesTable() {
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingRow, setPendingRow] = useState<Vehicle | null>(null);
+
+  const [expandedIds, setExpandedIds] = useState<Set<GridRowId>>(
+    () => new Set()
+  );
 
   const requestDelete = useCallback((row: Vehicle) => {
     setPendingRow(row);
@@ -106,7 +111,11 @@ export default function VehiclesTable() {
 
   const renderDetailPanel = useCallback((params: GridRowParams<Vehicle>) => {
     const vehicleId = Number((params.row as any).id);
-    return <VehicleHistoryDetails vehicleId={vehicleId} />;
+    return (
+      <Box sx={{ outline: "1px solid red" }}>
+        <VehicleHistoryDetails vehicleId={vehicleId} />
+      </Box>
+    );
   }, []);
 
   const getDetailPanelHeight = useCallback(() => "auto" as const, []);
@@ -130,6 +139,11 @@ export default function VehiclesTable() {
         rowCount={total}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
+        detailPanelExpandedRowIds={expandedIds}
+        onDetailPanelExpandedRowIdsChange={(ids) => {
+          const arr = Array.from(ids as Set<GridRowId>);
+          setExpandedIds(new Set(arr.slice(-1)));
+        }}
       />
 
       <PermissionGate guard={{ permission: "Permission.Vehicles.Delete" }}>

@@ -2,16 +2,18 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Stack,
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import { SidebarNavList, type SidebarNavItem } from "./SidebarNavList";
+import type { ReactNode } from "react";
 
 type Props = {
   sectionLabelKey: string;
-  accordion?: { title: string; items: SidebarNavItem[] }[];
+  accordion?: { title: string; items: SidebarNavItem[]; icon?: ReactNode }[];
   listItems?: SidebarNavItem[];
   pathname: string;
   onClose: () => void;
@@ -42,7 +44,11 @@ export function SidebarSection({
     </Typography>
   );
 
-  const renderAccordion = (title: string, items: SidebarNavItem[]) => {
+  const renderAccordion = (
+    title: string,
+    items: SidebarNavItem[],
+    icon?: ReactNode
+  ) => {
     if (!items.length) return null;
 
     return (
@@ -61,12 +67,28 @@ export function SidebarSection({
             "& .MuiAccordionSummary-content": { my: 0.5 },
           }}
         >
-          <Typography
-            variant="subtitle2"
-            sx={{ color: theme.palette.text.secondary }}
-          >
-            {title}
-          </Typography>
+          <Stack direction="row" spacing={1} alignItems="center">
+            {icon ? (
+              <Typography
+                component="span"
+                sx={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  color: theme.palette.text.secondary,
+                  fontSize: 16,
+                }}
+              >
+                {icon}
+              </Typography>
+            ) : null}
+
+            <Typography
+              variant="subtitle2"
+              sx={{ color: theme.palette.text.secondary }}
+            >
+              {title}
+            </Typography>
+          </Stack>
         </AccordionSummary>
 
         <AccordionDetails sx={{ p: 0 }}>
@@ -80,7 +102,7 @@ export function SidebarSection({
     <>
       {renderSectionLabel(sectionLabelKey)}
       {accordion.map((a) => (
-        <div key={a.title}>{renderAccordion(a.title, a.items)}</div>
+        <div key={a.title}>{renderAccordion(a.title, a.items, a.icon)}</div>
       ))}
       {!!listItems.length && (
         <SidebarNavList

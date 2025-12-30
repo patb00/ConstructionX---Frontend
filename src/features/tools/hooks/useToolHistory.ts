@@ -1,22 +1,43 @@
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import type { PagedResult, ToolHistoryItem } from "..";
 import { toolsKeys } from "../api/tools.keys";
 import { ToolsApi } from "../api/tools.api";
-import type { PagedResult, ToolHistoryItem } from "..";
 
-export const toolHistoryQuery = {
-  key: (toolId: number, page0: number, pageSize: number) =>
-    toolsKeys.history(toolId, page0, pageSize),
-  fetch: (toolId: number, page0: number, pageSize: number) =>
-    ToolsApi.history(toolId, page0 + 1, pageSize),
-};
-
-export function useToolHistoryPage(
-  toolId: number,
-  page0: number,
-  pageSize: number
-) {
-  return useQuery<PagedResult<ToolHistoryItem>>({
-    queryKey: toolHistoryQuery.key(toolId, page0, pageSize),
-    queryFn: () => toolHistoryQuery.fetch(toolId, page0, pageSize),
+export const useToolHistory = (toolId: number) => {
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 5,
   });
-}
+
+  const { data, error, isLoading, isError, isFetching } = useQuery<
+    PagedResult<ToolHistoryItem>
+  >({
+    queryKey: toolsKeys.history(
+      toolId,
+      paginationModel.page,
+      paginationModel.pageSize
+    ),
+    queryFn: () =>
+      ToolsApi.history(
+        toolId,
+        paginationModel.page + 1,
+        paginationModel.pageSize
+      ),
+    enabled: Number.isFinite(toolId) && toolId > 0,
+    placeholderData: (prev) => prev,
+  });
+
+  return {
+    historyRows: data?.items ?? [],
+    total: data?.total ?? 0,
+
+    paginationModel,
+    setPaginationModel,
+
+    error,
+    isLoading,
+    isFetching,
+    isError,
+  };
+};

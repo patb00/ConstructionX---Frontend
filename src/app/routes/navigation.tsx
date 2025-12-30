@@ -175,7 +175,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     labelKey: "nav.vehicleBusinessTrips",
     to: "/app/vehicle-business-trips",
-    icon: <FaTasks />, // or FaCarSide / FaRegFileAlt if you prefer
+    icon: <FaTasks />,
     section: "SYSTEM",
     category: "VEHICLES",
     guard: { permission: "Permission.Vehicles.Read" },

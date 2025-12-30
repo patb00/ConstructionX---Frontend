@@ -15,6 +15,7 @@ import {
   type GridPinnedColumnFields,
   type GridRowClassNameParams,
   type GridGroupingColDefOverride,
+  type GridRowId,
 } from "@mui/x-data-grid-pro";
 import { useTranslation } from "react-i18next";
 
@@ -66,6 +67,9 @@ export type ReusableDataGridProps<
   groupingColDef?: GridGroupingColDefOverride;
   defaultGroupingExpansionDepth?: number;
   isGroupExpandedByDefault?: (node: any) => boolean;
+
+  detailPanelExpandedRowIds?: Set<GridRowId>;
+  onDetailPanelExpandedRowIdsChange?: (ids: Set<GridRowId>) => void;
 };
 
 function applyHeaderMappings<T extends GridValidRowModel>(
@@ -137,6 +141,8 @@ export default function ReusableDataGrid<
   groupingColDef,
   defaultGroupingExpansionDepth,
   isGroupExpandedByDefault,
+  detailPanelExpandedRowIds,
+  onDetailPanelExpandedRowIdsChange,
 }: ReusableDataGridProps<T>) {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -404,6 +410,8 @@ export default function ReusableDataGrid<
       groupingColDef={groupingColDef}
       defaultGroupingExpansionDepth={defaultGroupingExpansionDepth}
       isGroupExpandedByDefault={isGroupExpandedByDefault}
+      detailPanelExpandedRowIds={detailPanelExpandedRowIds}
+      onDetailPanelExpandedRowIdsChange={onDetailPanelExpandedRowIdsChange}
       sx={{
         border: "none",
         backgroundColor: "#fff",

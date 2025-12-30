@@ -180,10 +180,12 @@
       "completed": "Completed",
       "cancelled": "Cancelled",
       "dialogTitle": "Change status",
-      "dialogFieldLabel": "Status"
+      "dialogFieldLabel": "Status",
+      "label": "Status"
     }
   },
   "common": {
+    "all": "All statuses",
     "unassign": "Unassign",
     "notAvailable": "Not available",
     "loading": "Loading…",
@@ -1514,17 +1516,40 @@
   },
   "history": {
     "tool": {
-      "title": "Tool history"
+      "title": "Tool history",
+      "assignments": "Assignments",
+      "emptyAssignments": "No assignments."
     },
     "vehicle": {
-      "title": "Vehicle history"
+      "title": "Vehicle history",
+
+      "assignments": "Assignments",
+      "emptyAssignments": "No assignments.",
+
+      "registrations": "Registrations",
+      "emptyRegistrations": "No registrations.",
+      "registrationFallback": "Registration station",
+
+      "trips": "Business trips",
+      "emptyTrips": "No business trips.",
+      "tripFallback": "Trip",
+      "refueled": "Refueled",
+
+      "insurance": "Insurance",
+      "emptyInsurance": "No insurance records.",
+      "insuranceFallback": "Insurance"
     },
     "common": {
       "assigned": "Assigned",
       "updated": "Updated",
       "event": "Event",
       "ongoing": "ongoing",
-      "loadMore": "Load more"
+      "loadMore": "Load more",
+      "vehicleId": "Vehicle ID",
+      "loading": "Loading…",
+
+      "loadError": "Failed to load.",
+      "toolId": "Tool ID"
     },
     "meta": {
       "siteId": "Site ID",

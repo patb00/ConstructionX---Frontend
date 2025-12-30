@@ -56,17 +56,38 @@ export function NotificationRow({
       </ListItemIcon>
 
       <ListItemText
+        // ✅ important: allow it to shrink and wrap inside flex row
+        sx={{ minWidth: 0 }}
         secondaryTypographyProps={{ component: "div" }}
         primary={
-          <Typography variant="body2" fontWeight={n.isRead ? 500 : 800}>
+          <Typography
+            variant="body2"
+            fontWeight={n.isRead ? 500 : 800}
+            sx={{
+              whiteSpace: "normal",
+              overflowWrap: "anywhere",
+              wordBreak: "break-word",
+              lineHeight: 1.25,
+            }}
+          >
             {n.title}
           </Typography>
         }
         secondary={
           <Box sx={{ display: "flex", flexDirection: "column", gap: 0.25 }}>
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                whiteSpace: "normal",
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
+                lineHeight: 1.25,
+              }}
+            >
               {n.message}
             </Typography>
+
             <Typography
               variant="caption"
               sx={{ color: "primary.main", fontWeight: 600 }}

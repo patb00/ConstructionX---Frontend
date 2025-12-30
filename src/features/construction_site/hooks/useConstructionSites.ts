@@ -99,7 +99,7 @@ export const useConstructionSites = (args: {
 
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
-    pageSize: 20,
+    pageSize: 25,
   });
 
   const [filterModel, _setFilterModel] = useState<GridFilterModel>({

@@ -6,7 +6,8 @@ import { useTranslation } from "react-i18next";
 import { SidebarBrand } from "./SidebarBrand";
 import { SidebarSection } from "./SidebarSection";
 import { canSeeItem } from "./SidebarGuard";
-
+import { FaCarSide, FaListUl, FaUserShield } from "react-icons/fa";
+import { LuConstruction } from "react-icons/lu";
 import { useAuthStore } from "../../../features/auth/store/useAuthStore";
 import { NAV_ITEMS, type NavItem } from "../../routes/navigation";
 
@@ -61,6 +62,7 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
       accordion={[
         {
           title: t("sidebar.constructionGroup"),
+          icon: <LuConstruction />,
           items: MANAGEMENT_GRADILISTA,
         },
       ]}
@@ -69,14 +71,26 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
       onClose={onClose}
     />
   );
+
   const SystemContent = (
     <SidebarSection
       sectionLabelKey="sidebar.system"
       accordion={[
-        { title: t("sidebar.vehiclesGroup"), items: SYSTEM_VEHICLES },
-        { title: t("sidebar.codebookGroup"), items: SYSTEM_SIFRARNIK },
-
-        { title: t("sidebar.identityGroup"), items: SYSTEM_IDENTITET },
+        {
+          title: t("sidebar.vehiclesGroup"),
+          icon: <FaCarSide />,
+          items: SYSTEM_VEHICLES,
+        },
+        {
+          title: t("sidebar.codebookGroup"),
+          icon: <FaListUl />,
+          items: SYSTEM_SIFRARNIK,
+        },
+        {
+          title: t("sidebar.identityGroup"),
+          icon: <FaUserShield />,
+          items: SYSTEM_IDENTITET,
+        },
       ]}
       listItems={SYSTEM_OSTALO}
       pathname={pathname}

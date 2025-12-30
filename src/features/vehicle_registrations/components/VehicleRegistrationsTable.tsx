@@ -12,10 +12,11 @@ import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
 import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
+import { alpha, useTheme } from "@mui/material";
 
 export default function VehicleRegistrationsTable() {
   const { t } = useTranslation();
-
+  const theme = useTheme();
   const {
     vehicleRegistrationsRows,
     vehicleRegistrationsColumns,
@@ -129,6 +130,35 @@ export default function VehicleRegistrationsTable() {
 
   if (error) return <div>{t("vehicleRegistrations.list.error")}</div>;
 
+  const getRowClassName = useCallback((params: any) => {
+    const raw = (params.row as any)?.validTo;
+    if (!raw) return "";
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const next = new Date(raw);
+    next.setHours(0, 0, 0, 0);
+
+    const diffDays = Math.floor((next.getTime() - today.getTime()) / 86400000);
+
+    return diffDays >= 0 && diffDays <= 14 ? "row--dueSoon" : "";
+  }, []);
+
+  const dueSoonRowSx = {
+    "& .MuiDataGrid-row.row--dueSoon": {
+      backgroundColor: `${alpha(theme.palette.error.main, 0.12)} !important`,
+    },
+
+    "& .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell": {
+      backgroundColor: `${alpha(theme.palette.error.main, 0.12)} !important`,
+    },
+
+    "& .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell--pinnedRight": {
+      backgroundColor: `white !important`,
+    },
+  };
+
   return (
     <>
       <ReusableDataGrid<VehicleRegistration>
@@ -144,6 +174,8 @@ export default function VehicleRegistrationsTable() {
         rowCount={total}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
+        getRowClassName={getRowClassName}
+        sx={dueSoonRowSx}
       />
 
       <PermissionGate guard={{ permission: "Permission.Vehicles.Delete" }}>

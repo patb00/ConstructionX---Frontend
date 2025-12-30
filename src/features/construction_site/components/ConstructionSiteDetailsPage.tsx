@@ -43,7 +43,7 @@ import { useAssignVehiclesToConstructionSite } from "../hooks/useAssignVehiclesT
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { fullName } from "../utils/name";
 import { normalizeText } from "../utils/normalize";
-import { useConstructionSiteStatusOptions } from "../hooks/useConstructionSiteStatusOptions";
+import { useConstructionSiteStatusOptions } from "../../constants/enum/useConstructionSiteStatusOptions";
 
 type Employee = {
   id: number;

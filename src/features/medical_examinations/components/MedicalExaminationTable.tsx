@@ -173,18 +173,27 @@ export default function MedicalExaminationsTable({
       const diffDays =
         (next.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
 
-      return diffDays <= 0 && diffDays >= -14 ? "row--dueSoon" : "";
+      return diffDays >= 0 && diffDays <= 14 ? "row--dueSoon" : "";
     },
     []
   );
-
   const dueSoonRowSx = {
     "& .MuiDataGrid-row.row--dueSoon": {
-      backgroundColor: alpha(theme.palette.error.main, 0.12),
+      backgroundColor: `${alpha(theme.palette.error.main, 0.12)} !important`,
+    },
+
+    "& .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell": {
+      backgroundColor: `${alpha(theme.palette.error.main, 0.12)} !important`,
+    },
+
+    "& .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell--pinnedRight": {
+      backgroundColor: `white !important`,
     },
   };
 
   if (error) return <div>{t("medicalExaminations.list.error")}</div>;
+
+  console.log("rows", rows);
 
   return (
     <>

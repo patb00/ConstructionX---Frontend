@@ -180,10 +180,12 @@
       "completed": "Završeno",
       "cancelled": "Otkazano",
       "dialogTitle": "Promijeni status",
-      "dialogFieldLabel": "Status"
+      "dialogFieldLabel": "Status",
+      "label": "Status"
     }
   },
   "common": {
+    "all": "Svi statusi",
     "unassign": "Ukloni dodjelu",
     "notAvailable": "Nije definirano",
     "loading": "Učitavanje…",
@@ -1511,17 +1513,39 @@
   },
   "history": {
     "tool": {
-      "title": "Povijest alata"
+      "title": "Povijest alata",
+      "assignments": "Dodjele",
+      "emptyAssignments": "Nema dodjela."
     },
     "vehicle": {
-      "title": "Povijest vozila"
+      "title": "Povijest vozila",
+
+      "assignments": "Dodjele",
+      "emptyAssignments": "Nema dodjela.",
+
+      "registrations": "Registracije",
+      "emptyRegistrations": "Nema registracija.",
+      "registrationFallback": "Registracijska stanica",
+
+      "trips": "Službena putovanja",
+      "emptyTrips": "Nema službenih putovanja.",
+      "tripFallback": "Putovanje",
+      "refueled": "Točeno gorivo",
+
+      "insurance": "Osiguranje",
+      "emptyInsurance": "Nema osiguranja.",
+      "insuranceFallback": "Osiguranje"
     },
     "common": {
       "assigned": "Dodijeljeno",
       "updated": "Ažurirano",
       "event": "Događaj",
       "ongoing": "u tijeku",
-      "loadMore": "Učitaj više"
+      "loadMore": "Učitaj više",
+      "loading": "Učitavanje…",
+      "vehicleId": "ID vozila",
+      "loadError": "Neuspjelo učitavanje.",
+      "toolId": "ID alata"
     },
     "meta": {
       "siteId": "ID gradilišta",

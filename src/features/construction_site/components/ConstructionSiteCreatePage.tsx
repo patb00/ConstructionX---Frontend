@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import ConstructionSiteForm from "./ConstructionSiteForm";
 import { useAddConstructionSite } from "../hooks/useAddConstructionSite";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
-import { useConstructionSiteStatusOptions } from "../hooks/useConstructionSiteStatusOptions";
+import { useConstructionSiteStatusOptions } from "../../constants/enum/useConstructionSiteStatusOptions";
 import type { ConstructionSiteFormValues } from "..";
 import { useMemo } from "react";
 import { buildEmployeeSelectOptions } from "../utils/options";
