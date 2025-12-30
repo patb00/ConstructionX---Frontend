@@ -1,8 +1,8 @@
-import type { NewVehicleBusinessTripRequest, VehicleBusinessTrip } from "..";
+import type { VehicleBusinessTrip, UpdateVehicleBusinessTripRequest } from "..";
 
 export function vehicleBusinessTripToDefaultValues(
   trip?: VehicleBusinessTrip | null
-): Partial<NewVehicleBusinessTripRequest> | undefined {
+): UpdateVehicleBusinessTripRequest | undefined {
   if (!trip) return undefined;
 
   return {
@@ -14,10 +14,13 @@ export function vehicleBusinessTripToDefaultValues(
     endAt: trip.endAt,
     startKilometers: trip.startKilometers ?? 0,
     endKilometers: trip.endKilometers ?? 0,
+
+    tripStatus: (trip.tripStatus ?? 1) as any,
+
     refueled: !!trip.refueled,
     fuelAmount: trip.fuelAmount ?? 0,
     fuelCurrency: trip.fuelCurrency ?? "",
     fuelLiters: trip.fuelLiters ?? 0,
     note: trip.note ?? "",
-  };
+  } as any;
 }

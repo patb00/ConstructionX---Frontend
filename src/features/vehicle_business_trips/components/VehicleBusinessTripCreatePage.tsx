@@ -48,6 +48,7 @@ export default function VehicleBusinessTripCreatePage() {
           busy={busy}
           vehicleOptions={vehicleOptions}
           employeeOptions={employeeOptions}
+          showStatusField={false}
         />
       </Paper>
     </Stack>

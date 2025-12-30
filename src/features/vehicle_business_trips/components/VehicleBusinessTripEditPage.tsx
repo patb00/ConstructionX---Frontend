@@ -3,13 +3,13 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-import type { NewVehicleBusinessTripRequest } from "..";
+import type { UpdateVehicleBusinessTripRequest } from "..";
 import { useVehicleBusinessTrip } from "../hooks/useVehicleBusinessTrip";
 import { useUpdateVehicleBusinessTrip } from "../hooks/useUpdateVehicleBusinessTrip";
 import VehicleBusinessTripForm from "./VehicleBusinessTripForm";
-import { vehicleBusinessTripToDefaultValues } from "../utils/vehicleBusinessTripForm";
 import { useVehicleOptions } from "../../constants/options/useVehicleOptions";
 import { useEmployeeOptions } from "../../constants/options/useEmployeeOptions";
+import { vehicleBusinessTripToDefaultValues } from "../utils/vehicleBusinessTripForm";
 
 export default function VehicleBusinessTripEditPage() {
   const { t } = useTranslation();
@@ -39,29 +39,14 @@ export default function VehicleBusinessTripEditPage() {
 
   if (error) return <div>{t("vehicleBusinessTrips.edit.loadError")}</div>;
 
-  const defaultValues: NewVehicleBusinessTripRequest | undefined =
-    vehicleBusinessTripToDefaultValues(trip) as any;
+  const defaultValues: UpdateVehicleBusinessTripRequest | undefined =
+    vehicleBusinessTripToDefaultValues(trip);
 
-  const handleSubmit = (values: NewVehicleBusinessTripRequest) => {
-    const idForUpdate =
-      typeof (trip as any)?.id === "number" ? (trip as any).id : businessTripId;
+  const handleSubmit = (values: UpdateVehicleBusinessTripRequest) => {
+    const idForUpdate = typeof trip?.id === "number" ? trip.id : businessTripId;
 
     updateTrip(
-      {
-        id: idForUpdate,
-        startLocationText: values.startLocationText ?? null,
-        endLocationText: values.endLocationText ?? null,
-        startAt: values.startAt,
-        endAt: values.endAt,
-        startKilometers: values.startKilometers,
-        endKilometers: values.endKilometers,
-        tripStatus: (trip as any)?.tripStatus ?? 1,
-        refueled: values.refueled,
-        fuelAmount: values.fuelAmount,
-        fuelCurrency: values.fuelCurrency ?? null,
-        fuelLiters: values.fuelLiters,
-        note: values.note ?? null,
-      } as any,
+      { ...values, id: idForUpdate },
       {
         onSuccess: () => navigate("/app/vehicle-business-trips"),
       }
@@ -98,6 +83,7 @@ export default function VehicleBusinessTripEditPage() {
           busy={busy}
           vehicleOptions={vehicleOptions}
           employeeOptions={employeeOptions}
+          showStatusField
         />
       </Paper>
     </Stack>
