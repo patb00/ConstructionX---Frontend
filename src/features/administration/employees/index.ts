@@ -10,10 +10,15 @@ export interface Employee {
   hasMachineryLicense: boolean;
   clothingSize: string;
   gloveSize: string;
-  shoeSize: number;
   description: string;
+  shoeSize: number;
   email: string;
 }
+
+export type AssignJobPositionRequest = {
+  employeeId: number;
+  jobPositionId: number;
+};
 
 export type NewEmployeeRequest = Omit<Employee, "id">;
 
