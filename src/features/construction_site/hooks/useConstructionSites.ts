@@ -150,6 +150,7 @@ export const useConstructionSites = (args: {
           type: "singleSelect",
           valueOptions: statusOptions,
           width: 140,
+          filterable: false,
         },
         siteManagerId: {
           type: "singleSelect",

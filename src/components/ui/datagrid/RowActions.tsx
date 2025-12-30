@@ -26,6 +26,17 @@ export type RowActionsLabels = {
   status?: string;
 };
 
+export type RowActionItem = {
+  key: string;
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+  color?: string;
+  loading?: boolean;
+  variant?: "default" | "danger" | "success";
+};
+
 type RowActionsProps = {
   onView?: () => void;
   onEdit?: () => void;
@@ -35,6 +46,9 @@ type RowActionsProps = {
   toggleLoading?: boolean;
   onManageRoles?: () => void;
   onChangeStatus?: () => void;
+
+  customActions?: RowActionItem[];
+
   disabled?: boolean;
   color?: string;
   labels?: RowActionsLabels;
@@ -50,6 +64,7 @@ export function RowActions({
   toggleLoading,
   onManageRoles,
   onChangeStatus,
+  customActions,
   disabled,
   color = "#F1B103",
   labels,
@@ -90,6 +105,17 @@ export function RowActions({
     },
   } as const;
 
+  const successButtonSx = {
+    ...iconButtonSx,
+    backgroundColor: alpha(successColor, 0.12),
+    color: successColor,
+    "&:hover": { backgroundColor: alpha(successColor, 0.2) },
+    "&.Mui-disabled": {
+      backgroundColor: alpha(successColor, 0.12),
+      color: alpha(successColor, 0.5),
+    },
+  } as const;
+
   const toggleButtonSx = isActive
     ? {
         ...iconButtonSx,
@@ -119,15 +145,37 @@ export function RowActions({
       fn();
     };
 
+  const hasCustom = !!customActions?.length;
+
   const hasAnyAction =
     onView ||
     onEdit ||
     onDelete ||
     onToggleActive ||
     onManageRoles ||
-    onChangeStatus; // ⭐ updated
+    onChangeStatus ||
+    hasCustom;
 
   if (!hasAnyAction) return null;
+
+  const resolveCustomSx = (action: RowActionItem) => {
+    if (action.variant === "danger") return deleteButtonSx;
+    if (action.variant === "success") return successButtonSx;
+    if (action.color) {
+      const c = action.color;
+      return {
+        ...iconButtonSx,
+        backgroundColor: alpha(c, 0.12),
+        color: c,
+        "&:hover": { backgroundColor: alpha(c, 0.2) },
+        "&.Mui-disabled": {
+          backgroundColor: alpha(c, 0.12),
+          color: alpha(c, 0.5),
+        },
+      } as const;
+    }
+    return iconButtonSx;
+  };
 
   return (
     <Box
@@ -175,7 +223,7 @@ export function RowActions({
         </Tooltip>
       )}
 
-      {/* CHANGE STATUS  */}
+      {/* CHANGE STATUS */}
       {onChangeStatus && (
         <Tooltip title={labels?.status ?? "Promijeni status"}>
           <span>
@@ -192,6 +240,28 @@ export function RowActions({
           </span>
         </Tooltip>
       )}
+
+      {/* CUSTOM ACTIONS */}
+      {customActions?.map((action) => {
+        const isBtnDisabled = disabled || !!action.disabled || !!action.loading;
+
+        return (
+          <Tooltip key={action.key} title={action.label}>
+            <span>
+              <Button
+                variant="contained"
+                size="small"
+                sx={resolveCustomSx(action)}
+                disabled={isBtnDisabled}
+                onClick={handleClick(action.onClick, !!action.disabled)}
+                {...buttonProps}
+              >
+                {action.loading ? <CircularProgress size={16} /> : action.icon}
+              </Button>
+            </span>
+          </Tooltip>
+        );
+      })}
 
       {/* DELETE */}
       {onDelete && (
