@@ -5,10 +5,13 @@ import { PermissionGate } from "../../../lib/permissions";
 import { useTranslation } from "react-i18next";
 import StatusSelect from "../../../components/ui/select/StatusSelect";
 import { useConstructionSiteStatusOptions } from "../../constants/enum/useConstructionSiteStatusOptions";
+import { useState } from "react";
 
 const ConstructionSitesListPage = () => {
   const { t } = useTranslation();
   const statusOptions = useConstructionSiteStatusOptions();
+
+  const [statusValue, setStatusValue] = useState<string>("");
 
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
@@ -36,10 +39,12 @@ const ConstructionSitesListPage = () => {
           label={t("constructionSites.status.label")}
           placeholder={t("common.all")}
           options={statusOptions}
+          value={statusValue}
+          onChange={setStatusValue}
         />
       </Stack>
 
-      <ConstructionSitesTable />
+      <ConstructionSitesTable statusValue={statusValue} />
     </Stack>
   );
 };

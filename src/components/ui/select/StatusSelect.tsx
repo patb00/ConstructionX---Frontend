@@ -10,7 +10,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 export type StatusOption = { value: number; label: string };
 
@@ -21,19 +21,22 @@ type Props = {
   disabled?: boolean;
   fullWidth?: boolean;
   size?: "small" | "medium";
+
+  value?: string;
+  onChange?: (value: string) => void;
 };
 
 function statusColor(value: number, theme: any): string {
   switch (value) {
-    case 1: // Planned
+    case 1:
       return theme.palette.secondary.main;
-    case 2: // In progress
+    case 2:
       return theme.palette.secondary.dark ?? theme.palette.secondary.main;
-    case 3: // On hold
+    case 3:
       return theme.palette.warning.main;
-    case 4: // Completed
+    case 4:
       return theme.palette.success.main;
-    case 5: // Cancelled
+    case 5:
       return theme.palette.error.main;
     default:
       return theme.palette.grey[400];
@@ -49,7 +52,6 @@ function Dot({ color }: { color: string }) {
         borderRadius: "50%",
         bgcolor: color,
         flex: "0 0 auto",
-
         boxShadow: `
           0 0 0 2px ${alpha(color, 0.25)},
           0 0 8px ${alpha(color, 0.45)}
@@ -66,14 +68,15 @@ export default function StatusSelect({
   disabled,
   fullWidth,
   size = "small",
+
+  value = "",
+  onChange,
 }: Props) {
   const theme = useTheme();
-  const [value, setValue] = useState<string>("");
-
   const items = useMemo(() => options ?? [], [options]);
 
   const handleChange = (e: SelectChangeEvent) => {
-    setValue(e.target.value);
+    onChange?.(e.target.value);
   };
 
   const selectedOption = useMemo(
@@ -100,14 +103,9 @@ export default function StatusSelect({
             backgroundColor: "background.paper",
             "& fieldset": { borderColor: "divider" },
             "&:hover fieldset": { borderColor: "text.secondary" },
-            "&.Mui-focused fieldset": {
-              borderColor: "primary.main",
-            },
+            "&.Mui-focused fieldset": { borderColor: "primary.main" },
           },
-          "& .MuiSelect-select": {
-            py: 1,
-            fontWeight: 500,
-          },
+          "& .MuiSelect-select": { py: 1, fontWeight: 500 },
         }}
       >
         <InputLabel sx={{ display: "none" }}>{label}</InputLabel>
@@ -153,7 +151,6 @@ export default function StatusSelect({
 
           {items.map((opt) => {
             const color = statusColor(opt.value, theme);
-
             return (
               <MenuItem key={opt.value} value={String(opt.value)}>
                 <Stack direction="row" alignItems="center" spacing={1}>

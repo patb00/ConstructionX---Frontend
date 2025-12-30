@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 
 import type { GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
@@ -24,7 +24,11 @@ import {
   type StatusOption,
 } from "../../../components/ui/change-status-dialog/ChangeStatusDialog";
 
-export default function ConstructionSitesTable() {
+type Props = {
+  statusValue: string;
+};
+
+export default function ConstructionSitesTable({ statusValue }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const can = useCan();
@@ -81,6 +85,32 @@ export default function ConstructionSitesTable() {
     toolOptions,
     vehicleOptions,
   });
+
+  useEffect(() => {
+    setFilterModel((prev) => {
+      const items = (prev.items ?? []).filter(
+        (item) => item.field !== "status"
+      );
+
+      if (!statusValue) {
+        return { ...prev, items };
+      }
+
+      return {
+        ...prev,
+        items: [
+          ...items,
+          {
+            field: "status",
+            operator: "equals",
+            value: Number(statusValue),
+          },
+        ],
+      };
+    });
+
+    setPaginationModel((p) => ({ ...p, page: 0 }));
+  }, [statusValue, setFilterModel, setPaginationModel]);
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingRow, setPendingRow] = useState<ConstructionSite | null>(null);
