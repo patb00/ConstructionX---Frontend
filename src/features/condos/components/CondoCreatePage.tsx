@@ -3,10 +3,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAddCondo } from "../hooks/useAddCondo";
-import { useEmployees } from "../../administration/employees/hooks/useEmployees";
+
 import CondoForm from "./CondoForm";
-import { toEmployeeOptions } from "../../tools/utils/options";
-import { toCurrencyOptions } from "../utils/options";
 
 export default function CondoCreatePage() {
   const { t } = useTranslation();
@@ -14,14 +12,7 @@ export default function CondoCreatePage() {
 
   const { mutateAsync, isPending: creating } = useAddCondo();
 
-  const { employeeRows = [], isLoading: employeesLoading } = useEmployees();
-  const employeeOptions = toEmployeeOptions(employeeRows, [
-    { value: null, label: t("condos.form.responsible.none") },
-  ]);
-
-  const currencyOptions = toCurrencyOptions();
-
-  const busy = creating || employeesLoading;
+  const busy = creating;
 
   return (
     <Stack spacing={2}>
@@ -50,12 +41,7 @@ export default function CondoCreatePage() {
           p: 2,
         }}
       >
-        <CondoForm
-          onSubmit={mutateAsync}
-          busy={busy}
-          employeeOptions={employeeOptions}
-          currencyOptions={currencyOptions}
-        />
+        <CondoForm onSubmit={mutateAsync} busy={busy} />
       </Paper>
     </Stack>
   );

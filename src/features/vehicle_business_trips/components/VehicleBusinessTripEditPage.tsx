@@ -7,8 +7,6 @@ import type { UpdateVehicleBusinessTripRequest } from "..";
 import { useVehicleBusinessTrip } from "../hooks/useVehicleBusinessTrip";
 import { useUpdateVehicleBusinessTrip } from "../hooks/useUpdateVehicleBusinessTrip";
 import VehicleBusinessTripForm from "./VehicleBusinessTripForm";
-import { useVehicleOptions } from "../../constants/options/useVehicleOptions";
-import { useEmployeeOptions } from "../../constants/options/useEmployeeOptions";
 import { vehicleBusinessTripToDefaultValues } from "../utils/vehicleBusinessTripForm";
 
 export default function VehicleBusinessTripEditPage() {
@@ -31,29 +29,21 @@ export default function VehicleBusinessTripEditPage() {
   const { mutate: updateTrip, isPending: updating } =
     useUpdateVehicleBusinessTrip();
 
-  const { options: vehicleOptions, isLoading: vehiclesLoading } =
-    useVehicleOptions();
-
-  const { options: employeeOptions, isLoading: employeesLoading } =
-    useEmployeeOptions();
-
   if (error) return <div>{t("vehicleBusinessTrips.edit.loadError")}</div>;
 
   const defaultValues: UpdateVehicleBusinessTripRequest | undefined =
     vehicleBusinessTripToDefaultValues(trip);
 
-  const handleSubmit = (values: UpdateVehicleBusinessTripRequest) => {
-    const idForUpdate = typeof trip?.id === "number" ? trip.id : businessTripId;
-
+  const handleSubmit = (
+    values: Omit<UpdateVehicleBusinessTripRequest, "id">
+  ) => {
     updateTrip(
-      { ...values, id: idForUpdate },
-      {
-        onSuccess: () => navigate("/app/vehicle-business-trips"),
-      }
+      { ...values, id: businessTripId },
+      { onSuccess: () => navigate("/app/vehicle-business-trips") }
     );
   };
 
-  const busy = loadingTrip || updating || vehiclesLoading || employeesLoading;
+  const busy = loadingTrip || updating;
 
   return (
     <Stack spacing={2}>
@@ -67,22 +57,17 @@ export default function VehicleBusinessTripEditPage() {
           variant="outlined"
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate("/app/vehicle-business-trips")}
-          sx={{ color: "primary.main" }}
         >
           {t("vehicleBusinessTrips.edit.back")}
         </Button>
       </Stack>
 
-      <Paper
-        elevation={0}
-        sx={{ border: (th) => `1px solid ${th.palette.divider}`, p: 2 }}
-      >
+      <Paper elevation={0} sx={{ border: 1, borderColor: "divider", p: 2 }}>
         <VehicleBusinessTripForm
+          mode="edit"
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           busy={busy}
-          vehicleOptions={vehicleOptions}
-          employeeOptions={employeeOptions}
           showStatusField
         />
       </Paper>

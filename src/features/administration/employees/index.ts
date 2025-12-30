@@ -5,18 +5,15 @@ export interface Employee {
   oib: string;
   dateOfBirth: string;
   employmentDate: string;
+  phoneNumber: string;
   terminationDate?: string | null;
   hasMachineryLicense: boolean;
   clothingSize: string;
   gloveSize: string;
   shoeSize: number;
+  description: string;
   email: string;
 }
-
-export type AssignJobPositionRequest = {
-  employeeId: number;
-  jobPositionId: number;
-};
 
 export type NewEmployeeRequest = Omit<Employee, "id">;
 

@@ -5,25 +5,24 @@ import {
   SmartForm,
   type FieldConfig,
 } from "../../../components/ui/smartform/SmartForm";
-
-type Option = { label: string; value: any };
+import { useVehicleOptions } from "../../constants/options/useVehicleOptions";
 
 type Props = {
   defaultValues?: Partial<NewVehicleRegistrationRequest>;
   onSubmit: (values: NewVehicleRegistrationRequest) => void | Promise<void>;
   busy?: boolean;
-  vehicleOptions: Option[];
 };
 
 export default function VehicleRegistrationForm({
   defaultValues,
   onSubmit,
   busy,
-  vehicleOptions,
 }: Props) {
   const { t } = useTranslation();
-
   const [docFile, setDocFile] = useState<File | null>(null);
+
+  const { options: vehicleOptions, isLoading: vehiclesLoading } =
+    useVehicleOptions();
 
   const fields: FieldConfig<NewVehicleRegistrationRequest>[] = useMemo(
     () => [
@@ -69,7 +68,6 @@ export default function VehicleRegistrationForm({
         name: "reportNumber",
         label: t("vehicleRegistrations.form.field.reportNumber"),
       },
-
       {
         name: "documentPath",
         label: t("vehicleRegistrations.form.field.documentPath"),
@@ -85,7 +83,6 @@ export default function VehicleRegistrationForm({
           return fileOrName ?? null;
         },
       },
-
       {
         name: "note",
         label: t("vehicleRegistrations.form.field.note"),
@@ -93,6 +90,8 @@ export default function VehicleRegistrationForm({
     ],
     [t, vehicleOptions, docFile, defaultValues?.documentPath]
   );
+
+  const isBusy = busy || vehiclesLoading;
 
   return (
     <SmartForm<NewVehicleRegistrationRequest>
@@ -107,7 +106,7 @@ export default function VehicleRegistrationForm({
         ["documentPath"],
       ]}
       defaultValues={defaultValues}
-      busy={busy}
+      busy={isBusy}
       submitLabel={t("vehicleRegistrations.form.submit")}
       onSubmit={onSubmit}
     />

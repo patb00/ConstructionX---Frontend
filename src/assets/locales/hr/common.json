@@ -705,7 +705,9 @@
         "clothingSize": "Veličina odjeće",
         "gloveSize": "Veličina rukavica",
         "shoeSize": "Veličina obuće",
-        "jobPositionId": "Radno mjesto"
+        "jobPositionId": "Radno mjesto",
+        "phoneNumber": "Broj telefona",
+        "description": "Opis"
       },
       "jobPosition": {
         "none": "— Bez radnog mjesta —"

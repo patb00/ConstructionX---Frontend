@@ -1,57 +1,83 @@
-import type { NewMedicalExaminationRequest } from "..";
+import { useTranslation } from "react-i18next";
 import {
   SmartForm,
   type FieldConfig,
 } from "../../../components/ui/smartform/SmartForm";
-import { useTranslation } from "react-i18next";
 
-type Option = { label: string; value: any };
+import type {
+  NewMedicalExaminationRequest,
+  UpdateMedicalExaminationRequest,
+} from "..";
 
-type Props = {
-  defaultValues?: Partial<NewMedicalExaminationRequest>;
-  onSubmit: (values: NewMedicalExaminationRequest) => void | Promise<void>;
+import { useEmployeeOptions } from "../../constants/options/useEmployeeOptions";
+import { useMedicalExaminationTypeOptions } from "../../constants/options/useMedicalExaminationTypesOptions";
+
+type MedicalExaminationMode = "create" | "edit";
+
+type MedicalExaminationFormValues<M extends MedicalExaminationMode> =
+  M extends "create"
+    ? NewMedicalExaminationRequest
+    : Omit<UpdateMedicalExaminationRequest, "id">;
+
+type Props<M extends MedicalExaminationMode> = {
+  mode: M;
+
+  defaultValues?: Partial<MedicalExaminationFormValues<M>>;
+  onSubmit: (values: MedicalExaminationFormValues<M>) => void | Promise<void>;
   busy?: boolean;
-  employeeOptions: Option[];
-  examinationTypeOptions: Option[];
+
   showEmployeeField?: boolean;
+
   selectedFile?: File | null;
   onFileChange?: (file: File | null) => void;
   fileAccept?: string;
   existingCertificatePath?: string | null;
 };
 
-export default function MedicalExaminationForm({
+export default function MedicalExaminationForm<
+  M extends MedicalExaminationMode
+>({
   defaultValues,
   onSubmit,
   busy,
-  employeeOptions,
-  examinationTypeOptions,
   showEmployeeField = true,
   selectedFile,
   onFileChange,
   fileAccept = ".pdf,image/*",
   existingCertificatePath,
-}: Props) {
+}: Props<M>) {
   const { t } = useTranslation();
 
-  const fields: FieldConfig<NewMedicalExaminationRequest>[] = [
+  const {
+    options: employeeOptions,
+    isLoading: employeesLoading,
+    isError: employeesError,
+  } = useEmployeeOptions();
+
+  const { options: examinationTypeOptions, isLoading: typesLoading } =
+    useMedicalExaminationTypeOptions();
+
+  const fields: FieldConfig<any>[] = [
     ...(showEmployeeField
-      ? ([
+      ? [
           {
             name: "employeeId",
             label: t("medicalExaminations.form.field.employeeId"),
             required: true,
             type: "select",
             options: employeeOptions,
+            disabled: employeesLoading || employeesError,
           },
-        ] as FieldConfig<NewMedicalExaminationRequest>[])
+        ]
       : []),
+
     {
       name: "examinationTypeId",
       label: t("medicalExaminations.form.field.examinationTypeId"),
       required: true,
       type: "select",
       options: examinationTypeOptions,
+      disabled: typesLoading,
     },
     {
       name: "examinationDate",
@@ -74,7 +100,6 @@ export default function MedicalExaminationForm({
       name: "note",
       label: t("medicalExaminations.form.field.note"),
     },
-
     {
       name: "attachment" as any,
       label: t("medicalExaminations.form.field.attachmentLabel", {
@@ -90,27 +115,19 @@ export default function MedicalExaminationForm({
     } as any,
   ];
 
-  const rows: Array<(keyof NewMedicalExaminationRequest & string)[]> =
-    showEmployeeField
-      ? ([
-          ["employeeId", "examinationTypeId"],
-          ["examinationDate", "nextExaminationDate"],
-          ["result", "note"],
-          ["attachment" as any],
-        ] as any)
-      : ([
-          ["examinationTypeId"],
-          ["examinationDate", "nextExaminationDate"],
-          ["result", "note"],
-          ["attachment" as any],
-        ] as any);
+  const isBusy = busy || employeesLoading || typesLoading;
 
   return (
-    <SmartForm<NewMedicalExaminationRequest>
+    <SmartForm<any>
       fields={fields}
-      rows={rows}
+      rows={[
+        ["employeeId", "examinationTypeId"],
+        ["examinationDate", "nextExaminationDate"],
+        ["result", "note"],
+        ["attachment"],
+      ]}
       defaultValues={defaultValues}
-      busy={busy}
+      busy={isBusy}
       submitLabel={t("medicalExaminations.form.submit")}
       onSubmit={onSubmit}
     />

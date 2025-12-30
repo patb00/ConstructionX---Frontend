@@ -20,17 +20,16 @@ export default function RoleForm({ defaultValues, onSubmit, busy }: Props) {
       name: "description",
       label: t("roles.form.field.description"),
       required: true,
+      type: "textarea",
+      props: { minRows: 5 },
     },
   ];
 
   return (
     <SmartForm<NewRoleRequest>
       fields={fields}
-      rows={[["name", "description"]]}
-      defaultValues={{
-        name: "",
-        ...defaultValues,
-      }}
+      rows={[["name"], ["description"]]}
+      defaultValues={defaultValues}
       busy={busy}
       submitLabel={t("roles.form.submit")}
       onSubmit={onSubmit}

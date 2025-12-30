@@ -5,26 +5,26 @@ import {
   SmartForm,
   type FieldConfig,
 } from "../../../components/ui/smartform/SmartForm";
-
-type Option = { label: string; value: any };
+import { useVehicleOptions } from "../../constants/options/useVehicleOptions";
 
 type Props = {
   defaultValues?: Partial<NewVehicleInsuranceRequest>;
   onSubmit: (values: NewVehicleInsuranceRequest) => void | Promise<void>;
   busy?: boolean;
-  vehicleOptions: Option[];
-  policyTypeOptions?: Option[];
+  policyTypeOptions?: { label: string; value: number }[];
 };
 
 export default function VehicleInsuranceForm({
   defaultValues,
   onSubmit,
   busy,
-  vehicleOptions,
   policyTypeOptions = [],
 }: Props) {
   const { t } = useTranslation();
   const [docFile, setDocFile] = useState<File | null>(null);
+
+  const { options: vehicleOptions, isLoading: vehiclesLoading } =
+    useVehicleOptions();
 
   const fields: FieldConfig<NewVehicleInsuranceRequest>[] = useMemo(
     () => [
@@ -93,6 +93,8 @@ export default function VehicleInsuranceForm({
     [t, vehicleOptions, policyTypeOptions, docFile, defaultValues?.documentPath]
   );
 
+  const isBusy = busy || vehiclesLoading;
+
   return (
     <SmartForm<NewVehicleInsuranceRequest>
       fields={fields}
@@ -105,7 +107,7 @@ export default function VehicleInsuranceForm({
         ["documentPath"],
       ]}
       defaultValues={defaultValues}
-      busy={busy}
+      busy={isBusy}
       submitLabel={t("vehicleInsurances.form.submit")}
       onSubmit={onSubmit}
     />

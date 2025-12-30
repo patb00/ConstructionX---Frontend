@@ -5,26 +5,29 @@ import {
 } from "../../../components/ui/smartform/SmartForm";
 import { useTranslation } from "react-i18next";
 
+import { useConstructionSiteManagerOptions } from "../../constants/options/useConstructionSiteManagerOptions";
+
 type Option = { label: string; value: any };
 
 type Props = {
   defaultValues?: Partial<ConstructionSiteFormValues>;
   onSubmit: (values: ConstructionSiteFormValues) => void | Promise<void>;
   busy?: boolean;
-  managerOptions: Option[];
-  statusOptions?: Option[];
   showStatus?: boolean;
+  statusOptions?: Option[];
 };
 
 export default function ConstructionSiteForm({
   defaultValues,
   onSubmit,
   busy,
-  managerOptions,
-  statusOptions = [],
   showStatus = false,
+  statusOptions,
 }: Props) {
   const { t } = useTranslation();
+
+  const { options: managerOptions, isLoading: managersLoading } =
+    useConstructionSiteManagerOptions();
 
   const fields: FieldConfig<ConstructionSiteFormValues>[] = [
     {
@@ -88,12 +91,14 @@ export default function ConstructionSiteForm({
         ["description"],
       ] as any);
 
+  const isBusy = busy || managersLoading;
+
   return (
     <SmartForm<ConstructionSiteFormValues>
       fields={fields}
       rows={rows}
       defaultValues={defaultValues}
-      busy={busy}
+      busy={isBusy}
       submitLabel={t("constructionSites.form.submit")}
       onSubmit={onSubmit}
     />

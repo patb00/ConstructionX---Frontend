@@ -1,10 +1,10 @@
-import type { NewMedicalExaminationRequest } from "..";
+import type { UpdateMedicalExaminationRequest } from "..";
 
 const toYMD = (s?: string | null) => (s ? s.slice(0, 10) : "");
 
 export function medicalExaminationToDefaultValues(
   exam: any | null | undefined
-): Partial<NewMedicalExaminationRequest> | undefined {
+): Partial<Omit<UpdateMedicalExaminationRequest, "id">> | undefined {
   if (!exam) return undefined;
 
   return {
@@ -18,8 +18,7 @@ export function medicalExaminationToDefaultValues(
 
 export function medicalExaminationToUpdatePayload(
   id: number,
-  values: NewMedicalExaminationRequest
-) {
-  const { employeeId: _ignored, ...rest } = values as any;
-  return { id, ...rest };
+  values: Omit<UpdateMedicalExaminationRequest, "id">
+): UpdateMedicalExaminationRequest {
+  return { id, ...values };
 }

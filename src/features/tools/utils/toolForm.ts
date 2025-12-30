@@ -3,8 +3,7 @@ import type { NewToolRequest } from "..";
 const toYMD = (s?: string | null) => (s ? s.slice(0, 10) : "");
 
 export function toolToDefaultValues(
-  tool: any | null | undefined,
-  fallbackCategoryId: any
+  tool: any | null | undefined
 ): Partial<NewToolRequest> | undefined {
   if (!tool) return undefined;
 
@@ -20,7 +19,7 @@ export function toolToDefaultValues(
     status: tool.status ?? null,
     condition: tool.condition ?? null,
     description: tool.description ?? null,
-    toolCategoryId: tool.toolCategoryId ?? fallbackCategoryId ?? 0,
+    toolCategoryId: tool.toolCategoryId ?? null,
     responsibleEmployeeId: tool.responsibleEmployeeId ?? null,
   };
 }

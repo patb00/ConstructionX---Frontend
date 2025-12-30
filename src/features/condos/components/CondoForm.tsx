@@ -4,28 +4,30 @@ import {
   SmartForm,
   type FieldConfig,
 } from "../../../components/ui/smartform/SmartForm";
-
-type Option = { label: string; value: any };
-
-type Props = {
-  defaultValues?: Partial<NewCondoRequest>;
-  onSubmit: (values: NewCondoRequest) => void | Promise<void>;
-  busy?: boolean;
-  employeeOptions: Option[];
-  currencyOptions: Option[];
-};
+import { useCurrencyOptions } from "../../constants/enum/useCurrencyOptions";
+import { useEmployeeOptions } from "../../constants/options/useEmployeeOptions";
 
 export default function CondoForm({
   defaultValues,
   onSubmit,
   busy,
-  employeeOptions,
-  currencyOptions,
-}: Props) {
+}: {
+  defaultValues?: Partial<NewCondoRequest>;
+  onSubmit: (values: NewCondoRequest) => void | Promise<void>;
+  busy?: boolean;
+}) {
   const { t } = useTranslation();
 
+  const currencyOptions = useCurrencyOptions();
+  const { options: employeeOptions, isLoading: employeesLoading } =
+    useEmployeeOptions();
+
   const fields: FieldConfig<NewCondoRequest>[] = [
-    { name: "address", label: t("condos.form.field.address"), required: true },
+    {
+      name: "address",
+      label: t("condos.form.field.address"),
+      required: true,
+    },
     {
       name: "capacity",
       label: t("condos.form.field.capacity"),
@@ -76,8 +78,13 @@ export default function CondoForm({
       required: true,
       options: currencyOptions,
     },
-    { name: "notes", label: t("condos.form.field.notes") },
+    {
+      name: "notes",
+      label: t("condos.form.field.notes"),
+    },
   ];
+
+  const isBusy = busy || employeesLoading;
 
   return (
     <SmartForm<NewCondoRequest>
@@ -91,7 +98,7 @@ export default function CondoForm({
         ["notes"],
       ]}
       defaultValues={defaultValues}
-      busy={busy}
+      busy={isBusy}
       submitLabel={t("condos.form.submit")}
       onSubmit={onSubmit}
     />

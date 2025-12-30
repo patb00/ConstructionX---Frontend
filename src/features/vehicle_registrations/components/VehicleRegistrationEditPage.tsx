@@ -8,7 +8,6 @@ import { useVehicleRegistration } from "../hooks/useVehicleRegistration";
 import { useUpdateVehicleRegistration } from "../hooks/useUpdateVehicleRegistration";
 import { vehicleRegistrationToDefaultValues } from "../utils/vehcileRegistrationForm";
 import VehicleRegistrationForm from "./VehicleRegistrationForm";
-import { useVehicleOptions } from "../../constants/options/useVehicleOptions";
 
 export default function VehicleRegistrationEditPage() {
   const { t } = useTranslation();
@@ -26,9 +25,6 @@ export default function VehicleRegistrationEditPage() {
     isLoading: loadingRegistration,
     error,
   } = useVehicleRegistration(registrationId);
-
-  const { options: vehicleOptions, isLoading: vehiclesLoading } =
-    useVehicleOptions();
 
   const { mutate: updateRegistration, isPending: updating } =
     useUpdateVehicleRegistration();
@@ -49,7 +45,7 @@ export default function VehicleRegistrationEditPage() {
     });
   };
 
-  const busy = loadingRegistration || updating || vehiclesLoading;
+  const busy = loadingRegistration || updating;
 
   return (
     <Stack spacing={2}>
@@ -77,7 +73,6 @@ export default function VehicleRegistrationEditPage() {
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           busy={busy}
-          vehicleOptions={vehicleOptions}
         />
       </Paper>
     </Stack>

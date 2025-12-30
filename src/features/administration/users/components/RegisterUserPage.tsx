@@ -1,12 +1,14 @@
 import { Button, Paper, Stack, Typography } from "@mui/material";
-import UserForm from "./UserForm";
-import { useRegisterUser } from "../hooks/useRegisterUser";
-import { useUpdateRoles } from "../hooks/useUpdateRoles";
-import { useRoles } from "../../roles/hooks/useRoles";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+
+import UserForm from "./UserForm";
+import { useRegisterUser } from "../hooks/useRegisterUser";
+import { useUpdateRoles } from "../hooks/useUpdateRoles";
+
 import type { RegisterUserRequest } from "..";
+import { useRoleOptions } from "../../../constants/options/useRolesOptions";
 
 export default function RegisterUserPage() {
   const { t } = useTranslation();
@@ -16,12 +18,7 @@ export default function RegisterUserPage() {
   const { mutateAsync: updateRoles, isPending: updatingRoles } =
     useUpdateRoles();
 
-  const { rolesRows } = useRoles();
-
-  const roleOptions = rolesRows.map((r) => ({
-    label: r.name,
-    value: r.id,
-  }));
+  const { roleOptions, rolesRows, isLoading: rolesLoading } = useRoleOptions();
 
   const handleSubmit = async (values: RegisterUserRequest) => {
     const res: any = await registerUser(values);
@@ -31,10 +28,10 @@ export default function RegisterUserPage() {
     await updateRoles({
       userId,
       payload: {
-        userRoles: rolesRows.map((r) => ({
+        userRoles: (rolesRows ?? []).map((r: any) => ({
           roleId: r.id,
           name: r.name,
-          description: (r as any).description ?? null,
+          description: r.description ?? null,
           isAssigned: r.id === values.roleId,
         })),
       },
@@ -55,7 +52,6 @@ export default function RegisterUserPage() {
           variant="outlined"
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate("/app/administration/users")}
-          sx={{ color: "primary.main" }}
         >
           {t("users.create.back")}
         </Button>
@@ -63,16 +59,13 @@ export default function RegisterUserPage() {
 
       <Paper
         elevation={0}
-        sx={{
-          border: (t) => `1px solid ${t.palette.divider}`,
-          height: "100%",
-          width: "100%",
-        }}
+        sx={{ border: (t) => `1px solid ${t.palette.divider}`, p: 2 }}
       >
         <UserForm
-          onSubmit={handleSubmit}
-          busy={isPending || updatingRoles}
+          mode="create"
           roleOptions={roleOptions}
+          busy={isPending || updatingRoles || rolesLoading}
+          onSubmit={handleSubmit}
         />
       </Paper>
     </Stack>

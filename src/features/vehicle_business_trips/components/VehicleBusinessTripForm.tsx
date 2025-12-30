@@ -1,34 +1,46 @@
 import { useEffect, useState } from "react";
-import type { NewVehicleBusinessTripRequest } from "..";
+import { useTranslation } from "react-i18next";
 import {
   SmartForm,
   type FieldConfig,
 } from "../../../components/ui/smartform/SmartForm";
-import { useTranslation } from "react-i18next";
+
+import type {
+  NewVehicleBusinessTripRequest,
+  UpdateVehicleBusinessTripRequest,
+} from "..";
+
+import { useEmployeeOptions } from "../../constants/options/useEmployeeOptions";
+import { useVehicleOptions } from "../../constants/options/useVehicleOptions";
 import { useVehicleBusinessTripStatusOptions } from "../../constants/enum/useVehicleBusinessTripStatusOptions";
 
-type Option = { label: string; value: any };
+type VehicleBusinessTripMode = "create" | "edit";
 
-type Props = {
-  defaultValues?: Partial<NewVehicleBusinessTripRequest>;
-  onSubmit: (values: any) => void | Promise<void>;
+type VehicleBusinessTripFormValues<M extends VehicleBusinessTripMode> =
+  M extends "create"
+    ? NewVehicleBusinessTripRequest
+    : Omit<UpdateVehicleBusinessTripRequest, "id">;
+
+type Props<M extends VehicleBusinessTripMode> = {
+  mode: M;
+  defaultValues?: Partial<VehicleBusinessTripFormValues<M>>;
+  onSubmit: (values: VehicleBusinessTripFormValues<M>) => void | Promise<void>;
   busy?: boolean;
-  vehicleOptions: Option[];
-  employeeOptions: Option[];
   showStatusField?: boolean;
-  statusOptions?: Option[];
 };
 
-export default function VehicleBusinessTripForm({
-  defaultValues,
-  onSubmit,
-  busy,
-  vehicleOptions,
-  employeeOptions,
-  showStatusField = false,
-  statusOptions,
-}: Props) {
+export default function VehicleBusinessTripForm<
+  M extends VehicleBusinessTripMode
+>({ defaultValues, onSubmit, busy, showStatusField = false }: Props<M>) {
   const { t } = useTranslation();
+
+  const { options: vehicleOptions, isLoading: vehiclesLoading } =
+    useVehicleOptions();
+
+  const { options: employeeOptions, isLoading: employeesLoading } =
+    useEmployeeOptions();
+
+  const statusOptions = useVehicleBusinessTripStatusOptions();
 
   const [isRefueled, setIsRefueled] = useState<boolean>(
     Boolean(defaultValues?.refueled)
@@ -38,10 +50,7 @@ export default function VehicleBusinessTripForm({
     setIsRefueled(Boolean(defaultValues?.refueled));
   }, [defaultValues?.refueled]);
 
-  const defaultStatusOptions = useVehicleBusinessTripStatusOptions();
-  const finalStatusOptions = statusOptions ?? defaultStatusOptions;
-
-  const fields: FieldConfig<NewVehicleBusinessTripRequest>[] = [
+  const fields: FieldConfig<any>[] = [
     {
       name: "vehicleId",
       label: t("vehicleBusinessTrips.form.field.vehicleId"),
@@ -82,25 +91,23 @@ export default function VehicleBusinessTripForm({
       name: "startKilometers",
       label: t("vehicleBusinessTrips.form.field.startKilometers"),
       type: "number",
-      required: true,
     },
     {
       name: "endKilometers",
       label: t("vehicleBusinessTrips.form.field.endKilometers"),
       type: "number",
-      required: true,
     },
 
     ...(showStatusField
-      ? ([
+      ? [
           {
-            name: "tripStatus" as any,
+            name: "tripStatus",
             label: t("vehicleBusinessTrips.form.field.tripStatus", "Status"),
-            type: "select",
+            type: "select" as const,
             required: true,
-            options: finalStatusOptions,
+            options: statusOptions,
           },
-        ] as FieldConfig<NewVehicleBusinessTripRequest>[])
+        ]
       : []),
 
     {
@@ -112,24 +119,18 @@ export default function VehicleBusinessTripForm({
       name: "fuelLiters",
       label: t("vehicleBusinessTrips.form.field.fuelLiters"),
       type: "number",
-      props: {
-        disabled: !isRefueled,
-      },
+      props: { disabled: !isRefueled },
     },
     {
       name: "fuelAmount",
       label: t("vehicleBusinessTrips.form.field.fuelAmount"),
       type: "number",
-      props: {
-        disabled: !isRefueled,
-      },
+      props: { disabled: !isRefueled },
     },
     {
       name: "fuelCurrency",
       label: t("vehicleBusinessTrips.form.field.fuelCurrency"),
-      props: {
-        disabled: !isRefueled,
-      },
+      props: { disabled: !isRefueled },
     },
     {
       name: "note",
@@ -137,23 +138,25 @@ export default function VehicleBusinessTripForm({
     },
   ];
 
-  const rows: Array<(keyof NewVehicleBusinessTripRequest & string)[]> = [
+  const rows = [
     ["vehicleId", "employeeId"],
     ["startLocationText", "endLocationText"],
     ["startAt", "endAt"],
     ["startKilometers", "endKilometers"],
-    ...(showStatusField ? ([["tripStatus" as any]] as any) : []),
+    ...(showStatusField ? [["tripStatus"]] : []),
     ["refueled"],
     ["fuelLiters", "fuelAmount", "fuelCurrency"],
     ["note"],
-  ] as any;
+  ];
+
+  const isBusy = busy || vehiclesLoading || employeesLoading;
 
   return (
-    <SmartForm<NewVehicleBusinessTripRequest>
+    <SmartForm<any>
       fields={fields}
-      rows={rows}
+      rows={rows as any}
       defaultValues={defaultValues}
-      busy={busy}
+      busy={isBusy}
       submitLabel={t("vehicleBusinessTrips.form.submit")}
       onSubmit={onSubmit}
       renderFooterActions={(values) => {

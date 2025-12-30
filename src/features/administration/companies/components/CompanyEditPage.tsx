@@ -5,6 +5,7 @@ import CompanyForm from "./CompanyForm";
 import { useCompany } from "../hooks/useCompany";
 import { useUpdateCompany } from "../hooks/useUpdateCompany";
 import { useTranslation } from "react-i18next";
+import type { NewCompanyRequest } from "..";
 
 export default function CompanyEditPage() {
   const { t } = useTranslation();
@@ -22,7 +23,7 @@ export default function CompanyEditPage() {
     dateOfCreation: company.dateOfCreation?.slice(0, 16),
   };
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: NewCompanyRequest) => {
     await updateCompany({ id: companyId, ...values });
   };
 

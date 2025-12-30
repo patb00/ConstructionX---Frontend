@@ -5,28 +5,15 @@ import { useTranslation } from "react-i18next";
 
 import ConstructionSiteForm from "./ConstructionSiteForm";
 import { useAddConstructionSite } from "../hooks/useAddConstructionSite";
-import { useEmployees } from "../../administration/employees/hooks/useEmployees";
-import { useConstructionSiteStatusOptions } from "../../constants/enum/useConstructionSiteStatusOptions";
+
 import type { ConstructionSiteFormValues } from "..";
-import { useMemo } from "react";
-import { buildEmployeeSelectOptions } from "../utils/options";
+import { useConstructionSiteStatusOptions } from "../../constants/enum/useConstructionSiteStatusOptions";
 
 export default function ConstructionSiteCreatePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-
-  const { mutateAsync: createSite, isPending } = useAddConstructionSite();
-  const { employeeRows = [] } = useEmployees();
   const statusOptions = useConstructionSiteStatusOptions();
-
-  const managerOptions = useMemo(
-    () =>
-      buildEmployeeSelectOptions(
-        employeeRows,
-        t("constructionSites.form.manager.none")
-      ),
-    [employeeRows, t]
-  );
+  const { mutateAsync: createSite, isPending } = useAddConstructionSite();
 
   const handleSubmit = async (values: ConstructionSiteFormValues) => {
     await createSite(values as any);
@@ -61,10 +48,10 @@ export default function ConstructionSiteCreatePage() {
         <ConstructionSiteForm
           onSubmit={handleSubmit}
           busy={isPending}
-          managerOptions={managerOptions}
-          statusOptions={statusOptions}
           showStatus
+          statusOptions={statusOptions}
         />
+        ;
       </Paper>
     </Stack>
   );

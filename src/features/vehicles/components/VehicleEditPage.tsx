@@ -7,11 +7,6 @@ import VehicleForm from "./VehicleForm";
 import type { NewVehicleRequest } from "..";
 import { useVehicle } from "../hooks/useVehicle";
 import { useUpdateVehicle } from "../hooks/useUpdateVehicles";
-import { useVehicleStatuses } from "../constants/hooks/useVehicleStatus";
-import { useVehicleConditions } from "../constants/hooks/useVehicleConditions";
-import { useVehicleTypes } from "../constants/hooks/useVehiclesTypes";
-
-import { toStringOptions } from "../utils/options";
 import { vehicleToDefaultValues } from "../utils/vehicleForm";
 
 export default function VehicleEditPage() {
@@ -31,12 +26,6 @@ export default function VehicleEditPage() {
   } = useVehicle(vehicleId);
   const { mutate: updateVehicle, isPending: updating } = useUpdateVehicle();
 
-  const { data: statuses = [], isLoading: statusesLoading } =
-    useVehicleStatuses();
-  const { data: conditions = [], isLoading: conditionsLoading } =
-    useVehicleConditions();
-  const { data: types = [], isLoading: typesLoading } = useVehicleTypes();
-
   if (error) return <div>{t("vehicles.edit.loadError")}</div>;
 
   const defaultValues: NewVehicleRequest | undefined =
@@ -53,12 +42,7 @@ export default function VehicleEditPage() {
     });
   };
 
-  const busy =
-    vehicleLoading ||
-    updating ||
-    statusesLoading ||
-    conditionsLoading ||
-    typesLoading;
+  const busy = vehicleLoading || updating;
 
   return (
     <Stack spacing={2}>
@@ -85,9 +69,6 @@ export default function VehicleEditPage() {
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           busy={busy}
-          statusOptions={toStringOptions(statuses)}
-          conditionOptions={toStringOptions(conditions)}
-          typeOptions={toStringOptions(types)}
         />
       </Paper>
     </Stack>

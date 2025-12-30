@@ -4,50 +4,37 @@ import {
   SmartForm,
   type FieldConfig,
 } from "../../../components/ui/smartform/SmartForm";
-
-type Option = { label: string; value: any };
+import { useVehicleStatusOptions } from "../../constants/options/useVehicleStatusOptions";
+import { useVehicleConditionOptions } from "../../constants/options/useVehicleConditionOptions";
+import { useVehicleTypeOptions } from "../../constants/options/useVehicleTypeOptions";
 
 type Props = {
   defaultValues?: Partial<NewVehicleRequest>;
   onSubmit: (values: NewVehicleRequest) => void | Promise<void>;
   busy?: boolean;
-  statusOptions: Option[];
-  conditionOptions: Option[];
-  typeOptions: Option[];
 };
 
-export default function VehicleForm({
-  defaultValues,
-  onSubmit,
-  busy,
-  statusOptions,
-  conditionOptions,
-  typeOptions,
-}: Props) {
+export default function VehicleForm({ defaultValues, onSubmit, busy }: Props) {
   const { t } = useTranslation();
 
+  const { options: statusOptions, isLoading: statusesLoading } =
+    useVehicleStatusOptions();
+
+  const { options: conditionOptions, isLoading: conditionsLoading } =
+    useVehicleConditionOptions();
+
+  const { options: typeOptions, isLoading: typesLoading } =
+    useVehicleTypeOptions();
+
   const fields: FieldConfig<NewVehicleRequest>[] = [
-    {
-      name: "name",
-      label: t("vehicles.form.field.name"),
-      required: true,
-    },
+    { name: "name", label: t("vehicles.form.field.name"), required: true },
     {
       name: "registrationNumber",
       label: t("vehicles.form.field.registrationNumber"),
     },
-    {
-      name: "vin",
-      label: t("vehicles.form.field.vin"),
-    },
-    {
-      name: "brand",
-      label: t("vehicles.form.field.brand"),
-    },
-    {
-      name: "model",
-      label: t("vehicles.form.field.model"),
-    },
+    { name: "vin", label: t("vehicles.form.field.vin") },
+    { name: "brand", label: t("vehicles.form.field.brand") },
+    { name: "model", label: t("vehicles.form.field.model") },
     {
       name: "yearOfManufacturing",
       label: t("vehicles.form.field.yearOfManufacturing"),
@@ -93,16 +80,11 @@ export default function VehicleForm({
       label: t("vehicles.form.field.averageConsumption"),
       type: "number",
     },
-    {
-      name: "weight",
-      label: t("vehicles.form.field.weight"),
-      type: "number",
-    },
-    {
-      name: "description",
-      label: t("vehicles.form.field.description"),
-    },
+    { name: "weight", label: t("vehicles.form.field.weight"), type: "number" },
+    { name: "description", label: t("vehicles.form.field.description") },
   ];
+
+  const isBusy = busy || statusesLoading || conditionsLoading || typesLoading;
 
   return (
     <SmartForm<NewVehicleRequest>
@@ -118,7 +100,7 @@ export default function VehicleForm({
         ["description"],
       ]}
       defaultValues={defaultValues}
-      busy={busy}
+      busy={isBusy}
       submitLabel={t("vehicles.form.submit")}
       onSubmit={onSubmit}
     />

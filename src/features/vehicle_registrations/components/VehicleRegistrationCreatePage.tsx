@@ -5,16 +5,13 @@ import { useTranslation } from "react-i18next";
 
 import { useAddVehicleRegistration } from "../hooks/useAddVehicleRegistration";
 import VehicleRegistrationForm from "./VehicleRegistrationForm";
-import { useVehicleOptions } from "../../constants/options/useVehicleOptions";
 
 export default function VehicleRegistrationCreatePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { mutateAsync, isPending: creating } = useAddVehicleRegistration();
-  const { options: vehicleOptions, isLoading: vehiclesLoading } =
-    useVehicleOptions();
 
-  const busy = creating || vehiclesLoading;
+  const busy = creating;
 
   return (
     <Stack spacing={2}>
@@ -38,11 +35,7 @@ export default function VehicleRegistrationCreatePage() {
         elevation={0}
         sx={{ border: (th) => `1px solid ${th.palette.divider}`, p: 2 }}
       >
-        <VehicleRegistrationForm
-          onSubmit={mutateAsync as any}
-          busy={busy}
-          vehicleOptions={vehicleOptions}
-        />
+        <VehicleRegistrationForm onSubmit={mutateAsync as any} busy={busy} />
       </Paper>
     </Stack>
   );

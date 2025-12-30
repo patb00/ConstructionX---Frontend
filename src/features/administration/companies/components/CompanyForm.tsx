@@ -28,11 +28,7 @@ export default function CompanyForm({ defaultValues, onSubmit, busy }: Props) {
     <SmartForm<NewCompanyRequest>
       fields={fields}
       rows={[["name", "dateOfCreation"]]}
-      defaultValues={{
-        name: "",
-        dateOfCreation: defaultValues?.dateOfCreation,
-        ...defaultValues,
-      }}
+      defaultValues={defaultValues}
       busy={busy}
       submitLabel={t("companies.form.submit")}
       onSubmit={onSubmit}

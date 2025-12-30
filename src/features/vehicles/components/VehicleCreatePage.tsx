@@ -5,23 +5,13 @@ import { useTranslation } from "react-i18next";
 
 import VehicleForm from "./VehicleForm";
 import { useAddVehicle } from "../hooks/useAddVehicle";
-import { useVehicleStatuses } from "../constants/hooks/useVehicleStatus";
-import { useVehicleConditions } from "../constants/hooks/useVehicleConditions";
-import { useVehicleTypes } from "../constants/hooks/useVehiclesTypes";
-import { toStringOptions } from "../utils/options";
 
 export default function VehicleCreatePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { mutateAsync, isPending: creating } = useAddVehicle();
 
-  const { data: statuses = [], isLoading: statusesLoading } =
-    useVehicleStatuses();
-  const { data: conditions = [], isLoading: conditionsLoading } =
-    useVehicleConditions();
-  const { data: types = [], isLoading: typesLoading } = useVehicleTypes();
-
-  const busy = creating || statusesLoading || conditionsLoading || typesLoading;
+  const busy = creating;
 
   return (
     <Stack spacing={2}>
@@ -44,13 +34,7 @@ export default function VehicleCreatePage() {
         elevation={0}
         sx={{ border: (th) => `1px solid ${th.palette.divider}`, p: 2 }}
       >
-        <VehicleForm
-          onSubmit={mutateAsync}
-          busy={busy}
-          statusOptions={toStringOptions(statuses)}
-          conditionOptions={toStringOptions(conditions)}
-          typeOptions={toStringOptions(types)}
-        />
+        <VehicleForm onSubmit={mutateAsync} busy={busy} />;
       </Paper>
     </Stack>
   );

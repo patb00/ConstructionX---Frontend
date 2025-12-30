@@ -6,10 +6,7 @@ import CondoForm from "./CondoForm";
 import type { NewCondoRequest } from "..";
 import { useUpdateCondo } from "../hooks/useUpdateCondo";
 import { useCondo } from "../hooks/useCondo";
-import { useEmployees } from "../../administration/employees/hooks/useEmployees";
-import { toEmployeeOptions } from "../../tools/utils/options";
 import { condoToDefaultValues } from "../utils/condoForm";
-import { toCurrencyOptions } from "../utils/options";
 
 export default function CondoEditPage() {
   const { t } = useTranslation();
@@ -23,13 +20,6 @@ export default function CondoEditPage() {
 
   const { data: condo, isLoading: condoLoading, error } = useCondo(condoId);
   const { mutate: updateCondo, isPending: updating } = useUpdateCondo();
-
-  const { employeeRows = [], isLoading: employeesLoading } = useEmployees();
-  const employeeOptions = toEmployeeOptions(employeeRows, [
-    { value: null, label: t("condos.form.responsible.none") },
-  ]);
-
-  const currencyOptions = toCurrencyOptions();
 
   const defaultValues: Partial<NewCondoRequest> | undefined =
     condoToDefaultValues(condo);
@@ -45,7 +35,7 @@ export default function CondoEditPage() {
 
   if (error) return <div>{t("condos.edit.loadError")}</div>;
 
-  const busy = condoLoading || updating || employeesLoading;
+  const busy = condoLoading || updating;
 
   return (
     <Stack spacing={2}>
@@ -78,8 +68,6 @@ export default function CondoEditPage() {
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           busy={busy}
-          employeeOptions={employeeOptions}
-          currencyOptions={currencyOptions}
         />
       </Paper>
     </Stack>

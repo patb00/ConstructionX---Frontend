@@ -36,11 +36,7 @@ export default function ExaminationTypeForm({
     <SmartForm<NewExaminationTypeRequest>
       fields={fields}
       rows={[["examinationTypeName", "monthsToNextExamination"]]}
-      defaultValues={{
-        examinationTypeName: "",
-        monthsToNextExamination: 0,
-        ...defaultValues,
-      }}
+      defaultValues={defaultValues}
       busy={busy}
       submitLabel={t("examinationTypes.form.submit")}
       onSubmit={onSubmit}

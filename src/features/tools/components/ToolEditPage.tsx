@@ -7,16 +7,6 @@ import ToolForm from "./ToolForm";
 import type { NewToolRequest } from "..";
 import { useUpdateTool } from "../hooks/useUpdateTool";
 import { useTool } from "../hooks/useTool";
-import { useToolCategories } from "../../tools_category/hooks/useToolCategories";
-import { useEmployees } from "../../administration/employees/hooks/useEmployees";
-import { useToolStatuses } from "../constants/hooks/useToolStatuses";
-import { useToolConditions } from "../constants/hooks/useToolConditions";
-
-import {
-  toCategoryOptions,
-  toEmployeeOptions,
-  toStringEnumOptions,
-} from "../utils/options";
 import { toolToDefaultValues } from "../utils/toolForm";
 
 export default function ToolEditPage() {
@@ -24,51 +14,28 @@ export default function ToolEditPage() {
   const { id } = useParams<{ id: string }>();
   const toolId = Number(id);
 
-  if (!Number.isFinite(toolId))
+  if (!Number.isFinite(toolId)) {
     return <div>{t("tools.edit.invalidUrlId")}</div>;
+  }
 
   const navigate = useNavigate();
 
-  const { data: tool, isLoading: toolLoading, error } = useTool(toolId);
+  const { data: tool, isLoading, error } = useTool(toolId);
   const { mutate: updateTool, isPending: updating } = useUpdateTool();
 
-  const { toolCategoriesRows = [], isLoading: categoriesLoading } =
-    useToolCategories();
-  const categoryOptions = toCategoryOptions(toolCategoriesRows);
+  if (error) {
+    return <div>{t("tools.edit.loadError")}</div>;
+  }
 
-  const { employeeRows = [], isLoading: employeesLoading } = useEmployees();
-  const employeeOptions = toEmployeeOptions(employeeRows, [
-    { value: null, label: t("tools.form.responsible.none") },
-  ]);
-
-  const { data: statuses = [], isLoading: statusesLoading } = useToolStatuses();
-  const { data: conditions = [], isLoading: conditionsLoading } =
-    useToolConditions();
-
-  const fallbackCategoryId = categoryOptions?.[0]?.value ?? 0;
-  const defaultValues: NewToolRequest | undefined = toolToDefaultValues(
-    tool,
-    fallbackCategoryId
-  ) as any;
+  const defaultValues = toolToDefaultValues(tool) as NewToolRequest | undefined;
 
   const handleSubmit = (values: NewToolRequest) => {
-    const idForUpdate =
-      typeof (tool as any)?.id === "number" ? (tool as any).id : toolId;
-
-    updateTool({ id: idForUpdate, ...values } as any, {
+    updateTool({ id: toolId, ...values } as any, {
       onSuccess: () => navigate("/app/tools"),
     });
   };
 
-  if (error) return <div>{t("tools.edit.loadError")}</div>;
-
-  const busy =
-    toolLoading ||
-    updating ||
-    categoriesLoading ||
-    employeesLoading ||
-    statusesLoading ||
-    conditionsLoading;
+  const busy = isLoading || updating;
 
   return (
     <Stack spacing={2}>
@@ -81,6 +48,7 @@ export default function ToolEditPage() {
         <Typography variant="h5" fontWeight={600}>
           {t("tools.edit.title")}
         </Typography>
+
         <Button
           size="small"
           variant="outlined"
@@ -100,10 +68,6 @@ export default function ToolEditPage() {
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           busy={busy}
-          categoryOptions={categoryOptions}
-          employeeOptions={employeeOptions}
-          statusOptions={toStringEnumOptions(statuses)}
-          conditionOptions={toStringEnumOptions(conditions)}
         />
       </Paper>
     </Stack>

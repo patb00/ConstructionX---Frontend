@@ -708,7 +708,9 @@
         "clothingSize": "Kleidergröße",
         "gloveSize": "Handschuhgröße",
         "shoeSize": "Schuhgröße",
-        "jobPositionId": "Stellenbezeichnung"
+        "jobPositionId": "Stellenbezeichnung",
+        "phoneNumber": "Telefonnummer",
+        "description": "Beschreibung"
       },
       "jobPosition": {
         "none": "— Keine Position —"

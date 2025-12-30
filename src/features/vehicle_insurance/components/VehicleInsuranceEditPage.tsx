@@ -8,7 +8,6 @@ import { useVehicleInsurance } from "../hooks/useVehicleInsurance";
 import { useUpdateVehicleInsurance } from "../hooks/useUpdateVehicleInsurance";
 import VehicleInsuranceForm from "./VehicleInsuranceForm";
 import { vehicleInsuranceToDefaultValues } from "../utils/vehicleInsuranceForm";
-import { useVehicleOptions } from "../../constants/options/useVehicleOptions";
 
 export default function VehicleInsuranceEditPage() {
   const { t } = useTranslation();
@@ -30,9 +29,6 @@ export default function VehicleInsuranceEditPage() {
   const { mutate: updateInsurance, isPending: updating } =
     useUpdateVehicleInsurance();
 
-  const { options: vehicleOptions, isLoading: vehiclesLoading } =
-    useVehicleOptions();
-
   if (error) return <div>{t("vehicleInsurances.edit.loadError")}</div>;
 
   const defaultValues: NewVehicleInsuranceRequest | undefined =
@@ -49,7 +45,7 @@ export default function VehicleInsuranceEditPage() {
     });
   };
 
-  const busy = loadingInsurance || updating || vehiclesLoading;
+  const busy = loadingInsurance || updating;
 
   return (
     <Stack spacing={2}>
@@ -77,7 +73,6 @@ export default function VehicleInsuranceEditPage() {
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           busy={busy}
-          vehicleOptions={vehicleOptions}
         />
       </Paper>
     </Stack>

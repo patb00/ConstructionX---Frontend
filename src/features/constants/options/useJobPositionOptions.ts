@@ -1,4 +1,4 @@
-import { useJobPositions } from "../../job_positions/hooks/useJobPositions";
+import { useJobPositions } from "../../administration/job_positions/hooks/useJobPositions";
 
 export function useJobPositionOptions() {
   const { jobPositionsRows, isLoading, error } = useJobPositions();

@@ -2,15 +2,10 @@ import { Paper, Stack, Typography, Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-
 import ConstructionSiteForm from "./ConstructionSiteForm";
-
-import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { useConstructionSite } from "../hooks/useConstructionSite";
 import { useUpdateConstructionSite } from "../hooks/useUpdateConstructionSite";
 import type { ConstructionSiteFormValues } from "..";
-import { buildEmployeeSelectOptions } from "../utils/options";
-import { useMemo } from "react";
 
 export default function ConstructionSiteEditPage() {
   const { t } = useTranslation();
@@ -30,16 +25,6 @@ export default function ConstructionSiteEditPage() {
   } = useConstructionSite(siteId);
 
   const { mutate: updateSite, isPending } = useUpdateConstructionSite();
-  const { employeeRows = [], isLoading: employeesLoading } = useEmployees();
-
-  const managerOptions = useMemo(
-    () =>
-      buildEmployeeSelectOptions(
-        employeeRows,
-        t("constructionSites.form.manager.none")
-      ),
-    [employeeRows, t]
-  );
 
   const defaultValues: Partial<ConstructionSiteFormValues> | undefined =
     site && {
@@ -67,7 +52,7 @@ export default function ConstructionSiteEditPage() {
     return <div>{t("constructionSites.edit.loadError")}</div>;
   }
 
-  const busy = siteLoading || isPending || employeesLoading;
+  const busy = siteLoading || isPending;
 
   return (
     <Stack spacing={2}>
@@ -100,7 +85,6 @@ export default function ConstructionSiteEditPage() {
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           busy={busy}
-          managerOptions={managerOptions}
           showStatus={false}
         />
       </Paper>

@@ -5,17 +5,13 @@ import { useTranslation } from "react-i18next";
 
 import VehicleInsuranceForm from "./VehicleInsuranceForm";
 import { useAddVehicleInsurance } from "../hooks/useAddVehicleInsurance";
-import { useVehicleOptions } from "../../constants/options/useVehicleOptions";
 
 export default function VehicleInsuranceCreatePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { mutateAsync, isPending: creating } = useAddVehicleInsurance();
 
-  const { options: vehicleOptions, isLoading: vehiclesLoading } =
-    useVehicleOptions();
-
-  const busy = creating || vehiclesLoading;
+  const busy = creating;
 
   return (
     <Stack spacing={2}>
@@ -39,11 +35,7 @@ export default function VehicleInsuranceCreatePage() {
         elevation={0}
         sx={{ border: (th) => `1px solid ${th.palette.divider}`, p: 2 }}
       >
-        <VehicleInsuranceForm
-          onSubmit={mutateAsync as any}
-          busy={busy}
-          vehicleOptions={vehicleOptions}
-        />
+        <VehicleInsuranceForm onSubmit={mutateAsync as any} busy={busy} />
       </Paper>
     </Stack>
   );
