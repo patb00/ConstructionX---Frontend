@@ -185,6 +185,9 @@
     }
   },
   "common": {
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "saving": "Saving...",
     "all": "All statuses",
     "unassign": "Unassign",
     "notAvailable": "Not available",
@@ -1612,6 +1615,27 @@
         "fuelCurrency": "Fuel currency",
         "note": "Note"
       }
+    }
+  },
+  "vehicleRegistrationEmployees": {
+    "assign": {
+      "due": "Due: {{date}}",
+      "title": "Assign task",
+      "subtitle": "Assign vehicle registration to an employee",
+      "previewTitle": "Vehicle registration task",
+      "previewSubtitle": "Based on the selected item",
+      "assignmentTitle": "Assignment",
+      "employee": "Employee",
+      "note": "Note (optional)",
+      "notePlaceholder": "Add details for the employee (what needs to be done, where, deadlines...)",
+      "helper": "This will create a task and assign it to the selected employee.",
+      "fields": {
+        "vehicle": "Vehicle",
+        "registration": "Registration"
+      }
+    },
+    "rowActions": {
+      "assign": "Assign task"
     }
   }
 }

@@ -185,6 +185,9 @@
     }
   },
   "common": {
+    "cancel": "Odustani",
+    "submit": "Spremi",
+    "saving": "Spremanje...",
     "all": "Svi statusi",
     "unassign": "Ukloni dodjelu",
     "notAvailable": "Nije definirano",
@@ -1607,6 +1610,27 @@
         "fuelCurrency": "Valuta",
         "note": "Napomena"
       }
+    }
+  },
+  "vehicleRegistrationEmployees": {
+    "assign": {
+      "due": "Rok: {{date}}",
+      "title": "Dodjela zadatka",
+      "subtitle": "Dodijeli registraciju vozila zaposleniku",
+      "previewTitle": "Zadatak registracije vozila",
+      "previewSubtitle": "Na temelju odabrane stavke",
+      "assignmentTitle": "Dodjela",
+      "employee": "Zaposlenik",
+      "note": "Napomena (neobavezno)",
+      "notePlaceholder": "Dodajte detalje za zaposlenika (što treba napraviti, gdje, rokovi...)",
+      "helper": "Ovim će se kreirati zadatak i dodijeliti odabranom zaposleniku.",
+      "fields": {
+        "vehicle": "Vozilo",
+        "registration": "Registracija"
+      }
+    },
+    "rowActions": {
+      "assign": "Dodijeli zadatak"
     }
   }
 }

@@ -186,6 +186,9 @@
     }
   },
   "common": {
+    "cancel": "Abbrechen",
+    "submit": "Speichern",
+    "saving": "Wird gespeichert...",
     "all": "Alle Status",
     "unassign": "Zuweisung entfernen",
     "notAvailable": "Nicht verfügbar",
@@ -1610,6 +1613,27 @@
         "fuelCurrency": "Währung",
         "note": "Notiz"
       }
+    }
+  },
+  "vehicleRegistrationEmployees": {
+    "assign": {
+      "due": "Fällig bis: {{date}}",
+      "title": "Aufgabe zuweisen",
+      "subtitle": "Fahrzeugregistrierung einem Mitarbeiter zuweisen",
+      "previewTitle": "Fahrzeugregistrierungsaufgabe",
+      "previewSubtitle": "Basierend auf dem ausgewählten Eintrag",
+      "assignmentTitle": "Zuweisung",
+      "employee": "Mitarbeiter",
+      "note": "Notiz (optional)",
+      "notePlaceholder": "Fügen Sie Details für den Mitarbeiter hinzu (was zu tun ist, wo, Fristen...)",
+      "helper": "Dies erstellt eine Aufgabe und weist sie dem ausgewählten Mitarbeiter zu.",
+      "fields": {
+        "vehicle": "Fahrzeug",
+        "registration": "Registrierung"
+      }
+    },
+    "rowActions": {
+      "assign": "Aufgabe zuweisen"
     }
   }
 }
