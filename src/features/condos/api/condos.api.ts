@@ -4,6 +4,7 @@ import type {
   UpdateCondoRequest,
   GetCondosQuery,
   PagedResult,
+  AssignEmployeesToCondoRequest,
 } from "..";
 import { authFetch } from "../../../lib/authFetch";
 import type { ApiEnvelope } from "../../administration/tenants";
@@ -34,6 +35,13 @@ export const CondosApi = {
   getById: async (condoId: number): Promise<Condo> => {
     const res = await authFetch<ApiEnvelope<Condo>>(`${base}/${condoId}`);
     return res.data;
+  },
+
+  assignEmployees: async (payload: AssignEmployeesToCondoRequest) => {
+    return authFetch<ApiEnvelope<number[]>>(`${base}/assign-employees`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
   },
 
   getAll: async (query?: GetCondosQuery): Promise<PagedResult<Condo>> => {

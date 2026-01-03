@@ -48,6 +48,30 @@ export interface ConstructionSiteVehicle {
   description?: string | null;
 }
 
+export interface ConstructionSiteCondo {
+  id: number;
+
+  address?: string | null;
+
+  capacity?: number | null;
+  currentlyOccupied?: number | null;
+
+  leaseStartDate?: string | null;
+  leaseEndDate?: string | null;
+
+  pricePerDay?: number | null;
+  pricePerMonth?: number | null;
+  currency?: string | null;
+
+  notes?: string | null;
+
+  responsibleEmployeeId?: number | null;
+  responsibleEmployeeName?: string | null;
+
+  dateFrom?: string | null;
+  dateTo?: string | null;
+}
+
 export interface ConstructionSite {
   id: number;
   name: string;
@@ -62,6 +86,7 @@ export interface ConstructionSite {
   constructionSiteEmployees: ConstructionSiteEmployee[];
   constructionSiteTools: ConstructionSiteTool[];
   constructionSiteVehicles: ConstructionSiteVehicle[];
+  constructionSiteCondos: ConstructionSiteCondo[];
 }
 
 export interface NewConstructionSiteRequest {
@@ -157,4 +182,16 @@ export interface ConstructionSiteFormValues {
   description?: string | null;
   siteManagerId: number | null;
   status?: number;
+}
+
+export interface AssignCondoItem {
+  condoId: number;
+  dateFrom: string;
+  dateTo: string;
+  responsibleEmployeeId: number;
+}
+
+export interface AssignCondosRequest {
+  constructionSiteId: number;
+  condos: AssignCondoItem[];
 }

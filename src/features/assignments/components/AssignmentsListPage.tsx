@@ -32,7 +32,6 @@ import { useTranslation } from "react-i18next";
 import { AssignmentsBoardView } from "./AssignmentsBoardView";
 
 import { useMemo, useState } from "react";
-import StatCard from "../../construction_site/components/StatCard";
 
 import {
   TimelineView,
@@ -44,6 +43,7 @@ import { ViewSelect } from "../../../components/ui/select/ViewSelect";
 import { dedupeByKey } from "../utils/collections";
 import { getEmployeeInitials, getEmployeeLabel } from "../utils/employee";
 import { formatIsoDate } from "../utils/date";
+import StatCardDetail from "../../../components/ui/StatCardDetail";
 
 type ViewMode = "board" | "timeline";
 
@@ -396,7 +396,7 @@ const AssignmentsListPage = () => {
           {selectedEmployee && (
             <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
               <Box sx={{ ...cardBoxSx }}>
-                <StatCard
+                <StatCardDetail
                   icon={<BadgeIcon />}
                   label={t("assignments.employee.info")}
                   value={getEmployeeLabel(selectedEmployee)}
@@ -409,7 +409,7 @@ const AssignmentsListPage = () => {
               </Box>
 
               <Box sx={{ ...cardBoxSx }}>
-                <StatCard
+                <StatCardDetail
                   icon={<CalendarTodayIcon />}
                   label={t("assignments.employee.dates")}
                   value={
@@ -430,7 +430,7 @@ const AssignmentsListPage = () => {
               </Box>
 
               <Box sx={{ ...cardBoxSx }}>
-                <StatCard
+                <StatCardDetail
                   icon={<AssignmentTurnedInIcon />}
                   label={t("assignments.employee.assignments")}
                   value={`${employeeAssignmentsCount.construction} · ${employeeAssignmentsCount.vehicles} · ${employeeAssignmentsCount.tools}`}

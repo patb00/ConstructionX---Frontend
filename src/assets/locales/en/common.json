@@ -58,9 +58,19 @@
         "modelShort": "Model",
         "inventoryShort": "Inventory no.",
         "serialShort": "Serial no."
-      }
+      },
+      "condos": "Condos",
+      "noCondos": "No condos assigned.",
+      "addFirstCondo": "Add first condo"
     },
     "detailPanel": {
+      "noCondosAssigned": "No condos assigned.",
+      "condoFallback": "Condo",
+      "responsible": "Responsible: {{name}}",
+      "capacity": "Capacity: {{count}}",
+      "occupied": "Occupied: {{occupied}} / {{capacity}}",
+      "perMonthShort": "mo",
+      "perDayShort": "day",
       "loading": "Loading details…",
       "loadError": "Failed to load construction site details.",
       "fallbackName": "Construction site",
@@ -108,11 +118,15 @@
       "loading": "Loading…",
       "loadError": "Failed to load employees.",
       "empty": "No employees available.",
+      "condosTitle": "Assign condos",
+      "noCondos": "No condos available.",
+      "pickCondoHint": "Odaberite stanove s lijeve strane.",
       "left": {
         "employeesCount": "Employees ({{count}})",
         "selectedCount": "Selected: {{count}}",
         "vehiclesCount": "Vehicles: {{count}}",
-        "toolsCount": "Tools: {{count}}"
+        "toolsCount": "Tools: {{count}}",
+        "condosCount": "Condos ({{count}})"
       },
       "global": {
         "startLabel": "Start (global)",
@@ -188,10 +202,17 @@
     "cancel": "Cancel",
     "submit": "Submit",
     "saving": "Saving...",
+    "edit": "Edit",
     "all": "All statuses",
     "unassign": "Unassign",
     "notAvailable": "Not available",
     "loading": "Loading…",
+    "add": "Add",
+    "remove": "Remove",
+    "assign": "Assign",
+    "assignEmployees": "Assign employees",
+    "employees": "Employees",
+    "loadError": "Failed to load data.",
     "fileInput": {
       "choose": "Choose file",
       "noFile": "No file chosen"
@@ -1404,6 +1425,39 @@
         "currency": "Currency",
         "notes": "Notes"
       }
+    },
+    "assignEmployees": {
+      "title": "Assign employees to condo",
+      "empty": "No employees available.",
+      "loadError": "Failed to load employees.",
+      "pickHint": "Select employees from the left.",
+
+      "allCount": "Employees ({{count}})",
+      "selectedCount": "Selected: {{count}}",
+
+      "global": {
+        "startLabel": "Start date (global)",
+        "endLabel": "End date (global)"
+      },
+
+      "chip": {
+        "global": "Global",
+        "custom": "Custom"
+      },
+
+      "tooltip": {
+        "resetToGlobal": "Reset to global range"
+      },
+
+      "validation": {
+        "invalidRange": "Start date must be before or equal to end date."
+      },
+
+      "actions": {
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving..."
+      }
     }
   },
   "notifications": {
@@ -1525,6 +1579,13 @@
       "assignments": "Assignments",
       "emptyAssignments": "No assignments."
     },
+    "condo": {
+      "title": "Condo history",
+      "employees": "Employees",
+      "emptyEmployees": "No employees assigned.",
+      "constructionSites": "Construction sites",
+      "emptyConstructionSites": "No construction sites linked."
+    },
     "vehicle": {
       "title": "Vehicle history",
 
@@ -1552,9 +1613,9 @@
       "loadMore": "Load more",
       "vehicleId": "Vehicle ID",
       "loading": "Loading…",
-
       "loadError": "Failed to load.",
-      "toolId": "Tool ID"
+      "toolId": "Tool ID",
+      "condoId": "Condo ID"
     },
     "meta": {
       "siteId": "Site ID",
@@ -1629,6 +1690,9 @@
       "note": "Note (optional)",
       "notePlaceholder": "Add details for the employee (what needs to be done, where, deadlines...)",
       "helper": "This will create a task and assign it to the selected employee.",
+      "alreadyAssignedTitle": "Task already assigned",
+      "alreadyAssignedHelper": "This vehicle registration is already assigned to an employee. ",
+      "alreadyAssignedSubmit": "Already assigned",
       "fields": {
         "vehicle": "Vehicle",
         "registration": "Registration"

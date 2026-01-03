@@ -59,9 +59,22 @@
         "modelShort": "Modell",
         "inventoryShort": "Inventarnummer",
         "serialShort": "Seriennummer"
-      }
+      },
+
+      "condos": "Unterkünfte",
+
+      "noCondos": "Keine Unterkünfte zugewiesen.",
+
+      "addFirstCondo": "Erste Unterkunft hinzufügen"
     },
     "detailPanel": {
+      "noCondosAssigned": "Keine Unterkünfte zugewiesen.",
+      "condoFallback": "Unterkunft",
+      "responsible": "Verantwortlich: {{name}}",
+      "capacity": "Kapazität: {{count}}",
+      "occupied": "Belegt: {{occupied}} / {{capacity}}",
+      "perMonthShort": "Mon",
+      "perDayShort": "Tag",
       "loading": "Details werden geladen…",
       "loadError": "Baustellendetails konnten nicht geladen werden.",
       "fallbackName": "Baustelle",
@@ -113,7 +126,8 @@
         "employeesCount": "Mitarbeiter ({{count}})",
         "selectedCount": "Ausgewählt: {{count}}",
         "vehiclesCount": "Fahrzeuge: {{count}}",
-        "toolsCount": "Werkzeuge: {{count}}"
+        "toolsCount": "Werkzeuge: {{count}}",
+        "condosCount": "Unterkünfte ({{count}})"
       },
       "global": {
         "startLabel": "Beginn (global)",
@@ -143,7 +157,10 @@
         "cancel": "Abbrechen",
         "save": "Speichern",
         "saving": "Wird gespeichert..."
-      }
+      },
+      "condosTitle": "Unterkünfte zuweisen",
+      "noCondos": "Keine Unterkünfte verfügbar.",
+      "pickCondoHint": "Wählen Sie Unterkünfte auf der linken Seite aus."
     },
     "form": {
       "field": {
@@ -189,10 +206,19 @@
     "cancel": "Abbrechen",
     "submit": "Speichern",
     "saving": "Wird gespeichert...",
+    "edit": "Bearbeiten",
     "all": "Alle Status",
     "unassign": "Zuweisung entfernen",
     "notAvailable": "Nicht verfügbar",
     "loading": "Wird geladen…",
+    "add": "Hinzufügen",
+    "remove": "Entfernen",
+
+    "assign": "Zuweisen",
+    "assignEmployees": "Mitarbeiter zuweisen",
+    "employees": "Mitarbeiter",
+
+    "loadError": "Daten konnten nicht geladen werden.",
     "fileInput": {
       "choose": "Datei auswählen",
       "noFile": "Keine Datei ausgewählt"
@@ -1405,6 +1431,39 @@
         "currency": "Währung",
         "notes": "Notizen"
       }
+    },
+    "assignEmployees": {
+      "title": "Mitarbeiter der Unterkunft zuweisen",
+      "empty": "Keine Mitarbeiter verfügbar.",
+      "loadError": "Mitarbeiter konnten nicht geladen werden.",
+      "pickHint": "Wählen Sie Mitarbeiter auf der linken Seite aus.",
+
+      "allCount": "Mitarbeiter ({{count}})",
+      "selectedCount": "Ausgewählt: {{count}}",
+
+      "global": {
+        "startLabel": "Startdatum (global)",
+        "endLabel": "Enddatum (global)"
+      },
+
+      "chip": {
+        "global": "Global",
+        "custom": "Benutzerdefiniert"
+      },
+
+      "tooltip": {
+        "resetToGlobal": "Auf globalen Zeitraum zurücksetzen"
+      },
+
+      "validation": {
+        "invalidRange": "Das Startdatum muss vor oder gleich dem Enddatum liegen."
+      },
+
+      "actions": {
+        "cancel": "Abbrechen",
+        "save": "Speichern",
+        "saving": "Speichern..."
+      }
     }
   },
   "notifications": {
@@ -1526,6 +1585,13 @@
       "assignments": "Zuweisungen",
       "emptyAssignments": "Keine Zuweisungen."
     },
+    "condo": {
+      "title": "Wohnungs­historie",
+      "employees": "Mitarbeiter",
+      "emptyEmployees": "Keine Mitarbeiter zugewiesen.",
+      "constructionSites": "Baustellen",
+      "emptyConstructionSites": "Keine Baustellen verknüpft."
+    },
     "vehicle": {
       "title": "Fahrzeughistorie",
       "assignments": "Zuweisungen",
@@ -1544,7 +1610,9 @@
       "emptyInsurance": "Keine Versicherungen.",
       "insuranceFallback": "Versicherung"
     },
+
     "common": {
+      "condoId": "Wohnungs-ID",
       "assigned": "Zugewiesen",
       "updated": "Aktualisiert",
       "event": "Ereignis",
@@ -1627,6 +1695,9 @@
       "note": "Notiz (optional)",
       "notePlaceholder": "Fügen Sie Details für den Mitarbeiter hinzu (was zu tun ist, wo, Fristen...)",
       "helper": "Dies erstellt eine Aufgabe und weist sie dem ausgewählten Mitarbeiter zu.",
+      "alreadyAssignedTitle": "Aufgabe bereits zugewiesen",
+      "alreadyAssignedHelper": "Diese Fahrzeugregistrierung ist bereits einem Mitarbeiter zugewiesen. ",
+      "alreadyAssignedSubmit": "Bereits zugewiesen",
       "fields": {
         "vehicle": "Fahrzeug",
         "registration": "Registrierung"

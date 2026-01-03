@@ -35,7 +35,7 @@ export const BoardView: React.FC<BoardViewProps> = ({ columns, sx }) => {
     flexBasis: {
       xs: "100%",
       sm: "100%",
-      md: "calc(33.333% - 16px)",
+      md: "calc(25% - 16px)",
     },
     minWidth: 0,
   };

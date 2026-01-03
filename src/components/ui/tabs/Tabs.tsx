@@ -40,10 +40,7 @@ export function Tabs<T extends string | number>({
         borderColor: "divider",
         borderRadius: 999,
         p: 0.5,
-        backgroundColor: (t) =>
-          t.palette.mode === "dark"
-            ? "rgba(255,255,255,0.04)"
-            : "rgba(0,0,0,0.02)",
+        background: "#F4F6FF",
         overflow: "hidden",
         ...sx,
       }}

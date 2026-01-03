@@ -8,9 +8,9 @@ import { useCondos } from "../hooks/useCondos";
 import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { Condo } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
-import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
+import { CondoHistoryDetails } from "./CondoHistoryDetails";
 
 export default function CondosTable() {
   const { t } = useTranslation();
@@ -97,17 +97,12 @@ export default function CondosTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
-  const renderDetailPanel = useCallback(
-    (params: GridRowParams<Condo>) => (
-      <GridDetailPanel<Condo>
-        row={params.row}
-        columns={condosColumns as GridColDef<Condo>[]}
-      />
-    ),
-    [condosColumns]
-  );
+  const renderDetailPanel = useCallback((params: GridRowParams<Condo>) => {
+    const condoId = Number((params.row as any).id);
+    return <CondoHistoryDetails condoId={condoId} />;
+  }, []);
 
-  const getDetailPanelHeight = useCallback(() => 220, []);
+  const getDetailPanelHeight = useCallback(() => "auto" as const, []);
 
   if (error) return <div>{t("condos.list.error")}</div>;
 
@@ -122,7 +117,7 @@ export default function CondosTable() {
         loading={!!isLoading}
         getDetailPanelContent={renderDetailPanel}
         getDetailPanelHeight={getDetailPanelHeight}
-        detailPanelMode="mobile-only"
+        detailPanelMode="desktop-only"
         paginationMode="server"
         rowCount={total}
         paginationModel={paginationModel}

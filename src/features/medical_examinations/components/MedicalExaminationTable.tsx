@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from "react";
-import { alpha, Box, useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
 import type { GridRowClassNameParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +15,7 @@ import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
+import { dueSoonRowSx } from "../../../components/ui/datagrid/styles/dueSoonRowSx";
 
 type Props = {
   examinationTypeId: number | null;
@@ -177,23 +178,8 @@ export default function MedicalExaminationsTable({
     },
     []
   );
-  const dueSoonRowSx = {
-    "& .MuiDataGrid-row.row--dueSoon": {
-      backgroundColor: `${alpha(theme.palette.error.main, 0.12)} !important`,
-    },
-
-    "& .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell": {
-      backgroundColor: `${alpha(theme.palette.error.main, 0.12)} !important`,
-    },
-
-    "& .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell--pinnedRight": {
-      backgroundColor: `white !important`,
-    },
-  };
 
   if (error) return <div>{t("medicalExaminations.list.error")}</div>;
-
-  console.log("rows", rows);
 
   return (
     <>
@@ -223,7 +209,7 @@ export default function MedicalExaminationsTable({
         pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
         getRowClassName={getRowClassName}
-        sx={dueSoonRowSx}
+        sx={dueSoonRowSx(theme)}
         {...(isAll && !groupByEmployee
           ? {
               paginationMode: "server" as const,

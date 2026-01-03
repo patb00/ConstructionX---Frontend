@@ -54,9 +54,20 @@
         "modelShort": "Model",
         "inventoryShort": "Inventarni broj",
         "serialShort": "Serijski broj"
-      }
+      },
+      "condos": "Stanovi",
+      "addCondo": "Dodaj stan",
+      "addFirstCondo": "Dodaj prvi stan",
+      "noCondos": "Nema dodijeljenih stanova."
     },
     "detailPanel": {
+      "noCondosAssigned": "Nema dodijeljenih stanova.",
+      "condoFallback": "Stan",
+      "responsible": "Odgovorna osoba: {{name}}",
+      "capacity": "Kapacitet: {{count}}",
+      "occupied": "Zauzeto: {{occupied}} / {{capacity}}",
+      "perMonthShort": "mj",
+      "perDayShort": "dan",
       "loading": "Učitavanje detalja…",
       "loadError": "Neuspjelo učitavanje detalja gradilišta.",
       "fallbackName": "Gradilište",
@@ -108,7 +119,12 @@
       "loading": "Učitavanje…",
       "loadError": "Neuspjelo učitavanje zaposlenika.",
       "empty": "Nema dostupnih zaposlenika.",
+
+      "condosTitle": "Dodjela stanova",
+      "noCondos": "Nema dostupnih stanova.",
+      "pickCondoHint": "Odaberite stanove s lijeve strane.",
       "left": {
+        "condosCount": "Stanovi ({{count}})",
         "employeesCount": "Zaposlenici ({{count}})",
         "selectedCount": "Odabrano: {{count}}",
         "vehiclesCount": "Vozila: {{count}}",
@@ -188,10 +204,15 @@
     "cancel": "Odustani",
     "submit": "Spremi",
     "saving": "Spremanje...",
+    "edit": "Uredi",
     "all": "Svi statusi",
     "unassign": "Ukloni dodjelu",
     "notAvailable": "Nije definirano",
     "loading": "Učitavanje…",
+    "assign": "Dodijeli",
+    "assignEmployees": "Dodijeli zaposlenike",
+    "employees": "Zaposlenici",
+    "condo": "Stan",
     "fileInput": {
       "choose": "Odaberi datoteku",
       "noFile": "Nije odabrana nijedna datoteka"
@@ -1402,6 +1423,86 @@
         "currency": "Valuta",
         "notes": "Napomena"
       }
+    },
+    "assign": {
+      "title": "Dodjela zaposlenika stanu",
+      "empty": "Nema dostupnih zaposlenika.",
+      "loadError": "Neuspjelo učitavanje zaposlenika.",
+      "pickHint": "Odaberite zaposlenike s lijeve strane.",
+
+      "left": {
+        "employeesCount": "Zaposlenici ({{count}})",
+        "selectedCount": "Odabrano: {{count}}"
+      },
+
+      "global": {
+        "startLabel": "Početak (globalno)",
+        "endLabel": "Završetak (globalno)"
+      },
+
+      "chip": {
+        "global": "Raspon: Globalno",
+        "custom": "Raspon: Prilagođeno"
+      },
+
+      "grid": {
+        "employee": "Zaposlenik",
+        "start": "Početak",
+        "end": "Završetak",
+        "reset": "Reset"
+      },
+
+      "tooltip": {
+        "resetToGlobal": "Vrati na globalni raspon"
+      },
+
+      "validation": {
+        "invalidRange": "Provjerite datume (Početak ≤ Završetak)."
+      },
+
+      "actions": {
+        "cancel": "Odustani",
+        "save": "Spremi",
+        "saving": "Spremanje..."
+      }
+    },
+    "fields": {
+      "address": "Adresa",
+      "capacity": "Kapacitet",
+      "occupied": "Popunjeno"
+    },
+    "assignEmployees": {
+      "title": "Dodjela zaposlenika stanu",
+      "empty": "Nema dostupnih zaposlenika.",
+      "loadError": "Neuspjelo učitavanje zaposlenika.",
+      "pickHint": "Odaberite zaposlenike s lijeve strane.",
+
+      "allCount": "Zaposlenici ({{count}})",
+      "selectedCount": "Odabrano: {{count}}",
+
+      "global": {
+        "startLabel": "Početak (globalno)",
+        "endLabel": "Završetak (globalno)"
+      },
+
+      "chip": {
+        "global": "Globalno",
+        "custom": "Prilagođeno"
+      },
+
+      "tooltip": {
+        "resetToGlobal": "Vrati na globalni raspon"
+      },
+
+      "validation": {
+        "invalidRange": "Početni datum mora biti prije završnog."
+      },
+
+      "actions": {
+        "cancel": "Odustani",
+        "save": "Spremi",
+        "saving": "Spremanje..."
+      }
     }
   },
   "notifications": {
@@ -1522,6 +1623,13 @@
       "assignments": "Dodjele",
       "emptyAssignments": "Nema dodjela."
     },
+    "condo": {
+      "title": "Povijest stana",
+      "employees": "Zaposlenici",
+      "emptyEmployees": "Nema dodijeljenih zaposlenika.",
+      "constructionSites": "Gradilišta",
+      "emptyConstructionSites": "Nema povezanih gradilišta."
+    },
     "vehicle": {
       "title": "Povijest vozila",
 
@@ -1550,7 +1658,8 @@
       "loading": "Učitavanje…",
       "vehicleId": "ID vozila",
       "loadError": "Neuspjelo učitavanje.",
-      "toolId": "ID alata"
+      "toolId": "ID alata",
+      "condoId": "ID stana"
     },
     "meta": {
       "siteId": "ID gradilišta",
@@ -1624,6 +1733,9 @@
       "note": "Napomena (neobavezno)",
       "notePlaceholder": "Dodajte detalje za zaposlenika (što treba napraviti, gdje, rokovi...)",
       "helper": "Ovim će se kreirati zadatak i dodijeliti odabranom zaposleniku.",
+      "alreadyAssignedTitle": "Zadatak je već dodijeljen",
+      "alreadyAssignedHelper": "Ova registracija vozila već je dodijeljena zaposleniku. ",
+      "alreadyAssignedSubmit": "Već dodijeljeno",
       "fields": {
         "vehicle": "Vozilo",
         "registration": "Registracija"

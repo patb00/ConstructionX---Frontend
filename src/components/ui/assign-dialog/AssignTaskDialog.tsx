@@ -2,7 +2,7 @@ import * as React from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
-
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import {
   alpha,
   Box,
@@ -21,6 +21,9 @@ import {
   TextField,
   Typography,
   useTheme,
+  Skeleton,
+  CircularProgress,
+  Tooltip,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -71,6 +74,13 @@ type Props = {
   submitDisabled?: boolean;
 
   submitVariant?: "primary" | "danger";
+
+  formLoading?: boolean;
+  formDisabled?: boolean;
+
+  showEdit?: boolean;
+  onEdit?: () => void;
+  isEditing?: boolean;
 };
 
 export function AssignTaskDialog({
@@ -104,8 +114,16 @@ export function AssignTaskDialog({
   submitDisabled,
 
   submitVariant = "primary",
+
+  formLoading = false,
+  formDisabled,
+
+  showEdit = false,
+  isEditing = false,
+  onEdit,
 }: Props) {
   const theme = useTheme();
+
   const { t } = useTranslation();
 
   const resolvedTitle = title ?? t("vehicleRegistrationEmployees.assign.title");
@@ -241,22 +259,24 @@ export function AssignTaskDialog({
           </Box>
         </Box>
 
-        <IconButton
-          onClick={handleExplicitClose}
-          disabled={submitting}
-          sx={{
-            width: 32,
-            height: 32,
-            borderRadius: "999px",
-            p: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            "&:hover": { backgroundColor: "#EFF6FF" },
-          }}
-        >
-          <CloseIcon sx={{ fontSize: 16, color: "#111827" }} />
-        </IconButton>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+          <IconButton
+            onClick={handleExplicitClose}
+            disabled={submitting}
+            sx={{
+              width: 32,
+              height: 32,
+              borderRadius: "999px",
+              p: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              "&:hover": { backgroundColor: "#EFF6FF" },
+            }}
+          >
+            <CloseIcon sx={{ fontSize: 16, color: "#111827" }} />
+          </IconButton>
+        </Box>
       </Box>
 
       <DialogContent sx={{ p: 0, mb: 2 }}>
@@ -288,19 +308,50 @@ export function AssignTaskDialog({
                 </Typography>
               </Box>
 
-              {dueLabel && (
-                <Chip
-                  size="small"
-                  icon={<EventOutlinedIcon />}
-                  label={dueLabel}
-                  sx={{
-                    height: 26,
-                    fontSize: 12,
-                    borderRadius: 999,
-                    ...chipStyles,
-                  }}
-                />
-              )}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                {dueLabel && (
+                  <Chip
+                    size="small"
+                    icon={<EventOutlinedIcon />}
+                    label={dueLabel}
+                    sx={{
+                      height: 26,
+                      fontSize: 12,
+                      borderRadius: 999,
+                      ...chipStyles,
+                    }}
+                  />
+                )}
+                {showEdit && (
+                  <Tooltip title={t("common.edit")}>
+                    <span>
+                      <IconButton
+                        size="small"
+                        onClick={onEdit}
+                        disabled={submitting || formLoading || isEditing}
+                        sx={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: 1,
+                          color: "#6B7280",
+                          border: "1px solid #E5E7EB",
+                          backgroundColor: "#ffffff",
+                          "&:hover": {
+                            backgroundColor: "#F9FAFB",
+                            color: theme.palette.primary.main,
+                          },
+                          "&.Mui-disabled": {
+                            color: "#9CA3AF",
+                            borderColor: "#E5E7EB",
+                          },
+                        }}
+                      >
+                        <EditOutlinedIcon sx={{ fontSize: 16 }} />
+                      </IconButton>
+                    </span>
+                  </Tooltip>
+                )}
+              </Box>
             </Box>
 
             {previewFields.length > 0 && (
@@ -342,64 +393,82 @@ export function AssignTaskDialog({
                 {t("vehicleRegistrationEmployees.assign.assignmentTitle")}
               </Typography>
 
-              <FormControl fullWidth size="small">
-                <InputLabel id="assign-task-employee-label">
-                  {resolvedEmployeeLabel}
-                </InputLabel>
-                <Select
-                  labelId="assign-task-employee-label"
-                  value={values.employeeId}
-                  label={resolvedEmployeeLabel}
+              {formLoading ? (
+                <Box>
+                  <Skeleton variant="text" width={120} />
+                  <Skeleton variant="rounded" height={40} />
+                </Box>
+              ) : (
+                <FormControl fullWidth size="small">
+                  <InputLabel id="assign-task-employee-label">
+                    {resolvedEmployeeLabel}
+                  </InputLabel>
+                  <Select
+                    disabled={formDisabled || submitting}
+                    labelId="assign-task-employee-label"
+                    value={values.employeeId}
+                    label={resolvedEmployeeLabel}
+                    onChange={(e) =>
+                      onChange({
+                        ...values,
+                        employeeId: e.target.value as number,
+                      })
+                    }
+                    sx={{
+                      borderRadius: 1,
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#E5E7EB",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#D1D5DB",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: alpha(theme.palette.primary.main, 0.5),
+                      },
+                      backgroundColor: "#fff",
+                    }}
+                  >
+                    {employeeOptions.map((emp) => (
+                      <MenuItem key={emp.value} value={emp.value}>
+                        {emp.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+
+              {formLoading ? (
+                <Box>
+                  <Skeleton variant="text" width={140} />
+                  <Skeleton variant="rounded" height={90} />
+                </Box>
+              ) : (
+                <TextField
+                  disabled={formDisabled || submitting}
+                  size="small"
+                  label={resolvedNoteLabel}
+                  value={values.note}
                   onChange={(e) =>
-                    onChange({
-                      ...values,
-                      employeeId: e.target.value as number,
-                    })
+                    onChange({ ...values, note: e.target.value })
                   }
+                  multiline
+                  minRows={3}
+                  placeholder={resolvedNotePlaceholder}
                   sx={{
-                    borderRadius: 1,
+                    "& .MuiOutlinedInput-root": {
+                      backgroundColor: "#fff",
+                      borderRadius: 1,
+                    },
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderColor: "#E5E7EB",
                     },
                     "&:hover .MuiOutlinedInput-notchedOutline": {
                       borderColor: "#D1D5DB",
                     },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: alpha(theme.palette.primary.main, 0.5),
-                    },
-                    backgroundColor: "#fff",
+                    "& .MuiInputLabel-root": { color: "#6B7280" },
                   }}
-                >
-                  {employeeOptions.map((emp) => (
-                    <MenuItem key={emp.value} value={emp.value}>
-                      {emp.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <TextField
-                size="small"
-                label={resolvedNoteLabel}
-                value={values.note}
-                onChange={(e) => onChange({ ...values, note: e.target.value })}
-                multiline
-                minRows={3}
-                placeholder={resolvedNotePlaceholder}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    backgroundColor: "#fff",
-                    borderRadius: 1,
-                  },
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#E5E7EB",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#D1D5DB",
-                  },
-                  "& .MuiInputLabel-root": { color: "#6B7280" },
-                }}
-              />
+                />
+              )}
 
               {resolvedHelperText && (
                 <Box
@@ -456,7 +525,13 @@ export function AssignTaskDialog({
           size="small"
           sx={submitSx}
         >
-          {submitting ? t("common.saving") : resolvedSubmitText}
+          {submitting ? (
+            t("common.saving")
+          ) : formLoading ? (
+            <CircularProgress size={16} />
+          ) : (
+            resolvedSubmitText
+          )}
         </Button>
       </DialogActions>
     </Dialog>

@@ -1,23 +1,19 @@
 import { Autocomplete, TextField } from "@mui/material";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-
-import { useEmployees } from "../../administration/employees/hooks/useEmployees";
-import { useVehicles } from "../../vehicles/hooks/useVehicles";
-import { useConstructionSite } from "../hooks/useConstructionSite";
-import { useAssignVehiclesToConstructionSite } from "../hooks/useAssignVehiclesToConstructionSite";
-
-import { todayStr } from "../utils/dates";
-import { fullName } from "../utils/name";
 import {
   ReusableAssignDialog,
   type AssignBaseRange,
-} from "../../../components/ui/assign-dialog/AssignDialog";
-import { normalizeText } from "../utils/normalize";
+} from "../../../../components/ui/assign-dialog/AssignDialog";
+import { useConstructionSite } from "../../hooks/useConstructionSite";
+import { useEmployees } from "../../../administration/employees/hooks/useEmployees";
+import { useTools } from "../../../tools/hooks/useTools";
+import { useAssignToolsToConstructionSite } from "../../hooks/useAssignToolsToConstructionSite";
+import { normalizeText } from "../../utils/normalize";
+import { todayStr } from "../../utils/dates";
+import { fullName } from "../../utils/name";
 
-type VehRange = AssignBaseRange & {
-  responsibleEmployeeId?: number | null;
-};
+type ToolRange = AssignBaseRange & { responsibleEmployeeId?: number | null };
 
 type Props = {
   constructionSiteId: number;
@@ -25,13 +21,12 @@ type Props = {
   onClose: () => void;
 };
 
-export default function AssignVehiclesDialog({
+export default function AssignToolsDialog({
   constructionSiteId,
   open,
   onClose,
 }: Props) {
   const { t } = useTranslation();
-
   const { data: site } = useConstructionSite(constructionSiteId);
   const {
     employeeRows = [],
@@ -39,39 +34,38 @@ export default function AssignVehiclesDialog({
     isError: empError,
   } = useEmployees();
   const {
-    vehiclesRows = [],
-    isLoading: vehLoading,
-    isError: vehError,
-  } = useVehicles();
-
-  const assign = useAssignVehiclesToConstructionSite();
+    toolsRows = [],
+    isLoading: toolLoading,
+    isError: toolError,
+  } = useTools();
+  const assign = useAssignToolsToConstructionSite();
 
   const preselected = useMemo(() => {
-    const prior = site?.constructionSiteVehicles ?? [];
+    const prior = site?.constructionSiteTools ?? [];
     const ids: number[] = [];
-    const map: Record<number, VehRange> = {};
+    const map: Record<number, ToolRange> = {};
     if (!prior.length) return { ids, map };
 
     const byName = new Map(
-      (employeeRows as any[]).map((e: any) => [
+      employeeRows.map((e: any) => [
         normalizeText(fullName(e.firstName, e.lastName)),
         Number(e.id),
       ])
     );
 
-    for (const v of prior as any[]) {
-      const vehId = Number(v?.id);
-      if (!Number.isFinite(vehId)) continue;
-      ids.push(vehId);
+    for (const item of prior as any[]) {
+      const toolId = Number(item.id);
+      if (!Number.isFinite(toolId)) continue;
+      ids.push(toolId);
 
-      let respId: number | null | undefined = v.responsibleEmployeeId;
-      if (respId == null && v.responsibleEmployeeName) {
-        respId = byName.get(normalizeText(v.responsibleEmployeeName));
+      let respId: number | null | undefined = item.responsibleEmployeeId;
+      if (respId == null && item.responsibleEmployeeName) {
+        respId = byName.get(normalizeText(item.responsibleEmployeeName));
       }
 
-      map[vehId] = {
-        from: v.dateFrom ?? todayStr(),
-        to: v.dateTo ?? todayStr(),
+      map[toolId] = {
+        from: item.dateFrom ?? todayStr(),
+        to: item.dateTo ?? todayStr(),
         custom: true,
         responsibleEmployeeId: Number.isFinite(Number(respId))
           ? Number(respId)
@@ -83,21 +77,25 @@ export default function AssignVehiclesDialog({
   }, [site, employeeRows]);
 
   return (
-    <ReusableAssignDialog<any, VehRange, any>
+    <ReusableAssignDialog<any, ToolRange, any>
       open={open}
-      title={t("constructionSites.assign.vehiclesTitle")}
+      title={t("constructionSites.assign.toolsTitle")}
       onClose={() => {
         if (assign.isPending) return;
         onClose();
       }}
-      items={vehiclesRows as any[]}
-      getItemId={(v) => Number(v.id)}
-      getItemPrimary={(v) => v.name ?? `ID ${v.id}`}
-      getItemSecondary={(v) =>
-        v.registrationNumber ? `Reg.: ${v.registrationNumber}` : null
-      }
+      items={toolsRows}
+      loading={empLoading || toolLoading}
+      error={empError || toolError}
+      emptyText={t("constructionSites.assign.noTools")}
+      loadErrorText={t("constructionSites.assign.loadError")}
+      busy={assign.isPending}
       preselected={preselected}
-      leftWidthMd="260px"
+      getItemId={(tool) => Number(tool.id)}
+      getItemPrimary={(tool) => tool.name ?? tool.model ?? `#${tool.id}`}
+      getItemSecondary={(tool) =>
+        tool.inventoryNumber ? `Inv. br.: ${tool.inventoryNumber}` : null
+      }
       detailGridMd="minmax(220px,1fr) 180px 180px minmax(220px,1fr) 48px"
       createRange={({ globalFrom, globalTo }) => ({
         from: globalFrom,
@@ -108,7 +106,7 @@ export default function AssignVehiclesDialog({
       renderRowExtra={({ range, setRangePatch }) => (
         <Autocomplete
           size="small"
-          options={(employeeRows as any[]) ?? []}
+          options={employeeRows as any[]}
           getOptionLabel={(e: any) =>
             e ? fullName(e.firstName, e.lastName) : ""
           }
@@ -117,7 +115,7 @@ export default function AssignVehiclesDialog({
           }
           value={
             range.responsibleEmployeeId != null
-              ? ((employeeRows as any[]) ?? []).find(
+              ? (employeeRows as any[]).find(
                   (e) => Number(e.id) === Number(range.responsibleEmployeeId)
                 ) ?? null
               : null
@@ -130,11 +128,6 @@ export default function AssignVehiclesDialog({
           renderInput={(params) => <TextField {...params} />}
         />
       )}
-      loading={empLoading || vehLoading}
-      error={empError || vehError}
-      emptyText={t("constructionSites.assign.noVehicles")}
-      loadErrorText={t("constructionSites.assign.loadError")}
-      busy={assign.isPending}
       labels={{
         startLabel: t("constructionSites.assign.global.startLabel"),
         endLabel: t("constructionSites.assign.global.endLabel"),
@@ -142,7 +135,7 @@ export default function AssignVehiclesDialog({
         save: t("constructionSites.assign.actions.save"),
         saving: t("constructionSites.assign.actions.saving"),
         invalidRange: t("constructionSites.assign.validation.invalidRange"),
-        pickHint: t("constructionSites.assign.pickVehicleHint"),
+        pickHint: t("constructionSites.assign.pickToolHint"),
         itemsCountLabel: (count: number) =>
           t("constructionSites.assign.left.vehiclesCount", { count }),
         selectedCountLabel: (count: number) =>
@@ -155,21 +148,17 @@ export default function AssignVehiclesDialog({
       }}
       buildPayload={({ selected, ranges, globalFrom, globalTo }) => ({
         constructionSiteId,
-        vehicles:
+        tools:
           selected.length === 0
             ? []
-            : selected.map((vehicleId) => {
-                const r =
-                  ranges[vehicleId] ??
-                  ({
-                    from: globalFrom,
-                    to: globalTo,
-                    responsibleEmployeeId: null,
-                    custom: false,
-                  } as VehRange);
-
+            : selected.map((toolId) => {
+                const r = ranges[toolId] ?? {
+                  from: globalFrom,
+                  to: globalTo,
+                  responsibleEmployeeId: null,
+                };
                 return {
-                  vehicleId,
+                  toolId,
                   dateFrom: r.from,
                   dateTo: r.to,
                   responsibleEmployeeId: r.responsibleEmployeeId ?? 0,

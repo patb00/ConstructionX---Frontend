@@ -3,7 +3,6 @@ import {
   Button,
   Stack,
   Typography,
-  Card,
   Chip,
   IconButton,
   Tooltip,
@@ -16,34 +15,39 @@ import AddIcon from "@mui/icons-material/Add";
 import GroupIcon from "@mui/icons-material/Group";
 import HandymanIcon from "@mui/icons-material/Handyman";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-
+import ApartmentIcon from "@mui/icons-material/Apartment";
+import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-
-import { FaTools, FaCarSide, FaMinusCircle, FaUser } from "react-icons/fa";
-
-import StatCard from "./StatCard";
+import { FaTools, FaCarSide, FaUser } from "react-icons/fa";
 import { formatDate, formatDateRange } from "../utils/dates";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useConstructionSite } from "../hooks/useConstructionSite";
 import { useState, useMemo, useCallback } from "react";
-
-import AssignEmployeesDialog from "./AssignEmployeesDialog";
-import AssignToolsDialog from "./AssignToolsDialog";
-import AssignVehiclesDialog from "./AssignVehiclesDialog";
 import {
   BoardView,
   type BoardColumnConfig,
 } from "../../../components/ui/views/BoardView";
-
 import { useAssignEmployeesToConstructionSite } from "../hooks/useAssignEmployeesToConstructionSite";
 import { useAssignToolsToConstructionSite } from "../hooks/useAssignToolsToConstructionSite";
 import { useAssignVehiclesToConstructionSite } from "../hooks/useAssignVehiclesToConstructionSite";
-
+import { useAssignCondosToConstructionSite } from "../hooks/useAssignCondosToConstructionSite";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { fullName } from "../utils/name";
 import { normalizeText } from "../utils/normalize";
 import { useConstructionSiteStatusOptions } from "../../constants/enum/useConstructionSiteStatusOptions";
+import AssignCondosDialog from "./dialogs/AssignCondosDialog";
+import AssignEmployeesToCondoDialog from "./dialogs/AssignEmployeesToCondoDialog";
+import AssignVehiclesDialog from "./dialogs/AssignVehiclesDialog";
+import AssignToolsDialog from "./dialogs/AssignToolsDialog";
+import AssignEmployeesDialog from "./dialogs/AssignEmployeesDialog";
+import { buildUnassign } from "../utils/unassign";
+import { EmptyColumn } from "../../../components/ui/EmptyColumn";
+import { RemoveActionButton } from "../../../components/ui/RemoveActionButton";
+import { BoardItemCard } from "../../../components/ui/BoardItemCard";
+import StatCardDetail from "../../../components/ui/StatCardDetail";
+import { AddBadgeIcon } from "../../../components/ui/icons/AddBadgeIcon";
+import { RemoveBadgeIcon } from "../../../components/ui/icons/RemoveBadgeIcon";
 
 type Employee = {
   id: number;
@@ -82,28 +86,32 @@ type Vehicle = {
   responsibleEmployeeId?: number | null;
 };
 
-type RemoveBadgeIconProps = {
-  icon: React.ReactNode;
+type Condo = {
+  id: number;
+  name?: string | null;
+  code?: string | null;
+  status?: string | null;
+  condition?: string | null;
+  dateFrom?: string | null;
+  dateTo?: string | null;
+  responsibleEmployeeName?: string | null;
+  responsibleEmployeeId?: number | null;
 };
 
-function RemoveBadgeIcon({ icon }: RemoveBadgeIconProps) {
-  return (
-    <Box sx={{ position: "relative", width: 16, height: 16 }}>
-      {icon}
-      <FaMinusCircle
-        size={10}
-        color="#d32f2f"
-        style={{
-          position: "absolute",
-          bottom: -4,
-          right: -4,
-          background: "white",
-          borderRadius: "50%",
-        }}
-      />
-    </Box>
-  );
-}
+const addHeaderAction = (onClick: () => void) => (
+  <IconButton
+    size="small"
+    onClick={onClick}
+    disableRipple
+    sx={{
+      p: 0.25,
+      color: "primary.main",
+      "&:hover": { backgroundColor: "transparent", opacity: 0.8 },
+    }}
+  >
+    <AddIcon fontSize="small" />
+  </IconButton>
+);
 
 export default function ConstructionSiteDetailsPage() {
   const { t } = useTranslation();
@@ -120,17 +128,18 @@ export default function ConstructionSiteDetailsPage() {
   const [openEmp, setOpenEmp] = useState(false);
   const [openTools, setOpenTools] = useState(false);
   const [openVeh, setOpenVeh] = useState(false);
-
+  const [openCondos, setOpenCondos] = useState(false);
+  const [assignEmpCondoId, setAssignEmpCondoId] = useState<number | null>(null);
+  const openAssignEmployees = assignEmpCondoId != null;
   const assignEmp = useAssignEmployeesToConstructionSite();
   const assignTools = useAssignToolsToConstructionSite();
   const assignVeh = useAssignVehiclesToConstructionSite();
-
+  const assignCondos = useAssignCondosToConstructionSite();
   const statusOptions = useConstructionSiteStatusOptions();
-
   const employees = (data?.constructionSiteEmployees ?? []) as Employee[];
   const tools = (data?.constructionSiteTools ?? []) as Tool[];
   const vehicles = (data?.constructionSiteVehicles ?? []) as Vehicle[];
-
+  const condos = (data?.constructionSiteCondos ?? []) as Condo[];
   const statusLabel = useMemo(() => {
     if (data?.status == null) return "—";
     return statusOptions.find((opt) => opt.value === data.status)?.label ?? "—";
@@ -172,150 +181,84 @@ export default function ConstructionSiteDetailsPage() {
     [employeeIdByName]
   );
 
-  const unassignEmployee = useCallback(
-    (employeeIdToRemove: number) => {
-      const remaining = employees
-        .filter((e) => e.id !== employeeIdToRemove)
-        .map((e) => ({
+  const unassignEmployee = useMemo(
+    () =>
+      buildUnassign({
+        siteId,
+        items: employees,
+        mutate: assignEmp.mutate,
+        payloadKey: "employees",
+        mapItem: (e: Employee) => ({
           employeeId: e.id,
           dateFrom: e.dateFrom ?? null,
           dateTo: e.dateTo ?? null,
-        }));
-
-      assignEmp.mutate({
-        constructionSiteId: siteId,
-        employees: remaining,
-      } as any);
-    },
-    [assignEmp, employees, siteId]
+        }),
+      }),
+    [siteId, employees, assignEmp.mutate]
   );
 
-  const unassignTool = useCallback(
-    (toolIdToRemove: number) => {
-      const remaining = tools
-        .filter((x) => x.id !== toolIdToRemove)
-        .map((x) => {
-          const respId = resolveResponsibleEmployeeId(x);
-          return {
-            toolId: x.id,
-            dateFrom: x.dateFrom ?? null,
-            dateTo: x.dateTo ?? null,
-            responsibleEmployeeId: respId,
-          };
-        });
-
-      assignTools.mutate({
-        constructionSiteId: siteId,
-        tools: remaining,
-      } as any);
-    },
-    [assignTools, tools, siteId, resolveResponsibleEmployeeId]
+  const mapWithResponsible = useCallback(
+    (x: {
+      id: number;
+      dateFrom?: string | null;
+      dateTo?: string | null;
+      responsibleEmployeeId?: number | null;
+      responsibleEmployeeName?: string | null;
+    }) => ({
+      dateFrom: x.dateFrom ?? null,
+      dateTo: x.dateTo ?? null,
+      responsibleEmployeeId: resolveResponsibleEmployeeId(x),
+    }),
+    [resolveResponsibleEmployeeId]
   );
 
-  const unassignVehicle = useCallback(
-    (vehicleIdToRemove: number) => {
-      const remaining = vehicles
-        .filter((x) => x.id !== vehicleIdToRemove)
-        .map((x) => {
-          const respId = resolveResponsibleEmployeeId(x);
-          return {
-            vehicleId: x.id,
-            dateFrom: x.dateFrom ?? null,
-            dateTo: x.dateTo ?? null,
-            responsibleEmployeeId: respId,
-          };
-        });
+  const unassignTool = useMemo(
+    () =>
+      buildUnassign({
+        siteId,
+        items: tools,
+        mutate: assignTools.mutate,
+        payloadKey: "tools",
+        mapItem: (t: Tool) => ({
+          toolId: t.id,
+          ...mapWithResponsible(t),
+        }),
+      }),
+    [siteId, tools, assignTools.mutate, mapWithResponsible]
+  );
 
-      assignVeh.mutate({
-        constructionSiteId: siteId,
-        vehicles: remaining,
-      } as any);
-    },
-    [assignVeh, vehicles, siteId, resolveResponsibleEmployeeId]
+  const unassignVehicle = useMemo(
+    () =>
+      buildUnassign({
+        siteId,
+        items: vehicles,
+        mutate: assignVeh.mutate,
+        payloadKey: "vehicles",
+        mapItem: (x: Vehicle) => ({
+          vehicleId: x.id,
+          ...mapWithResponsible(x),
+        }),
+      }),
+    [siteId, vehicles, assignVeh.mutate, mapWithResponsible]
+  );
+
+  const unassignCondo = useMemo(
+    () =>
+      buildUnassign({
+        siteId,
+        items: condos,
+        mutate: assignCondos.mutate,
+        payloadKey: "condos",
+        mapItem: (x: Condo) => ({ condoId: x.id, ...mapWithResponsible(x) }),
+      }),
+    [siteId, condos, assignCondos.mutate, mapWithResponsible]
   );
 
   const columns: BoardColumnConfig[] = useMemo(() => {
     const employeeCount = employees.length;
     const toolCount = tools.length;
     const vehicleCount = vehicles.length;
-
-    const employeeEmpty = (
-      <Stack spacing={1.5} sx={{ p: 2, pl: 0 }}>
-        <Typography variant="body2" color="text.secondary">
-          {t("constructionSites.detail.noEmployees")}
-        </Typography>
-
-        <Box
-          onClick={() => setOpenEmp(true)}
-          sx={{
-            p: 1.5,
-            border: "1px dashed",
-            borderColor: "primary.main",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-          }}
-        >
-          <AddIcon fontSize="small" color="primary" />
-          <Typography variant="body2">
-            {t("constructionSites.detail.addFirstEmployee")}
-          </Typography>
-        </Box>
-      </Stack>
-    );
-
-    const toolsEmpty = (
-      <Stack spacing={1.5} sx={{ p: 2, pl: 0 }}>
-        <Typography variant="body2" color="text.secondary">
-          {t("constructionSites.detail.noTools")}
-        </Typography>
-
-        <Box
-          onClick={() => setOpenTools(true)}
-          sx={{
-            p: 1.5,
-            border: "1px dashed",
-            borderColor: "primary.main",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-          }}
-        >
-          <AddIcon fontSize="small" color="primary" />
-          <Typography variant="body2">
-            {t("constructionSites.detail.addFirstTool")}
-          </Typography>
-        </Box>
-      </Stack>
-    );
-
-    const vehiclesEmpty = (
-      <Stack spacing={1.5} sx={{ p: 2, pl: 0 }}>
-        <Typography variant="body2" color="text.secondary">
-          {t("constructionSites.detail.noVehicles")}
-        </Typography>
-
-        <Box
-          onClick={() => setOpenVeh(true)}
-          sx={{
-            p: 1.5,
-            border: "1px dashed",
-            borderColor: "primary.main",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-          }}
-        >
-          <AddIcon fontSize="small" color="primary" />
-          <Typography variant="body2">
-            {t("constructionSites.detail.addFirstVehicle")}
-          </Typography>
-        </Box>
-      </Stack>
-    );
+    const condoCount = condos.length;
 
     const employeeColumn: BoardColumnConfig<Employee> = {
       id: "employees",
@@ -323,42 +266,33 @@ export default function ConstructionSiteDetailsPage() {
       title: t("constructionSites.detail.employees"),
       rows: employees,
       count: employeeCount,
-      headerAction: (
-        <IconButton
-          size="small"
-          onClick={() => setOpenEmp(true)}
-          disableRipple
-          sx={{
-            p: 0.25,
-            color: "primary.main",
-            "&:hover": { backgroundColor: "transparent", opacity: 0.8 },
-          }}
-        >
-          <AddIcon fontSize="small" />
-        </IconButton>
+      headerAction: addHeaderAction(() => setOpenEmp(true)),
+      emptyContent: (
+        <EmptyColumn
+          text={t("constructionSites.detail.noEmployees")}
+          cta={t("constructionSites.detail.addFirstEmployee")}
+          onAdd={() => setOpenEmp(true)}
+        />
       ),
-      emptyContent: employeeEmpty,
       renderRow: (e) => {
         const fullNameTxt = `${e.firstName} ${e.lastName}`.trim();
         const position = e.jobPositionName || t("common.notAvailable");
         const dateRange = formatDateRange(e.dateFrom, e.dateTo);
 
         return (
-          <Card key={e.id} sx={{ p: 1.5, position: "relative" }}>
-            <Tooltip title={t("common.unassign")}>
-              <IconButton
-                size="small"
-                onClick={(evt) => {
-                  evt.stopPropagation();
-                  unassignEmployee(e.id);
-                }}
+          <BoardItemCard
+            key={e.id}
+            actions={
+              <RemoveActionButton
+                title={t("common.unassign")}
+                icon={<RemoveBadgeIcon icon={<FaUser size={14} />} />}
+                onClick={() => unassignEmployee(e.id)}
                 disabled={assignEmp.isPending}
                 sx={removeBtnSx}
-              >
-                <RemoveBadgeIcon icon={<FaUser size={14} />} />
-              </IconButton>
-            </Tooltip>
-
+              />
+            }
+            dateRangeText={dateRange}
+          >
             <Typography
               variant="body2"
               fontWeight={600}
@@ -376,17 +310,7 @@ export default function ConstructionSiteDetailsPage() {
             >
               {position}
             </Typography>
-
-            {dateRange && (
-              <Typography
-                variant="caption"
-                color="primary.main"
-                sx={{ display: "block", mt: 0.25 }}
-              >
-                {dateRange}
-              </Typography>
-            )}
-          </Card>
+          </BoardItemCard>
         );
       },
     };
@@ -397,21 +321,14 @@ export default function ConstructionSiteDetailsPage() {
       title: t("constructionSites.detail.tools"),
       rows: tools,
       count: toolCount,
-      headerAction: (
-        <IconButton
-          size="small"
-          onClick={() => setOpenTools(true)}
-          disableRipple
-          sx={{
-            p: 0.25,
-            color: "primary.main",
-            "&:hover": { backgroundColor: "transparent", opacity: 0.8 },
-          }}
-        >
-          <AddIcon fontSize="small" />
-        </IconButton>
+      headerAction: addHeaderAction(() => setOpenTools(true)),
+      emptyContent: (
+        <EmptyColumn
+          text={t("constructionSites.detail.noTools")}
+          cta={t("constructionSites.detail.addFirstTool")}
+          onAdd={() => setOpenTools(true)}
+        />
       ),
-      emptyContent: toolsEmpty,
       renderRow: (tool) => {
         const title =
           tool.name ||
@@ -439,21 +356,19 @@ export default function ConstructionSiteDetailsPage() {
         const dateRange = formatDateRange(tool.dateFrom, tool.dateTo);
 
         return (
-          <Card key={tool.id} sx={{ p: 1.5, position: "relative" }}>
-            <Tooltip title={t("common.unassign")}>
-              <IconButton
-                size="small"
-                onClick={(evt) => {
-                  evt.stopPropagation();
-                  unassignTool(tool.id);
-                }}
+          <BoardItemCard
+            key={tool.id}
+            actions={
+              <RemoveActionButton
+                title={t("common.unassign")}
+                icon={<RemoveBadgeIcon icon={<FaTools size={14} />} />}
+                onClick={() => unassignTool(tool.id)}
                 disabled={assignTools.isPending}
                 sx={removeBtnSx}
-              >
-                <RemoveBadgeIcon icon={<FaTools size={14} />} />
-              </IconButton>
-            </Tooltip>
-
+              />
+            }
+            dateRangeText={dateRange}
+          >
             <Box
               sx={{
                 display: "flex",
@@ -491,17 +406,7 @@ export default function ConstructionSiteDetailsPage() {
             >
               {meta}
             </Typography>
-
-            {dateRange && (
-              <Typography
-                variant="caption"
-                color="primary.main"
-                sx={{ display: "block", mt: 0.25 }}
-              >
-                {dateRange}
-              </Typography>
-            )}
-          </Card>
+          </BoardItemCard>
         );
       },
     };
@@ -512,21 +417,14 @@ export default function ConstructionSiteDetailsPage() {
       title: t("constructionSites.detail.vehicles"),
       rows: vehicles,
       count: vehicleCount,
-      headerAction: (
-        <IconButton
-          size="small"
-          onClick={() => setOpenVeh(true)}
-          disableRipple
-          sx={{
-            p: 0.25,
-            color: "primary.main",
-            "&:hover": { backgroundColor: "transparent", opacity: 0.8 },
-          }}
-        >
-          <AddIcon fontSize="small" />
-        </IconButton>
+      headerAction: addHeaderAction(() => setOpenVeh(true)),
+      emptyContent: (
+        <EmptyColumn
+          text={t("constructionSites.detail.noVehicles")}
+          cta={t("constructionSites.detail.addFirstVehicle")}
+          onAdd={() => setOpenVeh(true)}
+        />
       ),
-      emptyContent: vehiclesEmpty,
       renderRow: (v) => {
         const title =
           v.name ||
@@ -552,21 +450,19 @@ export default function ConstructionSiteDetailsPage() {
         const dateRange = formatDateRange(v.dateFrom, v.dateTo);
 
         return (
-          <Card key={v.id} sx={{ p: 1.5, position: "relative" }}>
-            <Tooltip title={t("common.unassign")}>
-              <IconButton
-                size="small"
-                onClick={(evt) => {
-                  evt.stopPropagation();
-                  unassignVehicle(v.id);
-                }}
+          <BoardItemCard
+            key={v.id}
+            actions={
+              <RemoveActionButton
+                title={t("common.unassign")}
+                icon={<RemoveBadgeIcon icon={<FaCarSide size={14} />} />}
+                onClick={() => unassignVehicle(v.id)}
                 disabled={assignVeh.isPending}
                 sx={removeBtnSx}
-              >
-                <RemoveBadgeIcon icon={<FaCarSide size={14} />} />
-              </IconButton>
-            </Tooltip>
-
+              />
+            }
+            dateRangeText={dateRange}
+          >
             <Box
               sx={{
                 display: "flex",
@@ -611,37 +507,134 @@ export default function ConstructionSiteDetailsPage() {
             >
               {meta}
             </Typography>
-
-            {dateRange && (
-              <Typography
-                variant="caption"
-                color="primary.main"
-                sx={{ display: "block", mt: 0.25 }}
-              >
-                {dateRange}
-              </Typography>
-            )}
-          </Card>
+          </BoardItemCard>
         );
       },
     };
 
-    return [employeeColumn, vehiclesColumn, toolsColumn];
+    const condosColumn: BoardColumnConfig<Condo> = {
+      id: "condos",
+      icon: <ApartmentIcon color="primary" fontSize="small" />,
+      title: t("constructionSites.detail.condos"),
+      rows: condos,
+      count: condoCount,
+      headerAction: addHeaderAction(() => setOpenCondos(true)),
+      emptyContent: (
+        <EmptyColumn
+          text={t("constructionSites.detail.noCondos")}
+          cta={t("constructionSites.detail.addFirstCondo")}
+          onAdd={() => setOpenCondos(true)}
+        />
+      ),
+      renderRow: (c) => {
+        const dateRange = formatDateRange(c.dateFrom, c.dateTo);
+
+        return (
+          <BoardItemCard
+            key={c.id}
+            actions={
+              <Stack
+                direction="row"
+                spacing={0.5}
+                sx={{
+                  position: "absolute",
+                  bottom: 6,
+                  right: 6,
+                  alignItems: "center",
+                }}
+              >
+                <Tooltip title={t("condos.assignEmployees.title")}>
+                  <IconButton
+                    size="small"
+                    onClick={(evt) => {
+                      evt.stopPropagation();
+                      setAssignEmpCondoId(c.id);
+                    }}
+                    sx={{
+                      p: 0.25,
+                      "&:hover": {
+                        backgroundColor: "transparent",
+                        opacity: 0.85,
+                      },
+                    }}
+                  >
+                    <AddBadgeIcon icon={<FaUser size={14} />} />
+                  </IconButton>
+                </Tooltip>
+
+                <RemoveActionButton
+                  title={t("common.unassign")}
+                  icon={
+                    <RemoveBadgeIcon icon={<HomeWorkIcon fontSize="small" />} />
+                  }
+                  onClick={() => unassignCondo(c.id)}
+                  disabled={assignCondos.isPending}
+                  sx={{ p: 0.25 }}
+                />
+              </Stack>
+            }
+            dateRangeText={dateRange}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                mb: 0.5,
+                gap: 1,
+              }}
+            >
+              <Box sx={{ minWidth: 0, pr: 4 }}>
+                <Typography
+                  variant="body2"
+                  fontWeight={600}
+                  noWrap
+                  sx={{ mb: 0.25 }}
+                >
+                  {c.name || c.code || `#${c.id}` || "—"}
+                </Typography>
+
+                {c.responsibleEmployeeName && (
+                  <Typography variant="caption" color="text.secondary" noWrap>
+                    {c.responsibleEmployeeName}
+                  </Typography>
+                )}
+              </Box>
+
+              {(c.condition || c.status) && (
+                <Stack direction="row" spacing={0.5}>
+                  {c.status && (
+                    <Chip size="small" variant="outlined" label={c.status} />
+                  )}
+                  {c.condition && <Chip size="small" label={c.condition} />}
+                </Stack>
+              )}
+            </Box>
+          </BoardItemCard>
+        );
+      },
+    };
+
+    return [employeeColumn, vehiclesColumn, toolsColumn, condosColumn];
   }, [
     employees,
     tools,
     vehicles,
+    condos,
     t,
     assignEmp.isPending,
     assignTools.isPending,
     assignVeh.isPending,
+    assignCondos.isPending,
     unassignEmployee,
     unassignTool,
     unassignVehicle,
+    unassignCondo,
     removeBtnSx,
     setOpenEmp,
     setOpenTools,
     setOpenVeh,
+    setOpenCondos,
   ]);
 
   return (
@@ -662,7 +655,7 @@ export default function ConstructionSiteDetailsPage() {
       </Box>
 
       <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-        <StatCard
+        <StatCardDetail
           icon={<CalendarTodayIcon />}
           label={t("constructionSites.fields.period")}
           value={`${formatDate(data?.startDate)} — ${formatDate(
@@ -672,13 +665,13 @@ export default function ConstructionSiteDetailsPage() {
             data?.createdDate
           )}`}
         />
-        <StatCard
+        <StatCardDetail
           icon={<BadgeIcon />}
           label={t("constructionSites.fields.manager")}
           value={data?.siteManagerName || "—"}
           caption={`${t("constructionSites.fields.id")}: ${data?.id ?? "—"}`}
         />
-        <StatCard
+        <StatCardDetail
           icon={<PlaceIcon />}
           label={t("constructionSites.fields.location")}
           value={data?.location || "—"}
@@ -686,7 +679,7 @@ export default function ConstructionSiteDetailsPage() {
             data?.name || "—"
           }`}
         />
-        <StatCard
+        <StatCardDetail
           icon={<InfoOutlinedIcon />}
           label={t("constructionSites.fields.status")}
           value={statusLabel}
@@ -710,6 +703,16 @@ export default function ConstructionSiteDetailsPage() {
         constructionSiteId={siteId}
         open={openVeh}
         onClose={() => setOpenVeh(false)}
+      />
+      <AssignCondosDialog
+        constructionSiteId={siteId}
+        open={openCondos}
+        onClose={() => setOpenCondos(false)}
+      />
+      <AssignEmployeesToCondoDialog
+        condoId={assignEmpCondoId ?? 0}
+        open={openAssignEmployees}
+        onClose={() => setAssignEmpCondoId(null)}
       />
     </Stack>
   );

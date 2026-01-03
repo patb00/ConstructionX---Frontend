@@ -1,7 +1,7 @@
 import { Box, Card, Stack, Typography } from "@mui/material";
 import * as React from "react";
 
-export default function StatCard({
+export default function StatCardDetail({
   icon,
   label,
   value,

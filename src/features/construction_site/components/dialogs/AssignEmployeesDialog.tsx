@@ -1,16 +1,15 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-
-import { useEmployees } from "../../administration/employees/hooks/useEmployees";
-import { useAssignEmployeesToConstructionSite } from "../hooks/useAssignEmployeesToConstructionSite";
-import { useConstructionSite } from "../hooks/useConstructionSite";
-import { todayStr } from "../utils/dates";
-import { fullName } from "../utils/name";
-import { getCommonRange } from "../utils/ranges";
 import {
   ReusableAssignDialog,
   type AssignBaseRange,
-} from "../../../components/ui/assign-dialog/AssignDialog";
+} from "../../../../components/ui/assign-dialog/AssignDialog";
+import { useConstructionSite } from "../../hooks/useConstructionSite";
+import { useEmployees } from "../../../administration/employees/hooks/useEmployees";
+import { useAssignEmployeesToConstructionSite } from "../../hooks/useAssignEmployeesToConstructionSite";
+import { fullName } from "../../utils/name";
+import { todayStr } from "../../utils/dates";
+import { getCommonRange } from "../../utils/ranges";
 
 type EmpRange = AssignBaseRange;
 
@@ -30,7 +29,6 @@ export default function AssignEmployeesDialog({
   const { data: site } = useConstructionSite(constructionSiteId);
   const assign = useAssignEmployeesToConstructionSite();
 
-  // ---------- preselected mapping (same logic as your original) ----------
   const preselected = useMemo(() => {
     type Prior = {
       firstName?: string;
@@ -75,7 +73,6 @@ export default function AssignEmployeesDialog({
     return { ids, map };
   }, [site, employeeRows]);
 
-  // Employees dialog had special: set global range based on common range
   const initialGlobalRange = useMemo(() => {
     const common = getCommonRange(preselected.ids, preselected.map);
     return common ? { from: common.from, to: common.to } : null;

@@ -38,13 +38,11 @@ export function ToolHistoryDetails({ toolId }: { toolId: number }) {
     error,
   } = useToolHistory(toolId);
 
-  // history "load more" accumulator (same as VehicleHistoryDetails)
   const [accumulated, setAccumulated] = useState<ToolHistoryItem[]>([]);
 
   useEffect(() => {
     setAccumulated([]);
     setPaginationModel((p) => ({ ...p, page: 0 }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toolId]);
 
   useEffect(() => {
@@ -90,7 +88,6 @@ export function ToolHistoryDetails({ toolId }: { toolId: number }) {
         />
       }
     >
-      {/* 1) History (Assignments / changes) */}
       <HistoryAccordionSection
         defaultExpanded
         icon={<AssignmentIcon sx={{ fontSize: 18 }} />}
@@ -186,8 +183,6 @@ export function ToolHistoryDetails({ toolId }: { toolId: number }) {
             </Button>
           </Box>
 
-          {/* (Optional) you already handle empty in HistoryAccordionSection,
-              keeping here for parity — no extra UI needed */}
           {isEmpty ? null : null}
         </Stack>
       </HistoryAccordionSection>
