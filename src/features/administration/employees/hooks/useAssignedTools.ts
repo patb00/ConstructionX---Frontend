@@ -1,4 +1,3 @@
-// useAssignedTools.ts
 import { useQuery } from "@tanstack/react-query";
 import { employeesKeys } from "../api/employees.keys";
 import { EmployeesApi } from "../api/employees.api";

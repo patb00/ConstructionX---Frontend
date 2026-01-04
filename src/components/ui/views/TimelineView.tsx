@@ -12,6 +12,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useTranslation } from "react-i18next";
 import { Fragment, useEffect, useMemo, useState } from "react";
 
+import {
+  addDays,
+  makeHeaderFormatter,
+  makeTooltipFormatter,
+  safeFormatISO,
+} from "../../../utils/dateFormatters";
+import { getIntlLocale } from "../../../utils/u18nLocale";
+
 export type Lane = {
   id: string;
   title: string;
@@ -22,12 +30,18 @@ export type TimelineItem = {
   id: string;
   laneId: string;
   title: string;
+  subtitle?: string;
   startDate: string;
   endDate: string;
   color: string;
 
   assigneeName?: string;
   assigneeInitials?: string;
+
+  meta?: {
+    type?: string;
+    laneLabel?: string;
+  };
 };
 
 type TimelineBoardProps = {
@@ -37,15 +51,50 @@ type TimelineBoardProps = {
   endDate: string;
 };
 
-function daysBetween(start: Date, end: Date) {
-  const ms = end.getTime() - start.getTime();
-  return Math.max(1, Math.round(ms / (1000 * 60 * 60 * 24)));
-}
-
 function normalizeDate(dateStr: string) {
   const d = new Date(dateStr);
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
+
+function daysDiffInclusive(start: Date, end: Date) {
+  const ms = end.getTime() - start.getTime();
+  return Math.max(1, Math.round(ms / (1000 * 60 * 60 * 24)) + 1);
+}
+
+function clampDate(d: Date, min: Date, max: Date) {
+  if (d < min) return min;
+  if (d > max) return max;
+  return d;
+}
+
+function overlapsRange(
+  itemStart: Date,
+  itemEnd: Date,
+  rangeStart: Date,
+  rangeEnd: Date
+) {
+  return itemStart <= rangeEnd && itemEnd >= rangeStart;
+}
+
+function dayIndex(from: Date, to: Date) {
+  return Math.round((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+type Segment = {
+  segmentId: string;
+  baseId: string;
+  laneId: string;
+  title: string;
+  subtitle?: string;
+  dayIdx: number;
+  color: string;
+  meta?: TimelineItem["meta"];
+  originalStart: string;
+  originalEnd: string;
+  rowIndex: number;
+  isFirst: boolean;
+  isLast: boolean;
+};
 
 export const TimelineView: React.FC<TimelineBoardProps> = ({
   lanes,
@@ -55,20 +104,30 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
 }) => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
-  const DAYS_PER_BLOCK = 5;
+  const locale = useMemo(
+    () => getIntlLocale(i18n),
+    [i18n.language, i18n.resolvedLanguage]
+  );
+
+  const headerFmt = useMemo(() => makeHeaderFormatter(locale), [locale]);
+  const tooltipFmt = useMemo(() => makeTooltipFormatter(locale), [locale]);
 
   const start = normalizeDate(startDate);
   const end = normalizeDate(endDate);
-  const totalDays = daysBetween(start, end);
-  const totalBlocks = Math.ceil(totalDays / DAYS_PER_BLOCK);
 
-  const labelColWidth = 140;
-  const dayMinWidth = 10;
-  const rowHeight = isSmall ? 44 : 40;
-  const barHeight = rowHeight - 12;
-  const baseTopOffset = 6;
+  const totalDays = useMemo(() => daysDiffInclusive(start, end), [start, end]);
+  const totalCols = totalDays;
+
+  const labelColWidth = 220;
+  const dayMinWidth = 44;
+
+  const barHeight = isSmall ? 64 : 56;
+  const rowGap = 6;
+  const rowHeight = barHeight + rowGap;
+
+  const baseTopOffset = 4;
 
   const [expandedLanes, setExpandedLanes] = useState<Record<string, boolean>>(
     {}
@@ -78,243 +137,126 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
     setExpandedLanes((prev) => {
       const next = { ...prev };
       lanes.forEach((lane) => {
-        if (next[lane.id] === undefined) {
-          next[lane.id] = true;
-        }
+        if (next[lane.id] === undefined) next[lane.id] = true;
       });
       return next;
     });
   }, [lanes]);
 
   const toggleLane = (laneId: string) => {
-    setExpandedLanes((prev) => ({
-      ...prev,
-      [laneId]: !prev[laneId],
-    }));
+    setExpandedLanes((prev) => ({ ...prev, [laneId]: !prev[laneId] }));
   };
 
-  const headerBlocks = useMemo(() => {
-    const blocks: {
-      startIndex: number;
-      endIndex: number;
-      startDate: Date;
-      endDate: Date;
-      label: string;
-    }[] = [];
+  const colWidthPercent = 100 / totalCols;
 
-    for (let i = 0; i < totalDays; i += DAYS_PER_BLOCK) {
-      const startIndex = i;
-      const endIndex = Math.min(i + DAYS_PER_BLOCK - 1, totalDays - 1);
-
-      const s = new Date(start);
-      s.setDate(start.getDate() + startIndex);
-
-      const e = new Date(start);
-      e.setDate(start.getDate() + endIndex);
-
-      blocks.push({
-        startIndex,
-        endIndex,
-        startDate: s,
-        endDate: e,
-        label: `${s.getDate()}–${e.getDate()}`,
-      });
-    }
-
-    return blocks;
-  }, [start, totalDays]);
-
-  const blockWidthPercent = 100 / totalBlocks;
-
-  const getItemStyle = (item: TimelineItem) => {
-    const s = normalizeDate(item.startDate);
-    const e = normalizeDate(item.endDate);
-
-    const offsetDays = Math.max(0, daysBetween(start, s) - 1);
-    const lengthDays = Math.max(1, daysBetween(s, e));
-
-    const leftBlocks = offsetDays / DAYS_PER_BLOCK;
-    const widthBlocks = lengthDays / DAYS_PER_BLOCK;
-
-    const left = leftBlocks * blockWidthPercent;
-    const width = widthBlocks * blockWidthPercent;
-
-    return {
-      left: `${left}%`,
-      width: `${width}%`,
-    };
-  };
-
-  const getLaneBarColors = (index: number) => {
-    if (index === 0) {
-      return {
-        bg: alpha(theme.palette.success.light, 0.35),
-        border: alpha(theme.palette.success.main, 0.9),
-        text: theme.palette.success.dark,
-      };
-    }
-    if (index === 1) {
-      return {
-        bg: alpha(theme.palette.warning.light, 0.4),
-        border: alpha(theme.palette.warning.main, 0.9),
-        text: theme.palette.warning.dark,
-      };
-    }
-    if (index === 2) {
-      return {
-        bg: alpha(theme.palette.error.light, 0.4),
-        border: alpha(theme.palette.error.main, 0.9),
-        text: theme.palette.error.dark,
-      };
-    }
-
-    return {
-      bg: alpha(theme.palette.grey[300], 0.4),
-      border: alpha(theme.palette.grey[500], 0.9),
-      text: theme.palette.text.primary,
-    };
-  };
-
-  const weekendColor = "#F2F5FF";
-
-  const blockHasWeekend = (blockStart: Date, blockEnd: Date) => {
-    const d = new Date(blockStart);
-    while (d <= blockEnd) {
+  const dayHeaders = useMemo(() => {
+    const result: { date: Date; label: string; isWeekend: boolean }[] = [];
+    for (let i = 0; i < totalDays; i++) {
+      const d = addDays(start, i);
       const day = d.getDay();
-      if (day === 0 || day === 6) return true;
-      d.setDate(d.getDate() + 1);
+      const isWeekend = day === 0 || day === 6;
+
+      const label = headerFmt.format(d);
+
+      result.push({ date: d, label, isWeekend });
     }
-    return false;
-  };
+    return result;
+  }, [start, totalDays, headerFmt]);
 
-  const weekendGradients = headerBlocks
-    .map((b, idx) => {
-      if (!blockHasWeekend(b.startDate, b.endDate)) return null;
-
-      const left = idx * blockWidthPercent;
-      const right = (idx + 1) * blockWidthPercent;
-
-      return `linear-gradient(to right,
-        transparent 0%,
-        transparent ${left}%,
-        ${weekendColor} ${left}%,
-        ${weekendColor} ${right}%,
-        transparent ${right}%,
-        transparent 100%)`;
-    })
-    .filter(Boolean) as string[];
-
-  const bgImages = weekendGradients.join(", ");
-  const bgSizes = Array(weekendGradients.length).fill("100% 100%").join(", ");
-
-  const formatDate = (iso: string) => {
-    const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return iso;
-    return d.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
+  const legend = useMemo(() => {
+    const map = new Map<string, { label: string; color: string }>();
+    items.forEach((it) => {
+      const label =
+        it.meta?.laneLabel || it.meta?.type || t("assignments.timeline.item");
+      const key = `${label}__${it.color}`;
+      if (!map.has(key)) map.set(key, { label, color: it.color });
     });
-  };
+    return Array.from(map.values());
+  }, [items, t]);
+
+  const laneSegments = useMemo(() => {
+    const byLane = new Map<string, Segment[]>();
+    lanes.forEach((lane) => byLane.set(lane.id, []));
+
+    const rowIndexByLane = new Map<string, Map<string, number>>();
+
+    const getRowIndex = (laneId: string, baseId: string) => {
+      let m = rowIndexByLane.get(laneId);
+      if (!m) {
+        m = new Map();
+        rowIndexByLane.set(laneId, m);
+      }
+      if (!m.has(baseId)) m.set(baseId, m.size);
+      return m.get(baseId)!;
+    };
+
+    items.forEach((it) => {
+      const rawS = normalizeDate(it.startDate);
+      const rawE = normalizeDate(it.endDate);
+
+      if (!overlapsRange(rawS, rawE, start, end)) return;
+
+      const s = clampDate(rawS, start, end);
+      const e = clampDate(rawE, start, end);
+
+      const startIdx = Math.max(0, dayIndex(start, s));
+      const endIdx = Math.min(totalDays - 1, dayIndex(start, e));
+
+      const rowIndex = getRowIndex(it.laneId, it.id);
+
+      for (let d = startIdx; d <= endIdx; d++) {
+        const seg: Segment = {
+          segmentId: `${it.id}__d${d}`,
+          baseId: it.id,
+          laneId: it.laneId,
+          title: it.title,
+          subtitle: it.subtitle,
+          dayIdx: d,
+          color: it.color,
+          meta: it.meta,
+          originalStart: it.startDate,
+          originalEnd: it.endDate,
+          rowIndex,
+          isFirst: d === startIdx,
+          isLast: d === endIdx,
+        };
+
+        if (!byLane.has(it.laneId)) byLane.set(it.laneId, []);
+        byLane.get(it.laneId)!.push(seg);
+      }
+    });
+
+    byLane.forEach((arr) => {
+      arr.sort((a, b) => a.rowIndex - b.rowIndex || a.dayIdx - b.dayIdx);
+    });
+
+    return byLane;
+  }, [items, lanes, start, end, totalDays]);
 
   return (
-    <Card
-      sx={{
-        p: 2,
-        overflowX: "auto",
-      }}
-    >
+    <Card sx={{ p: 2, overflowX: "auto", position: "relative" }}>
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: `${labelColWidth}px repeat(${totalBlocks}, minmax(${
-            dayMinWidth * DAYS_PER_BLOCK
-          }px, 1fr))`,
-        }}
-      >
-        <Box />
-
-        {(() => {
-          const monthBlocks: {
-            name: string;
-            startIndex: number;
-            span: number;
-          }[] = [];
-
-          let currentMonth = headerBlocks[0]?.startDate.getMonth() ?? 0;
-          let startIndex = 0;
-
-          headerBlocks.forEach((b, i) => {
-            const month = b.startDate.getMonth();
-            if (month !== currentMonth) {
-              monthBlocks.push({
-                name: headerBlocks[i - 1].startDate.toLocaleString(undefined, {
-                  month: "long",
-                }),
-                startIndex,
-                span: i - startIndex,
-              });
-
-              currentMonth = month;
-              startIndex = i;
-            }
-          });
-
-          if (headerBlocks.length) {
-            monthBlocks.push({
-              name: headerBlocks[
-                headerBlocks.length - 1
-              ].startDate.toLocaleString(undefined, { month: "long" }),
-              startIndex,
-              span: headerBlocks.length - startIndex,
-            });
-          }
-
-          return monthBlocks.map((m, idx) => (
-            <Box
-              key={idx}
-              sx={{
-                gridColumn: `${m.startIndex + 2} / span ${m.span}`,
-                textAlign: "center",
-                py: 0.5,
-                borderBottom: (t) => `1px solid ${t.palette.divider}`,
-              }}
-            >
-              <Typography
-                variant="body2"
-                sx={{ fontWeight: 600, color: "text.primary" }}
-              >
-                {m.name}
-              </Typography>
-            </Box>
-          ));
-        })()}
-      </Box>
-
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: `${labelColWidth}px repeat(${totalBlocks}, minmax(${
-            dayMinWidth * DAYS_PER_BLOCK
-          }px, 1fr))`,
+          gridTemplateColumns: `${labelColWidth}px repeat(${totalCols}, minmax(${dayMinWidth}px, 1fr))`,
           alignItems: "center",
-          columnGap: 0,
-          rowGap: 0,
         }}
       >
         <Box />
-
-        {headerBlocks.map((b, idx) => (
+        {dayHeaders.map((d, idx) => (
           <Box
             key={idx}
             sx={{
               textAlign: "center",
               py: 0.5,
               borderBottom: (t) => `1px solid ${t.palette.divider}`,
+              bgcolor: d.isWeekend
+                ? alpha(theme.palette.primary.light, 0.08)
+                : "transparent",
             }}
           >
             <Typography variant="caption" color="text.secondary">
-              {b.label}
+              {d.label}
             </Typography>
           </Box>
         ))}
@@ -323,19 +265,18 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: `${labelColWidth}px repeat(${totalBlocks}, minmax(${
-            dayMinWidth * DAYS_PER_BLOCK
-          }px, 1fr))`,
+          gridTemplateColumns: `${labelColWidth}px repeat(${totalCols}, minmax(${dayMinWidth}px, 1fr))`,
         }}
       >
-        {lanes.map((lane, laneIndex) => {
-          const laneItems = items.filter((i) => i.laneId === lane.id);
-          const barColors = getLaneBarColors(laneIndex);
+        {lanes.map((lane) => {
           const isExpanded = expandedLanes[lane.id] ?? true;
+          const segs = laneSegments.get(lane.id) ?? [];
 
-          const expandedHeight = laneItems.length
-            ? laneItems.length * rowHeight
-            : rowHeight;
+          const rowCount = segs.length
+            ? Math.max(...segs.map((s) => s.rowIndex)) + 1
+            : 1;
+
+          const expandedHeight = baseTopOffset + rowCount * rowHeight;
 
           return (
             <Fragment key={lane.id}>
@@ -345,10 +286,9 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
                   pr: 1,
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "flex-start",
                   cursor: "pointer",
                   userSelect: "none",
-                  gap: 0.5,
+                  gap: 1,
                 }}
                 onClick={() => toggleLane(lane.id)}
               >
@@ -360,6 +300,25 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
                     color: "#6D6D6D",
                   }}
                 />
+
+                {lane.initials && (
+                  <Avatar
+                    sx={{
+                      width: 24,
+                      height: 24,
+                      fontSize: 12,
+                      bgcolor: alpha(theme.palette.grey[700], 0.08),
+                      color: theme.palette.text.primary,
+                      border: `1px solid ${alpha(
+                        theme.palette.grey[700],
+                        0.15
+                      )}`,
+                    }}
+                  >
+                    {lane.initials}
+                  </Avatar>
+                )}
+
                 <Typography
                   variant="body2"
                   sx={{
@@ -377,70 +336,102 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
               <Box
                 sx={{
                   position: "relative",
-                  gridColumn: `2 / span ${totalBlocks}`,
+                  gridColumn: `2 / span ${totalCols}`,
                   minHeight: isExpanded ? expandedHeight : rowHeight,
                   transition: "min-height 0.25s ease",
                   borderBottom: (t) => `1px solid ${t.palette.divider}`,
+
                   "&::before": {
                     content: '""',
                     position: "absolute",
                     inset: 0,
-                    backgroundImage: bgImages,
-                    backgroundSize: bgSizes,
+                    backgroundImage: dayHeaders
+                      .map((d, idx) => {
+                        if (!d.isWeekend) return null;
+                        const left = idx * colWidthPercent;
+                        const right = (idx + 1) * colWidthPercent;
+                        return `linear-gradient(to right,
+                          transparent 0%,
+                          transparent ${left}%,
+                          ${alpha(theme.palette.primary.light, 0.08)} ${left}%,
+                          ${alpha(theme.palette.primary.light, 0.08)} ${right}%,
+                          transparent ${right}%,
+                          transparent 100%)`;
+                      })
+                      .filter(Boolean)
+                      .join(", "),
+                    backgroundSize: "100% 100%",
                     backgroundRepeat: "no-repeat",
                     pointerEvents: "none",
                     zIndex: 0,
                   },
                 }}
               >
-                {laneItems.map((item, idx) => {
-                  const style = getItemStyle(item);
-                  const top = baseTopOffset + idx * rowHeight;
+                {segs.map((seg) => {
+                  const dayGapPx = 5;
+                  const leftPct = seg.dayIdx * colWidthPercent;
+
+                  const left = `calc(${leftPct}% + ${dayGapPx / 2}px)`;
+                  const width = `calc(${colWidthPercent}% - ${dayGapPx}px)`;
+
+                  const top = baseTopOffset + seg.rowIndex * rowHeight;
+
+                  const bg = alpha(seg.color, 0.22);
+                  const border = alpha(seg.color, 0.85);
 
                   const tooltipContent = (
                     <Box sx={{ p: 0.5 }}>
                       <Typography
                         variant="caption"
-                        sx={{ fontWeight: 600, display: "block", mb: 0.25 }}
+                        sx={{ fontWeight: 700, display: "block", mb: 0.25 }}
                       >
-                        {item.title}
+                        {seg.title}
                       </Typography>
 
-                      {item.assigneeName && (
+                      {seg.subtitle && (
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            display: "block",
+                            mb: 0.25,
+                            color: "text.secondary",
+                          }}
+                        >
+                          {seg.subtitle}
+                        </Typography>
+                      )}
+
+                      {seg.meta?.laneLabel && (
                         <Typography
                           variant="caption"
                           sx={{ display: "block", mb: 0.25 }}
                         >
                           <strong>
-                            {t("assignments.timeline.tooltip.assignedTo")}
+                            {t("assignments.timeline.tooltip.type", "Type")}:
                           </strong>{" "}
-                          {item.assigneeName}
+                          {seg.meta.laneLabel}
                         </Typography>
                       )}
 
                       <Typography variant="caption" sx={{ display: "block" }}>
                         <strong>
-                          {t("assignments.timeline.tooltip.lane")}
+                          {t("assignments.timeline.tooltip.from", "From")}:
                         </strong>{" "}
-                        {lane.title}
+                        {safeFormatISO(seg.originalStart, tooltipFmt)}
                       </Typography>
 
                       <Typography variant="caption" sx={{ display: "block" }}>
                         <strong>
-                          {t("assignments.timeline.tooltip.from")}
+                          {t("assignments.timeline.tooltip.to", "To")}:
                         </strong>{" "}
-                        {formatDate(item.startDate)}
-                      </Typography>
-                      <Typography variant="caption" sx={{ display: "block" }}>
-                        <strong>{t("assignments.timeline.tooltip.to")}</strong>{" "}
-                        {formatDate(item.endDate)}
+                        {safeFormatISO(seg.originalEnd, tooltipFmt)}
                       </Typography>
                     </Box>
                   );
 
                   return (
                     <Tooltip
-                      key={item.id}
+                      key={seg.segmentId}
                       title={tooltipContent}
                       arrow
                       placement="top"
@@ -450,54 +441,62 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
                         sx={{
                           position: "absolute",
                           zIndex: 1,
-                          ...style,
+                          left,
+                          width,
                           top,
                           height: barHeight,
-                          borderRadius: 1,
-                          bgcolor: barColors.bg,
-                          border: `1px solid ${barColors.border}`,
+
+                          borderTopLeftRadius: seg.isFirst ? 3 : 2,
+                          borderBottomLeftRadius: seg.isFirst ? 3 : 2,
+                          borderTopRightRadius: seg.isLast ? 3 : 2,
+                          borderBottomRightRadius: seg.isLast ? 3 : 2,
+
+                          bgcolor: bg,
+                          border: `1px solid ${border}`,
                           display: "flex",
                           alignItems: "center",
                           px: 1.25,
-                          gap: 0.75,
-                          boxShadow:
-                            "0 1px 2px rgba(15,23,42,0.10), 0 0 0 1px rgba(15,23,42,0.03)",
+                          py: 0.25,
                           overflow: "hidden",
                           cursor: "pointer",
-                          transition: "opacity 0.2s ease, transform 0.2s ease",
                           opacity: isExpanded ? 1 : 0,
-                          transform: isExpanded
-                            ? "translateY(0)"
-                            : "translateY(-4px)",
                           pointerEvents: isExpanded ? "auto" : "none",
+                          boxShadow:
+                            "0 1px 2px rgba(15,23,42,0.10), 0 0 0 1px rgba(15,23,42,0.03)",
                         }}
                       >
-                        {item.assigneeInitials && (
-                          <Avatar
+                        <Box sx={{ minWidth: 0 }}>
+                          <Typography
+                            variant="caption"
                             sx={{
-                              width: 20,
-                              height: 20,
-                              fontSize: 11,
-                              bgcolor: "rgba(255,255,255,0.95)",
-                              color: barColors.text,
-                              boxShadow: "0 0 0 1px rgba(15,23,42,0.08)",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              color: theme.palette.text.primary,
+                              fontWeight: 700,
+                              lineHeight: 1.1,
+                              display: "block",
                             }}
                           >
-                            {item.assigneeInitials}
-                          </Avatar>
-                        )}
+                            {seg.title}
+                          </Typography>
 
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color: "common.black",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          {item.title}
-                        </Typography>
+                          {seg.subtitle && (
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                color: theme.palette.text.secondary,
+                                lineHeight: 1.1,
+                                display: "block",
+                              }}
+                            >
+                              {seg.subtitle}
+                            </Typography>
+                          )}
+                        </Box>
                       </Box>
                     </Tooltip>
                   );
@@ -507,6 +506,39 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
           );
         })}
       </Box>
+
+      {legend.length > 0 && (
+        <Box
+          sx={{
+            mt: 2,
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 1.5,
+            alignItems: "center",
+            justifyContent: "flex-start",
+          }}
+        >
+          {legend.map((l) => (
+            <Box
+              key={`${l.label}__${l.color}`}
+              sx={{ display: "flex", alignItems: "center", gap: 0.75 }}
+            >
+              <Box
+                sx={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: 999,
+                  bgcolor: l.color,
+                  boxShadow: `0 0 0 2px ${alpha(l.color, 0.25)}`,
+                }}
+              />
+              <Typography variant="caption" color="text.secondary">
+                {l.label}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+      )}
     </Card>
   );
 };

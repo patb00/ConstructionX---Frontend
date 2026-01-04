@@ -8,13 +8,14 @@ import {
   MenuItem,
   type SelectChangeEvent,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
 
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import BadgeIcon from "@mui/icons-material/Badge";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
-import ViewModuleIcon from "@mui/icons-material/ViewModule";
-import TimelineIcon from "@mui/icons-material/Timeline";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import { useAssignedVehicles } from "../../administration/employees/hooks/useAssignedVehicles";
 import { useAssignedConstructionSites } from "../../administration/employees/hooks/useAssignedConstructionSites";
@@ -29,8 +30,6 @@ import type {
 import { useAuthStore } from "../../auth/store/useAuthStore";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { useTranslation } from "react-i18next";
-import { AssignmentsBoardView } from "./AssignmentsBoardView";
-
 import { useMemo, useState } from "react";
 
 import {
@@ -38,17 +37,33 @@ import {
   type Lane,
   type TimelineItem,
 } from "../../../components/ui/views/TimelineView";
-import { ViewSelect } from "../../../components/ui/select/ViewSelect";
 
-import { dedupeByKey } from "../utils/collections";
 import { getEmployeeInitials, getEmployeeLabel } from "../utils/employee";
 import { formatIsoDate } from "../utils/date";
 import StatCardDetail from "../../../components/ui/StatCardDetail";
 
-type ViewMode = "board" | "timeline";
+import {
+  addDays,
+  makeWeekRangeFormatter,
+  formatWeekRange,
+} from "../../../utils/dateFormatters";
+import { getIntlLocale } from "../../../utils/u18nLocale";
+
+function toIsoDate(d: Date) {
+  return d.toISOString().slice(0, 10);
+}
+
+function startOfWeekMonday(date: Date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  return d;
+}
 
 const AssignmentsListPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { employeeRows = [] } = useEmployees();
 
   const { acsRows, isLoading: isLoadingSites } = useAssignedConstructionSites();
@@ -68,7 +83,9 @@ const AssignmentsListPage = () => {
   }, [userId]);
 
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | "">("");
-  const [viewMode, setViewMode] = useState<ViewMode>("board");
+  const [weekStart, setWeekStart] = useState<Date>(() =>
+    startOfWeekMonday(new Date())
+  );
 
   const effectiveEmployeeId =
     role === "Admin"
@@ -77,50 +94,12 @@ const AssignmentsListPage = () => {
         : null
       : myUserId;
 
-  const constructionRowsForBoard = useMemo<AssignedConstructionSite[]>(() => {
-    const rows =
-      effectiveEmployeeId == null
-        ? acsRows
-        : acsRows.filter((r) => r.employeeId === effectiveEmployeeId);
-
-    return effectiveEmployeeId == null
-      ? dedupeByKey(rows, (r) => r.constructionSiteId)
-      : rows;
-  }, [acsRows, effectiveEmployeeId]);
-
-  const vehicleRowsForBoard = useMemo<AssignedVehicle[]>(() => {
-    const rows =
-      effectiveEmployeeId == null
-        ? vehicleRows
-        : vehicleRows.filter(
-            (r) => r.responsibleEmployeeId === effectiveEmployeeId
-          );
-
-    return effectiveEmployeeId == null
-      ? dedupeByKey(rows, (r) => r.vehicleId)
-      : rows;
-  }, [vehicleRows, effectiveEmployeeId]);
-
-  const toolRowsForBoard = useMemo<AssignedTool[]>(() => {
-    const rows =
-      effectiveEmployeeId == null
-        ? toolRows
-        : toolRows.filter(
-            (r) => r.responsibleEmployeeId === effectiveEmployeeId
-          );
-
-    return effectiveEmployeeId == null
-      ? dedupeByKey(rows, (r) => r.toolId)
-      : rows;
-  }, [toolRows, effectiveEmployeeId]);
-
   const handleSelectChange = (e: SelectChangeEvent<number | "">) => {
     const v = e.target.value;
     if (v === "" || v === undefined || v === null) {
       setSelectedEmployeeId("");
       return;
     }
-
     const num = typeof v === "number" ? v : Number(v);
     setSelectedEmployeeId(Number.isFinite(num) ? num : "");
   };
@@ -146,15 +125,6 @@ const AssignmentsListPage = () => {
         ).length,
       }
     : { construction: 0, vehicles: 0, tools: 0 };
-
-  const cardBoxSx = {
-    flexBasis: {
-      xs: "100%",
-      sm: "calc(50% - 8px)",
-      md: "calc(33.333% - 12px)",
-    },
-    flexGrow: 1,
-  } as const;
 
   const constructionAssignments = useMemo<AssignedConstructionSite[]>(
     () =>
@@ -187,19 +157,57 @@ const AssignmentsListPage = () => {
   const isLoadingTimeline =
     isLoadingSites || isLoadingVehicles || isLoadingTools;
 
-  const { lanes, items, startDate, endDate } = useMemo(() => {
+  const startDate = useMemo(() => toIsoDate(weekStart), [weekStart]);
+  const endDate = useMemo(() => toIsoDate(addDays(weekStart, 6)), [weekStart]);
+
+  const locale = useMemo(
+    () => getIntlLocale(i18n),
+    [i18n.language, i18n.resolvedLanguage]
+  );
+
+  const weekRangeFmt = useMemo(() => makeWeekRangeFormatter(locale), [locale]);
+
+  const weekLabel = useMemo(
+    () => formatWeekRange(weekStart, weekRangeFmt),
+    [weekStart, weekRangeFmt]
+  );
+
+  const { lanes, items } = useMemo(() => {
     const todayIso = new Date().toISOString().slice(0, 10);
 
-    const lanes: Lane[] = [
-      { id: "construction", title: t("assignments.timeline.laneConstruction") },
-      { id: "vehicles", title: t("assignments.timeline.laneVehicles") },
-      { id: "tools", title: t("assignments.timeline.laneTools") },
-    ];
+    const employeesInScope =
+      effectiveEmployeeId == null
+        ? employeeRows
+        : employeeRows.filter((e) => e.id === effectiveEmployeeId);
+
+    const lanes: Lane[] = employeesInScope.map((e) => ({
+      id: String(e.id),
+      title: getEmployeeLabel(e),
+      initials: getEmployeeInitials(e),
+    }));
+
+    const UNASSIGNED_ID = "unassigned";
+    const hasUnassigned =
+      constructionAssignments.some((r) => r.employeeId == null) ||
+      vehicleAssignments.some((r) => r.responsibleEmployeeId == null) ||
+      toolAssignments.some((r) => r.responsibleEmployeeId == null);
+
+    if (hasUnassigned && effectiveEmployeeId == null) {
+      lanes.unshift({
+        id: UNASSIGNED_ID,
+        title: t("assignments.timeline.unassigned", "Unassigned"),
+        initials: "?",
+      });
+    }
 
     const items: TimelineItem[] = [];
-    const addItem = (item: TimelineItem) => items.push(item);
 
-    const findEmployee = (id?: number | null) =>
+    const laneForEmployee = (id?: number | null) => {
+      if (id == null) return UNASSIGNED_ID;
+      return String(id);
+    };
+
+    const findEmp = (id?: number | null) =>
       id == null ? null : employeeRows.find((e) => e.id === id) ?? null;
 
     constructionAssignments.forEach((row) => {
@@ -212,26 +220,34 @@ const AssignmentsListPage = () => {
         row.dateFrom ||
         start;
 
-      const employee = findEmployee(row.employeeId);
-      const assigneeName = employee ? getEmployeeLabel(employee) : undefined;
-      const assigneeInitials = employee
-        ? getEmployeeInitials(employee)
-        : undefined;
+      const emp = findEmp(row.employeeId);
 
-      addItem({
+      const csTitle =
+        row.name || row.location || t("assignments.timeline.constructionItem");
+
+      const csSubtitle = [
+        row.location && row.name ? row.location : null,
+        row.siteManagerName ? `Mgr: ${row.siteManagerName}` : null,
+      ]
+        .filter(Boolean)
+        .join(" · ");
+
+      items.push({
         id: `cs-${row.constructionSiteId}-${
           row.employeeId ?? "x"
         }-${start}-${end}`,
-        laneId: "construction",
-        title:
-          row.name ||
-          row.location ||
-          t("assignments.timeline.constructionItem"),
+        laneId: laneForEmployee(row.employeeId),
+        title: csTitle,
+        subtitle: csSubtitle || undefined,
         startDate: start,
         endDate: end,
         color: "#F1B103",
-        assigneeName,
-        assigneeInitials,
+        assigneeName: emp ? getEmployeeLabel(emp) : undefined,
+        assigneeInitials: emp ? getEmployeeInitials(emp) : undefined,
+        meta: {
+          type: "construction",
+          laneLabel: t("assignments.timeline.laneConstruction"),
+        },
       });
     });
 
@@ -239,30 +255,34 @@ const AssignmentsListPage = () => {
       const start = row.dateFrom || todayIso;
       const end = row.dateTo || start;
 
-      const employee = findEmployee(row.responsibleEmployeeId);
-      const assigneeName = employee ? getEmployeeLabel(employee) : undefined;
-      const assigneeInitials = employee
-        ? getEmployeeInitials(employee)
-        : undefined;
+      const emp = findEmp(row.responsibleEmployeeId);
 
-      const label =
-        row.registrationNumber ||
-        [row.constructionSiteName, row.constructionSiteLocation]
-          .filter(Boolean)
-          .join(" · ") ||
-        t("assignments.timeline.vehicleItem");
+      const vehicleTitle =
+        row.registrationNumber || t("assignments.timeline.vehicleItem");
 
-      addItem({
+      const vehicleSubtitle = [
+        [row.brand, row.model, row.vehicleType].filter(Boolean).join(" "),
+        row.constructionSiteName || row.constructionSiteLocation,
+      ]
+        .filter(Boolean)
+        .join(" · ");
+
+      items.push({
         id: `veh-${row.vehicleId}-${
           row.responsibleEmployeeId ?? "x"
         }-${start}-${end}`,
-        laneId: "vehicles",
-        title: label,
+        laneId: laneForEmployee(row.responsibleEmployeeId),
+        title: vehicleTitle,
+        subtitle: vehicleSubtitle || undefined,
         startDate: start,
         endDate: end,
         color: "#04befe",
-        assigneeName,
-        assigneeInitials,
+        assigneeName: emp ? getEmployeeLabel(emp) : undefined,
+        assigneeInitials: emp ? getEmployeeInitials(emp) : undefined,
+        meta: {
+          type: "vehicle",
+          laneLabel: t("assignments.timeline.laneVehicles"),
+        },
       });
     });
 
@@ -270,58 +290,45 @@ const AssignmentsListPage = () => {
       const start = row.dateFrom || todayIso;
       const end = row.dateTo || start;
 
-      const employee = findEmployee(row.responsibleEmployeeId);
-      const assigneeName = employee ? getEmployeeLabel(employee) : undefined;
-      const assigneeInitials = employee
-        ? getEmployeeInitials(employee)
-        : undefined;
+      const emp = findEmp(row.responsibleEmployeeId);
 
-      const label =
+      const toolTitle =
         row.name || row.inventoryNumber || t("assignments.timeline.toolItem");
 
-      addItem({
+      const toolSubtitle =
+        row.inventoryNumber && row.name ? `#${row.inventoryNumber}` : undefined;
+
+      items.push({
         id: `tool-${row.toolId}-${
           row.responsibleEmployeeId ?? "x"
         }-${start}-${end}`,
-        laneId: "tools",
-        title: label,
+        laneId: laneForEmployee(row.responsibleEmployeeId),
+        title: toolTitle,
+        subtitle: toolSubtitle,
         startDate: start,
         endDate: end,
         color: "#21D191",
-        assigneeName,
-        assigneeInitials,
+        assigneeName: emp ? getEmployeeLabel(emp) : undefined,
+        assigneeInitials: emp ? getEmployeeInitials(emp) : undefined,
+        meta: {
+          type: "tool",
+          laneLabel: t("assignments.timeline.laneTools"),
+        },
       });
     });
 
-    let minDate: Date | null = null;
-    let maxDate: Date | null = null;
+    const filteredItems =
+      effectiveEmployeeId == null
+        ? items
+        : items.filter((it) => it.laneId === String(effectiveEmployeeId));
 
-    items.forEach((it) => {
-      const s = new Date(it.startDate);
-      const e = new Date(it.endDate);
-      if (!Number.isNaN(s.getTime())) {
-        if (!minDate || s < minDate) minDate = s;
-      }
-      if (!Number.isNaN(e.getTime())) {
-        if (!maxDate || e > maxDate) maxDate = e;
-      }
-    });
-
-    if (!minDate || !maxDate) {
-      const today = new Date();
-      minDate = today;
-      maxDate = today;
-    }
-
-    const startIso = minDate.toISOString().slice(0, 10);
-    const endIso = maxDate.toISOString().slice(0, 10);
-
-    return { lanes, items, startDate: startIso, endDate: endIso };
+    return { lanes, items: filteredItems };
   }, [
+    employeeRows,
+    effectiveEmployeeId,
     constructionAssignments,
     vehicleAssignments,
     toolAssignments,
-    employeeRows,
     t,
   ]);
 
@@ -339,22 +346,27 @@ const AssignmentsListPage = () => {
           {t("assignments.title")}
         </Typography>
 
-        <ViewSelect
-          value={viewMode}
-          onChange={(val) => setViewMode(val as ViewMode)}
-          options={[
-            {
-              value: "board",
-              label: t("assignments.view.board"),
-              icon: <ViewModuleIcon />,
-            },
-            {
-              value: "timeline",
-              label: t("assignments.view.timeline"),
-              icon: <TimelineIcon />,
-            },
-          ]}
-        />
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <IconButton
+            size="small"
+            onClick={() => setWeekStart((d) => addDays(d, -7))}
+            aria-label={t("assignments.timeline.prevWeek", "Previous week")}
+          >
+            <ChevronLeftIcon />
+          </IconButton>
+
+          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+            {weekLabel}
+          </Typography>
+
+          <IconButton
+            size="small"
+            onClick={() => setWeekStart((d) => addDays(d, 7))}
+            aria-label={t("assignments.timeline.nextWeek", "Next week")}
+          >
+            <ChevronRightIcon />
+          </IconButton>
+        </Box>
       </Box>
 
       {role === "Admin" && (
@@ -395,7 +407,16 @@ const AssignmentsListPage = () => {
 
           {selectedEmployee && (
             <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-              <Box sx={{ ...cardBoxSx }}>
+              <Box
+                sx={{
+                  flexBasis: {
+                    xs: "100%",
+                    sm: "calc(50% - 8px)",
+                    md: "calc(33.333% - 12px)",
+                  },
+                  flexGrow: 1,
+                }}
+              >
                 <StatCardDetail
                   icon={<BadgeIcon />}
                   label={t("assignments.employee.info")}
@@ -408,7 +429,16 @@ const AssignmentsListPage = () => {
                 />
               </Box>
 
-              <Box sx={{ ...cardBoxSx }}>
+              <Box
+                sx={{
+                  flexBasis: {
+                    xs: "100%",
+                    sm: "calc(50% - 8px)",
+                    md: "calc(33.333% - 12px)",
+                  },
+                  flexGrow: 1,
+                }}
+              >
                 <StatCardDetail
                   icon={<CalendarTodayIcon />}
                   label={t("assignments.employee.dates")}
@@ -429,7 +459,16 @@ const AssignmentsListPage = () => {
                 />
               </Box>
 
-              <Box sx={{ ...cardBoxSx }}>
+              <Box
+                sx={{
+                  flexBasis: {
+                    xs: "100%",
+                    sm: "calc(50% - 8px)",
+                    md: "calc(33.333% - 12px)",
+                  },
+                  flexGrow: 1,
+                }}
+              >
                 <StatCardDetail
                   icon={<AssignmentTurnedInIcon />}
                   label={t("assignments.employee.assignments")}
@@ -442,16 +481,7 @@ const AssignmentsListPage = () => {
         </>
       )}
 
-      {viewMode === "board" ? (
-        <AssignmentsBoardView
-          construction={{
-            rows: constructionRowsForBoard,
-            loading: isLoadingSites,
-          }}
-          vehicles={{ rows: vehicleRowsForBoard, loading: isLoadingVehicles }}
-          tools={{ rows: toolRowsForBoard, loading: isLoadingTools }}
-        />
-      ) : isLoadingTimeline ? (
+      {isLoadingTimeline ? (
         <Box
           sx={{
             width: "100%",
