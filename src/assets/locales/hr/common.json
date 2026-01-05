@@ -27,7 +27,8 @@
     "notifications": "Obavijesti",
     "vehicleRegistrations": "Registracije vozila",
     "vehicleInsurances": "Osiguranja vozila",
-    "vehicleBusinessTrips": "Službena putovanja "
+    "vehicleBusinessTrips": "Službena putovanja ",
+    "vehicleRegistrationTasks": "Zadaci registracije vozila"
   },
   "constructionSites": {
     "detail": {

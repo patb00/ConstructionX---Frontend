@@ -27,7 +27,8 @@
     "notifications": "Benachrichtigungen",
     "vehicleRegistrations": "Fahrzeugzulassungen",
     "vehicleInsurances": "Fahrzeugversicherungen",
-    "vehicleBusinessTrips": "Dienstfahrten"
+    "vehicleBusinessTrips": "Dienstfahrten",
+    "vehicleRegistrationTasks": "Fahrzeugzulassungsaufgaben"
   },
 
   "constructionSites": {

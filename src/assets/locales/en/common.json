@@ -27,7 +27,8 @@
     "notifications": "Notifications",
     "vehicleRegistrations": "Vehicle Registrations",
     "vehicleInsurances": "Vehicle Insurances",
-    "vehicleBusinessTrips": "Vehicle Business Trips"
+    "vehicleBusinessTrips": "Vehicle Business Trips",
+    "vehicleRegistrationTasks": "Vehicle Registration Tasks"
   },
   "constructionSites": {
     "list": {
