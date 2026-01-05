@@ -62,10 +62,27 @@ export default function AssignToolsDialog({
       const toolId = Number(item.id);
       if (!Number.isFinite(toolId)) continue;
 
-      let respId: number | null | undefined = item.responsibleEmployeeId;
-      if (respId == null && item.responsibleEmployeeName) {
-        respId = byName.get(normalizeText(item.responsibleEmployeeName));
-      }
+      if (!bucket.has(toolId)) bucket.set(toolId, []);
+
+      const windows =
+        item?.assignmentWindows && item.assignmentWindows.length > 0
+          ? item.assignmentWindows
+          : [
+              {
+                dateFrom: item.dateFrom ?? todayStr(),
+                dateTo: item.dateTo ?? todayStr(),
+                responsibleEmployeeId: item.responsibleEmployeeId,
+                responsibleEmployeeName: item.responsibleEmployeeName,
+              },
+            ];
+
+      windows.forEach((window: any) => {
+        let respId: number | null | undefined =
+          window?.responsibleEmployeeId ?? item.responsibleEmployeeId;
+        const respName = window?.responsibleEmployeeName ?? item.responsibleEmployeeName;
+        if (respId == null && respName) {
+          respId = byName.get(normalizeText(respName));
+        }
 
       if (!bucket.has(toolId)) bucket.set(toolId, []);
       bucket.get(toolId)!.push({

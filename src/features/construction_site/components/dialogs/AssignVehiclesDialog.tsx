@@ -64,10 +64,38 @@ export default function AssignVehiclesDialog({
       const vehId = Number(v?.id);
       if (!Number.isFinite(vehId)) continue;
 
-      let respId: number | null | undefined = v.responsibleEmployeeId;
-      if (respId == null && v.responsibleEmployeeName) {
-        respId = byName.get(normalizeText(v.responsibleEmployeeName));
-      }
+      if (!bucket.has(vehId)) bucket.set(vehId, []);
+
+      const windows =
+        v?.assignmentWindows && v.assignmentWindows.length > 0
+          ? v.assignmentWindows
+          : [
+              {
+                dateFrom: v.dateFrom ?? todayStr(),
+                dateTo: v.dateTo ?? todayStr(),
+                responsibleEmployeeId: v.responsibleEmployeeId,
+                responsibleEmployeeName: v.responsibleEmployeeName,
+              },
+            ];
+
+      windows.forEach((window: any) => {
+        let respId: number | null | undefined =
+          window?.responsibleEmployeeId ?? v.responsibleEmployeeId;
+        const respName = window?.responsibleEmployeeName ?? v.responsibleEmployeeName;
+        if (respId == null && respName) {
+          respId = byName.get(normalizeText(respName));
+        }
+
+        bucket.get(vehId)!.push({
+          from: window?.dateFrom ?? todayStr(),
+          to: window?.dateTo ?? todayStr(),
+          custom: true,
+          responsibleEmployeeId: Number.isFinite(Number(respId))
+            ? Number(respId)
+            : null,
+        });
+      });
+    }
 
       if (!bucket.has(vehId)) bucket.set(vehId, []);
       bucket.get(vehId)!.push({

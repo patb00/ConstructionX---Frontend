@@ -5,6 +5,7 @@ export interface ConstructionSiteEmployee {
   jobPositionName?: string | null;
   dateFrom?: string | null;
   dateTo?: string | null;
+  assignmentWindows?: AssignEmployeeWindow[] | null;
 }
 
 export interface ConstructionSiteTool {
@@ -21,6 +22,7 @@ export interface ConstructionSiteTool {
   responsibleEmployeeName?: string | null;
   dateFrom?: string | null;
   dateTo?: string | null;
+  assignmentWindows?: AssignToolWindow[] | null;
   description?: string | null;
   category?: string | null;
 }
@@ -45,6 +47,7 @@ export interface ConstructionSiteVehicle {
   responsibleEmployeeName?: string | null;
   dateFrom?: string | null;
   dateTo?: string | null;
+  assignmentWindows?: AssignVehicleWindow[] | null;
   description?: string | null;
 }
 
