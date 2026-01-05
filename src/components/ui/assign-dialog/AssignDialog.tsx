@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import CloseIcon from "@mui/icons-material/Close";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
@@ -25,9 +27,13 @@ import {
   toPickerValue,
 } from "../../../features/construction_site/utils/dates";
 
-export type AssignBaseRange = { from: string; to: string; custom: boolean };
+export type AssignBaseWindow = { from: string; to: string; custom: boolean };
 
-type Preselected<TRange extends AssignBaseRange> = {
+export type AssignRange<TWindow extends AssignBaseWindow> = {
+  windows: TWindow[];
+};
+
+type Preselected<TRange extends AssignRange<AssignBaseWindow>> = {
   ids: number[];
   map: Record<number, TRange>;
 };
@@ -45,9 +51,12 @@ type Labels = {
   chipGlobal: string;
   chipCustom: string;
   resetToGlobalTooltip: string;
+  addWindow: string;
+  windowLabel: (index: number) => string;
+  removeWindowTooltip: string;
 };
 
-type Props<TItem, TRange extends AssignBaseRange, TPayload> = {
+type Props<TItem, TWindow extends AssignBaseWindow, TPayload> = {
   open: boolean;
   title: string;
   onClose: () => void;
@@ -57,22 +66,23 @@ type Props<TItem, TRange extends AssignBaseRange, TPayload> = {
   getItemPrimary: (item: TItem) => string;
   getItemSecondary?: (item: TItem) => ReactNode;
 
-  preselected: Preselected<TRange>;
+  preselected: Preselected<AssignRange<TWindow>>;
   initialGlobalRange?: { from: string; to: string } | null;
 
-  createRange: (ctx: { globalFrom: string; globalTo: string }) => TRange;
+  createWindow: (ctx: { globalFrom: string; globalTo: string }) => TWindow;
 
-  renderRowExtra?: (args: {
+  renderWindowExtra?: (args: {
     id: number;
     item: TItem | undefined;
-    range: TRange;
-    setRangePatch: (patch: Partial<TRange>) => void;
+    window: TWindow;
+    windowIndex: number;
+    setWindowPatch: (patch: Partial<TWindow>) => void;
   }) => ReactNode;
 
   onSave: (payload: TPayload) => void;
   buildPayload: (args: {
     selected: number[];
-    ranges: Record<number, TRange>;
+    ranges: Record<number, AssignRange<TWindow>>;
     globalFrom: string;
     globalTo: string;
   }) => TPayload;
@@ -85,13 +95,14 @@ type Props<TItem, TRange extends AssignBaseRange, TPayload> = {
 
   detailGridMd?: string;
   leftWidthMd?: string;
+  allowMultipleWindows?: boolean;
 
   labels?: Partial<Labels>;
 };
 
 export function ReusableAssignDialog<
   TItem,
-  TRange extends AssignBaseRange,
+  TWindow extends AssignBaseWindow,
   TPayload
 >({
   open,
@@ -105,8 +116,8 @@ export function ReusableAssignDialog<
 
   preselected,
   initialGlobalRange = null,
-  createRange,
-  renderRowExtra,
+  createWindow,
+  renderWindowExtra,
 
   onSave,
   buildPayload,
@@ -116,10 +127,11 @@ export function ReusableAssignDialog<
   error = false,
   emptyText = "No items.",
   loadErrorText = "Failed to load.",
-  detailGridMd = "minmax(220px,1fr) 180px 180px 48px",
+  detailGridMd = "minmax(140px,1fr) 180px 180px",
   leftWidthMd = "260px",
+  allowMultipleWindows = true,
   labels,
-}: Props<TItem, TRange, TPayload>) {
+}: Props<TItem, TWindow, TPayload>) {
   const L: Labels = {
     startLabel: labels?.startLabel ?? "Start",
     endLabel: labels?.endLabel ?? "End",
@@ -133,12 +145,17 @@ export function ReusableAssignDialog<
     chipGlobal: labels?.chipGlobal ?? "Global",
     chipCustom: labels?.chipCustom ?? "Custom",
     resetToGlobalTooltip: labels?.resetToGlobalTooltip ?? "Reset to global",
+    addWindow: labels?.addWindow ?? "Add window",
+    windowLabel: labels?.windowLabel ?? ((i) => `Window ${i + 1}`),
+    removeWindowTooltip: labels?.removeWindowTooltip ?? "Remove window",
   };
 
   const [selected, setSelected] = useState<number[]>([]);
   const [globalFrom, setGlobalFrom] = useState<string>(todayStr());
   const [globalTo, setGlobalTo] = useState<string>(todayStr());
-  const [ranges, setRanges] = useState<Record<number, TRange>>({});
+  const [ranges, setRanges] = useState<Record<number, AssignRange<TWindow>>>(
+    {}
+  );
   const [touched, setTouched] = useState(false);
 
   useEffect(() => {
@@ -173,7 +190,7 @@ export function ReusableAssignDialog<
     if (filtered.length !== selected.length) {
       setSelected(filtered);
       setRanges((old) => {
-        const next: Record<number, TRange> = {};
+        const next: Record<number, AssignRange<TWindow>> = {};
         filtered.forEach((id) => {
           if (old[id]) next[id] = old[id];
         });
@@ -184,6 +201,9 @@ export function ReusableAssignDialog<
 
   const markTouched = () => setTouched(true);
 
+  const getOrCreateRange = (id: number) =>
+    ranges[id] ?? { windows: [createWindow({ globalFrom, globalTo })] };
+
   const toggle = (id: number) => {
     markTouched();
     setSelected((prev) => {
@@ -193,7 +213,10 @@ export function ReusableAssignDialog<
 
       setRanges((old) => {
         if (next.includes(id) && !old[id]) {
-          return { ...old, [id]: createRange({ globalFrom, globalTo }) };
+          return {
+            ...old,
+            [id]: { windows: [createWindow({ globalFrom, globalTo })] },
+          };
         }
         return old;
       });
@@ -204,11 +227,16 @@ export function ReusableAssignDialog<
 
   const applyGlobalToNonCustom = (nextFrom: string, nextTo: string) => {
     setRanges((old) => {
-      const updated: Record<number, TRange> = { ...old };
+      const updated: Record<number, AssignRange<TWindow>> = { ...old };
       selected.forEach((id) => {
         const r = updated[id];
         if (!r) return;
-        if (!r.custom) updated[id] = { ...r, from: nextFrom, to: nextTo };
+        updated[id] = {
+          ...r,
+          windows: r.windows.map((window) =>
+            window.custom ? window : { ...window, from: nextFrom, to: nextTo }
+          ),
+        };
       });
       return updated;
     });
@@ -226,29 +254,73 @@ export function ReusableAssignDialog<
     applyGlobalToNonCustom(globalFrom, v);
   };
 
-  const setRowFrom = (id: number, v: string) => {
+  const setWindowFrom = (id: number, index: number, v: string) => {
     markTouched();
     setRanges((old) => {
-      const prev = old[id] ?? createRange({ globalFrom, globalTo });
-      return { ...old, [id]: { ...prev, from: v, custom: true } };
+      const prev = getOrCreateRange(id);
+      const windows = prev.windows.map((window, i) =>
+        i === index ? { ...window, from: v, custom: true } : window
+      );
+      return { ...old, [id]: { ...prev, windows } };
     });
   };
 
-  const setRowTo = (id: number, v: string) => {
+  const setWindowTo = (id: number, index: number, v: string) => {
     markTouched();
     setRanges((old) => {
-      const prev = old[id] ?? createRange({ globalFrom, globalTo });
-      return { ...old, [id]: { ...prev, to: v, custom: true } };
+      const prev = getOrCreateRange(id);
+      const windows = prev.windows.map((window, i) =>
+        i === index ? { ...window, to: v, custom: true } : window
+      );
+      return { ...old, [id]: { ...prev, windows } };
     });
   };
 
-  const resetRowToGlobal = (id: number) => {
+  const addWindow = (id: number) => {
+    if (!allowMultipleWindows) return;
     markTouched();
     setRanges((old) => {
-      const prev = old[id] ?? createRange({ globalFrom, globalTo });
+      const prev = getOrCreateRange(id);
       return {
         ...old,
-        [id]: { ...prev, from: globalFrom, to: globalTo, custom: false },
+        [id]: {
+          ...prev,
+          windows: [...prev.windows, createWindow({ globalFrom, globalTo })],
+        },
+      };
+    });
+  };
+
+  const removeWindow = (id: number, index: number) => {
+    if (!allowMultipleWindows) return;
+    markTouched();
+    setRanges((old) => {
+      const prev = getOrCreateRange(id);
+      if (prev.windows.length <= 1) return old;
+      return {
+        ...old,
+        [id]: {
+          ...prev,
+          windows: prev.windows.filter((_, i) => i !== index),
+        },
+      };
+    });
+  };
+
+  const resetWindowToGlobal = (id: number, index: number) => {
+    markTouched();
+    setRanges((old) => {
+      const prev = getOrCreateRange(id);
+      return {
+        ...old,
+        [id]: {
+          ...prev,
+          windows: prev.windows.map((window, i) =>
+            i === index
+              ? { ...window, from: globalFrom, to: globalTo, custom: false }
+              : window
+          ),
+        },
       };
     });
   };
@@ -258,18 +330,22 @@ export function ReusableAssignDialog<
     return selected.some((id) => {
       const r = ranges[id];
       if (!r) return false;
-      return r.from !== globalFrom || r.to !== globalTo;
+      return r.windows.some(
+        (window) => window.from !== globalFrom || window.to !== globalTo
+      );
     });
   }, [selected, ranges, globalFrom, globalTo]);
 
   const allRangesValid = useMemo(() => {
     if (!isValidRange(globalFrom, globalTo)) return false;
     for (const id of selected) {
-      const r = ranges[id] ?? createRange({ globalFrom, globalTo });
-      if (!isValidRange(r.from, r.to)) return false;
+      const r = getOrCreateRange(id);
+      for (const window of r.windows) {
+        if (!isValidRange(window.from, window.to)) return false;
+      }
     }
     return true;
-  }, [selected, ranges, globalFrom, globalTo, createRange]);
+  }, [selected, ranges, globalFrom, globalTo]);
 
   const handleSave = () => {
     if (selected.length > 0 && !allRangesValid) return;
@@ -282,7 +358,7 @@ export function ReusableAssignDialog<
     return selected.map((id) => ({ id, item: byId.get(id) }));
   }, [items, selected, getItemId]);
 
-  const computedGrid = detailGridMd;
+  const computedGrid = `${detailGridMd} 48px 48px`;
 
   return (
     <Dialog
@@ -463,93 +539,202 @@ export function ReusableAssignDialog<
               {selected.length === 0 ? (
                 <Typography color="text.secondary">{L.pickHint}</Typography>
               ) : (
-                <Stack spacing={1} sx={{ maxHeight: 420, overflowY: "auto" }}>
+                <Stack spacing={1.5} sx={{ maxHeight: 420, overflowY: "auto" }}>
                   {selectedItems.map(({ id, item }) => {
-                    const r =
-                      ranges[id] ?? createRange({ globalFrom, globalTo });
-                    const isRowGloballySynced =
-                      r.from === globalFrom && r.to === globalTo;
+                    const range = getOrCreateRange(id);
 
                     return (
                       <Box
                         key={id}
                         sx={{
-                          p: 1,
+                          p: 1.5,
                           border: (t) => `1px solid ${t.palette.divider}`,
                           borderRadius: 1,
-                          display: "grid",
-                          gridTemplateColumns: { xs: "1fr", md: computedGrid },
-                          gap: 1,
-                          alignItems: "center",
+                          backgroundColor: "#ffffff",
                         }}
                       >
-                        <Box sx={{ minWidth: 0 }}>
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              fontWeight: 600,
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                            }}
-                            title={item ? getItemPrimary(item) : `ID ${id}`}
-                          >
-                            {item ? getItemPrimary(item) : `ID ${id}`}
-                          </Typography>
-                        </Box>
-
-                        <DatePicker
-                          value={toPickerValue(r.from)}
-                          onChange={(nv) => setRowFrom(id, fromPickerValue(nv))}
-                          slotProps={{
-                            textField: {
-                              size: "small",
-                              error: !isValidRange(r.from, r.to),
-                            },
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: 1,
+                            mb: 1,
                           }}
-                        />
-
-                        <DatePicker
-                          value={toPickerValue(r.to)}
-                          onChange={(nv) => setRowTo(id, fromPickerValue(nv))}
-                          slotProps={{
-                            textField: {
-                              size: "small",
-                              error: !isValidRange(r.from, r.to),
-                            },
-                          }}
-                        />
-
-                        {renderRowExtra ? (
-                          <Box>
-                            {renderRowExtra({
-                              id,
-                              item,
-                              range: r as TRange,
-                              setRangePatch: (patch) => {
-                                setTouched(true);
-                                setRanges((old) => ({
-                                  ...old,
-                                  [id]: { ...(old[id] ?? r), ...patch },
-                                }));
-                              },
-                            })}
+                        >
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                fontWeight: 600,
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                              title={item ? getItemPrimary(item) : `ID ${id}`}
+                            >
+                              {item ? getItemPrimary(item) : `ID ${id}`}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {range.windows.length} window
+                              {range.windows.length === 1 ? "" : "s"}
+                            </Typography>
                           </Box>
-                        ) : null}
 
-                        <Box sx={{ display: "flex", justifyContent: "center" }}>
-                          <Tooltip title={L.resetToGlobalTooltip}>
-                            <span>
-                              <IconButton
-                                size="small"
-                                onClick={() => resetRowToGlobal(id)}
-                                disabled={isRowGloballySynced}
-                              >
-                                <RestartAltIcon fontSize="small" />
-                              </IconButton>
-                            </span>
-                          </Tooltip>
+                          {allowMultipleWindows ? (
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              startIcon={<AddRoundedIcon />}
+                              onClick={() => addWindow(id)}
+                              sx={{
+                                textTransform: "none",
+                                borderColor: "#E5E7EB",
+                                color: "#111827",
+                                fontWeight: 500,
+                              }}
+                            >
+                              {L.addWindow}
+                            </Button>
+                          ) : null}
                         </Box>
+
+                        <Stack spacing={1}>
+                          {range.windows.map((window, index) => {
+                            const isWindowSynced =
+                              window.from === globalFrom &&
+                              window.to === globalTo;
+                            const allowRemove =
+                              allowMultipleWindows &&
+                              range.windows.length > 1;
+
+                            return (
+                              <Box
+                                key={`${id}-${index}`}
+                                sx={{
+                                  display: "grid",
+                                  gridTemplateColumns: {
+                                    xs: "1fr",
+                                    md: computedGrid,
+                                  },
+                                  gap: 1,
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Typography
+                                  variant="caption"
+                                  sx={{
+                                    color: "text.secondary",
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  {L.windowLabel(index)}
+                                </Typography>
+
+                                <DatePicker
+                                  value={toPickerValue(window.from)}
+                                  onChange={(nv) =>
+                                    setWindowFrom(id, index, fromPickerValue(nv))
+                                  }
+                                  slotProps={{
+                                    textField: {
+                                      size: "small",
+                                      error: !isValidRange(
+                                        window.from,
+                                        window.to
+                                      ),
+                                    },
+                                  }}
+                                />
+
+                                <DatePicker
+                                  value={toPickerValue(window.to)}
+                                  onChange={(nv) =>
+                                    setWindowTo(id, index, fromPickerValue(nv))
+                                  }
+                                  slotProps={{
+                                    textField: {
+                                      size: "small",
+                                      error: !isValidRange(
+                                        window.from,
+                                        window.to
+                                      ),
+                                    },
+                                  }}
+                                />
+
+                                {renderWindowExtra ? (
+                                  <Box>
+                                    {renderWindowExtra({
+                                      id,
+                                      item,
+                                      window: window as TWindow,
+                                      windowIndex: index,
+                                      setWindowPatch: (patch) => {
+                                        setTouched(true);
+                                        setRanges((old) => {
+                                          const prev = getOrCreateRange(id);
+                                          const nextWindows = prev.windows.map(
+                                            (entry, i) =>
+                                              i === index
+                                                ? { ...entry, ...patch }
+                                                : entry
+                                          );
+                                          return {
+                                            ...old,
+                                            [id]: { ...prev, windows: nextWindows },
+                                          };
+                                        });
+                                      },
+                                    })}
+                                  </Box>
+                                ) : null}
+
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  <Tooltip title={L.resetToGlobalTooltip}>
+                                    <span>
+                                      <IconButton
+                                        size="small"
+                                        onClick={() =>
+                                          resetWindowToGlobal(id, index)
+                                        }
+                                        disabled={isWindowSynced}
+                                      >
+                                        <RestartAltIcon fontSize="small" />
+                                      </IconButton>
+                                    </span>
+                                  </Tooltip>
+                                </Box>
+
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  <Tooltip title={L.removeWindowTooltip}>
+                                    <span>
+                                      <IconButton
+                                        size="small"
+                                        onClick={() =>
+                                          removeWindow(id, index)
+                                        }
+                                        disabled={!allowRemove}
+                                      >
+                                        <DeleteOutlineIcon fontSize="small" />
+                                      </IconButton>
+                                    </span>
+                                  </Tooltip>
+                                </Box>
+                              </Box>
+                            );
+                          })}
+                        </Stack>
                       </Box>
                     );
                   })}
