@@ -81,30 +81,22 @@ export default function AssignVehiclesDialog({
       windows.forEach((window: any) => {
         let respId: number | null | undefined =
           window?.responsibleEmployeeId ?? v.responsibleEmployeeId;
-        const respName = window?.responsibleEmployeeName ?? v.responsibleEmployeeName;
+
+        const respName =
+          window?.responsibleEmployeeName ?? v.responsibleEmployeeName;
+
         if (respId == null && respName) {
           respId = byName.get(normalizeText(respName));
         }
 
         bucket.get(vehId)!.push({
-          from: window?.dateFrom ?? todayStr(),
-          to: window?.dateTo ?? todayStr(),
+          from: window?.dateFrom ?? v.dateFrom ?? todayStr(),
+          to: window?.dateTo ?? v.dateTo ?? todayStr(),
           custom: true,
           responsibleEmployeeId: Number.isFinite(Number(respId))
             ? Number(respId)
             : null,
         });
-      });
-    }
-
-      if (!bucket.has(vehId)) bucket.set(vehId, []);
-      bucket.get(vehId)!.push({
-        from: v.dateFrom ?? todayStr(),
-        to: v.dateTo ?? todayStr(),
-        custom: true,
-        responsibleEmployeeId: Number.isFinite(Number(respId))
-          ? Number(respId)
-          : null,
       });
     }
 
@@ -186,6 +178,12 @@ export default function AssignVehiclesDialog({
         resetToGlobalTooltip: t(
           "constructionSites.assign.tooltip.resetToGlobal"
         ),
+        addWindow: t("constructionSites.assign.window.add"),
+        windowLabel: (i: number) =>
+          t("constructionSites.assign.window.label", { index: i + 1 }),
+        removeWindowTooltip: t("constructionSites.assign.window.remove"),
+        windowsCountLabel: (count: number) =>
+          t("constructionSites.assign.window.count", { count }),
       }}
       buildPayload={({ selected, ranges, globalFrom, globalTo }) => ({
         constructionSiteId,
@@ -195,7 +193,13 @@ export default function AssignVehiclesDialog({
             : selected.map((vehicleId) => {
                 const windows =
                   ranges[vehicleId]?.windows ??
-                  ([{ from: globalFrom, to: globalTo, responsibleEmployeeId: 0 }] as VehWindow[]);
+                  ([
+                    {
+                      from: globalFrom,
+                      to: globalTo,
+                      responsibleEmployeeId: 0,
+                    },
+                  ] as VehWindow[]);
 
                 return {
                   vehicleId,

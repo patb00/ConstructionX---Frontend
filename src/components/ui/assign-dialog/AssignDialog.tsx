@@ -54,6 +54,7 @@ type Labels = {
   addWindow: string;
   windowLabel: (index: number) => string;
   removeWindowTooltip: string;
+  windowsCountLabel: (count: number) => string;
 };
 
 type Props<TItem, TWindow extends AssignBaseWindow, TPayload> = {
@@ -148,6 +149,9 @@ export function ReusableAssignDialog<
     addWindow: labels?.addWindow ?? "Add window",
     windowLabel: labels?.windowLabel ?? ((i) => `Window ${i + 1}`),
     removeWindowTooltip: labels?.removeWindowTooltip ?? "Remove window",
+    windowsCountLabel:
+      labels?.windowsCountLabel ??
+      ((count) => `${count} window${count === 1 ? "" : "s"}`),
   };
 
   const [selected, setSelected] = useState<number[]>([]);
@@ -577,10 +581,6 @@ export function ReusableAssignDialog<
                             >
                               {item ? getItemPrimary(item) : `ID ${id}`}
                             </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              {range.windows.length} window
-                              {range.windows.length === 1 ? "" : "s"}
-                            </Typography>
                           </Box>
 
                           {allowMultipleWindows ? (
@@ -607,8 +607,7 @@ export function ReusableAssignDialog<
                               window.from === globalFrom &&
                               window.to === globalTo;
                             const allowRemove =
-                              allowMultipleWindows &&
-                              range.windows.length > 1;
+                              allowMultipleWindows && range.windows.length > 1;
 
                             return (
                               <Box
@@ -636,7 +635,11 @@ export function ReusableAssignDialog<
                                 <DatePicker
                                   value={toPickerValue(window.from)}
                                   onChange={(nv) =>
-                                    setWindowFrom(id, index, fromPickerValue(nv))
+                                    setWindowFrom(
+                                      id,
+                                      index,
+                                      fromPickerValue(nv)
+                                    )
                                   }
                                   slotProps={{
                                     textField: {
@@ -684,7 +687,10 @@ export function ReusableAssignDialog<
                                           );
                                           return {
                                             ...old,
-                                            [id]: { ...prev, windows: nextWindows },
+                                            [id]: {
+                                              ...prev,
+                                              windows: nextWindows,
+                                            },
                                           };
                                         });
                                       },

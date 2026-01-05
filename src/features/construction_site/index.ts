@@ -53,24 +53,17 @@ export interface ConstructionSiteVehicle {
 
 export interface ConstructionSiteCondo {
   id: number;
-
   address?: string | null;
-
   capacity?: number | null;
   currentlyOccupied?: number | null;
-
   leaseStartDate?: string | null;
   leaseEndDate?: string | null;
-
   pricePerDay?: number | null;
   pricePerMonth?: number | null;
   currency?: string | null;
-
   notes?: string | null;
-
   responsibleEmployeeId?: number | null;
   responsibleEmployeeName?: string | null;
-
   dateFrom?: string | null;
   dateTo?: string | null;
 }

@@ -72,27 +72,31 @@ const AssignmentsListPage = () => {
 
   const { userId, role } = useAuthStore();
 
-  const myUserId = useMemo(() => {
-    const n =
-      typeof userId === "string"
-        ? parseInt(userId, 10)
-        : typeof userId === "number"
-        ? userId
-        : NaN;
-    return Number.isFinite(n) ? n : null;
-  }, [userId]);
+  /**
+   * IMPORTANT:
+   * JWT userId is a UUID string (e.g. "a9b50b3b-...").
+   * Assignments are keyed by numeric employeeId/responsibleEmployeeId.
+   * The bridge is employee.applicationUserId === JWT userId.
+   */
+  const myEmployeeId = useMemo<number | null>(() => {
+    if (!userId) return null;
+    const me = employeeRows.find((e: any) => e.applicationUserId === userId);
+    return me?.id ?? null;
+  }, [employeeRows, userId]);
 
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | "">("");
   const [weekStart, setWeekStart] = useState<Date>(() =>
     startOfWeekMonday(new Date())
   );
 
-  const effectiveEmployeeId =
+  // Admin: can choose employee or "all" (null)
+  // Basic: must be locked to their own employeeId (and if missing, show none)
+  const effectiveEmployeeId: number | null =
     role === "Admin"
       ? typeof selectedEmployeeId === "number"
         ? selectedEmployeeId
         : null
-      : myUserId;
+      : myEmployeeId;
 
   const handleSelectChange = (e: SelectChangeEvent<number | "">) => {
     const v = e.target.value;
@@ -126,33 +130,33 @@ const AssignmentsListPage = () => {
       }
     : { construction: 0, vehicles: 0, tools: 0 };
 
-  const constructionAssignments = useMemo<AssignedConstructionSite[]>(
-    () =>
-      effectiveEmployeeId == null
-        ? acsRows
-        : acsRows.filter((r) => r.employeeId === effectiveEmployeeId),
-    [acsRows, effectiveEmployeeId]
-  );
+  // Safer behavior:
+  // - Admin with "all": show all rows
+  // - Basic with missing mapping: show nothing (avoid leaking all assignments)
+  const canShowAll = role === "Admin" && effectiveEmployeeId == null;
+  const shouldShowNone = role !== "Admin" && effectiveEmployeeId == null;
 
-  const vehicleAssignments = useMemo<AssignedVehicle[]>(
-    () =>
-      effectiveEmployeeId == null
-        ? vehicleRows
-        : vehicleRows.filter(
-            (r) => r.responsibleEmployeeId === effectiveEmployeeId
-          ),
-    [vehicleRows, effectiveEmployeeId]
-  );
+  const constructionAssignments = useMemo<AssignedConstructionSite[]>(() => {
+    if (shouldShowNone) return [];
+    if (canShowAll) return acsRows;
+    return acsRows.filter((r) => r.employeeId === effectiveEmployeeId);
+  }, [acsRows, canShowAll, shouldShowNone, effectiveEmployeeId]);
 
-  const toolAssignments = useMemo<AssignedTool[]>(
-    () =>
-      effectiveEmployeeId == null
-        ? toolRows
-        : toolRows.filter(
-            (r) => r.responsibleEmployeeId === effectiveEmployeeId
-          ),
-    [toolRows, effectiveEmployeeId]
-  );
+  const vehicleAssignments = useMemo<AssignedVehicle[]>(() => {
+    if (shouldShowNone) return [];
+    if (canShowAll) return vehicleRows;
+    return vehicleRows.filter(
+      (r) => r.responsibleEmployeeId === effectiveEmployeeId
+    );
+  }, [vehicleRows, canShowAll, shouldShowNone, effectiveEmployeeId]);
+
+  const toolAssignments = useMemo<AssignedTool[]>(() => {
+    if (shouldShowNone) return [];
+    if (canShowAll) return toolRows;
+    return toolRows.filter(
+      (r) => r.responsibleEmployeeId === effectiveEmployeeId
+    );
+  }, [toolRows, canShowAll, shouldShowNone, effectiveEmployeeId]);
 
   const isLoadingTimeline =
     isLoadingSites || isLoadingVehicles || isLoadingTools;
@@ -331,6 +335,11 @@ const AssignmentsListPage = () => {
     toolAssignments,
     t,
   ]);
+
+  console.log("userId", userId);
+  console.log("role", role);
+  console.log("myEmployeeId", myEmployeeId);
+  console.log("effectiveEmployeeId", effectiveEmployeeId);
 
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>

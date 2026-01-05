@@ -19,7 +19,7 @@ import ApartmentIcon from "@mui/icons-material/Apartment";
 import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { FaTools, FaCarSide, FaUser } from "react-icons/fa";
-import { formatDate, formatDateRange } from "../utils/dates";
+import { formatDate, getConstructionSiteDateRange } from "../utils/dates";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useConstructionSite } from "../hooks/useConstructionSite";
@@ -48,55 +48,12 @@ import { BoardItemCard } from "../../../components/ui/BoardItemCard";
 import StatCardDetail from "../../../components/ui/StatCardDetail";
 import { AddBadgeIcon } from "../../../components/ui/icons/AddBadgeIcon";
 import { RemoveBadgeIcon } from "../../../components/ui/icons/RemoveBadgeIcon";
-
-type Employee = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  jobPositionName?: string | null;
-  dateFrom?: string | null;
-  dateTo?: string | null;
-};
-
-type Tool = {
-  id: number;
-  name?: string | null;
-  model?: string | null;
-  inventoryNumber?: string | null;
-  serialNumber?: string | null;
-  status?: string | null;
-  condition?: string | null;
-  dateFrom?: string | null;
-  dateTo?: string | null;
-  responsibleEmployeeName?: string | null;
-  responsibleEmployeeId?: number | null;
-};
-
-type Vehicle = {
-  id: number;
-  name?: string | null;
-  brand?: string | null;
-  model?: string | null;
-  registrationNumber?: string | null;
-  status?: string | null;
-  condition?: string | null;
-  dateFrom?: string | null;
-  dateTo?: string | null;
-  responsibleEmployeeName?: string | null;
-  responsibleEmployeeId?: number | null;
-};
-
-type Condo = {
-  id: number;
-  name?: string | null;
-  code?: string | null;
-  status?: string | null;
-  condition?: string | null;
-  dateFrom?: string | null;
-  dateTo?: string | null;
-  responsibleEmployeeName?: string | null;
-  responsibleEmployeeId?: number | null;
-};
+import type {
+  ConstructionSiteCondo,
+  ConstructionSiteEmployee,
+  ConstructionSiteTool,
+  ConstructionSiteVehicle,
+} from "..";
 
 const addHeaderAction = (onClick: () => void) => (
   <IconButton
@@ -136,10 +93,13 @@ export default function ConstructionSiteDetailsPage() {
   const assignVeh = useAssignVehiclesToConstructionSite();
   const assignCondos = useAssignCondosToConstructionSite();
   const statusOptions = useConstructionSiteStatusOptions();
-  const employees = (data?.constructionSiteEmployees ?? []) as Employee[];
-  const tools = (data?.constructionSiteTools ?? []) as Tool[];
-  const vehicles = (data?.constructionSiteVehicles ?? []) as Vehicle[];
-  const condos = (data?.constructionSiteCondos ?? []) as Condo[];
+  const employees = (data?.constructionSiteEmployees ??
+    []) as ConstructionSiteEmployee[];
+  const tools = (data?.constructionSiteTools ?? []) as ConstructionSiteTool[];
+  const vehicles = (data?.constructionSiteVehicles ??
+    []) as ConstructionSiteVehicle[];
+  const condos = (data?.constructionSiteCondos ??
+    []) as ConstructionSiteCondo[];
   const statusLabel = useMemo(() => {
     if (data?.status == null) return "—";
     return statusOptions.find((opt) => opt.value === data.status)?.label ?? "—";
@@ -188,7 +148,7 @@ export default function ConstructionSiteDetailsPage() {
         items: employees,
         mutate: assignEmp.mutate,
         payloadKey: "employees",
-        mapItem: (e: Employee) => ({
+        mapItem: (e: ConstructionSiteEmployee) => ({
           employeeId: e.id,
           dateFrom: e.dateFrom ?? null,
           dateTo: e.dateTo ?? null,
@@ -219,7 +179,7 @@ export default function ConstructionSiteDetailsPage() {
         items: tools,
         mutate: assignTools.mutate,
         payloadKey: "tools",
-        mapItem: (t: Tool) => ({
+        mapItem: (t: ConstructionSiteTool) => ({
           toolId: t.id,
           ...mapWithResponsible(t),
         }),
@@ -234,7 +194,7 @@ export default function ConstructionSiteDetailsPage() {
         items: vehicles,
         mutate: assignVeh.mutate,
         payloadKey: "vehicles",
-        mapItem: (x: Vehicle) => ({
+        mapItem: (x: ConstructionSiteVehicle) => ({
           vehicleId: x.id,
           ...mapWithResponsible(x),
         }),
@@ -249,7 +209,10 @@ export default function ConstructionSiteDetailsPage() {
         items: condos,
         mutate: assignCondos.mutate,
         payloadKey: "condos",
-        mapItem: (x: Condo) => ({ condoId: x.id, ...mapWithResponsible(x) }),
+        mapItem: (x: ConstructionSiteCondo) => ({
+          condoId: x.id,
+          ...mapWithResponsible(x),
+        }),
       }),
     [siteId, condos, assignCondos.mutate, mapWithResponsible]
   );
@@ -260,7 +223,7 @@ export default function ConstructionSiteDetailsPage() {
     const vehicleCount = vehicles.length;
     const condoCount = condos.length;
 
-    const employeeColumn: BoardColumnConfig<Employee> = {
+    const employeeColumn: BoardColumnConfig<ConstructionSiteEmployee> = {
       id: "employees",
       icon: <GroupIcon color="primary" fontSize="small" />,
       title: t("constructionSites.detail.employees"),
@@ -277,7 +240,7 @@ export default function ConstructionSiteDetailsPage() {
       renderRow: (e) => {
         const fullNameTxt = `${e.firstName} ${e.lastName}`.trim();
         const position = e.jobPositionName || t("common.notAvailable");
-        const dateRange = formatDateRange(e.dateFrom, e.dateTo);
+        const dateRange = getConstructionSiteDateRange(e);
 
         return (
           <BoardItemCard
@@ -315,7 +278,7 @@ export default function ConstructionSiteDetailsPage() {
       },
     };
 
-    const toolsColumn: BoardColumnConfig<Tool> = {
+    const toolsColumn: BoardColumnConfig<ConstructionSiteTool> = {
       id: "tools",
       icon: <HandymanIcon color="primary" fontSize="small" />,
       title: t("constructionSites.detail.tools"),
@@ -353,7 +316,7 @@ export default function ConstructionSiteDetailsPage() {
             .filter(Boolean)
             .join(" · ") || "—";
 
-        const dateRange = formatDateRange(tool.dateFrom, tool.dateTo);
+        const dateRange = getConstructionSiteDateRange(tool);
 
         return (
           <BoardItemCard
@@ -411,7 +374,7 @@ export default function ConstructionSiteDetailsPage() {
       },
     };
 
-    const vehiclesColumn: BoardColumnConfig<Vehicle> = {
+    const vehiclesColumn: BoardColumnConfig<ConstructionSiteVehicle> = {
       id: "vehicles",
       icon: <DirectionsCarIcon color="primary" fontSize="small" />,
       title: t("constructionSites.detail.vehicles"),
@@ -447,7 +410,7 @@ export default function ConstructionSiteDetailsPage() {
             .filter(Boolean)
             .join(" · ") || "—";
 
-        const dateRange = formatDateRange(v.dateFrom, v.dateTo);
+        const dateRange = getConstructionSiteDateRange(v);
 
         return (
           <BoardItemCard
@@ -512,7 +475,7 @@ export default function ConstructionSiteDetailsPage() {
       },
     };
 
-    const condosColumn: BoardColumnConfig<Condo> = {
+    const condosColumn: BoardColumnConfig<ConstructionSiteCondo> = {
       id: "condos",
       icon: <ApartmentIcon color="primary" fontSize="small" />,
       title: t("constructionSites.detail.condos"),
@@ -527,7 +490,7 @@ export default function ConstructionSiteDetailsPage() {
         />
       ),
       renderRow: (c) => {
-        const dateRange = formatDateRange(c.dateFrom, c.dateTo);
+        const dateRange = getConstructionSiteDateRange(c);
 
         return (
           <BoardItemCard
@@ -591,7 +554,7 @@ export default function ConstructionSiteDetailsPage() {
                   noWrap
                   sx={{ mb: 0.25 }}
                 >
-                  {c.name || c.code || `#${c.id}` || "—"}
+                  {`#${c.id}` || "—"}
                 </Typography>
 
                 {c.responsibleEmployeeName && (
@@ -600,15 +563,6 @@ export default function ConstructionSiteDetailsPage() {
                   </Typography>
                 )}
               </Box>
-
-              {(c.condition || c.status) && (
-                <Stack direction="row" spacing={0.5}>
-                  {c.status && (
-                    <Chip size="small" variant="outlined" label={c.status} />
-                  )}
-                  {c.condition && <Chip size="small" label={c.condition} />}
-                </Stack>
-              )}
             </Box>
           </BoardItemCard>
         );

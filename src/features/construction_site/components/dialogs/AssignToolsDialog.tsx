@@ -31,16 +31,19 @@ export default function AssignToolsDialog({
 }: Props) {
   const { t } = useTranslation();
   const { data: site } = useConstructionSite(constructionSiteId);
+
   const {
     employeeRows = [],
     isLoading: empLoading,
     isError: empError,
   } = useEmployees();
+
   const {
     toolsRows = [],
     isLoading: toolLoading,
     isError: toolError,
   } = useTools();
+
   const assign = useAssignToolsToConstructionSite();
 
   const preselected = useMemo(() => {
@@ -50,7 +53,7 @@ export default function AssignToolsDialog({
     if (!prior.length) return { ids, map };
 
     const byName = new Map(
-      employeeRows.map((e: any) => [
+      (employeeRows as any[]).map((e: any) => [
         normalizeText(fullName(e.firstName, e.lastName)),
         Number(e.id),
       ])
@@ -59,7 +62,7 @@ export default function AssignToolsDialog({
     const bucket = new Map<number, ToolWindow[]>();
 
     for (const item of prior as any[]) {
-      const toolId = Number(item.id);
+      const toolId = Number(item?.id);
       if (!Number.isFinite(toolId)) continue;
 
       if (!bucket.has(toolId)) bucket.set(toolId, []);
@@ -79,19 +82,22 @@ export default function AssignToolsDialog({
       windows.forEach((window: any) => {
         let respId: number | null | undefined =
           window?.responsibleEmployeeId ?? item.responsibleEmployeeId;
-        const respName = window?.responsibleEmployeeName ?? item.responsibleEmployeeName;
+
+        const respName =
+          window?.responsibleEmployeeName ?? item.responsibleEmployeeName;
+
         if (respId == null && respName) {
           respId = byName.get(normalizeText(respName));
         }
 
-      if (!bucket.has(toolId)) bucket.set(toolId, []);
-      bucket.get(toolId)!.push({
-        from: item.dateFrom ?? todayStr(),
-        to: item.dateTo ?? todayStr(),
-        custom: true,
-        responsibleEmployeeId: Number.isFinite(Number(respId))
-          ? Number(respId)
-          : null,
+        bucket.get(toolId)!.push({
+          from: window?.dateFrom ?? item.dateFrom ?? todayStr(),
+          to: window?.dateTo ?? item.dateTo ?? todayStr(),
+          custom: true,
+          responsibleEmployeeId: Number.isFinite(Number(respId))
+            ? Number(respId)
+            : null,
+        });
       });
     }
 
@@ -111,7 +117,7 @@ export default function AssignToolsDialog({
         if (assign.isPending) return;
         onClose();
       }}
-      items={toolsRows}
+      items={toolsRows as any[]}
       loading={empLoading || toolLoading}
       error={empError || toolError}
       emptyText={t("constructionSites.assign.noTools")}
@@ -133,7 +139,7 @@ export default function AssignToolsDialog({
       renderWindowExtra={({ window, setWindowPatch }) => (
         <Autocomplete
           size="small"
-          options={employeeRows as any[]}
+          options={(employeeRows as any[]) ?? []}
           getOptionLabel={(e: any) =>
             e ? fullName(e.firstName, e.lastName) : ""
           }
@@ -142,7 +148,7 @@ export default function AssignToolsDialog({
           }
           value={
             window.responsibleEmployeeId != null
-              ? (employeeRows as any[]).find(
+              ? ((employeeRows as any[]) ?? []).find(
                   (e) => Number(e.id) === Number(window.responsibleEmployeeId)
                 ) ?? null
               : null
@@ -172,6 +178,12 @@ export default function AssignToolsDialog({
         resetToGlobalTooltip: t(
           "constructionSites.assign.tooltip.resetToGlobal"
         ),
+        addWindow: t("constructionSites.assign.window.add"),
+        windowLabel: (i: number) =>
+          t("constructionSites.assign.window.label", { index: i + 1 }),
+        removeWindowTooltip: t("constructionSites.assign.window.remove"),
+        windowsCountLabel: (count: number) =>
+          t("constructionSites.assign.window.count", { count }),
       }}
       buildPayload={({ selected, ranges, globalFrom, globalTo }) => ({
         constructionSiteId,
@@ -181,7 +193,13 @@ export default function AssignToolsDialog({
             : selected.map((toolId) => {
                 const windows =
                   ranges[toolId]?.windows ??
-                  ([{ from: globalFrom, to: globalTo, responsibleEmployeeId: 0 }] as ToolWindow[]);
+                  ([
+                    {
+                      from: globalFrom,
+                      to: globalTo,
+                      responsibleEmployeeId: 0,
+                    },
+                  ] as ToolWindow[]);
 
                 return {
                   toolId,

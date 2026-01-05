@@ -141,6 +141,12 @@ export default function AssignEmployeesDialog({
         resetToGlobalTooltip: t(
           "constructionSites.assign.tooltip.resetToGlobal"
         ),
+        addWindow: t("constructionSites.assign.window.add"),
+        windowLabel: (i: number) =>
+          t("constructionSites.assign.window.label", { index: i + 1 }),
+        removeWindowTooltip: t("constructionSites.assign.window.remove"),
+        windowsCountLabel: (count: number) =>
+          t("constructionSites.assign.window.count", { count }),
       }}
       buildPayload={({ selected, ranges, globalFrom, globalTo }) => ({
         constructionSiteId,

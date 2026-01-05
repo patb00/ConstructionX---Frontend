@@ -120,6 +120,13 @@
       "loadError": "Neuspjelo učitavanje zaposlenika.",
       "empty": "Nema dostupnih zaposlenika.",
 
+      "window": {
+        "add": "Dodaj razdoblje",
+        "label": "Razdoblje {{index}}",
+        "remove": "Ukloni razdoblje",
+        "count": "{{count}} razdoblje{{count, plural, one {} other {a}}}"
+      },
+
       "condosTitle": "Dodjela stanova",
       "noCondos": "Nema dostupnih stanova.",
       "pickCondoHint": "Odaberite stanove s lijeve strane.",
