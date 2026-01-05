@@ -10,10 +10,11 @@ import { fullName } from "../../utils/name";
 import { normalizeText } from "../../utils/normalize";
 import {
   ReusableAssignDialog,
-  type AssignBaseRange,
+  type AssignBaseWindow,
+  type AssignRange,
 } from "../../../../components/ui/assign-dialog/AssignDialog";
 
-type CondoRange = AssignBaseRange & { responsibleEmployeeId?: number | null };
+type CondoWindow = AssignBaseWindow & { responsibleEmployeeId?: number | null };
 
 type Props = {
   constructionSiteId: number;
@@ -48,7 +49,7 @@ export default function AssignCondosDialog({
     const prior = (site as any)?.constructionSiteCondos ?? [];
 
     const ids: number[] = [];
-    const map: Record<number, CondoRange> = {};
+    const map: Record<number, AssignRange<CondoWindow>> = {};
     if (!prior.length) return { ids, map };
 
     const byName = new Map(
@@ -58,32 +59,38 @@ export default function AssignCondosDialog({
       ])
     );
 
+    const bucket = new Map<number, CondoWindow[]>();
+
     for (const c of prior as any[]) {
       const condoId = Number(c?.id ?? c?.condoId ?? c?.condo?.id);
       if (!Number.isFinite(condoId)) continue;
-
-      ids.push(condoId);
 
       let respId: number | null | undefined = c.responsibleEmployeeId;
       if (respId == null && c.responsibleEmployeeName) {
         respId = byName.get(normalizeText(c.responsibleEmployeeName));
       }
 
-      map[condoId] = {
+      if (!bucket.has(condoId)) bucket.set(condoId, []);
+      bucket.get(condoId)!.push({
         from: c.dateFrom ?? todayStr(),
         to: c.dateTo ?? todayStr(),
         custom: true,
         responsibleEmployeeId: Number.isFinite(Number(respId))
           ? Number(respId)
           : null,
-      };
+      });
+    }
+
+    for (const [id, windows] of bucket.entries()) {
+      ids.push(id);
+      map[id] = { windows };
     }
 
     return { ids, map };
   }, [site, employeeRows]);
 
   return (
-    <ReusableAssignDialog<any, CondoRange, any>
+    <ReusableAssignDialog<any, CondoWindow, any>
       open={open}
       title={t("constructionSites.assign.condosTitle")}
       onClose={() => {
@@ -98,19 +105,20 @@ export default function AssignCondosDialog({
       busy={assign.isPending}
       preselected={preselected}
       leftWidthMd="260px"
-      detailGridMd="minmax(220px,1fr) 180px 180px minmax(220px,1fr) 48px"
+      detailGridMd="minmax(140px,1fr) 180px 180px minmax(220px,1fr)"
+      allowMultipleWindows={false}
       getItemId={(condo) => Number(condo.id)}
       getItemPrimary={(condo) => condo.name ?? condo.code ?? `#${condo.id}`}
       getItemSecondary={(condo) =>
         condo.address ? String(condo.address) : null
       }
-      createRange={({ globalFrom, globalTo }) => ({
+      createWindow={({ globalFrom, globalTo }) => ({
         from: globalFrom,
         to: globalTo,
         custom: false,
         responsibleEmployeeId: null,
       })}
-      renderRowExtra={({ range, setRangePatch }) => (
+      renderWindowExtra={({ window, setWindowPatch }) => (
         <Autocomplete
           size="small"
           options={(employeeRows as any[]) ?? []}
@@ -121,14 +129,14 @@ export default function AssignCondosDialog({
             Number(opt?.id) === Number(val?.id)
           }
           value={
-            range.responsibleEmployeeId != null
+            window.responsibleEmployeeId != null
               ? ((employeeRows as any[]) ?? []).find(
-                  (e) => Number(e.id) === Number(range.responsibleEmployeeId)
+                  (e) => Number(e.id) === Number(window.responsibleEmployeeId)
                 ) ?? null
               : null
           }
           onChange={(_, val: any | null) =>
-            setRangePatch({
+            setWindowPatch({
               responsibleEmployeeId: val ? Number(val.id) : null,
             })
           }
@@ -159,20 +167,20 @@ export default function AssignCondosDialog({
           selected.length === 0
             ? []
             : selected.map((condoId) => {
-                const r =
-                  ranges[condoId] ??
+                const window =
+                  ranges[condoId]?.windows?.[0] ??
                   ({
                     from: globalFrom,
                     to: globalTo,
                     responsibleEmployeeId: null,
                     custom: false,
-                  } as CondoRange);
+                  } as CondoWindow);
 
                 return {
                   condoId,
-                  dateFrom: r.from,
-                  dateTo: r.to,
-                  responsibleEmployeeId: r.responsibleEmployeeId ?? 0,
+                  dateFrom: window.from,
+                  dateTo: window.to,
+                  responsibleEmployeeId: window.responsibleEmployeeId ?? 0,
                 };
               }),
       })}

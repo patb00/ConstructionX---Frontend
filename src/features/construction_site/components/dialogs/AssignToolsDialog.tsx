@@ -3,7 +3,8 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ReusableAssignDialog,
-  type AssignBaseRange,
+  type AssignBaseWindow,
+  type AssignRange,
 } from "../../../../components/ui/assign-dialog/AssignDialog";
 import { useConstructionSite } from "../../hooks/useConstructionSite";
 import { useEmployees } from "../../../administration/employees/hooks/useEmployees";
@@ -13,7 +14,9 @@ import { normalizeText } from "../../utils/normalize";
 import { todayStr } from "../../utils/dates";
 import { fullName } from "../../utils/name";
 
-type ToolRange = AssignBaseRange & { responsibleEmployeeId?: number | null };
+type ToolWindow = AssignBaseWindow & {
+  responsibleEmployeeId?: number | null;
+};
 
 type Props = {
   constructionSiteId: number;
@@ -43,7 +46,7 @@ export default function AssignToolsDialog({
   const preselected = useMemo(() => {
     const prior = site?.constructionSiteTools ?? [];
     const ids: number[] = [];
-    const map: Record<number, ToolRange> = {};
+    const map: Record<number, AssignRange<ToolWindow>> = {};
     if (!prior.length) return { ids, map };
 
     const byName = new Map(
@@ -53,31 +56,55 @@ export default function AssignToolsDialog({
       ])
     );
 
+    const bucket = new Map<number, ToolWindow[]>();
+
     for (const item of prior as any[]) {
       const toolId = Number(item.id);
       if (!Number.isFinite(toolId)) continue;
-      ids.push(toolId);
 
-      let respId: number | null | undefined = item.responsibleEmployeeId;
-      if (respId == null && item.responsibleEmployeeName) {
-        respId = byName.get(normalizeText(item.responsibleEmployeeName));
-      }
+      if (!bucket.has(toolId)) bucket.set(toolId, []);
 
-      map[toolId] = {
-        from: item.dateFrom ?? todayStr(),
-        to: item.dateTo ?? todayStr(),
-        custom: true,
-        responsibleEmployeeId: Number.isFinite(Number(respId))
-          ? Number(respId)
-          : null,
-      };
+      const windows =
+        item?.assignmentWindows && item.assignmentWindows.length > 0
+          ? item.assignmentWindows
+          : [
+              {
+                dateFrom: item.dateFrom ?? todayStr(),
+                dateTo: item.dateTo ?? todayStr(),
+                responsibleEmployeeId: item.responsibleEmployeeId,
+                responsibleEmployeeName: item.responsibleEmployeeName,
+              },
+            ];
+
+      windows.forEach((window: any) => {
+        let respId: number | null | undefined =
+          window?.responsibleEmployeeId ?? item.responsibleEmployeeId;
+        const respName = window?.responsibleEmployeeName ?? item.responsibleEmployeeName;
+        if (respId == null && respName) {
+          respId = byName.get(normalizeText(respName));
+        }
+
+        bucket.get(toolId)!.push({
+          from: window?.dateFrom ?? todayStr(),
+          to: window?.dateTo ?? todayStr(),
+          custom: true,
+          responsibleEmployeeId: Number.isFinite(Number(respId))
+            ? Number(respId)
+            : null,
+        });
+      });
+    }
+
+    for (const [id, windows] of bucket.entries()) {
+      ids.push(id);
+      map[id] = { windows };
     }
 
     return { ids, map };
   }, [site, employeeRows]);
 
   return (
-    <ReusableAssignDialog<any, ToolRange, any>
+    <ReusableAssignDialog<any, ToolWindow, any>
       open={open}
       title={t("constructionSites.assign.toolsTitle")}
       onClose={() => {
@@ -96,14 +123,14 @@ export default function AssignToolsDialog({
       getItemSecondary={(tool) =>
         tool.inventoryNumber ? `Inv. br.: ${tool.inventoryNumber}` : null
       }
-      detailGridMd="minmax(220px,1fr) 180px 180px minmax(220px,1fr) 48px"
-      createRange={({ globalFrom, globalTo }) => ({
+      detailGridMd="minmax(140px,1fr) 180px 180px minmax(220px,1fr)"
+      createWindow={({ globalFrom, globalTo }) => ({
         from: globalFrom,
         to: globalTo,
         custom: false,
         responsibleEmployeeId: null,
       })}
-      renderRowExtra={({ range, setRangePatch }) => (
+      renderWindowExtra={({ window, setWindowPatch }) => (
         <Autocomplete
           size="small"
           options={employeeRows as any[]}
@@ -114,14 +141,14 @@ export default function AssignToolsDialog({
             Number(opt?.id) === Number(val?.id)
           }
           value={
-            range.responsibleEmployeeId != null
+            window.responsibleEmployeeId != null
               ? (employeeRows as any[]).find(
-                  (e) => Number(e.id) === Number(range.responsibleEmployeeId)
+                  (e) => Number(e.id) === Number(window.responsibleEmployeeId)
                 ) ?? null
               : null
           }
           onChange={(_, val: any | null) =>
-            setRangePatch({
+            setWindowPatch({
               responsibleEmployeeId: val ? Number(val.id) : null,
             })
           }
@@ -152,16 +179,17 @@ export default function AssignToolsDialog({
           selected.length === 0
             ? []
             : selected.map((toolId) => {
-                const r = ranges[toolId] ?? {
-                  from: globalFrom,
-                  to: globalTo,
-                  responsibleEmployeeId: null,
-                };
+                const windows =
+                  ranges[toolId]?.windows ??
+                  ([{ from: globalFrom, to: globalTo, responsibleEmployeeId: 0 }] as ToolWindow[]);
+
                 return {
                   toolId,
-                  dateFrom: r.from,
-                  dateTo: r.to,
-                  responsibleEmployeeId: r.responsibleEmployeeId ?? 0,
+                  assignmentWindows: windows.map((window) => ({
+                    dateFrom: window.from,
+                    dateTo: window.to,
+                    responsibleEmployeeId: window.responsibleEmployeeId ?? 0,
+                  })),
                 };
               }),
       })}
