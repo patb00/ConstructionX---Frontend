@@ -92,7 +92,6 @@ export default function AssignEmployeesToCondoDialog({
       busy={assign.isPending}
       preselected={preselected}
       allowMultipleWindows={false}
-      showRemoveWindowAction={false}
       detailGridMd="minmax(140px,1fr) 180px 180px"
       getItemId={(e) => Number(e.id)}
       getItemPrimary={(e) => `${e.firstName} ${e.lastName}`.trim()}

@@ -107,7 +107,6 @@ export default function AssignCondosDialog({
       leftWidthMd="260px"
       detailGridMd="minmax(140px,1fr) 180px 180px minmax(220px,1fr)"
       allowMultipleWindows={false}
-      showRemoveWindowAction={false}
       getItemId={(condo) => Number(condo.id)}
       getItemPrimary={(condo) => condo.name ?? condo.code ?? `#${condo.id}`}
       getItemSecondary={(condo) =>

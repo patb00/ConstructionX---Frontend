@@ -96,7 +96,6 @@ type Props<TItem, TWindow extends AssignBaseWindow, TPayload> = {
   detailGridMd?: string;
   leftWidthMd?: string;
   allowMultipleWindows?: boolean;
-  showRemoveWindowAction?: boolean;
 
   labels?: Partial<Labels>;
 };
@@ -131,7 +130,6 @@ export function ReusableAssignDialog<
   detailGridMd = "minmax(140px,1fr) 180px 180px",
   leftWidthMd = "260px",
   allowMultipleWindows = true,
-  showRemoveWindowAction = true,
   labels,
 }: Props<TItem, TWindow, TPayload>) {
   const L: Labels = {
@@ -360,8 +358,7 @@ export function ReusableAssignDialog<
     return selected.map((id) => ({ id, item: byId.get(id) }));
   }, [items, selected, getItemId]);
 
-  const actionColumns = showRemoveWindowAction ? "48px 48px" : "48px";
-  const computedGrid = `${detailGridMd} ${actionColumns}`;
+  const computedGrid = `${detailGridMd} 48px 48px`;
 
   return (
     <Dialog
@@ -609,7 +606,6 @@ export function ReusableAssignDialog<
                               window.to === globalTo;
                             const allowRemove =
                               allowMultipleWindows &&
-                              showRemoveWindowAction &&
                               range.windows.length > 1;
 
                             return (
@@ -715,28 +711,26 @@ export function ReusableAssignDialog<
                                   </Tooltip>
                                 </Box>
 
-                                {showRemoveWindowAction ? (
-                                  <Box
-                                    sx={{
-                                      display: "flex",
-                                      justifyContent: "center",
-                                    }}
-                                  >
-                                    <Tooltip title={L.removeWindowTooltip}>
-                                      <span>
-                                        <IconButton
-                                          size="small"
-                                          onClick={() =>
-                                            removeWindow(id, index)
-                                          }
-                                          disabled={!allowRemove}
-                                        >
-                                          <DeleteOutlineIcon fontSize="small" />
-                                        </IconButton>
-                                      </span>
-                                    </Tooltip>
-                                  </Box>
-                                ) : null}
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  <Tooltip title={L.removeWindowTooltip}>
+                                    <span>
+                                      <IconButton
+                                        size="small"
+                                        onClick={() =>
+                                          removeWindow(id, index)
+                                        }
+                                        disabled={!allowRemove}
+                                      >
+                                        <DeleteOutlineIcon fontSize="small" />
+                                      </IconButton>
+                                    </span>
+                                  </Tooltip>
+                                </Box>
                               </Box>
                             );
                           })}

@@ -97,6 +97,17 @@ export default function AssignVehiclesDialog({
       });
     }
 
+      if (!bucket.has(vehId)) bucket.set(vehId, []);
+      bucket.get(vehId)!.push({
+        from: v.dateFrom ?? todayStr(),
+        to: v.dateTo ?? todayStr(),
+        custom: true,
+        responsibleEmployeeId: Number.isFinite(Number(respId))
+          ? Number(respId)
+          : null,
+      });
+    }
+
     for (const [id, windows] of bucket.entries()) {
       ids.push(id);
       map[id] = { windows };

@@ -30,16 +30,7 @@ export default function AssignEmployeesDialog({
 
   const preselected = useMemo(() => {
     const prior = (site as any)?.constructionSiteEmployees as
-      | Array<{
-          id?: number;
-          employeeId?: number;
-          employee?: { id?: number } | null;
-          firstName?: string;
-          lastName?: string;
-          dateFrom?: string;
-          dateTo?: string;
-          assignmentWindows?: Array<{ dateFrom?: string; dateTo?: string }>;
-        }>
+      | Array<{ id?: number; dateFrom?: string; dateTo?: string }>
       | undefined;
 
     const ids: number[] = [];
@@ -52,47 +43,17 @@ export default function AssignEmployeesDialog({
         .map((employee: any) => Number(employee?.id))
         .filter((id) => Number.isFinite(id))
     );
-    const byName = new Map(
-      employeeRows.map((employee: any) => [
-        `${employee?.firstName ?? ""} ${employee?.lastName ?? ""}`
-          .trim()
-          .toLowerCase(),
-        Number(employee?.id),
-      ])
-    );
 
     const bucket = new Map<number, EmpWindow[]>();
 
     for (const item of prior) {
-      let id = Number(item?.employeeId ?? item?.employee?.id ?? item?.id);
-      if (!Number.isFinite(id)) {
-        const name = `${item?.firstName ?? ""} ${item?.lastName ?? ""}`
-          .trim()
-          .toLowerCase();
-        const mapped = byName.get(name);
-        if (Number.isFinite(Number(mapped))) {
-          id = Number(mapped);
-        }
-      }
+      const id = Number(item?.id);
       if (!Number.isFinite(id)) continue;
       if (!bucket.has(id)) bucket.set(id, []);
-
-      const windows =
-        item?.assignmentWindows && item.assignmentWindows.length > 0
-          ? item.assignmentWindows
-          : [
-              {
-                dateFrom: item?.dateFrom ?? todayStr(),
-                dateTo: item?.dateTo ?? todayStr(),
-              },
-            ];
-
-      windows.forEach((window) => {
-        bucket.get(id)!.push({
-          from: window?.dateFrom ?? todayStr(),
-          to: window?.dateTo ?? todayStr(),
-          custom: true,
-        });
+      bucket.get(id)!.push({
+        from: item?.dateFrom ?? todayStr(),
+        to: item?.dateTo ?? todayStr(),
+        custom: true,
       });
     }
 
