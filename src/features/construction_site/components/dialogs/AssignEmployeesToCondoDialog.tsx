@@ -5,7 +5,8 @@ import { useEmployees } from "../../../administration/employees/hooks/useEmploye
 import { useAssignEmployeesToCondo } from "../../../condos/hooks/useAssignEmployeesToCondo";
 import {
   ReusableAssignDialog,
-  type AssignBaseRange,
+  type AssignBaseWindow,
+  type AssignRange,
 } from "../../../../components/ui/assign-dialog/AssignDialog";
 import { todayStr } from "../../utils/dates";
 import type { AssignEmployeesToCondoRequest } from "../../../condos";
@@ -32,6 +33,8 @@ type CondoEmployee = {
   dateTo?: string | null;
 };
 
+type CondoEmployeeWindow = AssignBaseWindow;
+
 export default function AssignEmployeesToCondoDialog({
   condoId,
   open,
@@ -48,7 +51,7 @@ export default function AssignEmployeesToCondoDialog({
     const prior = ((condo as any)?.employees ?? []) as CondoEmployee[];
 
     const ids: number[] = [];
-    const map: Record<number, AssignBaseRange> = {};
+    const map: Record<number, AssignRange<CondoEmployeeWindow>> = {};
 
     for (const e of prior) {
       const id = Number((e as any)?.id);
@@ -56,9 +59,13 @@ export default function AssignEmployeesToCondoDialog({
 
       ids.push(id);
       map[id] = {
-        from: e.dateFrom ?? todayStr(),
-        to: e.dateTo ?? todayStr(),
-        custom: true,
+        windows: [
+          {
+            from: e.dateFrom ?? todayStr(),
+            to: e.dateTo ?? todayStr(),
+            custom: true,
+          },
+        ],
       };
     }
 
@@ -68,7 +75,7 @@ export default function AssignEmployeesToCondoDialog({
   return (
     <ReusableAssignDialog<
       EmployeeRow,
-      AssignBaseRange,
+      CondoEmployeeWindow,
       AssignEmployeesToCondoRequest
     >
       open={open}
@@ -84,10 +91,12 @@ export default function AssignEmployeesToCondoDialog({
       loadErrorText={t("common.loadError")}
       busy={assign.isPending}
       preselected={preselected}
+      allowMultipleWindows={false}
+      detailGridMd="minmax(140px,1fr) 180px 180px"
       getItemId={(e) => Number(e.id)}
       getItemPrimary={(e) => `${e.firstName} ${e.lastName}`.trim()}
       getItemSecondary={(e) => e.jobPositionName ?? null}
-      createRange={({ globalFrom, globalTo }) => ({
+      createWindow={({ globalFrom, globalTo }) => ({
         from: globalFrom,
         to: globalTo,
         custom: false,
@@ -113,11 +122,13 @@ export default function AssignEmployeesToCondoDialog({
       buildPayload={({ selected, ranges, globalFrom, globalTo }) => ({
         condoId,
         employees: selected.map((employeeId) => {
-          const r = ranges[employeeId] ?? { from: globalFrom, to: globalTo };
+          const window =
+            ranges[employeeId]?.windows?.[0] ??
+            ({ from: globalFrom, to: globalTo } as CondoEmployeeWindow);
           return {
             employeeId,
-            dateFrom: r.from,
-            dateTo: r.to,
+            dateFrom: window.from,
+            dateTo: window.to,
           };
         }),
       })}

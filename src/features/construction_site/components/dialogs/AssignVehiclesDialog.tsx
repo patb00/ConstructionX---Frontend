@@ -4,7 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useConstructionSite } from "../../hooks/useConstructionSite";
 import {
   ReusableAssignDialog,
-  type AssignBaseRange,
+  type AssignBaseWindow,
+  type AssignRange,
 } from "../../../../components/ui/assign-dialog/AssignDialog";
 import { useAssignVehiclesToConstructionSite } from "../../hooks/useAssignVehiclesToConstructionSite";
 import { useVehicles } from "../../../vehicles/hooks/useVehicles";
@@ -13,7 +14,7 @@ import { fullName } from "../../utils/name";
 import { normalizeText } from "../../utils/normalize";
 import { todayStr } from "../../utils/dates";
 
-type VehRange = AssignBaseRange & {
+type VehWindow = AssignBaseWindow & {
   responsibleEmployeeId?: number | null;
 };
 
@@ -47,7 +48,7 @@ export default function AssignVehiclesDialog({
   const preselected = useMemo(() => {
     const prior = site?.constructionSiteVehicles ?? [];
     const ids: number[] = [];
-    const map: Record<number, VehRange> = {};
+    const map: Record<number, AssignRange<VehWindow>> = {};
     if (!prior.length) return { ids, map };
 
     const byName = new Map(
@@ -57,31 +58,38 @@ export default function AssignVehiclesDialog({
       ])
     );
 
+    const bucket = new Map<number, VehWindow[]>();
+
     for (const v of prior as any[]) {
       const vehId = Number(v?.id);
       if (!Number.isFinite(vehId)) continue;
-      ids.push(vehId);
 
       let respId: number | null | undefined = v.responsibleEmployeeId;
       if (respId == null && v.responsibleEmployeeName) {
         respId = byName.get(normalizeText(v.responsibleEmployeeName));
       }
 
-      map[vehId] = {
+      if (!bucket.has(vehId)) bucket.set(vehId, []);
+      bucket.get(vehId)!.push({
         from: v.dateFrom ?? todayStr(),
         to: v.dateTo ?? todayStr(),
         custom: true,
         responsibleEmployeeId: Number.isFinite(Number(respId))
           ? Number(respId)
           : null,
-      };
+      });
+    }
+
+    for (const [id, windows] of bucket.entries()) {
+      ids.push(id);
+      map[id] = { windows };
     }
 
     return { ids, map };
   }, [site, employeeRows]);
 
   return (
-    <ReusableAssignDialog<any, VehRange, any>
+    <ReusableAssignDialog<any, VehWindow, any>
       open={open}
       title={t("constructionSites.assign.vehiclesTitle")}
       onClose={() => {
@@ -96,14 +104,14 @@ export default function AssignVehiclesDialog({
       }
       preselected={preselected}
       leftWidthMd="260px"
-      detailGridMd="minmax(220px,1fr) 180px 180px minmax(220px,1fr) 48px"
-      createRange={({ globalFrom, globalTo }) => ({
+      detailGridMd="minmax(140px,1fr) 180px 180px minmax(220px,1fr)"
+      createWindow={({ globalFrom, globalTo }) => ({
         from: globalFrom,
         to: globalTo,
         custom: false,
         responsibleEmployeeId: null,
       })}
-      renderRowExtra={({ range, setRangePatch }) => (
+      renderWindowExtra={({ window, setWindowPatch }) => (
         <Autocomplete
           size="small"
           options={(employeeRows as any[]) ?? []}
@@ -114,14 +122,14 @@ export default function AssignVehiclesDialog({
             Number(opt?.id) === Number(val?.id)
           }
           value={
-            range.responsibleEmployeeId != null
+            window.responsibleEmployeeId != null
               ? ((employeeRows as any[]) ?? []).find(
-                  (e) => Number(e.id) === Number(range.responsibleEmployeeId)
+                  (e) => Number(e.id) === Number(window.responsibleEmployeeId)
                 ) ?? null
               : null
           }
           onChange={(_, val: any | null) =>
-            setRangePatch({
+            setWindowPatch({
               responsibleEmployeeId: val ? Number(val.id) : null,
             })
           }
@@ -157,20 +165,17 @@ export default function AssignVehiclesDialog({
           selected.length === 0
             ? []
             : selected.map((vehicleId) => {
-                const r =
-                  ranges[vehicleId] ??
-                  ({
-                    from: globalFrom,
-                    to: globalTo,
-                    responsibleEmployeeId: null,
-                    custom: false,
-                  } as VehRange);
+                const windows =
+                  ranges[vehicleId]?.windows ??
+                  ([{ from: globalFrom, to: globalTo, responsibleEmployeeId: 0 }] as VehWindow[]);
 
                 return {
                   vehicleId,
-                  dateFrom: r.from,
-                  dateTo: r.to,
-                  responsibleEmployeeId: r.responsibleEmployeeId ?? 0,
+                  assignmentWindows: windows.map((window) => ({
+                    dateFrom: window.from,
+                    dateTo: window.to,
+                    responsibleEmployeeId: window.responsibleEmployeeId ?? 0,
+                  })),
                 };
               }),
       })}
