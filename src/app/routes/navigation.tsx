@@ -27,6 +27,8 @@ export type ModuleId =
   | "companies"
   | "medicalExaminations"
   | "examinationTypes"
+  | "certifications"
+  | "certificationTypes"
   | "employees"
   | "jobPositions"
   | "tools"
@@ -115,6 +117,22 @@ export const NAV_ITEMS: NavItem[] = [
     section: "SYSTEM",
     category: "CODEBOOK",
     guard: { permission: "Permission.ExaminationTypes.Read" },
+  },
+  {
+    labelKey: "nav.certifications",
+    to: "/app/certifications",
+    icon: <MdMedicalServices />,
+    section: "SYSTEM",
+    category: "CODEBOOK",
+    guard: { permission: "Permission.Certifications.Read" },
+  },
+  {
+    labelKey: "nav.certificationTypes",
+    to: "/app/certificationTypes",
+    icon: <FaListUl />,
+    section: "SYSTEM",
+    category: "CODEBOOK",
+    guard: { permission: "Permission.CertificationTypes.Read" },
   },
   {
     labelKey: "nav.employees",

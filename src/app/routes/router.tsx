@@ -18,6 +18,8 @@ import { assignmentsRoutes } from "../../features/assignments/routes";
 import { reportsRoutes } from "../../features/reports/routes";
 import { medicalExaminationsRoutes } from "../../features/medical_examinations/routes";
 import { examinationTypesRoutes } from "../../features/examination_types/routes";
+import { certificationsRoutes } from "../../features/certifications/routes";
+import { certificationTypesRoutes } from "../../features/certification_types/routes";
 import { condosRoutes } from "../../features/condos/routes";
 import { notificationsRoutes } from "../../features/notifications/routes";
 import { vehicleRegistrationsRoutes } from "../../features/vehicle_registrations/routes";
@@ -58,6 +60,8 @@ export const router = createBrowserRouter([
       reportsRoutes,
       medicalExaminationsRoutes,
       examinationTypesRoutes,
+      certificationsRoutes,
+      certificationTypesRoutes,
 
       notificationsRoutes,
     ],
