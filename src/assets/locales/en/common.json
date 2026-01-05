@@ -1537,6 +1537,50 @@
       }
     }
   },
+  "vehicleRegistrationTasks": {
+    "list": {
+      "title": "My Vehicle Registration Tasks",
+      "empty": "No tasks available.",
+      "columns": {
+        "id": "ID",
+        "vehicleId": "Vehicle ID",
+        "status": "Status",
+        "actions": "Actions"
+      }
+    },
+    "detail": {
+      "title": "Task details",
+      "back": "Back",
+      "empty": "Task not found.",
+      "invalidId": "Invalid task id.",
+      "fields": {
+        "id": "ID",
+        "vehicleId": "Vehicle ID",
+        "employeeId": "Employee ID",
+        "vehicleRegistrationId": "Vehicle registration ID",
+        "expiresOn": "Expires on",
+        "completedAt": "Completed at",
+        "status": "Status",
+        "note": "Note"
+      }
+    },
+    "status": {
+      "assigned": "Assigned",
+      "inProgress": "In progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "unknown": "Unknown"
+    },
+    "actions": {
+      "view": "View",
+      "changeStatus": "Change status"
+    },
+    "dialog": {
+      "title": "Change status",
+      "save": "Save",
+      "cancel": "Cancel"
+    }
+  },
   "vehicleInsurances": {
     "list": {
       "title": "Vehicle Insurances",
