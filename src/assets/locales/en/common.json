@@ -23,6 +23,8 @@
     "reports": "Reports",
     "examinationTypes": "Examination Types",
     "medicalExaminations": "Medical Examinations",
+    "certifications": "Certifications",
+    "certificationTypes": "Certification Types",
     "condos": "Condos",
     "notifications": "Notifications",
     "vehicleRegistrations": "Vehicle Registrations",
@@ -1380,6 +1382,86 @@
     },
     "tree": {
       "exam": "Exam {{id}}"
+    }
+  },
+  "certificationTypes": {
+    "list": {
+      "title": "Certification Types",
+      "error": "Failed to load certification types."
+    },
+    "create": {
+      "title": "Add Certification Type",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit Certification Type",
+      "back": "Back",
+      "invalidUrlId": "Invalid URL (id)",
+      "loadError": "Failed to load certification type."
+    },
+    "delete": {
+      "title": "Delete certification type?",
+      "description": "Are you sure you want to delete this certification type?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "actions": "Actions",
+    "table": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "detailView": "Details"
+    },
+    "form": {
+      "submit": "Save",
+      "field": {
+        "certificationTypeName": "Certification type name",
+        "requiresRenewal": "Requires renewal",
+        "monthsToRenewal": "Months to renewal"
+      }
+    }
+  },
+  "certifications": {
+    "list": {
+      "title": "Certifications",
+      "error": "Failed to load certifications."
+    },
+    "create": {
+      "title": "Add Certification",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit Certification",
+      "back": "Back",
+      "invalidUrlId": "Invalid URL (id)",
+      "loadError": "Failed to load certification."
+    },
+    "form": {
+      "submit": "Save",
+      "field": {
+        "employeeId": "Employee",
+        "certificationTypeId": "Certification Type",
+        "certificationDate": "Certification Date",
+        "nextCertificationDate": "Next Certification Date",
+        "status": "Status",
+        "certificatePath": "Certificate Path",
+        "reminderSentDate": "Reminder Sent Date",
+        "note": "Note"
+      }
+    },
+    "actions": "Actions",
+    "table": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "detailView": "Details"
+    },
+    "delete": {
+      "title": "Delete Certification?",
+      "description": "Are you sure you want to delete this certification?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "tree": {
+      "certification": "Certification {{id}}"
     }
   },
   "condos": {
