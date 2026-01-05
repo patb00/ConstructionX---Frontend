@@ -582,23 +582,6 @@ export function ReusableAssignDialog<
                               {item ? getItemPrimary(item) : `ID ${id}`}
                             </Typography>
                           </Box>
-
-                          {allowMultipleWindows ? (
-                            <Button
-                              size="small"
-                              variant="outlined"
-                              startIcon={<AddRoundedIcon />}
-                              onClick={() => addWindow(id)}
-                              sx={{
-                                textTransform: "none",
-                                borderColor: "#E5E7EB",
-                                color: "#111827",
-                                fontWeight: 500,
-                              }}
-                            >
-                              {L.addWindow}
-                            </Button>
-                          ) : null}
                         </Box>
 
                         <Stack spacing={1}>
@@ -745,6 +728,30 @@ export function ReusableAssignDialog<
                             );
                           })}
                         </Stack>
+                        {allowMultipleWindows ? (
+                          <Button
+                            size="small"
+                            variant="text"
+                            startIcon={<AddRoundedIcon fontSize="small" />}
+                            onClick={() => addWindow(selected[0])}
+                            disableRipple
+                            sx={{
+                              textTransform: "none",
+                              fontWeight: 500,
+                              color: "primary.main",
+                              px: 0.5,
+                              minWidth: "auto",
+                              borderRadius: 1,
+                              mt: 1,
+                              "&:hover": {
+                                backgroundColor: "transparent",
+                                opacity: 0.85,
+                              },
+                            }}
+                          >
+                            {L.addWindow}
+                          </Button>
+                        ) : null}
                       </Box>
                     );
                   })}
