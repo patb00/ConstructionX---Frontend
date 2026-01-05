@@ -84,14 +84,14 @@ export default function AssignToolsDialog({
           respId = byName.get(normalizeText(respName));
         }
 
-        bucket.get(toolId)!.push({
-          from: window?.dateFrom ?? todayStr(),
-          to: window?.dateTo ?? todayStr(),
-          custom: true,
-          responsibleEmployeeId: Number.isFinite(Number(respId))
-            ? Number(respId)
-            : null,
-        });
+      if (!bucket.has(toolId)) bucket.set(toolId, []);
+      bucket.get(toolId)!.push({
+        from: item.dateFrom ?? todayStr(),
+        to: item.dateTo ?? todayStr(),
+        custom: true,
+        responsibleEmployeeId: Number.isFinite(Number(respId))
+          ? Number(respId)
+          : null,
       });
     }
 
