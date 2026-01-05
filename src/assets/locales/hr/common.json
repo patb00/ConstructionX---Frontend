@@ -27,7 +27,8 @@
     "notifications": "Obavijesti",
     "vehicleRegistrations": "Registracije vozila",
     "vehicleInsurances": "Osiguranja vozila",
-    "vehicleBusinessTrips": "Službena putovanja "
+    "vehicleBusinessTrips": "Službena putovanja ",
+    "vehicleRegistrationTasks": "Zadaci registracije vozila"
   },
   "constructionSites": {
     "detail": {
@@ -1581,6 +1582,22 @@
         "documentPath": "Dokument",
         "note": "Napomena"
       }
+    }
+  },
+  "vehicleRegistrationTasks": {
+    "title": "Moji zadaci registracije vozila",
+    "empty": "Nema zadataka.",
+    "error": "Nije moguće učitati zadatke.",
+    "actions": {
+      "changeStatus": "Promijeni status",
+      "save": "Spremi",
+      "cancel": "Odustani"
+    },
+    "status": {
+      "assigned": "Dodijeljeno",
+      "inProgress": "U tijeku",
+      "completed": "Završeno",
+      "cancelled": "Otkazano"
     }
   },
   "vehicleInsurances": {

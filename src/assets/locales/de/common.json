@@ -27,7 +27,8 @@
     "notifications": "Benachrichtigungen",
     "vehicleRegistrations": "Fahrzeugzulassungen",
     "vehicleInsurances": "Fahrzeugversicherungen",
-    "vehicleBusinessTrips": "Dienstfahrten"
+    "vehicleBusinessTrips": "Dienstfahrten",
+    "vehicleRegistrationTasks": "Fahrzeugzulassungsaufgaben"
   },
 
   "constructionSites": {
@@ -1541,6 +1542,22 @@
         "documentPath": "Dokument",
         "note": "Notiz"
       }
+    }
+  },
+  "vehicleRegistrationTasks": {
+    "title": "Meine Fahrzeugzulassungsaufgaben",
+    "empty": "Keine Aufgaben vorhanden.",
+    "error": "Aufgaben konnten nicht geladen werden.",
+    "actions": {
+      "changeStatus": "Status ändern",
+      "save": "Speichern",
+      "cancel": "Abbrechen"
+    },
+    "status": {
+      "assigned": "Zugewiesen",
+      "inProgress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "cancelled": "Storniert"
     }
   },
   "vehicleInsurances": {

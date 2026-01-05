@@ -27,7 +27,8 @@
     "notifications": "Notifications",
     "vehicleRegistrations": "Vehicle Registrations",
     "vehicleInsurances": "Vehicle Insurances",
-    "vehicleBusinessTrips": "Vehicle Business Trips"
+    "vehicleBusinessTrips": "Vehicle Business Trips",
+    "vehicleRegistrationTasks": "Vehicle Registration Tasks"
   },
   "constructionSites": {
     "list": {
@@ -1535,6 +1536,22 @@
         "documentPath": "Document",
         "note": "Note"
       }
+    }
+  },
+  "vehicleRegistrationTasks": {
+    "title": "My Vehicle Registration Tasks",
+    "empty": "No tasks available.",
+    "error": "Unable to load tasks.",
+    "actions": {
+      "changeStatus": "Change status",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "status": {
+      "assigned": "Assigned",
+      "inProgress": "In progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
     }
   },
   "vehicleInsurances": {
