@@ -358,7 +358,9 @@ export function ReusableAssignDialog<
     return selected.map((id) => ({ id, item: byId.get(id) }));
   }, [items, selected, getItemId]);
 
-  const computedGrid = `${detailGridMd} 48px 48px`;
+  const computedGrid = allowMultipleWindows
+    ? `${detailGridMd} 48px 48px`
+    : `${detailGridMd} 48px`;
 
   return (
     <Dialog
@@ -711,26 +713,28 @@ export function ReusableAssignDialog<
                                   </Tooltip>
                                 </Box>
 
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <Tooltip title={L.removeWindowTooltip}>
-                                    <span>
-                                      <IconButton
-                                        size="small"
-                                        onClick={() =>
-                                          removeWindow(id, index)
-                                        }
-                                        disabled={!allowRemove}
-                                      >
-                                        <DeleteOutlineIcon fontSize="small" />
-                                      </IconButton>
-                                    </span>
-                                  </Tooltip>
-                                </Box>
+                                {allowMultipleWindows ? (
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "center",
+                                    }}
+                                  >
+                                    <Tooltip title={L.removeWindowTooltip}>
+                                      <span>
+                                        <IconButton
+                                          size="small"
+                                          onClick={() =>
+                                            removeWindow(id, index)
+                                          }
+                                          disabled={!allowRemove}
+                                        >
+                                          <DeleteOutlineIcon fontSize="small" />
+                                        </IconButton>
+                                      </span>
+                                    </Tooltip>
+                                  </Box>
+                                ) : null}
                               </Box>
                             );
                           })}
