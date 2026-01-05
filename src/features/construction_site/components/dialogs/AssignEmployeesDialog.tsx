@@ -30,7 +30,14 @@ export default function AssignEmployeesDialog({
 
   const preselected = useMemo(() => {
     const prior = (site as any)?.constructionSiteEmployees as
-      | Array<{ id?: number; dateFrom?: string; dateTo?: string }>
+      | Array<{
+          id?: number;
+          employeeId?: number;
+          employee?: { id?: number };
+          dateFrom?: string;
+          dateTo?: string;
+          assignmentWindows?: Array<{ dateFrom?: string; dateTo?: string }>;
+        }>
       | undefined;
 
     const ids: number[] = [];
@@ -47,13 +54,20 @@ export default function AssignEmployeesDialog({
     const bucket = new Map<number, EmpWindow[]>();
 
     for (const item of prior) {
-      const id = Number(item?.id);
+      const id = Number(item?.id ?? item?.employeeId ?? item?.employee?.id);
       if (!Number.isFinite(id)) continue;
       if (!bucket.has(id)) bucket.set(id, []);
-      bucket.get(id)!.push({
-        from: item?.dateFrom ?? todayStr(),
-        to: item?.dateTo ?? todayStr(),
-        custom: true,
+      const windows =
+        item?.assignmentWindows && item.assignmentWindows.length > 0
+          ? item.assignmentWindows
+          : [{ dateFrom: item?.dateFrom, dateTo: item?.dateTo }];
+
+      windows.forEach((window) => {
+        bucket.get(id)!.push({
+          from: window?.dateFrom ?? todayStr(),
+          to: window?.dateTo ?? todayStr(),
+          custom: true,
+        });
       });
     }
 
