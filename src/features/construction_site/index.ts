@@ -5,6 +5,7 @@ export interface ConstructionSiteEmployee {
   jobPositionName?: string | null;
   dateFrom?: string | null;
   dateTo?: string | null;
+  assignmentWindows?: AssignEmployeeWindow[] | null;
 }
 
 export interface ConstructionSiteTool {
@@ -21,6 +22,7 @@ export interface ConstructionSiteTool {
   responsibleEmployeeName?: string | null;
   dateFrom?: string | null;
   dateTo?: string | null;
+  assignmentWindows?: AssignToolWindow[] | null;
   description?: string | null;
   category?: string | null;
 }
@@ -45,6 +47,7 @@ export interface ConstructionSiteVehicle {
   responsibleEmployeeName?: string | null;
   dateFrom?: string | null;
   dateTo?: string | null;
+  assignmentWindows?: AssignVehicleWindow[] | null;
   description?: string | null;
 }
 
@@ -109,10 +112,14 @@ export interface UpdateConstructionSiteRequest {
   siteManagerId: number | null;
 }
 
-export interface AssignEmployeeItem {
-  employeeId: number;
+export interface AssignEmployeeWindow {
   dateFrom: string;
   dateTo: string;
+}
+
+export interface AssignEmployeeItem {
+  employeeId: number;
+  assignmentWindows: AssignEmployeeWindow[];
 }
 
 export interface AssignEmployeesRequest {
@@ -120,11 +127,15 @@ export interface AssignEmployeesRequest {
   employees: AssignEmployeeItem[];
 }
 
-export interface AssignToolItem {
-  toolId: number;
+export interface AssignToolWindow {
   dateFrom: string;
   dateTo: string;
   responsibleEmployeeId: number;
+}
+
+export interface AssignToolItem {
+  toolId: number;
+  assignmentWindows: AssignToolWindow[];
 }
 
 export interface AssignToolsRequest {
@@ -132,11 +143,15 @@ export interface AssignToolsRequest {
   tools: AssignToolItem[];
 }
 
-export interface AssignVehicleItem {
-  vehicleId: number;
+export interface AssignVehicleWindow {
   dateFrom: string;
   dateTo: string;
   responsibleEmployeeId: number;
+}
+
+export interface AssignVehicleItem {
+  vehicleId: number;
+  assignmentWindows: AssignVehicleWindow[];
 }
 
 export interface AssignVehiclesRequest {
