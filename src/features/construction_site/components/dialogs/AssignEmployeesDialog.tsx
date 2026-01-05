@@ -2,16 +2,15 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ReusableAssignDialog,
-  type AssignBaseRange,
+  type AssignBaseWindow,
+  type AssignRange,
 } from "../../../../components/ui/assign-dialog/AssignDialog";
 import { useConstructionSite } from "../../hooks/useConstructionSite";
 import { useEmployees } from "../../../administration/employees/hooks/useEmployees";
 import { useAssignEmployeesToConstructionSite } from "../../hooks/useAssignEmployeesToConstructionSite";
-import { fullName } from "../../utils/name";
 import { todayStr } from "../../utils/dates";
-import { getCommonRange } from "../../utils/ranges";
 
-type EmpRange = AssignBaseRange;
+type EmpWindow = AssignBaseWindow;
 
 type Props = {
   constructionSiteId: number;
@@ -30,56 +29,75 @@ export default function AssignEmployeesDialog({
   const assign = useAssignEmployeesToConstructionSite();
 
   const preselected = useMemo(() => {
-    type Prior = {
-      firstName?: string;
-      lastName?: string;
-      dateFrom?: string;
-      dateTo?: string;
-    };
-
     const prior = (site as any)?.constructionSiteEmployees as
-      | Prior[]
+      | Array<{
+          id?: number;
+          employeeId?: number;
+          employee?: { id?: number };
+          dateFrom?: string;
+          dateTo?: string;
+          assignmentWindows?: Array<{ dateFrom?: string; dateTo?: string }>;
+        }>
       | undefined;
 
     const ids: number[] = [];
-    const map: Record<number, EmpRange> = {};
+    const map: Record<number, AssignRange<EmpWindow>> = {};
 
     if (!prior?.length || !employeeRows.length) return { ids, map };
 
-    const bucket = new Map<string, Array<{ from: string; to: string }>>();
-    for (const p of prior) {
-      const key = fullName(p.firstName, p.lastName);
-      if (!bucket.has(key)) bucket.set(key, []);
-      bucket.get(key)!.push({
-        from: p.dateFrom ?? todayStr(),
-        to: p.dateTo ?? todayStr(),
+    const existingIds = new Set(
+      employeeRows
+        .map((employee: any) => Number(employee?.id))
+        .filter((id) => Number.isFinite(id))
+    );
+
+    const bucket = new Map<number, EmpWindow[]>();
+
+    for (const item of prior) {
+      const id = Number(item?.id ?? item?.employeeId ?? item?.employee?.id);
+      if (!Number.isFinite(id)) continue;
+      if (!bucket.has(id)) bucket.set(id, []);
+      const windows =
+        item?.assignmentWindows && item.assignmentWindows.length > 0
+          ? item.assignmentWindows
+          : [{ dateFrom: item?.dateFrom, dateTo: item?.dateTo }];
+
+      windows.forEach((window) => {
+        bucket.get(id)!.push({
+          from: window?.dateFrom ?? todayStr(),
+          to: window?.dateTo ?? todayStr(),
+          custom: true,
+        });
       });
     }
 
-    for (const e of employeeRows as any[]) {
-      const id = Number(e?.id);
-      if (!Number.isFinite(id)) continue;
-
-      const key = fullName(e?.firstName, e?.lastName);
-      const list = bucket.get(key);
-
-      if (list?.length) {
-        const { from, to } = list.shift()!;
-        ids.push(id);
-        map[id] = { from, to, custom: false };
-      }
+    for (const [id, windows] of bucket.entries()) {
+      if (!existingIds.has(id)) continue;
+      ids.push(id);
+      map[id] = { windows };
     }
 
     return { ids, map };
   }, [site, employeeRows]);
 
   const initialGlobalRange = useMemo(() => {
-    const common = getCommonRange(preselected.ids, preselected.map);
-    return common ? { from: common.from, to: common.to } : null;
+    if (preselected.ids.length === 0) return null;
+    const first = preselected.map[preselected.ids[0]];
+    if (!first || first.windows.length !== 1) return null;
+    const { from, to } = first.windows[0];
+    const allSame = preselected.ids.every((id) => {
+      const range = preselected.map[id];
+      return (
+        range?.windows.length === 1 &&
+        range.windows[0].from === from &&
+        range.windows[0].to === to
+      );
+    });
+    return allSame ? { from, to } : null;
   }, [preselected]);
 
   return (
-    <ReusableAssignDialog<any, EmpRange, any>
+    <ReusableAssignDialog<any, EmpWindow, any>
       open={open}
       title={t("constructionSites.assign.title")}
       onClose={() => {
@@ -95,13 +113,13 @@ export default function AssignEmployeesDialog({
       preselected={preselected}
       initialGlobalRange={initialGlobalRange}
       leftWidthMd="320px"
-      detailGridMd="minmax(220px,1fr) 180px 180px 48px"
+      detailGridMd="minmax(140px,1fr) 180px 180px"
       getItemId={(e) => Number(e.id)}
       getItemPrimary={(e) =>
         `${e.firstName ?? ""} ${e.lastName ?? ""}`.trim() || `ID ${e.id}`
       }
       getItemSecondary={(e) => (e.oib ? `OIB: ${e.oib}` : null)}
-      createRange={({ globalFrom, globalTo }) => ({
+      createWindow={({ globalFrom, globalTo }) => ({
         from: globalFrom,
         to: globalTo,
         custom: false,
@@ -123,6 +141,12 @@ export default function AssignEmployeesDialog({
         resetToGlobalTooltip: t(
           "constructionSites.assign.tooltip.resetToGlobal"
         ),
+        addWindow: t("constructionSites.assign.window.add"),
+        windowLabel: (i: number) =>
+          t("constructionSites.assign.window.label", { index: i + 1 }),
+        removeWindowTooltip: t("constructionSites.assign.window.remove"),
+        windowsCountLabel: (count: number) =>
+          t("constructionSites.assign.window.count", { count }),
       }}
       buildPayload={({ selected, ranges, globalFrom, globalTo }) => ({
         constructionSiteId,
@@ -130,18 +154,16 @@ export default function AssignEmployeesDialog({
           selected.length === 0
             ? []
             : selected.map((employeeId) => {
-                const r =
-                  ranges[employeeId] ??
-                  ({
-                    from: globalFrom,
-                    to: globalTo,
-                    custom: false,
-                  } as EmpRange);
+                const windows =
+                  ranges[employeeId]?.windows ??
+                  ([{ from: globalFrom, to: globalTo }] as EmpWindow[]);
 
                 return {
                   employeeId,
-                  dateFrom: r.from,
-                  dateTo: r.to,
+                  assignmentWindows: windows.map((window) => ({
+                    dateFrom: window.from,
+                    dateTo: window.to,
+                  })),
                 };
               }),
       })}

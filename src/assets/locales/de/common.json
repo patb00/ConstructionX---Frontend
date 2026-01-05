@@ -160,7 +160,13 @@
       },
       "condosTitle": "Unterkünfte zuweisen",
       "noCondos": "Keine Unterkünfte verfügbar.",
-      "pickCondoHint": "Wählen Sie Unterkünfte auf der linken Seite aus."
+      "pickCondoHint": "Wählen Sie Unterkünfte auf der linken Seite aus.",
+      "window": {
+        "add": "Zeitraum hinzufügen",
+        "label": "Zeitraum {{index}}",
+        "remove": "Zeitraum entfernen",
+        "count": "{{count}} Zeitraum{{count, plural, one {} other {e}}}"
+      }
     },
     "form": {
       "field": {

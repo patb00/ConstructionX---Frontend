@@ -120,7 +120,13 @@
       "empty": "No employees available.",
       "condosTitle": "Assign condos",
       "noCondos": "No condos available.",
-      "pickCondoHint": "Odaberite stanove s lijeve strane.",
+      "pickCondoHint": "Select apartments from the left.",
+      "window": {
+        "add": "Add period",
+        "label": "Period {{index}}",
+        "remove": "Remove period",
+        "count": "{{count}} period{{count, plural, one {} other {s}}}"
+      },
       "left": {
         "employeesCount": "Employees ({{count}})",
         "selectedCount": "Selected: {{count}}",

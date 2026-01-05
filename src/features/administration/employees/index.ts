@@ -13,6 +13,7 @@ export interface Employee {
   description: string;
   shoeSize: number;
   email: string;
+  applicationUserId: string;
 }
 
 export type AssignJobPositionRequest = {
