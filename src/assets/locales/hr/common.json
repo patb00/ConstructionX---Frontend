@@ -1585,19 +1585,47 @@
     }
   },
   "vehicleRegistrationTasks": {
-    "title": "Moji zadaci registracije vozila",
-    "empty": "Nema zadataka.",
-    "error": "Nije moguće učitati zadatke.",
-    "actions": {
-      "changeStatus": "Promijeni status",
-      "save": "Spremi",
-      "cancel": "Odustani"
+    "list": {
+      "title": "Moji zadaci registracije vozila",
+      "empty": "Nema zadataka.",
+      "columns": {
+        "id": "ID",
+        "vehicleId": "ID vozila",
+        "status": "Status",
+        "actions": "Akcije"
+      }
+    },
+    "detail": {
+      "title": "Detalji zadatka",
+      "back": "Natrag",
+      "empty": "Zadatak nije pronađen.",
+      "invalidId": "Neispravan ID zadatka.",
+      "fields": {
+        "id": "ID",
+        "vehicleId": "ID vozila",
+        "employeeId": "ID zaposlenika",
+        "vehicleRegistrationId": "ID registracije vozila",
+        "expiresOn": "Istječe",
+        "completedAt": "Završeno",
+        "status": "Status",
+        "note": "Napomena"
+      }
     },
     "status": {
       "assigned": "Dodijeljeno",
       "inProgress": "U tijeku",
       "completed": "Završeno",
-      "cancelled": "Otkazano"
+      "cancelled": "Otkazano",
+      "unknown": "Nepoznato"
+    },
+    "actions": {
+      "view": "Pregled",
+      "changeStatus": "Promijeni status"
+    },
+    "dialog": {
+      "title": "Promijeni status",
+      "save": "Spremi",
+      "cancel": "Odustani"
     }
   },
   "vehicleInsurances": {

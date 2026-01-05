@@ -1545,19 +1545,47 @@
     }
   },
   "vehicleRegistrationTasks": {
-    "title": "Meine Fahrzeugzulassungsaufgaben",
-    "empty": "Keine Aufgaben vorhanden.",
-    "error": "Aufgaben konnten nicht geladen werden.",
-    "actions": {
-      "changeStatus": "Status ändern",
-      "save": "Speichern",
-      "cancel": "Abbrechen"
+    "list": {
+      "title": "Meine Fahrzeugzulassungsaufgaben",
+      "empty": "Keine Aufgaben vorhanden.",
+      "columns": {
+        "id": "ID",
+        "vehicleId": "Fahrzeug-ID",
+        "status": "Status",
+        "actions": "Aktionen"
+      }
+    },
+    "detail": {
+      "title": "Aufgabendetails",
+      "back": "Zurück",
+      "empty": "Aufgabe nicht gefunden.",
+      "invalidId": "Ungültige Aufgaben-ID.",
+      "fields": {
+        "id": "ID",
+        "vehicleId": "Fahrzeug-ID",
+        "employeeId": "Mitarbeiter-ID",
+        "vehicleRegistrationId": "Fahrzeugzulassungs-ID",
+        "expiresOn": "Läuft ab am",
+        "completedAt": "Abgeschlossen am",
+        "status": "Status",
+        "note": "Notiz"
+      }
     },
     "status": {
       "assigned": "Zugewiesen",
       "inProgress": "In Bearbeitung",
       "completed": "Abgeschlossen",
-      "cancelled": "Storniert"
+      "cancelled": "Storniert",
+      "unknown": "Unbekannt"
+    },
+    "actions": {
+      "view": "Ansehen",
+      "changeStatus": "Status ändern"
+    },
+    "dialog": {
+      "title": "Status ändern",
+      "save": "Speichern",
+      "cancel": "Abbrechen"
     }
   },
   "vehicleInsurances": {

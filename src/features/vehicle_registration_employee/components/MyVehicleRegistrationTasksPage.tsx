@@ -1,20 +1,14 @@
-import {
-  Box,
-  Card,
-  Chip,
-  CircularProgress,
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
-import SyncIcon from "@mui/icons-material/Sync";
+import { Box, Button, CircularProgress, Stack, Typography } from "@mui/material";
+import type { GridColDef } from "@mui/x-data-grid-pro";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 import type {
   UpdateVehicleRegistrationEmployeeRequest,
   VehicleRegistrationEmployee,
 } from "..";
+import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
 import {
   ChangeStatusDialog,
   type StatusOption,
@@ -28,6 +22,7 @@ const isFinalStatus = (status?: number | null) => status === 3 || status === 4;
 
 const MyVehicleRegistrationTasksPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { userId, role } = useAuthStore();
   const { employeeRows = [] } = useEmployees();
 
@@ -48,16 +43,12 @@ const MyVehicleRegistrationTasksPage = () => {
 
   const shouldShowNone = role !== "Admin" && myEmployeeId == null;
 
-  const queryEmployeeId =
-    !shouldShowNone && Number.isFinite(effectiveEmployeeId ?? NaN)
-      ? Number(effectiveEmployeeId)
-      : 0;
+  const queryEmployeeId = Number.isFinite(effectiveEmployeeId ?? NaN)
+    ? Number(effectiveEmployeeId)
+    : 0;
 
-  const {
-    data: tasks = [],
-    isLoading,
-    isError,
-  } = useVehicleRegistrationEmployeesByEmployee(queryEmployeeId);
+  const { data: tasks = [], isLoading } =
+    useVehicleRegistrationEmployeesByEmployee(queryEmployeeId);
 
   const statusOptions = useMemo<StatusOption[]>(
     () => [
@@ -127,15 +118,86 @@ const MyVehicleRegistrationTasksPage = () => {
     [activeTask, updateStatus]
   );
 
+  const columns = useMemo<GridColDef<VehicleRegistrationEmployee>[]>(
+    () => [
+      {
+        field: "id",
+        headerName: t("vehicleRegistrationTasks.list.columns.id"),
+        minWidth: 80,
+        flex: 0.2,
+      },
+      {
+        field: "vehicleId",
+        headerName: t("vehicleRegistrationTasks.list.columns.vehicleId"),
+        minWidth: 140,
+        flex: 0.3,
+      },
+      {
+        field: "status",
+        headerName: t("vehicleRegistrationTasks.list.columns.status"),
+        minWidth: 160,
+        flex: 0.3,
+        valueFormatter: (params) =>
+          statusLabelByValue.get(params.value as number) ??
+          t("vehicleRegistrationTasks.status.unknown"),
+      },
+      {
+        field: "actions",
+        headerName: t("vehicleRegistrationTasks.list.columns.actions"),
+        minWidth: 200,
+        flex: 0.4,
+        sortable: false,
+        filterable: false,
+        renderCell: ({ row }) => {
+          const isDisabled = isFinalStatus(row.status) || updateStatus.isPending;
+
+          return (
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Button
+                size="small"
+                variant="text"
+                onClick={() =>
+                  navigate(`/app/my-vehicle-registration-tasks/${row.id}`)
+                }
+              >
+                {t("vehicleRegistrationTasks.actions.view")}
+              </Button>
+              <Button
+                size="small"
+                variant="outlined"
+                disabled={isDisabled}
+                onClick={() => handleOpenStatusDialog(row)}
+              >
+                {t("vehicleRegistrationTasks.actions.changeStatus")}
+              </Button>
+            </Stack>
+          );
+        },
+      },
+    ],
+    [
+      navigate,
+      statusLabelByValue,
+      t,
+      updateStatus.isPending,
+      handleOpenStatusDialog,
+    ]
+  );
+
+  const hasActions = useMemo(
+    () => columns.some((column) => column.field === "actions"),
+    [columns]
+  );
+
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
       <Typography variant="h5" fontWeight={600}>
-        {t("vehicleRegistrationTasks.title")}
+        {t("vehicleRegistrationTasks.list.title")}
       </Typography>
 
       {shouldShowNone ? (
         <Typography variant="body2" color="text.secondary">
-          {t("vehicleRegistrationTasks.empty")}
+          {t("vehicleRegistrationTasks.list.empty")}
         </Typography>
       ) : isLoading ? (
         <Box
@@ -149,80 +211,31 @@ const MyVehicleRegistrationTasksPage = () => {
         >
           <CircularProgress />
         </Box>
-      ) : isError ? (
-        <Typography variant="body2" color="error">
-          {t("vehicleRegistrationTasks.error")}
-        </Typography>
       ) : tasks.length === 0 ? (
         <Typography variant="body2" color="text.secondary">
-          {t("vehicleRegistrationTasks.empty")}
+          {t("vehicleRegistrationTasks.list.empty")}
         </Typography>
       ) : (
-        <Stack spacing={2}>
-          {tasks.map((task) => {
-            const titleValue = task.vehicleRegistrationId || task.vehicleId;
-            const statusLabel =
-              statusLabelByValue.get(task.status) ??
-              t("vehicleRegistrationTasks.status.assigned");
-
-            return (
-              <Card
-                key={task.id}
-                variant="outlined"
-                sx={{
-                  p: 2,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 2,
-                }}
-              >
-                <Stack spacing={0.5} sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography variant="subtitle1" fontWeight={600} noWrap>
-                    {titleValue}
-                  </Typography>
-                  {task.expiresOn ? (
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {task.expiresOn}
-                    </Typography>
-                  ) : null}
-                  {task.note ? (
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {task.note}
-                    </Typography>
-                  ) : null}
-                </Stack>
-
-                <Chip
-                  size="small"
-                  label={statusLabel}
-                  sx={{ textTransform: "none" }}
-                />
-
-                <IconButton
-                  size="small"
-                  color="primary"
-                  disabled={isFinalStatus(task.status) || updateStatus.isPending}
-                  onClick={() => handleOpenStatusDialog(task)}
-                  aria-label={t("vehicleRegistrationTasks.actions.changeStatus")}
-                >
-                  <SyncIcon fontSize="small" />
-                </IconButton>
-              </Card>
-            );
-          })}
-        </Stack>
+        <Box sx={{ flex: 1, minHeight: 320 }}>
+          <ReusableDataGrid<VehicleRegistrationEmployee>
+            rows={tasks}
+            columns={columns}
+            getRowId={(row) => String(row.id)}
+            pinnedRightField={hasActions ? "actions" : undefined}
+          />
+        </Box>
       )}
 
       <ChangeStatusDialog
         open={statusDialogOpen}
-        title={t("vehicleRegistrationTasks.actions.changeStatus")}
+        title={t("vehicleRegistrationTasks.dialog.title")}
         currentStatus={activeTask?.status ?? null}
         options={statusOptions}
         loading={updateStatus.isPending}
         onClose={handleCloseStatusDialog}
         onSave={handleSaveStatus}
-        saveLabel={t("vehicleRegistrationTasks.actions.save")}
-        cancelLabel={t("vehicleRegistrationTasks.actions.cancel")}
+        saveLabel={t("vehicleRegistrationTasks.dialog.save")}
+        cancelLabel={t("vehicleRegistrationTasks.dialog.cancel")}
         disableBackdropClose
       />
     </Stack>
