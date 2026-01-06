@@ -23,6 +23,8 @@
     "reports": "Berichte",
     "examinationTypes": "Prüfarten",
     "medicalExaminations": "Medizinische Untersuchungen",
+    "certifications": "Zertifizierungen",
+    "certificationTypes": "Zertifizierungstypen",
     "condos": "Wohnungen",
     "notifications": "Benachrichtigungen",
     "vehicleRegistrations": "Fahrzeugzulassungen",
@@ -615,7 +617,18 @@
       "fuelLiters": "Kraftstoff (Liter)",
       "fuelAmount": "Kraftstoffkosten",
       "fuelCurrency": "Währung",
-      "tripStatus": "Fahrtstatus"
+      "tripStatus": "Fahrtstatus",
+
+      "certificationTypeName": "Zertifikatstyp",
+      "requiresRenewal": "Erfordert Erneuerung",
+      "monthsToRenewal": "Monate bis zur Erneuerung",
+
+      "employeeName": "Mitarbeiter",
+      "certificationTypeId": "Zertifikatstyp-ID",
+      "certificationDate": "Zertifikatsdatum",
+      "nextCertificationDate": "Nächstes Zertifikatsdatum",
+      "certificatePath": "Zertifikatsdatei",
+      "reminderSentDate": "Erinnerung gesendet"
     }
   },
   "tenants": {
@@ -1386,6 +1399,90 @@
     },
     "tree": {
       "exam": "Untersuchung {{id}}"
+    }
+  },
+  "certificationTypes": {
+    "list": {
+      "title": "Zertifizierungstypen",
+      "error": "Fehler beim Laden der Zertifizierungstypen."
+    },
+    "create": {
+      "title": "Zertifizierungstyp hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Zertifizierungstyp bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (ID)",
+      "loadError": "Der Zertifizierungstyp konnte nicht geladen werden."
+    },
+    "delete": {
+      "title": "Zertifizierungstyp löschen?",
+      "description": "Sind Sie sicher, dass Sie diesen Zertifizierungstyp löschen möchten?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "detailView": "Details"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "certificationTypeName": "Bezeichnung des Zertifizierungstyps",
+        "requiresRenewal": "Erneuerung erforderlich",
+        "monthsToRenewal": "Monate bis zur Erneuerung"
+      }
+    }
+  },
+  "certifications": {
+    "status": {
+      "passed": "Bestanden",
+      "failed": "Nicht bestanden"
+    },
+    "list": {
+      "title": "Zertifizierungen",
+      "error": "Fehler beim Laden der Zertifizierungen."
+    },
+    "create": {
+      "title": "Zertifizierung hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Zertifizierung bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (ID)",
+      "loadError": "Die Zertifizierung konnte nicht geladen werden."
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "employeeId": "Mitarbeiter",
+        "certificationTypeId": "Zertifizierungstyp",
+        "certificationDate": "Zertifizierungsdatum",
+        "nextCertificationDate": "Nächstes Zertifizierungsdatum",
+        "status": "Status",
+        "certificatePath": "Zertifikatspfad",
+        "reminderSentDate": "Erinnerungsdatum",
+        "note": "Notiz"
+      }
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "detailView": "Details"
+    },
+    "delete": {
+      "title": "Zertifizierung löschen?",
+      "description": "Sind Sie sicher, dass Sie diese Zertifizierung löschen möchten?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "tree": {
+      "certification": "Zertifizierung {{id}}"
     }
   },
   "condos": {

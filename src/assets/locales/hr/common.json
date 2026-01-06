@@ -23,6 +23,8 @@
     "reports": "Izvještaji",
     "examinationTypes": "Tipovi pregleda",
     "medicalExaminations": "Zdravstveni pregledi",
+    "certifications": "Certifikati",
+    "certificationTypes": "Tipovi certifikata",
     "condos": "Stanovi",
     "notifications": "Obavijesti",
     "vehicleRegistrations": "Registracije vozila",
@@ -608,7 +610,18 @@
       "fuelLiters": "Gorivo (litre)",
       "fuelAmount": "Iznos goriva",
       "fuelCurrency": "Valuta",
-      "tripStatus": "Status putovanja"
+      "tripStatus": "Status putovanja",
+
+      "certificationTypeName": "Naziv tipa certifikata",
+      "requiresRenewal": "Zahtijeva obnovu",
+      "monthsToRenewal": "Mjeseci do obnove",
+
+      "employeeName": "Zaposlenik",
+      "certificationTypeId": "ID tipa certifikata",
+      "certificationDate": "Datum certifikata",
+      "nextCertificationDate": "Sljedeći datum certifikata",
+      "certificatePath": "Dokument",
+      "reminderSentDate": "Podsjetnik poslan"
     }
   },
   "tenants": {
@@ -1379,6 +1392,90 @@
     },
     "tree": {
       "exam": "Pregled {{id}}"
+    }
+  },
+  "certificationTypes": {
+    "list": {
+      "title": "Tipovi certifikata",
+      "error": "Pogreška pri učitavanju tipova certifikata."
+    },
+    "create": {
+      "title": "Dodaj tip certifikata",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi tip certifikata",
+      "back": "Natrag",
+      "invalidUrlId": "Neispravan URL (id)",
+      "loadError": "Neuspjelo učitavanje tipa certifikata."
+    },
+    "delete": {
+      "title": "Obriši tip certifikata?",
+      "description": "Jeste li sigurni da želite obrisati ovaj tip certifikata?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    },
+    "actions": "Akcije",
+    "table": {
+      "edit": "Uredi",
+      "delete": "Izbriši",
+      "detailView": "Detalji"
+    },
+    "form": {
+      "submit": "Spremi",
+      "field": {
+        "certificationTypeName": "Naziv tipa certifikata",
+        "requiresRenewal": "Zahtijeva obnovu",
+        "monthsToRenewal": "Mjeseci do obnove"
+      }
+    }
+  },
+  "certifications": {
+    "list": {
+      "title": "Certifikati",
+      "error": "Pogreška pri učitavanju certifikata."
+    },
+    "status": {
+      "passed": "Prošao",
+      "failed": "Pao"
+    },
+    "create": {
+      "title": "Dodaj certifikat",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi certifikat",
+      "back": "Natrag",
+      "invalidUrlId": "Neispravan URL (id)",
+      "loadError": "Neuspjelo učitavanje certifikata."
+    },
+    "form": {
+      "submit": "Spremi",
+      "field": {
+        "employeeId": "Zaposlenik",
+        "certificationTypeId": "Tip certifikata",
+        "certificationDate": "Datum certifikata",
+        "nextCertificationDate": "Sljedeći datum certifikata",
+        "status": "Status",
+        "certificatePath": "Putanja certifikata",
+        "reminderSentDate": "Datum slanja podsjetnika",
+        "note": "Napomena"
+      }
+    },
+    "actions": "Akcije",
+    "table": {
+      "edit": "Uredi",
+      "delete": "Izbriši",
+      "detailView": "Detalji"
+    },
+    "delete": {
+      "title": "Obriši certifikat?",
+      "description": "Jeste li sigurni da želite obrisati ovaj certifikat?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    },
+    "tree": {
+      "certification": "Certifikat {{id}}"
     }
   },
   "condos": {

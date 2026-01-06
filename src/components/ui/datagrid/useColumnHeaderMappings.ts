@@ -315,5 +315,70 @@ export default function useColumnHeaderMappings(): MapItem[] {
       original: "Note",
       translated: t("common.columns.note"),
     },
+
+    // CERTIFICATION TYPES
+    {
+      original: "CertificationTypeName",
+      translated: t("common.columns.certificationTypeName"),
+    },
+    {
+      original: "RequiresRenewal",
+      translated: t("common.columns.requiresRenewal"),
+    },
+    {
+      original: "MonthsToRenewal",
+      translated: t("common.columns.monthsToRenewal"),
+    },
+    {
+      original: "CreatedDate",
+      translated: t("common.columns.createdDate"),
+    },
+    {
+      original: "CreatedBy",
+      translated: t("common.columns.createdBy"),
+    },
+    {
+      original: "ModifiedDate",
+      translated: t("common.columns.modifiedDate"),
+    },
+    {
+      original: "ModifiedBy",
+      translated: t("common.columns.modifiedBy"),
+    },
+
+    // CERTIFICATIONS (columns)
+    { original: "EmployeeName", translated: t("common.columns.employeeName") },
+    {
+      original: "CertificationTypeId",
+      translated: t("common.columns.certificationTypeId"),
+    },
+    {
+      original: "CertificationDate",
+      translated: t("common.columns.certificationDate"),
+    },
+    {
+      original: "NextCertificationDate",
+      translated: t("common.columns.nextCertificationDate"),
+    },
+    {
+      original: "CertificatePath",
+      translated: t("common.columns.certificatePath"),
+    },
+    {
+      original: "ReminderSentDate",
+      translated: t("common.columns.reminderSentDate"),
+    },
+
+    // Audit fields (your grid uses camelCase)
+    { original: "createdDate", translated: t("common.columns.createdDate") },
+    { original: "createdBy", translated: t("common.columns.createdBy") },
+    { original: "modifiedDate", translated: t("common.columns.modifiedDate") },
+    { original: "modifiedBy", translated: t("common.columns.modifiedBy") },
+
+    // also keep these if other tables use PascalCase
+    { original: "CreatedDate", translated: t("common.columns.createdDate") },
+    { original: "CreatedBy", translated: t("common.columns.createdBy") },
+    { original: "ModifiedDate", translated: t("common.columns.modifiedDate") },
+    { original: "ModifiedBy", translated: t("common.columns.modifiedBy") },
   ];
 }
