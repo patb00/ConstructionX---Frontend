@@ -5,6 +5,7 @@ import {
   FaIdBadge,
   FaBriefcase,
   FaTools,
+  FaBoxes,
   FaCarSide,
   FaTasks,
   FaRegFileAlt,
@@ -33,6 +34,7 @@ export type ModuleId =
   | "jobPositions"
   | "tools"
   | "toolCategories"
+  | "materials"
   | "vehicles"
   | "vehicleRegistrations"
   | "vehicleInsurances"
@@ -157,6 +159,14 @@ export const NAV_ITEMS: NavItem[] = [
     section: "SYSTEM",
     category: "CODEBOOK",
     guard: { permission: "Permission.Tools.Read" },
+  },
+  {
+    labelKey: "nav.materials",
+    to: "/app/materials",
+    icon: <FaBoxes />,
+    section: "SYSTEM",
+    category: "CODEBOOK",
+    guard: { permission: "Permission.Materials.Read" },
   },
   {
     labelKey: "nav.toolCategories",
