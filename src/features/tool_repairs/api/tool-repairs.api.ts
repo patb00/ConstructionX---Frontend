@@ -45,4 +45,11 @@ export const ToolRepairsApi = {
     );
     return res.data;
   },
+
+  getAll: async (page: number, pageSize: number) => {
+    const res = await authFetch<ApiEnvelope<PagedResult<ToolRepair>>>(
+      `${base}/get-all?Page=${page}&PageSize=${pageSize}`
+    );
+    return res.data;
+  },
 };

@@ -35,6 +35,9 @@
     "vehicleBusinessTrips": "Službena putovanja ",
     "tasks": "Zadatci"
   },
+  "common": {
+    "comingSoon": "Ovaj dio stiže uskoro."
+  },
   "constructionSites": {
     "detail": {
       "title": "Pregled gradilišta",

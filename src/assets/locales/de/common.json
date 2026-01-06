@@ -35,6 +35,9 @@
     "vehicleBusinessTrips": "Dienstfahrten",
     "tasks": "Aufgaben"
   },
+  "common": {
+    "comingSoon": "Dieser Bereich wird bald verfügbar sein."
+  },
 
   "constructionSites": {
     "list": {

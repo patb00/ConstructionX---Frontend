@@ -35,6 +35,9 @@
     "vehicleBusinessTrips": "Vehicle Business Trips",
     "tasks": "Tasks"
   },
+  "common": {
+    "comingSoon": "This section is coming soon."
+  },
   "constructionSites": {
     "list": {
       "title": "Construction Sites",
