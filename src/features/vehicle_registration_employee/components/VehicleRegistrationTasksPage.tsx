@@ -416,9 +416,9 @@ const VehicleRegistrationTasksPage = () => {
           />
         ),
       },
+
       {
         key: "taskName",
-        width: "22%",
         header: (
           <HeaderLabel
             icon={<TaskAltOutlined />}
@@ -428,14 +428,27 @@ const VehicleRegistrationTasksPage = () => {
         headSx: [listViewColDividerSx],
         cellSx: [listViewBodyCellSx, listViewColDividerSx],
         render: (item) => (
-          <Typography variant="body2" fontWeight={600} noWrap>
-            {item.title}
-          </Typography>
+          <Stack spacing={0.25} sx={{ minWidth: 0 }}>
+            <Typography variant="body2" fontWeight={700} noWrap>
+              {item.title}
+            </Typography>
+
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              noWrap
+              sx={{ display: { xs: "block", md: "none" }, fontSize: 12 }}
+            >
+              {item.subtitle || "-"}
+            </Typography>
+          </Stack>
         ),
       },
+
       {
         key: "description",
         width: "28%",
+        hideBelow: "lg",
         header: (
           <HeaderLabel
             icon={<DescriptionOutlined />}
@@ -453,6 +466,7 @@ const VehicleRegistrationTasksPage = () => {
       {
         key: "deadline",
         width: 210,
+        hideBelow: "lg",
         header: (
           <HeaderLabel
             icon={<EventOutlined />}
@@ -470,6 +484,7 @@ const VehicleRegistrationTasksPage = () => {
       {
         key: "type",
         width: 160,
+        hideBelow: "lg",
         header: (
           <HeaderLabel
             icon={<LabelOutlined />}
@@ -482,9 +497,10 @@ const VehicleRegistrationTasksPage = () => {
           <Chip size="small" label={item.projectName} sx={listViewChipSx} />
         ),
       },
+
       {
         key: "priority",
-        width: 220,
+        width: 260,
         header: (
           <HeaderLabel
             icon={<PriorityHighOutlined />}
@@ -493,14 +509,30 @@ const VehicleRegistrationTasksPage = () => {
         ),
         cellSx: [listViewBodyCellSx],
         render: (item) => (
-          <Box
-            sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}
-          >
-            <Chip
-              size="small"
-              label={item.statusTag.label}
-              sx={[listViewChipSx, { fontWeight: 600 }]}
-            />
+          <Stack spacing={0.75} sx={{ minWidth: 0 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                minWidth: 0,
+              }}
+            >
+              <Chip
+                size="small"
+                label={item.statusTag.label}
+                sx={[listViewChipSx, { fontWeight: 600 }]}
+              />
+            </Box>
+
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              noWrap
+              sx={{ display: { xs: "block", md: "none" }, fontSize: 12 }}
+            >
+              {item.deadline || "-"} • {item.projectName}
+            </Typography>
 
             {!item.isCompleted && (
               <Button
@@ -510,17 +542,17 @@ const VehicleRegistrationTasksPage = () => {
                 onClick={() => handleOpenResolveDialog(item.task)}
                 disabled={updateStatus.isPending}
                 sx={{
-                  ml: "auto",
                   height: 28,
                   textTransform: "none",
                   fontWeight: 600,
                   borderRadius: 1,
+                  alignSelf: "flex-start",
                 }}
               >
                 {t("vehicleRegistrationTasks.actions.completeTask")}
               </Button>
             )}
-          </Box>
+          </Stack>
         ),
       },
     ];

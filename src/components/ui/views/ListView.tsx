@@ -10,6 +10,8 @@ import {
   TableHead,
   TableRow,
   Typography,
+  useMediaQuery,
+  useTheme,
   type SxProps,
   type Theme,
 } from "@mui/material";
@@ -59,6 +61,11 @@ export type ListViewColumn<T> = {
   headSx?: SxProps<Theme>;
   cellSx?: SxProps<Theme>;
   render?: (row: T) => React.ReactNode;
+
+  hidden?: boolean;
+  hideBelow?: "sm" | "md" | "lg";
+
+  showBelow?: "sm" | "md" | "lg";
 };
 
 export type ListViewProps<T> = {
@@ -69,6 +76,10 @@ export type ListViewProps<T> = {
   renderRow?: (row: T) => React.ReactNode;
   columns: Array<ListViewColumn<T>>;
   renderSectionEndAdornment?: (section: ListViewSection<T>) => React.ReactNode;
+
+  enableHorizontalScroll?: boolean;
+
+  tableMinWidth?: number;
 
   sx?: SxProps<Theme>;
   sectionHeaderSx?: SxProps<Theme>;
@@ -85,6 +96,15 @@ const headCellBaseSx: SxProps<Theme> = {
   py: 1.25,
 };
 
+function isDownOrEqual(
+  bp: "sm" | "md" | "lg",
+  flags: { smDown: boolean; mdDown: boolean; lgDown: boolean }
+) {
+  if (bp === "sm") return flags.smDown;
+  if (bp === "md") return flags.mdDown;
+  return flags.lgDown;
+}
+
 export default function ListView<T>({
   sections,
   openByKey,
@@ -93,11 +113,39 @@ export default function ListView<T>({
   renderRow,
   columns,
   renderSectionEndAdornment,
+  enableHorizontalScroll = false,
+  tableMinWidth = 900,
   sx,
   sectionHeaderSx,
   tableSx,
   containerSx,
 }: ListViewProps<T>) {
+  const theme = useTheme();
+  const smDown = useMediaQuery(theme.breakpoints.down("sm"));
+  const mdDown = useMediaQuery(theme.breakpoints.down("md"));
+  const lgDown = useMediaQuery(theme.breakpoints.down("lg"));
+
+  const responsiveFlags = React.useMemo(
+    () => ({ smDown, mdDown, lgDown }),
+    [smDown, mdDown, lgDown]
+  );
+
+  const visibleColumns = React.useMemo(() => {
+    return columns.filter((c) => {
+      if (c.hidden) return false;
+
+      if (c.showBelow) {
+        return isDownOrEqual(c.showBelow, responsiveFlags);
+      }
+
+      if (c.hideBelow) {
+        return !isDownOrEqual(c.hideBelow, responsiveFlags);
+      }
+
+      return true;
+    });
+  }, [columns, responsiveFlags]);
+
   const [internalOpen, setInternalOpen] = React.useState<
     Record<string, boolean>
   >({});
@@ -212,6 +260,11 @@ export default function ListView<T>({
                 borderRadius: 1,
                 overflow: "hidden",
                 bgcolor: "background.paper",
+
+                ...(enableHorizontalScroll
+                  ? { overflowX: "auto", overflowY: "hidden" }
+                  : null),
+
                 ...containerSx,
               }}
             >
@@ -221,6 +274,10 @@ export default function ListView<T>({
                   stickyHeader
                   sx={{
                     width: "100%",
+                    ...(enableHorizontalScroll
+                      ? { minWidth: tableMinWidth }
+                      : null),
+
                     borderCollapse: "separate",
                     borderSpacing: 0,
                     bgcolor: "background.paper",
@@ -235,7 +292,7 @@ export default function ListView<T>({
                 >
                   <TableHead>
                     <TableRow>
-                      {columns.map((c) => (
+                      {visibleColumns.map((c) => (
                         <TableCell
                           key={c.key}
                           align={c.align}
@@ -266,7 +323,7 @@ export default function ListView<T>({
 
                       return (
                         <TableRow key={key} hover>
-                          {columns.map((c) => (
+                          {visibleColumns.map((c) => (
                             <TableCell
                               key={c.key}
                               align={c.align}
