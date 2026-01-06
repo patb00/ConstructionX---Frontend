@@ -30,7 +30,8 @@
     "notifications": "Benachrichtigungen",
     "vehicleRegistrations": "Fahrzeugzulassungen",
     "vehicleInsurances": "Fahrzeugversicherungen",
-    "vehicleBusinessTrips": "Dienstfahrten"
+    "vehicleBusinessTrips": "Dienstfahrten",
+    "tasks": "Aufgaben"
   },
 
   "constructionSites": {
@@ -1687,6 +1688,86 @@
       }
     }
   },
+  "myTasks": {
+    "title": "Aufgaben",
+    "tabs": {
+      "vehicleRegistration": "Fahrzeugzulassungsaufgaben"
+    }
+  },
+
+  "vehicleRegistrationTasks": {
+    "list": {
+      "title": "Meine Fahrzeugzulassungsaufgaben",
+      "empty": "Keine Aufgaben vorhanden.",
+      "sections": {
+        "assigned": "Zugewiesen",
+        "dueSoon": "Bald fällig",
+        "inProgress": "In Bearbeitung",
+        "completed": "Abgeschlossen",
+        "cancelled": "Abgebrochen"
+      }
+    },
+    "columns": {
+      "id": "ID",
+      "vehicleId": "Fahrzeug-ID",
+      "status": "Status",
+      "actions": "Aktionen",
+      "taskName": "Aufgabenname",
+      "description": "Beschreibung",
+      "deadline": "Frist",
+      "type": "Typ",
+      "priority": "Priorität"
+    },
+    "detail": {
+      "title": "Aufgabendetails",
+      "back": "Zurück",
+      "empty": "Aufgabe nicht gefunden.",
+      "invalidId": "Ungültige Aufgaben-ID.",
+      "fields": {
+        "id": "ID",
+        "vehicleId": "Fahrzeug-ID",
+        "employeeId": "Mitarbeiter-ID",
+        "vehicleRegistrationId": "Fahrzeugzulassungs-ID",
+        "expiresOn": "Läuft ab am",
+        "completedAt": "Abgeschlossen am",
+        "status": "Status",
+        "note": "Notiz"
+      }
+    },
+    "status": {
+      "assigned": "Zugewiesen",
+      "inProgress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "cancelled": "Abgebrochen",
+      "unknown": "Unbekannt"
+    },
+    "actions": {
+      "view": "Ansehen",
+      "changeStatus": "Status ändern",
+      "completeTask": "Aufgabe abschließen"
+    },
+    "dialog": {
+      "title": "Status ändern",
+      "save": "Speichern",
+      "cancel": "Abbrechen"
+    },
+    "resolveDialog": {
+      "title": "Bestätigung",
+      "question": "Haben Sie eine neue Registrierung erstellt?",
+      "helper": "Falls nicht, klicken Sie auf \"Registrierung erstellen\". Nach der Erstellung kehren Sie hierher zurück und klicken auf \"Speichern\", um die Aufgabe als erledigt zu markieren.",
+      "save": "Speichern",
+      "create": "Registrierung erstellen",
+      "cancel": "Abbrechen",
+
+      "snackbarNoRegistration": "Für dieses Fahrzeug existiert noch keine Registrierung. Bitte erstellen Sie zuerst eine Registrierung.",
+      "snackbarNoNewerRegistration": "Es existiert keine neuere Registrierung für dieses Fahrzeug. Bitte erstellen Sie eine neue Registrierung, bevor Sie den Status ändern.",
+      "snackbarRegistrationTooOld": "Die Registrierung für dieses Fahrzeug ist älter als die Aufgabenfrist. Bitte erneuern oder erstellen Sie eine neue Registrierung.",
+      "snackbarBadDate": "Ungültiges Ablaufdatum der Aufgabe.",
+      "snackbarBadRegDate": "Ungültiges Datum der Fahrzeugregistrierung.",
+      "snackbarResolved": "Die Aufgabe wurde als erledigt markiert."
+    }
+  },
+
   "vehicleInsurances": {
     "list": {
       "title": "Fahrzeugversicherungen",

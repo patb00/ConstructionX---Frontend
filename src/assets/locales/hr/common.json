@@ -30,7 +30,8 @@
     "notifications": "Obavijesti",
     "vehicleRegistrations": "Registracije vozila",
     "vehicleInsurances": "Osiguranja vozila",
-    "vehicleBusinessTrips": "Službena putovanja "
+    "vehicleBusinessTrips": "Službena putovanja ",
+    "tasks": "Zadatci"
   },
   "constructionSites": {
     "detail": {
@@ -1727,6 +1728,85 @@
       }
     }
   },
+  "myTasks": {
+    "title": "Zadatci",
+    "tabs": {
+      "vehicleRegistration": "Zadatci za registraciju"
+    }
+  },
+  "vehicleRegistrationTasks": {
+    "list": {
+      "title": "Moji zadaci registracije vozila",
+      "empty": "Nema zadataka.",
+      "sections": {
+        "assigned": "Dodijeljeno",
+        "dueSoon": "Uskoro istječe",
+        "inProgress": "U tijeku",
+        "completed": "Završeno",
+        "cancelled": "Otkazano"
+      }
+    },
+    "columns": {
+      "id": "ID",
+      "vehicleId": "ID vozila",
+      "status": "Status",
+      "actions": "Akcije",
+      "taskName": "Naziv zadatka",
+      "description": "Opis",
+      "deadline": "Rok",
+      "type": "Tip",
+      "priority": "Prioritet"
+    },
+    "detail": {
+      "title": "Detalji zadatka",
+      "back": "Natrag",
+      "empty": "Zadatak nije pronađen.",
+      "invalidId": "Neispravan ID zadatka.",
+      "fields": {
+        "id": "ID",
+        "vehicleId": "ID vozila",
+        "employeeId": "ID zaposlenika",
+        "vehicleRegistrationId": "ID registracije vozila",
+        "expiresOn": "Istječe",
+        "completedAt": "Završeno",
+        "status": "Status",
+        "note": "Napomena"
+      }
+    },
+    "status": {
+      "assigned": "Dodijeljeno",
+      "inProgress": "U tijeku",
+      "completed": "Završeno",
+      "cancelled": "Otkazano",
+      "unknown": "Nepoznato"
+    },
+    "actions": {
+      "view": "Pregled",
+      "changeStatus": "Promijeni status",
+      "completeTask": "Završi zadatak"
+    },
+    "dialog": {
+      "title": "Promijeni status",
+      "save": "Spremi",
+      "cancel": "Odustani"
+    },
+    "resolveDialog": {
+      "title": "Potvrda",
+      "question": "Da li ste kreirali novu registraciju?",
+      "helper": "Ukoliko niste, kliknite na \"Kreiraj registraciju\". Nakon kreiranja registracije, vratite se ovdje i kliknite \"Spremi\" kako biste označili zadatak kao završen.",
+      "save": "Spremi",
+      "create": "Kreiraj registraciju",
+      "cancel": "Odustani",
+
+      "snackbarNoRegistration": "Za ovo vozilo još nema registracije. Kreirajte registraciju prije rješavanja zadatka.",
+      "snackbarNoNewerRegistration": "Ne postoji novija registracija za ovo vozilo. Kreirajte novu registraciju prije promjene statusa.",
+      "snackbarRegistrationTooOld": "Registracija za ovo vozilo je starija od roka zadatka. Kreirajte ili produžite registraciju pa pokušajte ponovno.",
+      "snackbarBadDate": "Neispravan datum roka na zadatku.",
+      "snackbarBadRegDate": "Neispravan datum na registraciji vozila.",
+      "snackbarResolved": "Zadatak je označen kao završen."
+    }
+  },
+
   "vehicleInsurances": {
     "list": {
       "title": "Osiguranja vozila",

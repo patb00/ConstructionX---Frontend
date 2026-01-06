@@ -193,6 +193,14 @@ export const NAV_ITEMS: NavItem[] = [
     guard: { permission: "Permission.Vehicles.Read" },
   },
   {
+    labelKey: "nav.tasks",
+    to: "/app/tasks",
+    icon: <FaTasks />,
+    section: "SYSTEM",
+    category: "VEHICLES",
+    guard: { permission: "Permission.Vehicles.Read" },
+  },
+  {
     labelKey: "nav.vehicleInsurances",
     to: "/app/vehicle-insurances",
     icon: <FaRegFileAlt />,
