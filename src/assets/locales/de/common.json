@@ -17,6 +17,7 @@
     "employees": "Mitarbeiter",
     "jobPositions": "Arbeitsstellen",
     "tools": "Werkzeuge",
+    "materials": "Materialien",
     "toolCategories": "Werkzeugkategorien",
     "vehicles": "Fahrzeuge",
     "assignments": "Zuweisungen",
@@ -628,7 +629,13 @@
       "certificationDate": "Zertifikatsdatum",
       "nextCertificationDate": "Nächstes Zertifikatsdatum",
       "certificatePath": "Zertifikatsdatei",
-      "reminderSentDate": "Erinnerung gesendet"
+      "reminderSentDate": "Erinnerung gesendet",
+
+      "unitOfMeasure": "Maßeinheit",
+      "quantity": "Menge",
+      "unitPrice": "Stückpreis",
+      "articleCode": "Artikelcode",
+      "barcode": "Barcode"
     }
   },
   "tenants": {
@@ -969,6 +976,46 @@
       },
       "responsible": {
         "none": "Nicht zugewiesen"
+      }
+    }
+  },
+  "materials": {
+    "list": {
+      "title": "Materialien",
+      "error": "Fehler beim Laden der Materialien"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "create": {
+      "title": "Material erstellen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Material bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige Material-ID in der URL",
+      "loadError": "Materialdaten konnten nicht geladen werden"
+    },
+    "delete": {
+      "title": "Material löschen",
+      "description": "Möchten Sie dieses Material wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "name": "Name",
+        "unitOfMeasure": "Maßeinheit",
+        "quantity": "Menge",
+        "unitPrice": "Stückpreis",
+        "description": "Beschreibung",
+        "articleCode": "Artikelcode",
+        "barcode": "Barcode",
+        "weight": "Gewicht"
       }
     }
   },

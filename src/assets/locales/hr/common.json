@@ -17,6 +17,7 @@
     "employees": "Zaposlenici",
     "jobPositions": "Radna mjesta",
     "tools": "Alati",
+    "materials": "Materijali",
     "toolCategories": "Kategorije alata",
     "vehicles": "Vozila",
     "assignments": "Dodjele",
@@ -621,7 +622,13 @@
       "certificationDate": "Datum certifikata",
       "nextCertificationDate": "Sljedeći datum certifikata",
       "certificatePath": "Dokument",
-      "reminderSentDate": "Podsjetnik poslan"
+      "reminderSentDate": "Podsjetnik poslan",
+
+      "unitOfMeasure": "Mjerna jedinica",
+      "quantity": "Količina",
+      "unitPrice": "Jedinična cijena",
+      "articleCode": "Šifra artikla",
+      "barcode": "Barkod"
     }
   },
   "tenants": {
@@ -962,6 +969,46 @@
       },
       "responsible": {
         "none": "Nije dodijeljeno"
+      }
+    }
+  },
+  "materials": {
+    "list": {
+      "title": "Materijali",
+      "error": "Greška prilikom učitavanja materijala"
+    },
+    "actions": "Akcije",
+    "table": {
+      "edit": "Uredi",
+      "delete": "Obriši"
+    },
+    "create": {
+      "title": "Dodaj materijal",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi materijal",
+      "back": "Natrag",
+      "invalidUrlId": "Nevažeći ID materijala u URL-u",
+      "loadError": "Nije moguće učitati podatke o materijalu"
+    },
+    "delete": {
+      "title": "Brisanje materijala",
+      "description": "Jeste li sigurni da želite obrisati ovaj materijal?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    },
+    "form": {
+      "submit": "Spremi",
+      "field": {
+        "name": "Naziv",
+        "unitOfMeasure": "Mjerna jedinica",
+        "quantity": "Količina",
+        "unitPrice": "Jedinična cijena",
+        "description": "Opis",
+        "articleCode": "Šifra artikla",
+        "barcode": "Barkod",
+        "weight": "Težina"
       }
     }
   },
