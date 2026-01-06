@@ -17,6 +17,7 @@
     "employees": "Employees",
     "jobPositions": "Job Positions",
     "tools": "Tools",
+    "materials": "Materials",
     "toolCategories": "Tool Categories",
     "vehicles": "Vehicles",
     "assignments": "Assignments",
@@ -963,6 +964,46 @@
       },
       "responsible": {
         "none": "Unassigned"
+      }
+    }
+  },
+  "materials": {
+    "list": {
+      "title": "Materials",
+      "error": "Failed to load materials"
+    },
+    "actions": "Actions",
+    "table": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "create": {
+      "title": "Create Material",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit Material",
+      "back": "Back",
+      "invalidUrlId": "Invalid material id in URL",
+      "loadError": "Could not load material data"
+    },
+    "delete": {
+      "title": "Delete Material",
+      "description": "Are you sure you want to delete this material?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "form": {
+      "submit": "Save",
+      "field": {
+        "name": "Name",
+        "unitOfMeasure": "Unit of measure",
+        "quantity": "Quantity",
+        "unitPrice": "Unit price",
+        "description": "Description",
+        "articleCode": "Article code",
+        "barcode": "Barcode",
+        "weight": "Weight"
       }
     }
   },

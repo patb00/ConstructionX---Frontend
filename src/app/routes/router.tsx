@@ -14,6 +14,7 @@ import { constructionSitesRoutes } from "../../features/construction_site/routes
 import { toolsRoutes } from "../../features/tools/routes";
 import { toolCategoriesRoutes } from "../../features/tools_category/routes";
 import { vehiclesRoutes } from "../../features/vehicles/routes";
+import { materialsRoutes } from "../../features/materials/routes";
 import { assignmentsRoutes } from "../../features/assignments/routes";
 import { reportsRoutes } from "../../features/reports/routes";
 import { medicalExaminationsRoutes } from "../../features/medical_examinations/routes";
@@ -48,6 +49,7 @@ export const router = createBrowserRouter([
 
       toolsRoutes,
       toolCategoriesRoutes,
+      materialsRoutes,
       constructionSitesRoutes,
       vehiclesRoutes,
       vehicleRegistrationsRoutes,
