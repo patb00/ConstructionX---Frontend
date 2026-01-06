@@ -62,7 +62,7 @@ export default function ResolveVehicleRegistrationTaskDialog({
       aria-labelledby="resolve-task-dialog-title"
       aria-describedby="resolve-task-dialog-description"
       fullWidth
-      maxWidth="xs"
+      maxWidth="sm"
       keepMounted
       PaperProps={{
         sx: {
