@@ -623,7 +623,13 @@
       "certificationDate": "Certification date",
       "nextCertificationDate": "Next certification date",
       "certificatePath": "Certificate file",
-      "reminderSentDate": "Reminder sent"
+      "reminderSentDate": "Reminder sent",
+
+      "unitOfMeasure": "Unit of measure",
+      "quantity": "Quantity",
+      "unitPrice": "Unit price",
+      "articleCode": "Article code",
+      "barcode": "Barcode"
     }
   },
   "tenants": {

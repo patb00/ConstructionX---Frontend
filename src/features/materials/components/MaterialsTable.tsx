@@ -92,11 +92,20 @@ export default function MaterialsTable() {
     };
 
     return [...base, actionsCol];
-  }, [materialsColumns, can, deleteMaterial.isPending, navigate, requestDelete, t]);
+  }, [
+    materialsColumns,
+    can,
+    deleteMaterial.isPending,
+    navigate,
+    requestDelete,
+    t,
+  ]);
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   if (error) return <div>{t("materials.list.error")}</div>;
+
+  console.log("materialsColumns", materialsColumns);
 
   return (
     <>

@@ -622,7 +622,13 @@
       "certificationDate": "Datum certifikata",
       "nextCertificationDate": "Sljedeći datum certifikata",
       "certificatePath": "Dokument",
-      "reminderSentDate": "Podsjetnik poslan"
+      "reminderSentDate": "Podsjetnik poslan",
+
+      "unitOfMeasure": "Mjerna jedinica",
+      "quantity": "Količina",
+      "unitPrice": "Jedinična cijena",
+      "articleCode": "Šifra artikla",
+      "barcode": "Barkod"
     }
   },
   "tenants": {

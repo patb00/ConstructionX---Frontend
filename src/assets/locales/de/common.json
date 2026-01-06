@@ -629,7 +629,13 @@
       "certificationDate": "Zertifikatsdatum",
       "nextCertificationDate": "Nächstes Zertifikatsdatum",
       "certificatePath": "Zertifikatsdatei",
-      "reminderSentDate": "Erinnerung gesendet"
+      "reminderSentDate": "Erinnerung gesendet",
+
+      "unitOfMeasure": "Maßeinheit",
+      "quantity": "Menge",
+      "unitPrice": "Stückpreis",
+      "articleCode": "Artikelcode",
+      "barcode": "Barcode"
     }
   },
   "tenants": {

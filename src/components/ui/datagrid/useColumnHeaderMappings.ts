@@ -380,5 +380,25 @@ export default function useColumnHeaderMappings(): MapItem[] {
     { original: "CreatedBy", translated: t("common.columns.createdBy") },
     { original: "ModifiedDate", translated: t("common.columns.modifiedDate") },
     { original: "ModifiedBy", translated: t("common.columns.modifiedBy") },
+
+    // MATERIALS
+    {
+      original: "UnitOfMeasure",
+      translated: t("common.columns.unitOfMeasure"),
+    },
+    { original: "Quantity", translated: t("common.columns.quantity") },
+    { original: "UnitPrice", translated: t("common.columns.unitPrice") },
+    { original: "ArticleCode", translated: t("common.columns.articleCode") },
+    { original: "Barcode", translated: t("common.columns.barcode") },
+
+    // if your grid uses camelCase (your data fields do)
+    {
+      original: "unitOfMeasure",
+      translated: t("common.columns.unitOfMeasure"),
+    },
+    { original: "quantity", translated: t("common.columns.quantity") },
+    { original: "unitPrice", translated: t("common.columns.unitPrice") },
+    { original: "articleCode", translated: t("common.columns.articleCode") },
+    { original: "barcode", translated: t("common.columns.barcode") },
   ];
 }
