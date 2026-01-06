@@ -165,8 +165,8 @@ export const NAV_ITEMS: NavItem[] = [
     guard: { permission: "Permission.Vehicles.Read" },
   },
   {
-    labelKey: "nav.vehicleRegistrationTasks",
-    to: "/app/my-vehicle-registration-tasks",
+    labelKey: "nav.tasks",
+    to: "/app/tasks",
     icon: <FaTasks />,
     section: "SYSTEM",
     category: "VEHICLES",

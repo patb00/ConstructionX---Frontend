@@ -28,7 +28,7 @@
     "vehicleRegistrations": "Vehicle Registrations",
     "vehicleInsurances": "Vehicle Insurances",
     "vehicleBusinessTrips": "Vehicle Business Trips",
-    "vehicleRegistrationTasks": "Vehicle Registration Tasks"
+    "tasks": "Tasks"
   },
   "constructionSites": {
     "list": {
@@ -1538,22 +1538,41 @@
       }
     }
   },
+  "myTasks": {
+    "title": "Tasks",
+    "tabs": {
+      "vehicleRegistration": "Vehicle Registration Tasks"
+    }
+  },
+
   "vehicleRegistrationTasks": {
     "list": {
       "title": "My Vehicle Registration Tasks",
       "empty": "No tasks available.",
-      "columns": {
-        "id": "ID",
-        "vehicleId": "Vehicle ID",
-        "status": "Status",
-        "actions": "Actions"
+      "sections": {
+        "assigned": "Assigned",
+        "dueSoon": "Due soon",
+        "inProgress": "In progress",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
       }
+    },
+    "columns": {
+      "id": "ID",
+      "vehicleId": "Vehicle ID",
+      "status": "Status",
+      "actions": "Actions",
+      "taskName": "Task name",
+      "description": "Description",
+      "deadline": "Deadline",
+      "type": "Type",
+      "priority": "Priority"
     },
     "detail": {
       "title": "Task details",
       "back": "Back",
       "empty": "Task not found.",
-      "invalidId": "Invalid task id.",
+      "invalidId": "Invalid task ID.",
       "fields": {
         "id": "ID",
         "vehicleId": "Vehicle ID",
@@ -1574,14 +1593,31 @@
     },
     "actions": {
       "view": "View",
-      "changeStatus": "Change status"
+      "changeStatus": "Change status",
+      "completeTask": "Complete task"
     },
     "dialog": {
       "title": "Change status",
       "save": "Save",
       "cancel": "Cancel"
+    },
+    "resolveDialog": {
+      "title": "Confirmation",
+      "question": "Have you created a new registration?",
+      "helper": "If not, click \"Create registration\". After creating the registration, return here and click \"Save\" to mark the task as completed.",
+      "save": "Save",
+      "create": "Create registration",
+      "cancel": "Cancel",
+
+      "snackbarNoRegistration": "There is no registration for this vehicle yet. Please create a registration before resolving the task.",
+      "snackbarNoNewerRegistration": "There is no newer registration for this vehicle. Please create a new registration before changing the status.",
+      "snackbarRegistrationTooOld": "The registration for this vehicle is older than the task deadline. Please renew or create a new registration and try again.",
+      "snackbarBadDate": "Invalid task expiration date.",
+      "snackbarBadRegDate": "Invalid vehicle registration date.",
+      "snackbarResolved": "The task has been marked as completed."
     }
   },
+
   "vehicleInsurances": {
     "list": {
       "title": "Vehicle Insurances",

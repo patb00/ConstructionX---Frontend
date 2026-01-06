@@ -1,6 +1,5 @@
 import { Outlet, type RouteObject } from "react-router-dom";
-import MyVehicleRegistrationTasksPage from "../components/MyVehicleRegistrationTasksPage";
-import MyVehicleRegistrationTaskDetailsPage from "../components/MyVehicleRegistrationTaskDetailsPage";
+import MyVehicleRegistrationTasksPage from "../components/VehicleRegistrationTasksPage";
 
 function VehicleRegistrationTasksLayout() {
   return (
@@ -11,13 +10,7 @@ function VehicleRegistrationTasksLayout() {
 }
 
 export const vehicleRegistrationTasksRoutes: RouteObject = {
-  path: "my-vehicle-registration-tasks",
+  path: "tasks",
   element: <VehicleRegistrationTasksLayout />,
-  children: [
-    { index: true, element: <MyVehicleRegistrationTasksPage /> },
-    {
-      path: ":taskId",
-      element: <MyVehicleRegistrationTaskDetailsPage />,
-    },
-  ],
+  children: [{ index: true, element: <MyVehicleRegistrationTasksPage /> }],
 };
