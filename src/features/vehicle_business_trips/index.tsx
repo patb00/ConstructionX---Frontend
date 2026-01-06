@@ -4,6 +4,7 @@ export interface VehicleBusinessTrip {
   employeeId: number;
   startLocationText: string | null;
   endLocationText: string | null;
+  purposeOfTrip: string | null;
   startAt: string;
   endAt: string;
   startKilometers: number;
@@ -17,35 +18,50 @@ export interface VehicleBusinessTrip {
 }
 
 export interface NewVehicleBusinessTripRequest {
-  vehicleId: number;
   employeeId: number;
   startLocationText?: string | null;
   endLocationText?: string | null;
+  purposeOfTrip?: string | null;
   startAt: string;
   endAt: string;
-  startKilometers: number;
-  endKilometers: number;
-  refueled: boolean;
-  fuelAmount: number;
-  fuelCurrency?: string | null;
-  fuelLiters: number;
-  note?: string | null;
 }
 
 export interface UpdateVehicleBusinessTripRequest {
   id: number;
   startLocationText?: string | null;
   endLocationText?: string | null;
+  purposeOfTrip?: string | null;
   startAt: string;
   endAt: string;
+}
+
+export interface ApproveVehicleBusinessTripRequest {
+  tripId: number;
+  vehicleId: number;
+  approvedByEmployeeUserId: string;
+}
+
+export interface RejectVehicleBusinessTripRequest {
+  tripId: number;
+  rejectReason: string;
+  approvedByEmployeeUserId: string;
+}
+
+export interface CancelVehicleBusinessTripRequest {
+  tripId: number;
+  cancelReason: string;
+  cancelledByEmployeeUserId: string;
+}
+
+export interface CompleteVehicleBusinessTripRequest {
+  tripId: number;
   startKilometers: number;
   endKilometers: number;
-  tripStatus: number;
   refueled: boolean;
   fuelAmount: number;
-  fuelCurrency?: string | null;
+  fuelCurrency: string;
   fuelLiters: number;
-  note?: string | null;
+  note: string;
 }
 
 export interface PagedResult<T> {
