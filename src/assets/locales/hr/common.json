@@ -610,7 +610,18 @@
       "fuelLiters": "Gorivo (litre)",
       "fuelAmount": "Iznos goriva",
       "fuelCurrency": "Valuta",
-      "tripStatus": "Status putovanja"
+      "tripStatus": "Status putovanja",
+
+      "certificationTypeName": "Naziv tipa certifikata",
+      "requiresRenewal": "Zahtijeva obnovu",
+      "monthsToRenewal": "Mjeseci do obnove",
+
+      "employeeName": "Zaposlenik",
+      "certificationTypeId": "ID tipa certifikata",
+      "certificationDate": "Datum certifikata",
+      "nextCertificationDate": "Sljedeći datum certifikata",
+      "certificatePath": "Dokument",
+      "reminderSentDate": "Podsjetnik poslan"
     }
   },
   "tenants": {
@@ -1423,6 +1434,10 @@
     "list": {
       "title": "Certifikati",
       "error": "Pogreška pri učitavanju certifikata."
+    },
+    "status": {
+      "passed": "Prošao",
+      "failed": "Pao"
     },
     "create": {
       "title": "Dodaj certifikat",

@@ -617,7 +617,18 @@
       "fuelLiters": "Kraftstoff (Liter)",
       "fuelAmount": "Kraftstoffkosten",
       "fuelCurrency": "Währung",
-      "tripStatus": "Fahrtstatus"
+      "tripStatus": "Fahrtstatus",
+
+      "certificationTypeName": "Zertifikatstyp",
+      "requiresRenewal": "Erfordert Erneuerung",
+      "monthsToRenewal": "Monate bis zur Erneuerung",
+
+      "employeeName": "Mitarbeiter",
+      "certificationTypeId": "Zertifikatstyp-ID",
+      "certificationDate": "Zertifikatsdatum",
+      "nextCertificationDate": "Nächstes Zertifikatsdatum",
+      "certificatePath": "Zertifikatsdatei",
+      "reminderSentDate": "Erinnerung gesendet"
     }
   },
   "tenants": {
@@ -1427,6 +1438,10 @@
     }
   },
   "certifications": {
+    "status": {
+      "passed": "Bestanden",
+      "failed": "Nicht bestanden"
+    },
     "list": {
       "title": "Zertifizierungen",
       "error": "Fehler beim Laden der Zertifizierungen."

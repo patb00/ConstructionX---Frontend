@@ -40,7 +40,7 @@ export default function CertificationTypeForm({
   return (
     <SmartForm<NewCertificationTypeRequest>
       fields={fields}
-      rows={[["certificationTypeName", "requiresRenewal", "monthsToRenewal"]]}
+      rows={[["certificationTypeName", "monthsToRenewal"], ["requiresRenewal"]]}
       defaultValues={defaultValues}
       busy={busy}
       submitLabel={t("certificationTypes.form.submit")}

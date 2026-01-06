@@ -16,8 +16,12 @@ import { RowActions } from "../../../components/ui/datagrid/RowActions";
 
 export default function CertificationTypesTable() {
   const { t } = useTranslation();
-  const { certificationTypesRows, certificationTypesColumns, error, isLoading } =
-    useCertificationTypes();
+  const {
+    certificationTypesRows,
+    certificationTypesColumns,
+    error,
+    isLoading,
+  } = useCertificationTypes();
 
   const deleteCertificationType = useDeleteCertificationType();
   const navigate = useNavigate();
@@ -139,6 +143,8 @@ export default function CertificationTypesTable() {
   );
 
   if (error) return <div>{t("certificationTypes.list.error")}</div>;
+
+  console.log("certificationTypesColumns", certificationTypesColumns);
 
   return (
     <>

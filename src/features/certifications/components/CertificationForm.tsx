@@ -8,21 +8,19 @@ import type { NewCertificationRequest, UpdateCertificationRequest } from "..";
 
 import { useEmployeeOptions } from "../../constants/options/useEmployeeOptions";
 import { useCertificationTypeOptions } from "../../constants/options/useCertificationTypesOptions";
+import { useCertificationStatusOptions } from "../../constants/options/useCertificationStatusOptions";
 
 type CertificationMode = "create" | "edit";
 
-type CertificationFormValues<M extends CertificationMode> =
-  M extends "create"
-    ? NewCertificationRequest
-    : Omit<UpdateCertificationRequest, "id">;
+type CertificationFormValues<M extends CertificationMode> = M extends "create"
+  ? NewCertificationRequest
+  : Omit<UpdateCertificationRequest, "id">;
 
 type Props<M extends CertificationMode> = {
   mode: M;
-
   defaultValues?: Partial<CertificationFormValues<M>>;
   onSubmit: (values: CertificationFormValues<M>) => void | Promise<void>;
   busy?: boolean;
-
   showEmployeeField?: boolean;
 };
 
@@ -43,18 +41,22 @@ export default function CertificationForm<M extends CertificationMode>({
   const { options: certificationTypeOptions, isLoading: typesLoading } =
     useCertificationTypeOptions();
 
-  const fields: FieldConfig<any>[] = [
+  const { options: statusOptions } = useCertificationStatusOptions();
+
+  const fields: FieldConfig<CertificationFormValues<M>>[] = [
     ...(showEmployeeField
-      ? [
+      ? ([
           {
             name: "employeeId",
             label: t("certifications.form.field.employeeId"),
             required: true,
             type: "select",
             options: employeeOptions,
-            disabled: employeesLoading || employeesError,
+            props: {
+              disabled: employeesLoading || employeesError,
+            },
           },
-        ]
+        ] as FieldConfig<CertificationFormValues<M>>[])
       : []),
 
     {
@@ -63,7 +65,9 @@ export default function CertificationForm<M extends CertificationMode>({
       required: true,
       type: "select",
       options: certificationTypeOptions,
-      disabled: typesLoading,
+      props: {
+        disabled: typesLoading,
+      },
     },
     {
       name: "certificationDate",
@@ -81,10 +85,13 @@ export default function CertificationForm<M extends CertificationMode>({
       name: "status",
       label: t("certifications.form.field.status"),
       required: true,
+      type: "select",
+      options: statusOptions,
     },
     {
       name: "certificatePath",
       label: t("certifications.form.field.certificatePath"),
+      type: "text",
     },
     {
       name: "reminderSentDate",
@@ -94,13 +101,14 @@ export default function CertificationForm<M extends CertificationMode>({
     {
       name: "note",
       label: t("certifications.form.field.note"),
+      type: "text",
     },
   ];
 
   const isBusy = busy || employeesLoading || typesLoading;
 
   return (
-    <SmartForm<any>
+    <SmartForm<CertificationFormValues<M>>
       fields={fields}
       rows={[
         ["employeeId", "certificationTypeId"],

@@ -611,7 +611,18 @@
       "fuelLiters": "Fuel (liters)",
       "fuelAmount": "Fuel cost",
       "fuelCurrency": "Currency",
-      "tripStatus": "Trip status"
+      "tripStatus": "Trip status",
+
+      "certificationTypeName": "Certification Type Name",
+      "requiresRenewal": "Requires Renewal",
+      "monthsToRenewal": "Months to Renewal",
+
+      "employeeName": "Employee",
+      "certificationTypeId": "Certification type ID",
+      "certificationDate": "Certification date",
+      "nextCertificationDate": "Next certification date",
+      "certificatePath": "Certificate file",
+      "reminderSentDate": "Reminder sent"
     }
   },
   "tenants": {
@@ -1421,6 +1432,10 @@
     }
   },
   "certifications": {
+    "status": {
+      "passed": "Passed",
+      "failed": "Failed"
+    },
     "list": {
       "title": "Certifications",
       "error": "Failed to load certifications."

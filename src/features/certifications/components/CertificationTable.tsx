@@ -32,9 +32,7 @@ export default function CertificationTable({
   const can = useCan();
 
   const all = useCertifications();
-  const byType = useCertificationsByCertificationType(
-    certificationTypeId ?? 0
-  );
+  const byType = useCertificationsByCertificationType(certificationTypeId ?? 0);
 
   const isAll = !certificationTypeId;
 
@@ -147,14 +145,7 @@ export default function CertificationTable({
         },
       },
     ];
-  }, [
-    columns,
-    can,
-    deleteCertification.isPending,
-    navigate,
-    requestDelete,
-    t,
-  ]);
+  }, [columns, can, deleteCertification.isPending, navigate, requestDelete, t]);
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
@@ -178,6 +169,8 @@ export default function CertificationTable({
   );
 
   if (error) return <div>{t("certifications.list.error")}</div>;
+
+  console.log("columns", columns);
 
   return (
     <>
@@ -221,7 +214,9 @@ export default function CertificationTable({
             })}
       />
 
-      <PermissionGate guard={{ permission: "Permission.Certifications.Delete" }}>
+      <PermissionGate
+        guard={{ permission: "Permission.Certifications.Delete" }}
+      >
         <ConfirmDialog
           open={confirmOpen}
           title={t("certifications.delete.title")}
