@@ -1,22 +1,18 @@
 import {
   Box,
-  Chip,
   CircularProgress,
-  Collapse,
-  Divider,
-  IconButton,
   Stack,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
 } from "@mui/material";
-import Checkbox from "@mui/material/Checkbox";
 import {
-  CheckCircleRounded,
-  ChevronRightRounded,
-  ExpandMoreRounded,
-  RadioButtonUncheckedRounded,
-  ArrowDropDownRounded,
+  CalendarMonthRounded,
+  ViewKanbanRounded,
+  ViewListRounded,
 } from "@mui/icons-material";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import type { MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 
 import type {
@@ -32,15 +28,17 @@ import { useEmployees } from "../../administration/employees/hooks/useEmployees"
 import { useVehicleRegistrationEmployeesByEmployee } from "../hooks/useVehicleRegistrationEmployeesByEmployee";
 import { useUpdateVehicleRegistrationEmployee } from "../hooks/useUpdateVehicleRegistrationEmployee";
 import { useVehicles } from "../../vehicles/hooks/useVehicles";
-import { RowActions } from "../../../components/ui/datagrid/RowActions";
+import CalendarView from "./views/CalendarView";
+import KanbanView from "./views/KanbanView";
+import ListView from "./views/ListView";
+import type {
+  CalendarDay,
+  KanbanColumn,
+  TaskSection,
+  TaskView,
+} from "./views/types";
 
 const isFinalStatus = (status?: number | null) => status === 3 || status === 4;
-
-type Section = {
-  key: string;
-  title: string;
-  items: VehicleRegistrationEmployee[];
-};
 
 function tagForStatus(status?: number | null) {
   if (status === 4) return { label: "Cancelled", color: "default" as const };
@@ -48,6 +46,19 @@ function tagForStatus(status?: number | null) {
   if (status === 2) return { label: "In progress", color: "warning" as const };
   return { label: "New", color: "default" as const };
 }
+
+type ViewMode = "list" | "kanban" | "calendar";
+
+const toStartOfDay = (value: Date) => {
+  const d = new Date(value);
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+
+const isSameDay = (a: Date, b: Date) =>
+  a.getFullYear() === b.getFullYear() &&
+  a.getMonth() === b.getMonth() &&
+  a.getDate() === b.getDate();
 
 const MyVehicleRegistrationTasksPage = () => {
   const { t } = useTranslation();
@@ -133,40 +144,72 @@ const MyVehicleRegistrationTasksPage = () => {
     return d.toLocaleDateString();
   }, []);
 
-  const sections = useMemo<Section[]>(() => {
-    const assigned = tasks.filter((x) => x.status === 1);
-    const inProgress = tasks.filter((x) => x.status === 2);
-    const completed = tasks.filter((x) => x.status === 3);
-    const cancelled = tasks.filter((x) => x.status === 4);
+  const taskViews = useMemo<TaskView[]>(() => {
+    return tasks.map((task) => {
+      const vehicle = vehicleById.get(task.vehicleId);
+      const deadline = formatDate(task.expiresOn);
+      const projectName = vehicle?.name ?? `Vehicle #${task.vehicleId}`;
+
+      const title =
+        vehicle && (vehicle.brand || vehicle.model)
+          ? `${vehicle.brand ?? ""} ${vehicle.model ?? ""}`.trim()
+          : `Vehicle registration task #${task.id}`;
+
+      const subtitle = task.note?.trim()
+        ? task.note.trim()
+        : vehicle?.vin
+          ? `VIN: ${vehicle?.vin}`
+          : null;
+
+      const statusTag = tagForStatus(task.status);
+      const disabled = isFinalStatus(task.status) || updateStatus.isPending;
+      const regNumber: string | null = vehicle?.registrationNumber ?? null;
+
+      return {
+        task,
+        title,
+        subtitle,
+        deadline,
+        projectName,
+        regNumber,
+        statusTag,
+        disabled,
+        isCompleted: task.status === 3,
+      };
+    });
+  }, [formatDate, tasks, updateStatus.isPending, vehicleById]);
+
+  const sections = useMemo<TaskSection[]>(() => {
+    const assigned = taskViews.filter((x) => x.task.status === 1);
+    const inProgress = taskViews.filter((x) => x.task.status === 2);
+    const completed = taskViews.filter((x) => x.task.status === 3);
+    const cancelled = taskViews.filter((x) => x.task.status === 4);
 
     const sortedAssigned = [...assigned].sort((a, b) => {
-      const ta = a.expiresOn
-        ? new Date(a.expiresOn).getTime()
+      const ta = a.task.expiresOn
+        ? new Date(a.task.expiresOn).getTime()
         : Number.POSITIVE_INFINITY;
-      const tb = b.expiresOn
-        ? new Date(b.expiresOn).getTime()
+      const tb = b.task.expiresOn
+        ? new Date(b.task.expiresOn).getTime()
         : Number.POSITIVE_INFINITY;
       return ta - tb;
     });
-    const doToday = sortedAssigned.slice(0, Math.min(3, sortedAssigned.length));
-    const newTasks = sortedAssigned.slice(doToday.length);
+    const dueSoon = sortedAssigned.slice(0, Math.min(3, sortedAssigned.length));
+    const remaining = sortedAssigned.slice(dueSoon.length);
 
-    const out: Section[] = [
-      { key: "new", title: "Assigned", items: newTasks },
-      { key: "today", title: "InProgress", items: doToday },
-      {
-        key: "progress",
-        title: "Completed",
-        items: inProgress,
-      },
+    const out: TaskSection[] = [
+      { key: "assigned", title: "Assigned", items: remaining },
+      { key: "due-soon", title: "Due soon", items: dueSoon },
+      { key: "in-progress", title: "In progress", items: inProgress },
       { key: "completed", title: "Completed", items: completed },
       { key: "cancelled", title: "Cancelled", items: cancelled },
     ];
 
     return out.filter((s) => s.items.length > 0);
-  }, [tasks]);
+  }, [taskViews]);
 
   const [openByKey, setOpenByKey] = useState<Record<string, boolean>>({});
+  const [activeView, setActiveView] = useState<ViewMode>("list");
 
   useEffect(() => {
     setOpenByKey((prev) => {
@@ -195,18 +238,100 @@ const MyVehicleRegistrationTasksPage = () => {
     setOpenByKey((prev) => ({ ...prev, [key]: !(prev[key] ?? true) }));
   }, []);
 
-  const gridCols = "40px 1fr 140px 200px 260px";
+  const kanbanColumns = useMemo<KanbanColumn[]>(() => {
+    return [
+      {
+        key: "assigned",
+        title: "Assigned",
+        items: taskViews.filter((item) => item.task.status === 1),
+      },
+      {
+        key: "in-progress",
+        title: "In progress",
+        items: taskViews.filter((item) => item.task.status === 2),
+      },
+      {
+        key: "completed",
+        title: "Completed",
+        items: taskViews.filter((item) => item.task.status === 3),
+      },
+      {
+        key: "cancelled",
+        title: "Cancelled",
+        items: taskViews.filter((item) => item.task.status === 4),
+      },
+    ];
+  }, [taskViews]);
+
+  const calendarDays = useMemo<CalendarDay[]>(() => {
+    const today = toStartOfDay(new Date());
+    return Array.from({ length: 5 }, (_, index) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() + index);
+      const label = date.toLocaleDateString(undefined, { weekday: "short" });
+      const dateLabel = date.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+      });
+      const tasksForDay = taskViews.filter((item) => {
+        if (!item.task.expiresOn) return false;
+        const deadline = toStartOfDay(new Date(item.task.expiresOn));
+        return isSameDay(deadline, date);
+      });
+
+      return {
+        key: `${date.toISOString()}`,
+        label,
+        dateLabel,
+        tasks: tasksForDay,
+      };
+    });
+  }, [taskViews]);
+
+  const unscheduledTasks = useMemo(
+    () => taskViews.filter((item) => !item.task.expiresOn),
+    [taskViews]
+  );
+
+  const handleViewChange = useCallback(
+    (_: MouseEvent<HTMLElement>, value: ViewMode | null) => {
+      if (value) setActiveView(value);
+    },
+    []
+  );
 
   return (
     <Stack spacing={2} sx={{ width: "100%" }}>
       <Stack
-        direction="row"
-        alignItems="baseline"
+        direction={{ xs: "column", md: "row" }}
+        alignItems={{ xs: "flex-start", md: "center" }}
         justifyContent="space-between"
+        spacing={1.5}
       >
         <Typography variant="h5" fontWeight={700}>
           {t("vehicleRegistrationTasks.list.title")}
         </Typography>
+
+        <ToggleButtonGroup
+          value={activeView}
+          exclusive
+          onChange={handleViewChange}
+          size="small"
+          sx={{ bgcolor: "background.paper", border: "1px solid", borderColor: "divider" }}
+        >
+          <ToggleButton value="list">
+            <ViewListRounded sx={{ mr: 0.75 }} />
+            List view
+          </ToggleButton>
+          <ToggleButton value="kanban">
+            <ViewKanbanRounded sx={{ mr: 0.75 }} />
+            Kanban view
+          </ToggleButton>
+          <ToggleButton value="calendar">
+            <CalendarMonthRounded sx={{ mr: 0.75 }} />
+            Calendar view
+          </ToggleButton>
+        </ToggleButtonGroup>
       </Stack>
 
       {shouldShowNone ? (
@@ -229,269 +354,46 @@ const MyVehicleRegistrationTasksPage = () => {
           {t("vehicleRegistrationTasks.list.empty")}
         </Typography>
       ) : (
-        <Stack spacing={2} sx={{ width: "100%" }}>
-          {sections.map((section) => {
-            const open = openByKey[section.key] ?? true;
+        <>
+          {activeView === "list" ? (
+            <ListView
+              sections={sections}
+              openByKey={openByKey}
+              onToggleSection={toggleSection}
+              onChangeStatus={handleOpenStatusDialog}
+              isUpdating={updateStatus.isPending}
+              labels={{
+                deadline: "Deadline",
+                projects: "Projects",
+                labels: "Labels",
+                changeStatus: t("vehicleRegistrationTasks.actions.changeStatus"),
+              }}
+            />
+          ) : null}
 
-            return (
-              <Box key={section.key} sx={{ width: "100%" }}>
-                <Box
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: gridCols,
-                    alignItems: "center",
-                    gap: 0,
-                    px: 0,
-                    py: 0,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <IconButton
-                      size="small"
-                      onClick={() => toggleSection(section.key)}
-                    >
-                      {open ? <ExpandMoreRounded /> : <ChevronRightRounded />}
-                    </IconButton>
-                  </Box>
+          {activeView === "kanban" ? (
+            <KanbanView
+              columns={kanbanColumns}
+              onChangeStatus={handleOpenStatusDialog}
+              isUpdating={updateStatus.isPending}
+              changeStatusLabel={t(
+                "vehicleRegistrationTasks.actions.changeStatus"
+              )}
+            />
+          ) : null}
 
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    spacing={1}
-                    sx={{ minWidth: 0, py: 0.75 }}
-                  >
-                    <Box
-                      sx={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        maxWidth: "100%",
-                        px: 1.25,
-                        py: 0.5,
-
-                        border: "1px solid",
-                        borderColor: "divider",
-                        bgcolor: "background.paper",
-                      }}
-                    >
-                      <Typography variant="body2" fontWeight={600} noWrap>
-                        {section.title}
-                      </Typography>
-                    </Box>
-                  </Stack>
-
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    spacing={0.25}
-                    sx={{ py: 0.75 }}
-                  >
-                    <Typography variant="caption" color="text.secondary">
-                      Deadline
-                    </Typography>
-                    <ArrowDropDownRounded
-                      sx={{ fontSize: 18, color: "text.disabled" }}
-                    />
-                  </Stack>
-
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    spacing={0.25}
-                    sx={{ py: 0.75 }}
-                  >
-                    <Typography variant="caption" color="text.secondary">
-                      Projects
-                    </Typography>
-                    <ArrowDropDownRounded
-                      sx={{ fontSize: 18, color: "text.disabled" }}
-                    />
-                  </Stack>
-
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    spacing={0.25}
-                    sx={{ py: 0.75 }}
-                  >
-                    <Typography variant="caption" color="text.secondary">
-                      Labels
-                    </Typography>
-                    <ArrowDropDownRounded
-                      sx={{ fontSize: 18, color: "text.disabled" }}
-                    />
-                  </Stack>
-                </Box>
-
-                <Box
-                  sx={{
-                    mt: 0.75,
-                    border: "1px solid",
-                    borderColor: "divider",
-                    borderRadius: 1,
-                    overflow: "hidden",
-                    bgcolor: "background.paper",
-                  }}
-                >
-                  <Collapse in={open} timeout={160} unmountOnExit={false}>
-                    <Stack divider={<Divider flexItem />}>
-                      {section.items.map((task) => {
-                        const vehicle = vehicleById.get(task.vehicleId);
-
-                        const deadline = formatDate(task.expiresOn);
-
-                        const projectName =
-                          vehicle?.name ?? `Vehicle #${task.vehicleId}`;
-
-                        const statusTag = tagForStatus(task.status);
-                        const disabled =
-                          isFinalStatus(task.status) || updateStatus.isPending;
-
-                        const taskTitle =
-                          vehicle && (vehicle.brand || vehicle.model)
-                            ? `${vehicle.brand ?? ""} ${
-                                vehicle.model ?? ""
-                              }`.trim()
-                            : `Vehicle registration task #${task.id}`;
-
-                        const regNumber: string | null =
-                          vehicle?.registrationNumber ?? null;
-
-                        const isCompleted = task.status === 3;
-
-                        return (
-                          <Box
-                            key={String(task.id)}
-                            sx={{
-                              display: "grid",
-                              gridTemplateColumns: gridCols,
-                              alignItems: "center",
-                              px: 0,
-                              py: 0,
-                              "&:hover": { bgcolor: "action.hover" },
-                            }}
-                          >
-                            <Box
-                              sx={{ display: "flex", justifyContent: "center" }}
-                            >
-                              <Checkbox
-                                checked={task.status === 3}
-                                onChange={() => handleOpenStatusDialog(task)}
-                                disabled={updateStatus.isPending}
-                                icon={<RadioButtonUncheckedRounded />}
-                                checkedIcon={<CheckCircleRounded />}
-                                sx={{ p: 0.5 }}
-                              />
-                            </Box>
-
-                            <Box sx={{ py: 0.9, pr: 1, minWidth: 0 }}>
-                              <Typography
-                                variant="body2"
-                                fontWeight={600}
-                                noWrap
-                              >
-                                {taskTitle}
-                              </Typography>
-                              {task.note?.trim() || vehicle?.vin ? (
-                                <Typography
-                                  variant="caption"
-                                  color="text.secondary"
-                                  noWrap
-                                >
-                                  {task.note?.trim()
-                                    ? task.note.trim()
-                                    : `VIN: ${vehicle?.vin}`}
-                                </Typography>
-                              ) : null}
-                            </Box>
-
-                            <Box sx={{ py: 0.9, pr: 1 }}>
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                              >
-                                {deadline || "-"}
-                              </Typography>
-                            </Box>
-
-                            <Box sx={{ py: 0.9, pr: 1, minWidth: 0 }}>
-                              <Chip
-                                size="small"
-                                label={projectName}
-                                variant="outlined"
-                                sx={{ height: 24, maxWidth: "100%" }}
-                              />
-                            </Box>
-
-                            <Box
-                              sx={{
-                                py: 0.9,
-                                pr: 1,
-                                minWidth: 0,
-                                display: "flex",
-                                alignItems: "center",
-                                width: "100%",
-                                gap: 1,
-                              }}
-                            >
-                              {/* LEFT SIDE: chips */}
-                              <Stack
-                                direction="row"
-                                alignItems="center"
-                                spacing={1}
-                                sx={{ minWidth: 0, overflow: "hidden" }}
-                              >
-                                <Chip
-                                  size="small"
-                                  label={statusTag.label}
-                                  color={statusTag.color}
-                                  variant="outlined"
-                                  sx={{ height: 24 }}
-                                />
-
-                                {regNumber ? (
-                                  <Chip
-                                    size="small"
-                                    label={regNumber}
-                                    variant="outlined"
-                                    sx={{ height: 24 }}
-                                  />
-                                ) : null}
-                              </Stack>
-
-                              {/* RIGHT SIDE: action stuck to far right */}
-                              {!isCompleted ? (
-                                <Box sx={{ ml: "auto", flexShrink: 0 }}>
-                                  <RowActions
-                                    disabled={disabled}
-                                    onChangeStatus={() =>
-                                      handleOpenStatusDialog(task)
-                                    }
-                                    labels={{
-                                      status: t(
-                                        "vehicleRegistrationTasks.actions.changeStatus"
-                                      ),
-                                    }}
-                                    buttonProps={{ size: "small" }}
-                                  />
-                                </Box>
-                              ) : null}
-                            </Box>
-                          </Box>
-                        );
-                      })}
-                    </Stack>
-                  </Collapse>
-                </Box>
-              </Box>
-            );
-          })}
-        </Stack>
+          {activeView === "calendar" ? (
+            <CalendarView
+              days={calendarDays}
+              unscheduledTasks={unscheduledTasks}
+              onChangeStatus={handleOpenStatusDialog}
+              isUpdating={updateStatus.isPending}
+              changeStatusLabel={t(
+                "vehicleRegistrationTasks.actions.changeStatus"
+              )}
+            />
+          ) : null}
+        </>
       )}
 
       <ChangeStatusDialog
