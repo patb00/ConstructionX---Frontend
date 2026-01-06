@@ -12,6 +12,7 @@ import {
   FaListUl,
   FaHome,
   FaBell,
+  FaWrench,
 } from "react-icons/fa";
 import { IoIosBusiness } from "react-icons/io";
 import { HiUsers } from "react-icons/hi";
@@ -39,6 +40,8 @@ export type ModuleId =
   | "vehicleRegistrations"
   | "vehicleInsurances"
   | "vehicleBusinessTrips"
+  | "vehicleRepairs"
+  | "toolRepairs"
   | "condos"
   | "tenants"
   | "roles"
@@ -161,6 +164,14 @@ export const NAV_ITEMS: NavItem[] = [
     guard: { permission: "Permission.Tools.Read" },
   },
   {
+    labelKey: "nav.toolRepairs",
+    to: "/app/tool-repairs",
+    icon: <FaWrench />,
+    section: "SYSTEM",
+    category: "CODEBOOK",
+    guard: { permission: "Permission.Tools.Read" },
+  },
+  {
     labelKey: "nav.materials",
     to: "/app/materials",
     icon: <FaBoxes />,
@@ -180,6 +191,14 @@ export const NAV_ITEMS: NavItem[] = [
     labelKey: "nav.vehicles",
     to: "/app/vehicles",
     icon: <FaCarSide />,
+    section: "SYSTEM",
+    category: "VEHICLES",
+    guard: { permission: "Permission.Vehicles.Read" },
+  },
+  {
+    labelKey: "nav.vehicleRepairs",
+    to: "/app/vehicle-repairs",
+    icon: <FaWrench />,
     section: "SYSTEM",
     category: "VEHICLES",
     guard: { permission: "Permission.Vehicles.Read" },
