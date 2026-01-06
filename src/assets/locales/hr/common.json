@@ -17,9 +17,11 @@
     "employees": "Zaposlenici",
     "jobPositions": "Radna mjesta",
     "tools": "Alati",
+    "toolRepairs": "Servis alata",
     "materials": "Materijali",
     "toolCategories": "Kategorije alata",
     "vehicles": "Vozila",
+    "vehicleRepairs": "Servis vozila",
     "assignments": "Dodjele",
     "reports": "Izvještaji",
     "examinationTypes": "Tipovi pregleda",
@@ -32,6 +34,9 @@
     "vehicleInsurances": "Osiguranja vozila",
     "vehicleBusinessTrips": "Službena putovanja ",
     "tasks": "Zadatci"
+  },
+  "common": {
+    "comingSoon": "Ovaj dio stiže uskoro."
   },
   "constructionSites": {
     "detail": {

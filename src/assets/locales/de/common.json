@@ -17,9 +17,11 @@
     "employees": "Mitarbeiter",
     "jobPositions": "Arbeitsstellen",
     "tools": "Werkzeuge",
+    "toolRepairs": "Werkzeugreparaturen",
     "materials": "Materialien",
     "toolCategories": "Werkzeugkategorien",
     "vehicles": "Fahrzeuge",
+    "vehicleRepairs": "Fahrzeugreparaturen",
     "assignments": "Zuweisungen",
     "reports": "Berichte",
     "examinationTypes": "Prüfarten",
@@ -32,6 +34,9 @@
     "vehicleInsurances": "Fahrzeugversicherungen",
     "vehicleBusinessTrips": "Dienstfahrten",
     "tasks": "Aufgaben"
+  },
+  "common": {
+    "comingSoon": "Dieser Bereich wird bald verfügbar sein."
   },
 
   "constructionSites": {
