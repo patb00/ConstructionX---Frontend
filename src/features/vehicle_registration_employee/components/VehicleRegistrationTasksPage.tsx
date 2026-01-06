@@ -18,7 +18,6 @@ import {
   DescriptionOutlined,
   EventOutlined,
   LabelOutlined,
-  PriorityHighOutlined,
 } from "@mui/icons-material";
 import CheckCircleOutlineOutlined from "@mui/icons-material/CheckCircleOutlineOutlined";
 import { useVehicleRegistrations } from "../../vehicle_registrations/hooks/useVehicleRegistrations";
@@ -419,6 +418,7 @@ const VehicleRegistrationTasksPage = () => {
 
       {
         key: "taskName",
+        width: 280,
         header: (
           <HeaderLabel
             icon={<TaskAltOutlined />}
@@ -463,6 +463,7 @@ const VehicleRegistrationTasksPage = () => {
           </Typography>
         ),
       },
+
       {
         key: "deadline",
         width: 210,
@@ -481,6 +482,7 @@ const VehicleRegistrationTasksPage = () => {
           </Typography>
         ),
       },
+
       {
         key: "type",
         width: 160,
@@ -498,62 +500,37 @@ const VehicleRegistrationTasksPage = () => {
         ),
       },
 
+      // ✅ Replaces "priority" column with "actions" and ONLY shows the button
       {
-        key: "priority",
-        width: 260,
+        key: "actions",
+        width: 180,
         header: (
           <HeaderLabel
-            icon={<PriorityHighOutlined />}
-            text={t("vehicleRegistrationTasks.columns.priority")}
+            icon={<CheckCircleOutlineOutlined />}
+            text={t("vehicleRegistrationTasks.columns.actions", {
+              defaultValue: "Actions",
+            })}
           />
         ),
         cellSx: [listViewBodyCellSx],
-        render: (item) => (
-          <Stack spacing={0.75} sx={{ minWidth: 0 }}>
-            <Box
+        render: (item) =>
+          item.disabled ? null : (
+            <Button
+              size="small"
+              variant="outlined"
+              startIcon={<CheckCircleOutlineOutlined />}
+              onClick={() => handleOpenResolveDialog(item.task)}
+              disabled={updateStatus.isPending}
               sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-                minWidth: 0,
+                height: 28,
+                textTransform: "none",
+                fontWeight: 600,
+                borderRadius: 1,
               }}
             >
-              <Chip
-                size="small"
-                label={item.statusTag.label}
-                sx={[listViewChipSx, { fontWeight: 600 }]}
-              />
-            </Box>
-
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              noWrap
-              sx={{ display: { xs: "block", md: "none" }, fontSize: 12 }}
-            >
-              {item.deadline || "-"} • {item.projectName}
-            </Typography>
-
-            {!item.isCompleted && (
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<CheckCircleOutlineOutlined />}
-                onClick={() => handleOpenResolveDialog(item.task)}
-                disabled={updateStatus.isPending}
-                sx={{
-                  height: 28,
-                  textTransform: "none",
-                  fontWeight: 600,
-                  borderRadius: 1,
-                  alignSelf: "flex-start",
-                }}
-              >
-                {t("vehicleRegistrationTasks.actions.completeTask")}
-              </Button>
-            )}
-          </Stack>
-        ),
+              {t("vehicleRegistrationTasks.actions.completeTask")}
+            </Button>
+          ),
       },
     ];
   }, [handleOpenResolveDialog, t, updateStatus.isPending]);
