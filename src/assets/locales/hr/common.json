@@ -1694,7 +1694,7 @@
   },
   "vehicleRepairs": {
     "list": {
-      "title": "Popravci vozila",
+      "title": "Servis vozila",
       "error": "Neuspjelo učitavanje popravaka."
     },
     "actions": "Akcije",
