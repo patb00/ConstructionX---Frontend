@@ -549,6 +549,8 @@
       "purchasePrice": "Nabavna cijena",
       "status": "Status",
       "condition": "Stanje",
+      "repairDate": "Datum popravka",
+      "cost": "Trošak",
       "toolCategoryId": "ID kategorije alata",
       "toolCategoryName": "Kategorija alata",
       "responsibleEmployeeId": "ID odgovorne osobe",
@@ -1688,6 +1690,12 @@
     },
     "toast": {
       "open": "Otvori"
+    }
+  },
+  "vehicleRepairs": {
+    "list": {
+      "title": "Popravci vozila",
+      "error": "Neuspjelo učitavanje popravaka."
     }
   },
   "vehicleRegistrations": {
