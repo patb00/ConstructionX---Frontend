@@ -1656,6 +1656,37 @@
     "list": {
       "title": "Fahrzeugreparaturen",
       "error": "Fehler beim Laden der Reparaturen."
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "create": {
+      "title": "Fahrzeugreparatur hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Fahrzeugreparatur bearbeiten",
+      "back": "Zurück",
+      "loadError": "Fahrzeugreparatur konnte nicht geladen werden.",
+      "invalidUrlId": "Ungültige Reparatur-ID"
+    },
+    "delete": {
+      "title": "Fahrzeugreparatur löschen",
+      "description": "Möchten Sie diese Fahrzeugreparatur wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "vehicleId": "Fahrzeug",
+        "repairDate": "Reparaturdatum",
+        "cost": "Kosten",
+        "condition": "Zustand",
+        "description": "Beschreibung"
+      }
     }
   },
   "vehicleRegistrations": {
