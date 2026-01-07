@@ -549,6 +549,8 @@
       "purchasePrice": "Purchase price",
       "status": "Status",
       "condition": "Condition",
+      "repairDate": "Repair date",
+      "cost": "Cost",
       "toolCategoryId": "Tool category ID",
       "toolCategoryName": "Tool category",
       "responsibleEmployeeId": "Responsible employee ID",
@@ -1642,6 +1644,43 @@
     },
     "toast": {
       "open": "Open"
+    }
+  },
+  "vehicleRepairs": {
+    "list": {
+      "title": "Vehicle Repairs",
+      "error": "Failed to load repairs."
+    },
+    "actions": "Actions",
+    "table": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "create": {
+      "title": "Add Vehicle Repair",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Edit Vehicle Repair",
+      "back": "Back",
+      "loadError": "Failed to load vehicle repair.",
+      "invalidUrlId": "Invalid repair id"
+    },
+    "delete": {
+      "title": "Delete vehicle repair",
+      "description": "Are you sure you want to delete this vehicle repair?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "form": {
+      "submit": "Save",
+      "field": {
+        "vehicleId": "Vehicle",
+        "repairDate": "Repair date",
+        "cost": "Cost",
+        "condition": "Condition",
+        "description": "Description"
+      }
     }
   },
   "vehicleRegistrations": {

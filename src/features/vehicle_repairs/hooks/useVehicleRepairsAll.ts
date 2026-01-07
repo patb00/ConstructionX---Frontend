@@ -15,7 +15,10 @@ interface UseVehicleRepairsAllResult {
 }
 
 export function useVehicleRepairsAll(): UseVehicleRepairsAllResult {
-  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 25,
+  });
 
   const { data, error, isLoading, isError } = useQuery<PagedResult<VehicleRepair>>({
     queryKey: vehicleRepairsKeys.listAll(

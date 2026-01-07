@@ -1,19 +1,31 @@
-import { Box, Stack, Typography } from "@mui/material";
-import { t } from "i18next";
+import { Button, Stack, Typography } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import VehicleRepairsTable from "./VehicleRepairsTable";
+import { PermissionGate } from "../../../lib/permissions";
 
 export default function VehicleRepairsListPage() {
+  const { t } = useTranslation();
+
   return (
-    <Box sx={{ p: 2, height: "100%" }}>
-      <Stack spacing={1}>
-        <Typography variant="h5">
-          {t("nav.vehicleRepairs", { defaultValue: "Vehicle Repairs" })}
+    <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
+        <Typography variant="h5" fontWeight={600}>
+          {t("vehicleRepairs.list.title")}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {t("common.comingSoon", {
-            defaultValue: "This section is coming soon.",
-          })}
-        </Typography>
+
+        <PermissionGate guard={{ permission: "Permission.Vehicles.Create" }}>
+          <Button
+            size="small"
+            component={RouterLink}
+            to="create"
+            variant="contained"
+          >
+            {t("vehicleRepairs.create.title")}
+          </Button>
+        </PermissionGate>
       </Stack>
-    </Box>
+      <VehicleRepairsTable />
+    </Stack>
   );
 }
