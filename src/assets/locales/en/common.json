@@ -549,6 +549,8 @@
       "purchasePrice": "Purchase price",
       "status": "Status",
       "condition": "Condition",
+      "repairDate": "Repair date",
+      "cost": "Cost",
       "toolCategoryId": "Tool category ID",
       "toolCategoryName": "Tool category",
       "responsibleEmployeeId": "Responsible employee ID",
@@ -1642,6 +1644,12 @@
     },
     "toast": {
       "open": "Open"
+    }
+  },
+  "vehicleRepairs": {
+    "list": {
+      "title": "Vehicle Repairs",
+      "error": "Failed to load repairs."
     }
   },
   "vehicleRegistrations": {

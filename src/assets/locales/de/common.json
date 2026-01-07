@@ -555,6 +555,8 @@
       "purchasePrice": "Kaufpreis",
       "status": "Status",
       "condition": "Zustand",
+      "repairDate": "Reparaturdatum",
+      "cost": "Kosten",
       "toolCategoryId": "Werkzeugkategorie-ID",
       "toolCategoryName": "Werkzeugkategorie",
       "responsibleEmployeeId": "Verantwortlicher Mitarbeiter (ID)",
@@ -1648,6 +1650,12 @@
     },
     "toast": {
       "open": "Öffnen"
+    }
+  },
+  "vehicleRepairs": {
+    "list": {
+      "title": "Fahrzeugreparaturen",
+      "error": "Fehler beim Laden der Reparaturen."
     }
   },
   "vehicleRegistrations": {
