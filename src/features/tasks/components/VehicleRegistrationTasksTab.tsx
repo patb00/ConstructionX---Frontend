@@ -72,7 +72,7 @@ type VehicleRegistrationRow = {
   validTo?: string | null;
 };
 
-export default function VehicleRegistrationRequestsTab() {
+export default function VehicleRegistrationTasksTab() {
   const { t } = useTranslation();
   const { userId, role } = useAuthStore();
   const { employeeRows = [], isLoading: employeesLoading } = useEmployees();

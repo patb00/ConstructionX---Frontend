@@ -1,7 +1,7 @@
 import { Outlet, type RouteObject } from "react-router-dom";
-import RequestsListPage from "../components/RequestListPage";
+import TasksListPage from "../components/TasksListPage";
 
-function RequestsLayout() {
+function TasksLayout() {
   return (
     <div style={{ height: "100%", width: "100%" }}>
       <Outlet />
@@ -11,11 +11,11 @@ function RequestsLayout() {
 
 export const tasksRoutes: RouteObject = {
   path: "tasks",
-  element: <RequestsLayout />,
+  element: <TasksLayout />,
   children: [
     {
       index: true,
-      element: <RequestsListPage />,
+      element: <TasksListPage />,
     },
   ],
 };

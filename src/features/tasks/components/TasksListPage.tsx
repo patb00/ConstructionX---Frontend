@@ -3,7 +3,7 @@ import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 
-import VehicleRegistrationRequestsTab from "./VehicleRegistrationRequestsTab";
+import VehicleRegistrationRequestsTab from "./VehicleRegistrationTasksTab";
 
 type RequestsTabKey = "vehicleRegistration" | "businessTrips";
 
