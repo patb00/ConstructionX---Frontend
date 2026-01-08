@@ -32,7 +32,7 @@
     "vehicleRegistrations": "Registracije vozila",
     "vehicleInsurances": "Osiguranja vozila",
     "vehicleBusinessTrips": "Službena putovanja ",
-    "requests": "Zahtjevi"
+    "tasks": "Zadaci"
   },
   "constructionSites": {
     "detail": {
@@ -630,7 +630,13 @@
       "quantity": "Količina",
       "unitPrice": "Jedinična cijena",
       "articleCode": "Šifra artikla",
-      "barcode": "Barkod"
+      "barcode": "Barkod",
+
+      "purposeOfTrip": "Svrha putovanja",
+      "approvedByEmployeeUserId": "Odobrio (ID korisnika)",
+      "approvedDate": "Datum odobrenja",
+      "rejectReason": "Razlog odbijanja",
+      "travelledKilometers": "Prijeđeni kilometri"
     }
   },
   "tenants": {
@@ -1730,9 +1736,9 @@
     }
   },
   "myTasks": {
-    "title": "Zahtjevi",
+    "title": "Zadaci",
     "tabs": {
-      "vehicleRegistration": "Zahtjevi za registraciju"
+      "vehicleRegistration": "Zadaci za registraciju"
     }
   },
   "vehicleRegistrationTasks": {
@@ -1924,7 +1930,11 @@
 
     "table": {
       "edit": "Uredi",
-      "delete": "Obriši"
+      "delete": "Obriši",
+      "approve": "Odobri",
+      "reject": "Odbij",
+      "cancel": "Otkaži",
+      "complete": "Završi"
     },
 
     "delete": {
@@ -1950,6 +1960,67 @@
         "fuelAmount": "Iznos goriva",
         "fuelCurrency": "Valuta",
         "note": "Napomena"
+      }
+    },
+    "dialogs": {
+      "common": {
+        "start": "Početak",
+        "end": "Kraj",
+        "cancel": "Odustani",
+        "noTripSelected": "Nije odabrano putovanje",
+        "tripDetailsTitle": "Detalji putovanja",
+        "referenceTrip": "Putovanje #{{id}}"
+      },
+      "approve": {
+        "title": "Odobri službeno putovanje",
+        "subtitle": "Odobravatelj {{id}}",
+        "previewSubtitle": "Pregledajte datume i zatim dodijelite vozilo.",
+        "submit": "Odobri",
+        "vehicleAssignment": "Dodjela vozila",
+        "vehicleLabel": "Vozilo",
+        "selectVehicle": "Odaberite vozilo…",
+        "checkAvailability": "Provjeri dostupnost",
+        "checking": "Provjeravam…",
+        "tip": "Savjet: prije odobravanja koristite “Provjeri dostupnost” kako biste izbjegli konflikte.",
+        "chip": {
+          "checking": "Provjera dostupnosti…",
+          "available": "Vozilo je dostupno",
+          "notAvailable": "Vozilo nije dostupno",
+          "notChecked": "Dostupnost nije provjerena"
+        },
+        "tooltip": {
+          "submitting": "Slanje…",
+          "loadingVehicles": "Učitavanje vozila…",
+          "noApprover": "Odobravatelj nije dostupan",
+          "selectVehicle": "Odaberite vozilo",
+          "checkingAvailability": "Provjera dostupnosti…",
+          "clickCheckFirst": "Prvo kliknite “Provjeri dostupnost”",
+          "vehicleNotAvailable": "Vozilo nije dostupno",
+          "selectVehicleAndDates": "Odaberite vozilo i provjerite datume"
+        }
+      },
+      "cancel": {
+        "title": "Otkaži službeno putovanje",
+        "subtitle": "Otkažitelj {{id}}",
+        "previewSubtitle": "Putovanje će biti otkazano i uklonjeno iz tijeka odobravanja.",
+        "submit": "Otkaži putovanje",
+        "close": "Zatvori",
+        "helper": "Možete dodati razlog (neobavezno). Ovu radnju nije moguće poništiti.",
+        "placeholder": "Neobavezni razlog (npr. više nije potrebno)",
+        "cannotBeUndone": "Ovu radnju nije moguće poništiti.",
+        "tooltip": {
+          "submitting": "Slanje…",
+          "noCanceller": "Otkažitelj nije dostupan"
+        }
+      },
+      "reject": {
+        "title": "Odbij službeno putovanje",
+        "subtitle": "Odbio {{id}}",
+        "previewSubtitle": "Pregledajte datume i unesite razlog odbijanja.",
+        "helper": "Unesite kratak razlog. Razlog će biti spremljen uz putovanje.",
+        "placeholder": "npr. Sukob termina / Nedostaju podaci / Pravila…",
+        "minChars": "Unesite najmanje 3 znaka.",
+        "note": "Napomena: odbijanje će obavijestiti podnositelja i zaustaviti tijek odobravanja."
       }
     }
   },

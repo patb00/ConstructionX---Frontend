@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Box,
   Button,
@@ -15,6 +14,7 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { AssignTaskDialog } from "../../../components/ui/assign-dialog/AssignTaskDialog";
+import { useEffect, useState } from "react";
 
 type Option = { label: string; value: number };
 
@@ -70,7 +70,7 @@ export function AssignVehicleRegistrationEmployeeDialog(props: {
 
   const hasExistingAssignment = !!existingAssignment;
 
-  const [values, setValues] = React.useState<{
+  const [values, setValues] = useState<{
     employeeId: number | "";
     note: string;
   }>({
@@ -78,15 +78,15 @@ export function AssignVehicleRegistrationEmployeeDialog(props: {
     note: "",
   });
 
-  const [isEditing, setIsEditing] = React.useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) return;
     setIsEditing(false);
     setValues({ employeeId: "", note: "" });
   }, [open]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) return;
     if (!existingAssignment) return;
     if (isEditing) return;

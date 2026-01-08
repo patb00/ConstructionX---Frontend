@@ -32,7 +32,7 @@
     "vehicleRegistrations": "Vehicle Registrations",
     "vehicleInsurances": "Vehicle Insurances",
     "vehicleBusinessTrips": "Vehicle Business Trips",
-    "requests": "Requests"
+    "tasks": "Tasks"
   },
   "constructionSites": {
     "list": {
@@ -631,7 +631,13 @@
       "quantity": "Quantity",
       "unitPrice": "Unit price",
       "articleCode": "Article code",
-      "barcode": "Barcode"
+      "barcode": "Barcode",
+
+      "purposeOfTrip": "Purpose of trip",
+      "approvedByEmployeeUserId": "Approved by (user ID)",
+      "approvedDate": "Approval date",
+      "rejectReason": "Rejection reason",
+      "travelledKilometers": "Traveled kilometers"
     }
   },
   "tenants": {
@@ -1684,9 +1690,9 @@
     }
   },
   "myTasks": {
-    "title": "Requests",
+    "title": "Tasks",
     "tabs": {
-      "vehicleRegistration": "Vehicle Registration Requests"
+      "vehicleRegistration": "Registration Tasks"
     }
   },
 
@@ -1881,7 +1887,11 @@
 
     "table": {
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "approve": "Approve",
+      "reject": "Reject",
+      "cancel": "Cancel",
+      "complete": "Complete"
     },
 
     "delete": {
@@ -1907,6 +1917,67 @@
         "fuelAmount": "Fuel cost",
         "fuelCurrency": "Fuel currency",
         "note": "Note"
+      }
+    },
+    "dialogs": {
+      "common": {
+        "start": "Start",
+        "end": "End",
+        "cancel": "Cancel",
+        "noTripSelected": "No trip selected",
+        "tripDetailsTitle": "Trip details",
+        "referenceTrip": "Trip #{{id}}"
+      },
+      "approve": {
+        "title": "Approve business trip",
+        "subtitle": "Approver {{id}}",
+        "previewSubtitle": "Review the dates and then assign a vehicle.",
+        "submit": "Approve",
+        "vehicleAssignment": "Vehicle assignment",
+        "vehicleLabel": "Vehicle",
+        "selectVehicle": "Select vehicle…",
+        "checkAvailability": "Check availability",
+        "checking": "Checking…",
+        "tip": "Tip: use “Check availability” before approving to avoid conflicts.",
+        "chip": {
+          "checking": "Checking availability…",
+          "available": "Vehicle available",
+          "notAvailable": "Vehicle not available",
+          "notChecked": "Availability not checked"
+        },
+        "tooltip": {
+          "submitting": "Submitting…",
+          "loadingVehicles": "Loading vehicles…",
+          "noApprover": "Approver not available",
+          "selectVehicle": "Select a vehicle",
+          "checkingAvailability": "Checking availability…",
+          "clickCheckFirst": "Click “Check availability” first",
+          "vehicleNotAvailable": "Vehicle is not available",
+          "selectVehicleAndDates": "Select a vehicle and ensure dates exist"
+        }
+      },
+      "cancel": {
+        "title": "Cancel business trip",
+        "subtitle": "Canceller {{id}}",
+        "previewSubtitle": "This trip will be cancelled and removed from the approval flow.",
+        "submit": "Cancel trip",
+        "close": "Close",
+        "helper": "You can add a reason (optional). This action cannot be undone.",
+        "placeholder": "Optional reason (e.g. no longer needed)",
+        "cannotBeUndone": "This action cannot be undone.",
+        "tooltip": {
+          "submitting": "Submitting…",
+          "noCanceller": "Canceller not available"
+        }
+      },
+      "reject": {
+        "title": "Reject business trip",
+        "subtitle": "Rejector {{id}}",
+        "previewSubtitle": "Review the dates and provide a reason for rejection.",
+        "helper": "Please provide a short reason. This will be saved with the trip.",
+        "placeholder": "e.g. Dates conflict / Missing info / Policy reason…",
+        "minChars": "Please enter at least 3 characters.",
+        "note": "Note: rejecting will notify the requester and stop the approval flow."
       }
     }
   },

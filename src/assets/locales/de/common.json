@@ -32,7 +32,7 @@
     "vehicleRegistrations": "Fahrzeugzulassungen",
     "vehicleInsurances": "Fahrzeugversicherungen",
     "vehicleBusinessTrips": "Dienstfahrten",
-    "requests": "Anfragen"
+    "tasks": "Aufgaben"
   },
 
   "constructionSites": {
@@ -637,7 +637,13 @@
       "quantity": "Menge",
       "unitPrice": "Stückpreis",
       "articleCode": "Artikelcode",
-      "barcode": "Barcode"
+      "barcode": "Barcode",
+
+      "purposeOfTrip": "Zweck der Fahrt",
+      "approvedByEmployeeUserId": "Genehmigt von (Benutzer-ID)",
+      "approvedDate": "Genehmigungsdatum",
+      "rejectReason": "Ablehnungsgrund",
+      "travelledKilometers": "Gefahrene Kilometer"
     }
   },
   "tenants": {
@@ -1690,9 +1696,9 @@
     }
   },
   "myTasks": {
-    "title": "Anfragen",
+    "title": "Aufgaben",
     "tabs": {
-      "vehicleRegistration": "Anfragen zur Fahrzeugzulassung"
+      "vehicleRegistration": "Registrierungsaufgaben"
     }
   },
 
@@ -1886,7 +1892,11 @@
 
     "table": {
       "edit": "Bearbeiten",
-      "delete": "Löschen"
+      "delete": "Löschen",
+      "approve": "Genehmigen",
+      "reject": "Ablehnen",
+      "cancel": "Abbrechen",
+      "complete": "Abschließen"
     },
 
     "delete": {
@@ -1912,6 +1922,67 @@
         "fuelAmount": "Kraftstoffkosten",
         "fuelCurrency": "Währung",
         "note": "Notiz"
+      }
+    },
+    "dialogs": {
+      "common": {
+        "start": "Start",
+        "end": "Ende",
+        "cancel": "Abbrechen",
+        "noTripSelected": "Keine Fahrt ausgewählt",
+        "tripDetailsTitle": "Fahrtdetails",
+        "referenceTrip": "Fahrt #{{id}}"
+      },
+      "approve": {
+        "title": "Dienstfahrt genehmigen",
+        "subtitle": "Genehmiger {{id}}",
+        "previewSubtitle": "Überprüfen Sie die Daten und weisen Sie anschließend ein Fahrzeug zu.",
+        "submit": "Genehmigen",
+        "vehicleAssignment": "Fahrzeugzuweisung",
+        "vehicleLabel": "Fahrzeug",
+        "selectVehicle": "Fahrzeug auswählen…",
+        "checkAvailability": "Verfügbarkeit prüfen",
+        "checking": "Prüfe…",
+        "tip": "Tipp: Nutzen Sie „Verfügbarkeit prüfen“, um Konflikte zu vermeiden.",
+        "chip": {
+          "checking": "Verfügbarkeit wird geprüft…",
+          "available": "Fahrzeug verfügbar",
+          "notAvailable": "Fahrzeug nicht verfügbar",
+          "notChecked": "Verfügbarkeit nicht geprüft"
+        },
+        "tooltip": {
+          "submitting": "Wird gesendet…",
+          "loadingVehicles": "Fahrzeuge werden geladen…",
+          "noApprover": "Genehmiger nicht verfügbar",
+          "selectVehicle": "Fahrzeug auswählen",
+          "checkingAvailability": "Verfügbarkeit wird geprüft…",
+          "clickCheckFirst": "Zuerst „Verfügbarkeit prüfen“ klicken",
+          "vehicleNotAvailable": "Fahrzeug ist nicht verfügbar",
+          "selectVehicleAndDates": "Fahrzeug auswählen und Datumsangaben prüfen"
+        }
+      },
+      "cancel": {
+        "title": "Dienstfahrt stornieren",
+        "subtitle": "Stornierer {{id}}",
+        "previewSubtitle": "Diese Fahrt wird storniert und aus dem Genehmigungsprozess entfernt.",
+        "submit": "Fahrt stornieren",
+        "close": "Schließen",
+        "helper": "Sie können optional einen Grund angeben. Diese Aktion kann nicht rückgängig gemacht werden.",
+        "placeholder": "Optionaler Grund (z. B. nicht mehr erforderlich)",
+        "cannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
+        "tooltip": {
+          "submitting": "Wird gesendet…",
+          "noCanceller": "Stornierer nicht verfügbar"
+        }
+      },
+      "reject": {
+        "title": "Dienstfahrt ablehnen",
+        "subtitle": "Abgelehnt von {{id}}",
+        "previewSubtitle": "Überprüfen Sie die Daten und geben Sie einen Ablehnungsgrund an.",
+        "helper": "Bitte geben Sie einen kurzen Grund an. Dieser wird mit der Fahrt gespeichert.",
+        "placeholder": "z. B. Terminkonflikt / Fehlende Angaben / Richtlinien…",
+        "minChars": "Bitte mindestens 3 Zeichen eingeben.",
+        "note": "Hinweis: Die Ablehnung informiert den Antragsteller und stoppt den Genehmigungsprozess."
       }
     }
   },

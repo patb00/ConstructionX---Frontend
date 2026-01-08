@@ -194,6 +194,8 @@ export default function VehicleBusinessTripsTable() {
 
   if (error) return <div>{t("vehicleBusinessTrips.list.error")}</div>;
 
+  console.log("columnsWithActions", columnsWithActions);
+
   return (
     <PermissionGate guard={{ permission: "Permission.Vehicles.Update" }}>
       <>

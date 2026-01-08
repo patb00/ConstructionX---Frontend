@@ -1,7 +1,7 @@
 import { Outlet, type RouteObject } from "react-router-dom";
-import VehicleRegistrationTasksPage from "../components/VehicleRegistrationTasksPage";
+import RequestsListPage from "../components/RequestListPage";
 
-function VehicleRegistrationTasksLayout() {
+function RequestsLayout() {
   return (
     <div style={{ height: "100%", width: "100%" }}>
       <Outlet />
@@ -10,12 +10,12 @@ function VehicleRegistrationTasksLayout() {
 }
 
 export const tasksRoutes: RouteObject = {
-  path: "requests1",
-  element: <VehicleRegistrationTasksLayout />,
+  path: "tasks",
+  element: <RequestsLayout />,
   children: [
     {
       index: true,
-      element: <VehicleRegistrationTasksPage />,
+      element: <RequestsListPage />,
     },
   ],
 };

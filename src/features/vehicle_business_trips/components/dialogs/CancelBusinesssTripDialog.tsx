@@ -1,9 +1,10 @@
-import * as React from "react";
 import BlockOutlinedIcon from "@mui/icons-material/BlockOutlined";
 import { Box, TextField, Typography } from "@mui/material";
 import type { VehicleBusinessTrip } from "../..";
 import { useCancelVehicleBusinessTrip } from "../../hooks/useCancelBusinessTrip";
 import { AssignTaskDialog } from "../../../../components/ui/assign-dialog/AssignTaskDialog";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   open: boolean;
@@ -18,6 +19,7 @@ export default function CancelBusinessTripDialog({
   trip,
   cancellerEmployeeUserId,
 }: Props) {
+  const { t } = useTranslation();
   const cancelMutation = useCancelVehicleBusinessTrip();
   const submitting = cancelMutation.isPending;
 
@@ -26,9 +28,9 @@ export default function CancelBusinessTripDialog({
   const startAt = (trip as any)?.startAt ?? (trip as any)?.fromDate ?? "";
   const endAt = (trip as any)?.endAt ?? (trip as any)?.toDate ?? "";
 
-  const [reason, setReason] = React.useState("");
+  const [reason, setReason] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) return;
     setReason("");
   }, [open, trip?.id]);
@@ -38,9 +40,11 @@ export default function CancelBusinessTripDialog({
   const cancelDisabled = submitting || !tripId || !cancellerEmployeeUserId;
 
   const cancelTooltip = (() => {
-    if (submitting) return "Submitting…";
-    if (!tripId) return "No trip selected";
-    if (!cancellerEmployeeUserId) return "Canceller not available";
+    if (submitting)
+      return t("vehicleBusinessTrips.dialogs.cancel.tooltip.submitting");
+    if (!tripId) return t("vehicleBusinessTrips.dialogs.common.noTripSelected");
+    if (!cancellerEmployeeUserId)
+      return t("vehicleBusinessTrips.dialogs.cancel.tooltip.noCanceller");
     return "";
   })();
 
@@ -61,23 +65,39 @@ export default function CancelBusinessTripDialog({
     <AssignTaskDialog
       open={open}
       onClose={onClose}
-      title="Cancel business trip"
+      title={t("vehicleBusinessTrips.dialogs.cancel.title")}
       subtitle={
         cancellerEmployeeUserId
-          ? `Canceller ${cancellerEmployeeUserId}`
-          : "Canceller -"
+          ? t("vehicleBusinessTrips.dialogs.cancel.subtitle", {
+              id: cancellerEmployeeUserId,
+            })
+          : t("vehicleBusinessTrips.dialogs.cancel.subtitle", { id: "-" })
       }
       headerIcon={<BlockOutlinedIcon sx={{ fontSize: 18 }} />}
-      referenceText={tripId ? `Trip #${tripId}` : "No trip selected"}
-      previewTitle="Trip details"
-      previewSubtitle="This trip will be cancelled and removed from the approval flow."
+      referenceText={
+        tripId
+          ? t("vehicleBusinessTrips.dialogs.common.referenceTrip", {
+              id: tripId,
+            })
+          : t("vehicleBusinessTrips.dialogs.common.noTripSelected")
+      }
+      previewTitle={t("vehicleBusinessTrips.dialogs.common.tripDetailsTitle")}
+      previewSubtitle={t("vehicleBusinessTrips.dialogs.cancel.previewSubtitle")}
       dueTone="neutral"
       previewFields={[
-        { label: "Start", value: startAt || "-", minWidth: 180 },
-        { label: "End", value: endAt || "-", minWidth: 180 },
+        {
+          label: t("vehicleBusinessTrips.dialogs.common.start"),
+          value: startAt || "-",
+          minWidth: 180,
+        },
+        {
+          label: t("vehicleBusinessTrips.dialogs.common.end"),
+          value: endAt || "-",
+          minWidth: 180,
+        },
       ]}
-      submitText="Cancel trip"
-      cancelText="Close"
+      submitText={t("vehicleBusinessTrips.dialogs.cancel.submit")}
+      cancelText={t("vehicleBusinessTrips.dialogs.cancel.close")}
       onSubmit={handleCancelTrip}
       submitting={submitting}
       submitDisabled={cancelDisabled}
@@ -85,7 +105,7 @@ export default function CancelBusinessTripDialog({
     >
       <Box>
         <Typography sx={{ fontSize: 12.5, color: "#6B7280", mb: 1.25 }}>
-          You can add a reason (optional). This action cannot be undone.
+          {t("vehicleBusinessTrips.dialogs.cancel.helper")}
         </Typography>
 
         <TextField
@@ -96,7 +116,7 @@ export default function CancelBusinessTripDialog({
           minRows={3}
           maxRows={6}
           disabled={submitting}
-          placeholder="Optional reason (e.g. no longer needed)"
+          placeholder={t("vehicleBusinessTrips.dialogs.cancel.placeholder")}
           size="small"
           sx={{
             "& .MuiOutlinedInput-root": {
@@ -120,7 +140,7 @@ export default function CancelBusinessTripDialog({
           }}
         >
           <Typography sx={{ fontSize: 12.5, color: "#111827" }}>
-            This action cannot be undone.
+            {t("vehicleBusinessTrips.dialogs.cancel.cannotBeUndone")}
           </Typography>
         </Box>
 

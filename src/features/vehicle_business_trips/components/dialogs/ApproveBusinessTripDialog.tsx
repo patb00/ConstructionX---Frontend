@@ -1,4 +1,3 @@
-import * as React from "react";
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
 import {
@@ -12,6 +11,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 import type { VehicleBusinessTrip } from "../..";
 import { useVehicleOptions } from "../../../constants/options/useVehicleOptions";
@@ -21,6 +21,7 @@ import {
   AssignTaskDialog,
   type AssignTaskPreviewField,
 } from "../../../../components/ui/assign-dialog/AssignTaskDialog";
+import { useEffect, useState } from "react";
 
 type Props = {
   open: boolean;
@@ -35,13 +36,14 @@ export default function ApproveBusinessTripDialog({
   trip,
   approverEmployeeUserId,
 }: Props) {
+  const { t } = useTranslation();
   const { options, isLoading: vehiclesLoading } = useVehicleOptions();
   const approveMutation = useApproveVehicleBusinessTrip();
 
-  const [vehicleId, setVehicleId] = React.useState<number | "">("");
-  const [vehicleIdForCheck, setVehicleIdForCheck] = React.useState<number>(0);
+  const [vehicleId, setVehicleId] = useState<number | "">("");
+  const [vehicleIdForCheck, setVehicleIdForCheck] = useState<number>(0);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) return;
     setVehicleId("");
     setVehicleIdForCheck(0);
@@ -91,23 +93,31 @@ export default function ApproveBusinessTripDialog({
     !vehicleAvailable;
 
   const approveTooltip = (() => {
-    if (submitting) return "Submitting…";
-    if (vehiclesLoading) return "Loading vehicles…";
-    if (!tripId) return "No trip selected";
-    if (!approverEmployeeUserId) return "Approver not available";
+    if (submitting)
+      return t("vehicleBusinessTrips.dialogs.approve.tooltip.submitting");
+    if (vehiclesLoading)
+      return t("vehicleBusinessTrips.dialogs.approve.tooltip.loadingVehicles");
+    if (!tripId) return t("vehicleBusinessTrips.dialogs.common.noTripSelected");
+    if (!approverEmployeeUserId)
+      return t("vehicleBusinessTrips.dialogs.approve.tooltip.noApprover");
     if (typeof vehicleId !== "number" || vehicleId <= 0)
-      return "Select a vehicle";
-    if (availability.isFetching) return "Checking availability…";
+      return t("vehicleBusinessTrips.dialogs.approve.tooltip.selectVehicle");
+    if (availability.isFetching)
+      return t(
+        "vehicleBusinessTrips.dialogs.approve.tooltip.checkingAvailability"
+      );
     if (!availabilityCheckedForSelectedVehicle)
-      return "Click “Check availability” first";
-    if (!vehicleAvailable) return "Vehicle is not available";
+      return t("vehicleBusinessTrips.dialogs.approve.tooltip.clickCheckFirst");
+    if (!vehicleAvailable)
+      return t(
+        "vehicleBusinessTrips.dialogs.approve.tooltip.vehicleNotAvailable"
+      );
     return "";
   })();
 
   const handleApprove = () => {
-    if (!tripId) return;
-    if (!approverEmployeeUserId) return;
-    if (typeof vehicleId !== "number" || vehicleId <= 0) return;
+    if (!tripId || !approverEmployeeUserId || typeof vehicleId !== "number")
+      return;
     if (!vehicleAvailable) return;
 
     approveMutation.mutate(
@@ -121,56 +131,66 @@ export default function ApproveBusinessTripDialog({
   };
 
   const chipLabel = (() => {
-    if (availability.isFetching) return "Checking availability…";
+    if (availability.isFetching)
+      return t("vehicleBusinessTrips.dialogs.approve.chip.checking");
     if (availability.isSuccess && vehicleIdForCheck > 0)
-      return availability.data ? "Vehicle available" : "Vehicle not available";
-    return "Availability not checked";
-  })();
-
-  const dueTone: "warning" | "info" | "neutral" = (() => {
-    if (availability.isFetching) return "info";
-    if (availability.isSuccess && vehicleIdForCheck > 0) {
-      return availability.data ? "info" : "warning";
-    }
-    return "neutral";
+      return availability.data
+        ? t("vehicleBusinessTrips.dialogs.approve.chip.available")
+        : t("vehicleBusinessTrips.dialogs.approve.chip.notAvailable");
+    return t("vehicleBusinessTrips.dialogs.approve.chip.notChecked");
   })();
 
   const previewFields: AssignTaskPreviewField[] = [
-    { label: "Start", value: startAt || "-", minWidth: 180 },
-    { label: "End", value: endAt || "-", minWidth: 180 },
+    {
+      label: t("vehicleBusinessTrips.dialogs.common.start"),
+      value: startAt || "-",
+      minWidth: 180,
+    },
+    {
+      label: t("vehicleBusinessTrips.dialogs.common.end"),
+      value: endAt || "-",
+      minWidth: 180,
+    },
   ];
 
   return (
     <AssignTaskDialog
       open={open}
       onClose={onClose}
-      title="Approve business trip"
+      title={t("vehicleBusinessTrips.dialogs.approve.title")}
       subtitle={
         approverEmployeeUserId
-          ? `Approver ${approverEmployeeUserId}`
-          : "Approver -"
+          ? t("vehicleBusinessTrips.dialogs.approve.subtitle", {
+              id: approverEmployeeUserId,
+            })
+          : t("vehicleBusinessTrips.dialogs.approve.subtitle", { id: "-" })
       }
       headerIcon={<ThumbUpAltOutlinedIcon sx={{ fontSize: 18 }} />}
-      referenceText={tripId ? `Trip #${tripId}` : "No trip selected"}
-      previewTitle="Trip details"
-      previewSubtitle="Review the dates and then assign a vehicle."
+      referenceText={
+        tripId
+          ? t("vehicleBusinessTrips.dialogs.common.referenceTrip", {
+              id: tripId,
+            })
+          : t("vehicleBusinessTrips.dialogs.common.noTripSelected")
+      }
+      previewTitle={t("vehicleBusinessTrips.dialogs.common.tripDetailsTitle")}
+      previewSubtitle={t(
+        "vehicleBusinessTrips.dialogs.approve.previewSubtitle"
+      )}
       dueLabel={chipLabel}
-      dueTone={dueTone}
       previewFields={previewFields}
       formLoading={vehiclesLoading}
       formDisabled={vehiclesLoading}
       submitting={submitting}
-      submitText="Approve"
-      cancelText="Cancel"
+      submitText={t("vehicleBusinessTrips.dialogs.approve.submit")}
+      cancelText={t("vehicleBusinessTrips.dialogs.common.cancel")}
       onSubmit={handleApprove}
       submitDisabled={approveDisabled}
       submitVariant="primary"
     >
       <Box>
-        <Typography
-          sx={{ fontSize: 13, fontWeight: 700, color: "#111827", mb: 1.25 }}
-        >
-          Vehicle assignment
+        <Typography sx={{ fontSize: 13, fontWeight: 700, mb: 1.25 }}>
+          {t("vehicleBusinessTrips.dialogs.approve.vehicleAssignment")}
         </Typography>
 
         <Box
@@ -186,11 +206,14 @@ export default function ApproveBusinessTripDialog({
             size="small"
             disabled={vehiclesLoading || submitting}
           >
-            <InputLabel id="approve-trip-vehicle-label">Vehicle</InputLabel>
+            <InputLabel id="approve-trip-vehicle-label">
+              {t("vehicleBusinessTrips.dialogs.approve.vehicleLabel")}
+            </InputLabel>
+
             <Select
               labelId="approve-trip-vehicle-label"
               value={vehicleId}
-              label="Vehicle"
+              label={t("vehicleBusinessTrips.dialogs.approve.vehicleLabel")}
               onChange={(e) => {
                 const next = e.target.value as number | "";
                 setVehicleId(next);
@@ -198,8 +221,11 @@ export default function ApproveBusinessTripDialog({
               }}
             >
               <MenuItem value="">
-                <em>Select vehicle…</em>
+                <em>
+                  {t("vehicleBusinessTrips.dialogs.approve.selectVehicle")}
+                </em>
               </MenuItem>
+
               {options.map((o) => (
                 <MenuItem key={o.value} value={o.value}>
                   {o.label}
@@ -209,7 +235,13 @@ export default function ApproveBusinessTripDialog({
           </FormControl>
 
           <Tooltip
-            title={!canCheck ? "Select a vehicle and ensure dates exist" : ""}
+            title={
+              !canCheck
+                ? t(
+                    "vehicleBusinessTrips.dialogs.approve.tooltip.selectVehicleAndDates"
+                  )
+                : ""
+            }
           >
             <span>
               <Button
@@ -235,10 +267,10 @@ export default function ApproveBusinessTripDialog({
                     }}
                   >
                     <CircularProgress size={16} />
-                    Checking…
+                    {t("vehicleBusinessTrips.dialogs.approve.checking")}
                   </Box>
                 ) : (
-                  "Check availability"
+                  t("vehicleBusinessTrips.dialogs.approve.checkAvailability")
                 )}
               </Button>
             </span>
@@ -259,7 +291,7 @@ export default function ApproveBusinessTripDialog({
         >
           <EventOutlinedIcon sx={{ fontSize: 16, opacity: 0.75 }} />
           <Typography sx={{ fontSize: 12.5, color: "#111827" }}>
-            Tip: Use “Check availability” before approving to avoid conflicts.
+            {t("vehicleBusinessTrips.dialogs.approve.tip")}
           </Typography>
         </Box>
 

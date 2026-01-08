@@ -104,8 +104,8 @@ export const NAV_ITEMS: NavItem[] = [
     category: "CONSTRUCTION",
   },
   {
-    labelKey: "nav.requests",
-    to: "/app/requests",
+    labelKey: "nav.tasks",
+    to: "/app/tasks",
     icon: <FaInbox />,
     section: "MANAGEMENT",
     category: "CONSTRUCTION",

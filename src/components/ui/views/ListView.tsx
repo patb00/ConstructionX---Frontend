@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Box,
   Collapse,
@@ -19,6 +18,8 @@ import { ChevronRightRounded, ExpandMoreRounded } from "@mui/icons-material";
 import type { ChipProps } from "@mui/material/Chip";
 import type { SystemStyleObject } from "@mui/system";
 import { CircularProgress } from "@mui/material";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import React from "react";
 
 export const listViewColDividerSx: SystemStyleObject<Theme> = {
   borderRight: "1px solid",
@@ -131,12 +132,12 @@ export default function ListView<T>({
   const mdDown = useMediaQuery(theme.breakpoints.down("md"));
   const lgDown = useMediaQuery(theme.breakpoints.down("lg"));
 
-  const responsiveFlags = React.useMemo(
+  const responsiveFlags = useMemo(
     () => ({ smDown, mdDown, lgDown }),
     [smDown, mdDown, lgDown]
   );
 
-  const visibleColumns = React.useMemo(() => {
+  const visibleColumns = useMemo(() => {
     return columns.filter((c) => {
       if (c.hidden) return false;
 
@@ -152,11 +153,9 @@ export default function ListView<T>({
     });
   }, [columns, responsiveFlags]);
 
-  const [internalOpen, setInternalOpen] = React.useState<
-    Record<string, boolean>
-  >({});
+  const [internalOpen, setInternalOpen] = useState<Record<string, boolean>>({});
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (openByKey) return;
 
     setInternalOpen((prev) => {
@@ -183,13 +182,13 @@ export default function ListView<T>({
 
   const isControlled = Boolean(openByKey);
 
-  const getOpen = React.useCallback(
+  const getOpen = useCallback(
     (key: string) =>
       isControlled ? openByKey?.[key] ?? true : internalOpen[key] ?? true,
     [internalOpen, isControlled, openByKey]
   );
 
-  const toggle = React.useCallback(
+  const toggle = useCallback(
     (key: string) => {
       if (isControlled) {
         onToggleSection?.(key);
