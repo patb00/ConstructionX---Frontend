@@ -1,5 +1,5 @@
 import * as React from "react";
-import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import BlockOutlinedIcon from "@mui/icons-material/BlockOutlined";
 import { Box, TextField, Typography } from "@mui/material";
 import type { VehicleBusinessTrip } from "../..";
 import { useCancelVehicleBusinessTrip } from "../../hooks/useCancelBusinessTrip";
@@ -67,7 +67,7 @@ export default function CancelBusinessTripDialog({
           ? `Canceller ${cancellerEmployeeUserId}`
           : "Canceller -"
       }
-      headerIcon={<CancelOutlinedIcon sx={{ fontSize: 18 }} />}
+      headerIcon={<BlockOutlinedIcon sx={{ fontSize: 18 }} />}
       referenceText={tripId ? `Trip #${tripId}` : "No trip selected"}
       previewTitle="Trip details"
       previewSubtitle="This trip will be cancelled and removed from the approval flow."

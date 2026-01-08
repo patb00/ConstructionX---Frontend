@@ -1,7 +1,6 @@
 import * as React from "react";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import { Box, TextField, Typography } from "@mui/material";
-
 import type { VehicleBusinessTrip } from "../..";
 import { useRejectVehicleBusinessTrip } from "../../hooks/useRejectVehicleBusinessTrip";
 import { AssignTaskDialog } from "../../../../components/ui/assign-dialog/AssignTaskDialog";
@@ -65,7 +64,7 @@ export default function RejectBusinessTripDialog({
           ? `Rejector ${rejectorEmployeeUserId}`
           : "Rejector -"
       }
-      headerIcon={<HighlightOffIcon sx={{ fontSize: 18 }} />}
+      headerIcon={<ThumbDownAltOutlinedIcon sx={{ fontSize: 18 }} />}
       referenceText={tripId ? `Trip #${tripId}` : "No trip selected"}
       previewTitle="Trip details"
       previewSubtitle="Review the dates and provide a reason for rejection."

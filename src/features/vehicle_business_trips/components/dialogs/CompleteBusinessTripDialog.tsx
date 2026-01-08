@@ -1,5 +1,5 @@
 import * as React from "react";
-import DoneAllOutlinedIcon from "@mui/icons-material/DoneAllOutlined";
+import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
 import LocalGasStationOutlinedIcon from "@mui/icons-material/LocalGasStationOutlined";
 import {
   Box,
@@ -132,7 +132,7 @@ export default function CompleteBusinessTripDialog({
       onClose={onClose}
       title="Complete business trip"
       subtitle="Fill in kilometers and optional fuel info"
-      headerIcon={<DoneAllOutlinedIcon sx={{ fontSize: 18 }} />}
+      headerIcon={<TaskAltOutlinedIcon sx={{ fontSize: 18 }} />}
       referenceText={tripId ? `Trip #${tripId}` : "No trip selected"}
       previewTitle="Trip details"
       previewSubtitle="Review dates and complete the trip with final data."

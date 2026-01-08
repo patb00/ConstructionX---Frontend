@@ -1,5 +1,5 @@
 import * as React from "react";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
 import {
   Box,
@@ -150,7 +150,7 @@ export default function ApproveBusinessTripDialog({
           ? `Approver ${approverEmployeeUserId}`
           : "Approver -"
       }
-      headerIcon={<CheckCircleOutlineIcon sx={{ fontSize: 18 }} />}
+      headerIcon={<ThumbUpAltOutlinedIcon sx={{ fontSize: 18 }} />}
       referenceText={tripId ? `Trip #${tripId}` : "No trip selected"}
       previewTitle="Trip details"
       previewSubtitle="Review the dates and then assign a vehicle."
