@@ -30,9 +30,7 @@ export default function ToolEditPage() {
   const defaultValues = toolToDefaultValues(tool) as NewToolRequest | undefined;
 
   const handleSubmit = (values: NewToolRequest) => {
-    updateTool({ id: toolId, ...values } as any, {
-      onSuccess: () => navigate("/app/tools"),
-    });
+    updateTool({ id: toolId, ...values } as any);
   };
 
   const busy = isLoading || updating;

@@ -40,9 +40,7 @@ export default function VehicleRegistrationEditPage() {
         ? (registration as any).id
         : registrationId;
 
-    updateRegistration({ id: idForUpdate, ...values } as any, {
-      onSuccess: () => navigate("/app/vehicle-registrations"),
-    });
+    updateRegistration({ id: idForUpdate, ...values } as any);
   };
 
   const busy = loadingRegistration || updating;

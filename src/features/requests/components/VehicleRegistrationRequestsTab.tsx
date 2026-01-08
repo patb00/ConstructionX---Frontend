@@ -5,8 +5,6 @@ import {
   Chip,
   CircularProgress,
   Stack,
-  Tab,
-  Tabs,
   Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -21,18 +19,11 @@ import {
 } from "@mui/icons-material";
 import CheckCircleOutlineOutlined from "@mui/icons-material/CheckCircleOutlineOutlined";
 import { useVehicleRegistrations } from "../../vehicle_registrations/hooks/useVehicleRegistrations";
-import type {
-  UpdateVehicleRegistrationEmployeeRequest,
-  VehicleRegistrationEmployee,
-} from "..";
+
 import { useNavigate } from "react-router-dom";
-import ResolveVehicleRegistrationTaskDialog from "../components/ResolveVehicleRegistrationTaskDialog";
 
 import { useAuthStore } from "../../auth/store/useAuthStore";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
-import { useVehicleRegistrationEmployeesByEmployee } from "../hooks/useVehicleRegistrationEmployeesByEmployee";
-import { useUpdateVehicleRegistrationEmployee } from "../hooks/useUpdateVehicleRegistrationEmployee";
-import { useVehicles } from "../../vehicles/hooks/useVehicles";
 
 import ListView, {
   type ListViewColumn,
@@ -44,6 +35,14 @@ import ListView, {
 } from "../../../components/ui/views/ListView";
 import { useSnackbar } from "notistack";
 import HeaderLabel from "../../../components/ui/HeaderLabel";
+import type {
+  UpdateVehicleRegistrationEmployeeRequest,
+  VehicleRegistrationEmployee,
+} from "../../vehicle_registration_employee";
+import { useVehicleRegistrationEmployeesByEmployee } from "../../vehicle_registration_employee/hooks/useVehicleRegistrationEmployeesByEmployee";
+import { useUpdateVehicleRegistrationEmployee } from "../../vehicle_registration_employee/hooks/useUpdateVehicleRegistrationEmployee";
+import { useVehicles } from "../../vehicles/hooks/useVehicles";
+import ResolveVehicleRegistrationTaskDialog from "../../vehicle_registration_employee/components/ResolveVehicleRegistrationTaskDialog";
 
 const isFinalStatus = (status?: number | null) => status === 3 || status === 4;
 
@@ -54,7 +53,7 @@ function tagForStatus(status?: number | null): ListViewStatusTag {
   return { label: "New", color: "default" };
 }
 
-type TaskView = {
+type RequestView = {
   task: VehicleRegistrationEmployee;
   title: string;
   subtitle: string | null;
@@ -73,25 +72,14 @@ type VehicleRegistrationRow = {
   validTo?: string | null;
 };
 
-const VehicleRegistrationTasksPage = () => {
+export default function VehicleRegistrationRequestsTab() {
   const { t } = useTranslation();
   const { userId, role } = useAuthStore();
   const { employeeRows = [], isLoading: employeesLoading } = useEmployees();
   const { vehiclesRows = [] } = useVehicles();
   const { vehicleRegistrationsRows } = useVehicleRegistrations();
   const navigate = useNavigate();
-  const [tab, setTab] = useState(0);
   const { enqueueSnackbar } = useSnackbar();
-
-  const handleTabChange = useCallback(
-    (_: React.SyntheticEvent, value: number) => setTab(value),
-    []
-  );
-
-  const a11yProps = (index: number) => ({
-    id: `my-tasks-tab-${index}`,
-    "aria-controls": `my-tasks-tabpanel-${index}`,
-  });
 
   const myEmployeeId = useMemo<number | null>(() => {
     if (!userId) return null;
@@ -124,13 +112,15 @@ const VehicleRegistrationTasksPage = () => {
   );
 
   const handleCreateRegistration = useCallback(() => {
-    navigate("/app/vehicle-registrations/create");
     setResolveDialogOpen(false);
+    setActiveTask(null);
+    navigate("/app/vehicle-registrations/create");
   }, [navigate]);
 
   const handleCloseResolveDialog = useCallback(() => {
     if (updateStatus.isPending) return;
     setResolveDialogOpen(false);
+    setActiveTask(null);
   }, [updateStatus.isPending]);
 
   const vehicleById = useMemo(() => {
@@ -234,7 +224,7 @@ const VehicleRegistrationTasksPage = () => {
     updateStatus,
   ]);
 
-  const taskViews = useMemo<TaskView[]>(() => {
+  const taskViews = useMemo<RequestView[]>(() => {
     return tasks.map((task) => {
       const vehicle = vehicleById.get(task.vehicleId);
       const deadline = formatDate(task.expiresOn);
@@ -243,7 +233,7 @@ const VehicleRegistrationTasksPage = () => {
       const title =
         vehicle && (vehicle.brand || vehicle.model)
           ? `${vehicle.brand ?? ""} ${vehicle.model ?? ""}`.trim()
-          : `Vehicle registration task #${task.id}`;
+          : `Vehicle registration request #${task.id}`;
 
       const subtitle = task.note?.trim()
         ? task.note.trim()
@@ -269,7 +259,7 @@ const VehicleRegistrationTasksPage = () => {
     });
   }, [formatDate, tasks, updateStatus.isPending, vehicleById]);
 
-  const sections = useMemo<Array<ListViewSection<TaskView>>>(() => {
+  const sections = useMemo<Array<ListViewSection<RequestView>>>(() => {
     const assigned = taskViews.filter((x) => x.task.status === 1);
     const inProgress = taskViews.filter((x) => x.task.status === 2);
     const completed = taskViews.filter((x) => x.task.status === 3);
@@ -288,7 +278,7 @@ const VehicleRegistrationTasksPage = () => {
     const dueSoon = sortedAssigned.slice(0, Math.min(3, sortedAssigned.length));
     const remaining = sortedAssigned.slice(dueSoon.length);
 
-    const out: Array<ListViewSection<TaskView>> = [
+    const out: Array<ListViewSection<RequestView>> = [
       {
         key: "assigned",
         title: t("vehicleRegistrationTasks.list.sections.assigned"),
@@ -321,34 +311,45 @@ const VehicleRegistrationTasksPage = () => {
 
   const [openByKey, setOpenByKey] = useState<Record<string, boolean>>({});
 
+  const sectionKeys = useMemo(() => sections.map((s) => s.key), [sections]);
+  const sectionKeysSig = useMemo(() => sectionKeys.join("|"), [sectionKeys]);
+
   useEffect(() => {
     setOpenByKey((prev) => {
-      const next = { ...prev };
+      const next: Record<string, boolean> = {};
       let changed = false;
 
-      for (const s of sections) {
-        if (next[s.key] === undefined) {
-          next[s.key] = true;
+      for (const key of sectionKeys) {
+        if (prev[key] === undefined) {
+          next[key] = true;
           changed = true;
+        } else {
+          next[key] = prev[key];
         }
       }
 
-      for (const key of Object.keys(next)) {
-        if (!sections.some((s) => s.key === key)) {
-          delete next[key];
-          changed = true;
+      if (!changed) {
+        const prevKeys = Object.keys(prev);
+        if (prevKeys.length !== sectionKeys.length) changed = true;
+        else {
+          for (const k of prevKeys) {
+            if (!next.hasOwnProperty(k)) {
+              changed = true;
+              break;
+            }
+          }
         }
       }
 
       return changed ? next : prev;
     });
-  }, [sections]);
+  }, [sectionKeysSig]);
 
   const toggleSection = useCallback((key: string) => {
     setOpenByKey((prev) => ({ ...prev, [key]: !(prev[key] ?? true) }));
   }, []);
 
-  const columns = useMemo<Array<ListViewColumn<TaskView>>>(() => {
+  const columns = useMemo<Array<ListViewColumn<RequestView>>>(() => {
     return [
       {
         key: "done",
@@ -507,83 +508,55 @@ const VehicleRegistrationTasksPage = () => {
 
   return (
     <Stack spacing={2} sx={{ width: "100%" }}>
-      <Box>
-        <Typography variant="h5" fontWeight={600}>
-          {t("myTasks.title")}
+      {shouldShowNone ? (
+        <Typography variant="body2" color="text.secondary">
+          {t("vehicleRegistrationTasks.list.empty")}
         </Typography>
-
-        <Tabs
-          value={tab}
-          onChange={handleTabChange}
-          sx={{ mt: 1 }}
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          <Tab
-            label={t("myTasks.tabs.vehicleRegistration")}
-            {...a11yProps(0)}
-          />
-        </Tabs>
-      </Box>
-
-      {tab === 0 && (
+      ) : isLoading ? (
         <Box
-          role="tabpanel"
-          id="my-tasks-tabpanel-0"
-          aria-labelledby="my-tasks-tab-0"
-          sx={{ pt: 2 }}
+          sx={{
+            minHeight: 220,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
-          {shouldShowNone ? (
-            <Typography variant="body2" color="text.secondary">
-              {t("vehicleRegistrationTasks.list.empty")}
-            </Typography>
-          ) : isLoading ? (
-            <Box
-              sx={{
-                minHeight: 220,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : sections.length === 0 ? (
-            <Typography variant="body2" color="text.secondary">
-              {t("vehicleRegistrationTasks.list.empty")}
-            </Typography>
-          ) : (
-            <ListView<TaskView>
-              sections={sections}
-              openByKey={openByKey}
-              onToggleSection={toggleSection}
-              getRowKey={(row) => String(row.task.id)}
-              columns={columns}
-              loading={isLoading}
-              loadingText={t("common.loading", { defaultValue: "Loading..." })}
-            />
-          )}
+          <CircularProgress />
         </Box>
+      ) : sections.length === 0 ? (
+        <Typography variant="body2" color="text.secondary">
+          {t("vehicleRegistrationTasks.list.empty")}
+        </Typography>
+      ) : (
+        <ListView<RequestView>
+          sections={sections}
+          openByKey={openByKey}
+          onToggleSection={toggleSection}
+          getRowKey={(row) => String(row.task.id)}
+          columns={columns}
+          loading={isLoading}
+          loadingText={t("common.loading", { defaultValue: "Loading..." })}
+        />
       )}
 
-      <ResolveVehicleRegistrationTaskDialog
-        open={resolveDialogOpen}
-        title={t("vehicleRegistrationTasks.resolveDialog.title")}
-        question={t("vehicleRegistrationTasks.resolveDialog.question")}
-        helperText={t("vehicleRegistrationTasks.resolveDialog.helper")}
-        loading={updateStatus.isPending}
-        onClose={handleCloseResolveDialog}
-        onSave={handleResolveTask}
-        onCreateRegistration={handleCreateRegistration}
-        saveText={t("vehicleRegistrationTasks.resolveDialog.save")}
-        createRegistrationText={t(
-          "vehicleRegistrationTasks.resolveDialog.create"
-        )}
-        cancelText={t("vehicleRegistrationTasks.resolveDialog.cancel")}
-        disableBackdropClose
-      />
+      {resolveDialogOpen && (
+        <ResolveVehicleRegistrationTaskDialog
+          open={resolveDialogOpen}
+          title={t("vehicleRegistrationTasks.resolveDialog.title")}
+          question={t("vehicleRegistrationTasks.resolveDialog.question")}
+          helperText={t("vehicleRegistrationTasks.resolveDialog.helper")}
+          loading={updateStatus.isPending}
+          onClose={handleCloseResolveDialog}
+          onSave={handleResolveTask}
+          onCreateRegistration={handleCreateRegistration}
+          saveText={t("vehicleRegistrationTasks.resolveDialog.save")}
+          createRegistrationText={t(
+            "vehicleRegistrationTasks.resolveDialog.create"
+          )}
+          cancelText={t("vehicleRegistrationTasks.resolveDialog.cancel")}
+          disableBackdropClose
+        />
+      )}
     </Stack>
   );
-};
-
-export default VehicleRegistrationTasksPage;
+}

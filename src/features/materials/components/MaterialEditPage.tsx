@@ -32,9 +32,7 @@ export default function MaterialEditPage() {
     | undefined;
 
   const handleSubmit = (values: NewMaterialRequest) => {
-    updateMaterial({ id: materialId, ...values } as any, {
-      onSuccess: () => navigate("/app/materials"),
-    });
+    updateMaterial({ id: materialId, ...values } as any);
   };
 
   const busy = isLoading || updating;

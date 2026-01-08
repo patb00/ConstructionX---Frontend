@@ -2,6 +2,7 @@
   "sidebar": {
     "management": "Management",
     "system": "System",
+    "toolsGroup": "Tools",
     "constructionGroup": "Construction sites",
     "codebookGroup": "Codebooks",
     "identityGroup": "Identity",
@@ -31,7 +32,7 @@
     "vehicleRegistrations": "Vehicle Registrations",
     "vehicleInsurances": "Vehicle Insurances",
     "vehicleBusinessTrips": "Vehicle Business Trips",
-    "tasks": "Tasks"
+    "requests": "Requests"
   },
   "constructionSites": {
     "list": {
@@ -1683,9 +1684,9 @@
     }
   },
   "myTasks": {
-    "title": "Tasks",
+    "title": "Requests",
     "tabs": {
-      "vehicleRegistration": "Vehicle Registration Tasks"
+      "vehicleRegistration": "Vehicle Registration Requests"
     }
   },
 
@@ -1706,7 +1707,7 @@
       "vehicleId": "Vehicle ID",
       "status": "Status",
       "actions": "Actions",
-      "taskName": "Task name",
+      "taskName": "Request name",
       "description": "Description",
       "deadline": "Deadline",
       "type": "Type",

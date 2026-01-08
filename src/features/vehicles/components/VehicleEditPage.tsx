@@ -37,9 +37,7 @@ export default function VehicleEditPage() {
         ? (vehicle as any).id
         : vehicleId;
 
-    updateVehicle({ id: idForUpdate, ...values } as any, {
-      onSuccess: () => navigate("/app/vehicles"),
-    });
+    updateVehicle({ id: idForUpdate, ...values } as any);
   };
 
   const busy = vehicleLoading || updating;

@@ -72,12 +72,6 @@ const AssignmentsListPage = () => {
 
   const { userId, role } = useAuthStore();
 
-  /**
-   * IMPORTANT:
-   * JWT userId is a UUID string (e.g. "a9b50b3b-...").
-   * Assignments are keyed by numeric employeeId/responsibleEmployeeId.
-   * The bridge is employee.applicationUserId === JWT userId.
-   */
   const myEmployeeId = useMemo<number | null>(() => {
     if (!userId) return null;
     const me = employeeRows.find((e: any) => e.applicationUserId === userId);
@@ -89,8 +83,6 @@ const AssignmentsListPage = () => {
     startOfWeekMonday(new Date())
   );
 
-  // Admin: can choose employee or "all" (null)
-  // Basic: must be locked to their own employeeId (and if missing, show none)
   const effectiveEmployeeId: number | null =
     role === "Admin"
       ? typeof selectedEmployeeId === "number"
@@ -130,9 +122,6 @@ const AssignmentsListPage = () => {
       }
     : { construction: 0, vehicles: 0, tools: 0 };
 
-  // Safer behavior:
-  // - Admin with "all": show all rows
-  // - Basic with missing mapping: show nothing (avoid leaking all assignments)
   const canShowAll = role === "Admin" && effectiveEmployeeId == null;
   const shouldShowNone = role !== "Admin" && effectiveEmployeeId == null;
 
@@ -335,11 +324,6 @@ const AssignmentsListPage = () => {
     toolAssignments,
     t,
   ]);
-
-  console.log("userId", userId);
-  console.log("role", role);
-  console.log("myEmployeeId", myEmployeeId);
-  console.log("effectiveEmployeeId", effectiveEmployeeId);
 
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>

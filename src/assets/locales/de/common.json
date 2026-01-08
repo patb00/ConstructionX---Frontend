@@ -3,6 +3,7 @@
     "management": "Verwaltung",
     "system": "System",
     "constructionGroup": "Baustellen",
+    "toolsGroup": "Werkzeuge",
     "codebookGroup": "Stammdaten",
     "identityGroup": "Identität",
     "vehiclesGroup": "Fahrzeuge"
@@ -31,7 +32,7 @@
     "vehicleRegistrations": "Fahrzeugzulassungen",
     "vehicleInsurances": "Fahrzeugversicherungen",
     "vehicleBusinessTrips": "Dienstfahrten",
-    "tasks": "Aufgaben"
+    "requests": "Anfragen"
   },
 
   "constructionSites": {
@@ -1689,9 +1690,9 @@
     }
   },
   "myTasks": {
-    "title": "Aufgaben",
+    "title": "Anfragen",
     "tabs": {
-      "vehicleRegistration": "Fahrzeugzulassungsaufgaben"
+      "vehicleRegistration": "Anfragen zur Fahrzeugzulassung"
     }
   },
 
@@ -1712,7 +1713,7 @@
       "vehicleId": "Fahrzeug-ID",
       "status": "Status",
       "actions": "Aktionen",
-      "taskName": "Aufgabenname",
+      "taskName": "Anfragename",
       "description": "Beschreibung",
       "deadline": "Frist",
       "type": "Typ",

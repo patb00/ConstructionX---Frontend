@@ -51,7 +51,6 @@ export default function MedicalExaminationEditPage() {
             file: selectedFile,
           });
         }
-        navigate("/app/medicalExaminations");
       },
     });
   };

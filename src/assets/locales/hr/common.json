@@ -4,6 +4,7 @@
     "system": "Sustav",
     "constructionGroup": "Gradilišta",
     "codebookGroup": "Šifrarnik",
+    "toolsGroup": "Alati",
     "identityGroup": "Identitet",
     "vehiclesGroup": "Vozila"
   },
@@ -31,7 +32,7 @@
     "vehicleRegistrations": "Registracije vozila",
     "vehicleInsurances": "Osiguranja vozila",
     "vehicleBusinessTrips": "Službena putovanja ",
-    "tasks": "Zadatci"
+    "requests": "Zahtjevi"
   },
   "constructionSites": {
     "detail": {
@@ -1729,9 +1730,9 @@
     }
   },
   "myTasks": {
-    "title": "Zadatci",
+    "title": "Zahtjevi",
     "tabs": {
-      "vehicleRegistration": "Zadatci za registraciju"
+      "vehicleRegistration": "Zahtjevi za registraciju"
     }
   },
   "vehicleRegistrationTasks": {
@@ -1751,7 +1752,7 @@
       "vehicleId": "ID vozila",
       "status": "Status",
       "actions": "Akcije",
-      "taskName": "Naziv zadatka",
+      "taskName": "Naziv zahtjeva",
       "description": "Opis",
       "deadline": "Rok",
       "type": "Tip",

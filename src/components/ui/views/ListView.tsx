@@ -18,6 +18,7 @@ import {
 import { ChevronRightRounded, ExpandMoreRounded } from "@mui/icons-material";
 import type { ChipProps } from "@mui/material/Chip";
 import type { SystemStyleObject } from "@mui/system";
+import { CircularProgress } from "@mui/material";
 
 export const listViewColDividerSx: SystemStyleObject<Theme> = {
   borderRight: "1px solid",
@@ -85,6 +86,9 @@ export type ListViewProps<T> = {
   sectionHeaderSx?: SxProps<Theme>;
   tableSx?: SxProps<Theme>;
   containerSx?: SxProps<Theme>;
+
+  loading?: boolean;
+  loadingText?: React.ReactNode;
 };
 
 const headCellBaseSx: SxProps<Theme> = {
@@ -119,6 +123,8 @@ export default function ListView<T>({
   sectionHeaderSx,
   tableSx,
   containerSx,
+  loading = false,
+  loadingText,
 }: ListViewProps<T>) {
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down("sm"));
@@ -310,32 +316,68 @@ export default function ListView<T>({
                   </TableHead>
 
                   <TableBody>
-                    {section.items.map((row) => {
-                      const key = getRowKey(row);
+                    {loading ? (
+                      <TableRow>
+                        <TableCell
+                          colSpan={visibleColumns.length}
+                          sx={{ py: 6 }}
+                        >
+                          <Stack
+                            direction="row"
+                            spacing={1.5}
+                            alignItems="center"
+                            justifyContent="center"
+                          >
+                            <CircularProgress size={22} />
+                            <Typography variant="body2" color="text.secondary">
+                              {loadingText ?? "Loading..."}
+                            </Typography>
+                          </Stack>
+                        </TableCell>
+                      </TableRow>
+                    ) : section.items.length === 0 ? (
+                      <TableRow>
+                        <TableCell
+                          colSpan={visibleColumns.length}
+                          sx={{ py: 4 }}
+                        >
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            align="center"
+                          >
+                            —
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      section.items.map((row) => {
+                        const key = getRowKey(row);
 
-                      if (renderRow) {
+                        if (renderRow) {
+                          return (
+                            <React.Fragment key={key}>
+                              {renderRow(row)}
+                            </React.Fragment>
+                          );
+                        }
+
                         return (
-                          <React.Fragment key={key}>
-                            {renderRow(row)}
-                          </React.Fragment>
+                          <TableRow key={key} hover>
+                            {visibleColumns.map((c) => (
+                              <TableCell
+                                key={c.key}
+                                align={c.align}
+                                padding={c.padding}
+                                sx={c.cellSx}
+                              >
+                                {c.render ? c.render(row) : null}
+                              </TableCell>
+                            ))}
+                          </TableRow>
                         );
-                      }
-
-                      return (
-                        <TableRow key={key} hover>
-                          {visibleColumns.map((c) => (
-                            <TableCell
-                              key={c.key}
-                              align={c.align}
-                              padding={c.padding}
-                              sx={c.cellSx}
-                            >
-                              {c.render ? c.render(row) : null}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      );
-                    })}
+                      })
+                    )}
                   </TableBody>
                 </Table>
               </Collapse>

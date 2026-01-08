@@ -40,9 +40,7 @@ export default function VehicleInsuranceEditPage() {
         ? (insurance as any).id
         : insuranceId;
 
-    updateInsurance({ id: idForUpdate, ...values } as any, {
-      onSuccess: () => navigate("/app/vehicle-insurances"),
-    });
+    updateInsurance({ id: idForUpdate, ...values } as any);
   };
 
   const busy = loadingInsurance || updating;

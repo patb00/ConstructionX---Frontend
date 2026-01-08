@@ -1,5 +1,5 @@
 import { Outlet, type RouteObject } from "react-router-dom";
-import MyVehicleRegistrationTasksPage from "../components/VehicleRegistrationTasksPage";
+import VehicleRegistrationTasksPage from "../components/VehicleRegistrationTasksPage";
 
 function VehicleRegistrationTasksLayout() {
   return (
@@ -9,8 +9,13 @@ function VehicleRegistrationTasksLayout() {
   );
 }
 
-export const vehicleRegistrationTasksRoutes: RouteObject = {
-  path: "tasks",
+export const tasksRoutes: RouteObject = {
+  path: "requests1",
   element: <VehicleRegistrationTasksLayout />,
-  children: [{ index: true, element: <MyVehicleRegistrationTasksPage /> }],
+  children: [
+    {
+      index: true,
+      element: <VehicleRegistrationTasksPage />,
+    },
+  ],
 };

@@ -40,9 +40,7 @@ export default function ExaminationTypeEditPage() {
         ? examinationType.id
         : examinationTypeId;
 
-    updateExaminationType({ id: idForUpdate, ...values } as any, {
-      onSuccess: () => navigate("/app/examinationTypes"),
-    });
+    updateExaminationType({ id: idForUpdate, ...values } as any);
   };
 
   if (error) {

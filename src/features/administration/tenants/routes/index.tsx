@@ -1,5 +1,4 @@
 import TenantsListPage from "../components/TenantsListPage";
-import TenantDetailsPage from "../components/TenantDetailsPage";
 import TenantCreatePage from "../components/TenantCreatePage";
 import TenantEditPage from "../components/TenantEditPage";
 import { Outlet, type RouteObject } from "react-router-dom";
@@ -18,7 +17,6 @@ export const tenantsRoutes: RouteObject = {
   children: [
     { index: true, element: <TenantsListPage /> },
     { path: "create", element: <TenantCreatePage /> },
-    { path: ":tenantId", element: <TenantDetailsPage /> },
     { path: ":tenantId/edit", element: <TenantEditPage /> },
   ],
 };

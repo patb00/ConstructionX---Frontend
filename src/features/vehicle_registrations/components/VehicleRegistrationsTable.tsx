@@ -270,18 +270,6 @@ export default function VehicleRegistrationsTable() {
     return diffDays >= 0 && diffDays <= 14 ? "row--dueSoon" : "";
   }, []);
 
-  /*   const dueSoonRowSx = {
-    "& .MuiDataGrid-row.row--dueSoon": {
-      backgroundColor: `${alpha(theme.palette.error.main, 0.12)} !important`,
-    },
-    "& .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell": {
-      backgroundColor: `${alpha(theme.palette.error.main, 0.12)} !important`,
-    },
-    "& .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell--pinnedRight": {
-      backgroundColor: `white !important`,
-    },
-  }; */
-
   useEffect(() => {
     if (!assignOpen) return;
     if (!existingAssignment) return;
