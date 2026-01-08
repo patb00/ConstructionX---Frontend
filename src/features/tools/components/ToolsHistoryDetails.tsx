@@ -12,15 +12,7 @@ import {
 } from "../../../components/ui/history/HistoryPanelShell";
 import { HistoryCard } from "../../../components/ui/history/HistoryCard";
 import { HistoryAccordionSection } from "../../../components/ui/history/HistoryAccordionSection";
-
-function formatRange(
-  from?: string | null,
-  to?: string | null,
-  ongoingLabel = "(ongoing)"
-) {
-  const f = from ?? "";
-  return to ? `${f} → ${to}` : `${f} → ${ongoingLabel}`;
-}
+import { formatHistoryRange } from "../../../shared/utils/formatHistoryRange";
 
 export function ToolHistoryDetails({ toolId }: { toolId: number }) {
   const theme = useTheme();
@@ -128,7 +120,7 @@ export function ToolHistoryDetails({ toolId }: { toolId: number }) {
                   >
                     <Chip
                       size="small"
-                      label={formatRange(
+                      label={formatHistoryRange(
                         from,
                         it.dateTo,
                         t("history.common.ongoing")

@@ -43,15 +43,10 @@ import { useVehicleRegistrationEmployeesByEmployee } from "../../vehicle_registr
 import { useUpdateVehicleRegistrationEmployee } from "../../vehicle_registration_employee/hooks/useUpdateVehicleRegistrationEmployee";
 import { useVehicles } from "../../vehicles/hooks/useVehicles";
 import ResolveVehicleRegistrationTaskDialog from "../../vehicle_registration_employee/components/ResolveVehicleRegistrationTaskDialog";
-
-const isFinalStatus = (status?: number | null) => status === 3 || status === 4;
-
-function tagForStatus(status?: number | null): ListViewStatusTag {
-  if (status === 4) return { label: "Cancelled", color: "default" };
-  if (status === 3) return { label: "Done", color: "success" };
-  if (status === 2) return { label: "In progress", color: "warning" };
-  return { label: "New", color: "default" };
-}
+import {
+  getVehicleRegistrationStatusTag,
+  isVehicleRegistrationFinalStatus,
+} from "../../../shared/utils/vehicleRegistrationStatus";
 
 type RequestView = {
   task: VehicleRegistrationEmployee;
@@ -241,8 +236,10 @@ export default function VehicleRegistrationTasksTab() {
         ? `VIN: ${vehicle?.vin}`
         : null;
 
-      const statusTag = tagForStatus(task.status);
-      const disabled = isFinalStatus(task.status) || updateStatus.isPending;
+      const statusTag = getVehicleRegistrationStatusTag(task.status);
+      const disabled =
+        isVehicleRegistrationFinalStatus(task.status) ||
+        updateStatus.isPending;
       const regNumber: string | null = vehicle?.registrationNumber ?? null;
 
       return {
@@ -254,7 +251,7 @@ export default function VehicleRegistrationTasksTab() {
         regNumber,
         statusTag,
         disabled,
-        isCompleted: task.status === 3,
+        isCompleted: isVehicleRegistrationFinalStatus(task.status),
       };
     });
   }, [formatDate, tasks, updateStatus.isPending, vehicleById]);

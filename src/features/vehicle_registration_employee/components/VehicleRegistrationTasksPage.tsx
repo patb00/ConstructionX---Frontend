@@ -33,6 +33,10 @@ import { useEmployees } from "../../administration/employees/hooks/useEmployees"
 import { useVehicleRegistrationEmployeesByEmployee } from "../hooks/useVehicleRegistrationEmployeesByEmployee";
 import { useUpdateVehicleRegistrationEmployee } from "../hooks/useUpdateVehicleRegistrationEmployee";
 import { useVehicles } from "../../vehicles/hooks/useVehicles";
+import {
+  getVehicleRegistrationStatusTag,
+  isVehicleRegistrationFinalStatus,
+} from "../../../shared/utils/vehicleRegistrationStatus";
 
 import ListView, {
   type ListViewColumn,
@@ -44,15 +48,6 @@ import ListView, {
 } from "../../../components/ui/views/ListView";
 import { useSnackbar } from "notistack";
 import HeaderLabel from "../../../components/ui/HeaderLabel";
-
-const isFinalStatus = (status?: number | null) => status === 3 || status === 4;
-
-function tagForStatus(status?: number | null): ListViewStatusTag {
-  if (status === 4) return { label: "Cancelled", color: "default" };
-  if (status === 3) return { label: "Done", color: "success" };
-  if (status === 2) return { label: "In progress", color: "warning" };
-  return { label: "New", color: "default" };
-}
 
 type TaskView = {
   task: VehicleRegistrationEmployee;
@@ -251,8 +246,10 @@ const VehicleRegistrationTasksPage = () => {
         ? `VIN: ${vehicle?.vin}`
         : null;
 
-      const statusTag = tagForStatus(task.status);
-      const disabled = isFinalStatus(task.status) || updateStatus.isPending;
+      const statusTag = getVehicleRegistrationStatusTag(task.status);
+      const disabled =
+        isVehicleRegistrationFinalStatus(task.status) ||
+        updateStatus.isPending;
       const regNumber: string | null = vehicle?.registrationNumber ?? null;
 
       return {
@@ -264,7 +261,7 @@ const VehicleRegistrationTasksPage = () => {
         regNumber,
         statusTag,
         disabled,
-        isCompleted: task.status === 3,
+        isCompleted: isVehicleRegistrationFinalStatus(task.status),
       };
     });
   }, [formatDate, tasks, updateStatus.isPending, vehicleById]);

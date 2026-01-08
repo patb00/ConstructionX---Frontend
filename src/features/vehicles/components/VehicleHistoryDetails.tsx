@@ -13,6 +13,7 @@ import { useVehicleHistory } from "../hooks/useVehicleHistory";
 import { useVehicleRegistrationsByVehicle } from "../../vehicle_registrations/hooks/useVehicleRegistrationsByVehicle";
 import { useVehicleBusinessTripsByVehicle } from "../../vehicle_business_trips/hooks/useVehicleBusinessTripsByVehicle";
 import { useVehicleInsurancesByVehicle } from "../../vehicle_insurance/hooks/useVehicleInsurancesByVehicle";
+import { formatHistoryRange } from "../../../shared/utils/formatHistoryRange";
 
 import {
   HistoryPanelShell,
@@ -20,11 +21,6 @@ import {
 } from "../../../components/ui/history/HistoryPanelShell";
 import { HistoryCard } from "../../../components/ui/history/HistoryCard";
 import { HistoryAccordionSection } from "../../../components/ui/history/HistoryAccordionSection";
-
-function formatRange(from?: string | null, to?: string | null) {
-  const f = from ?? "";
-  return to ? `${f} → ${to}` : `${f} → (ongoing)`;
-}
 
 function formatDateTime(iso?: string | null) {
   if (!iso) return "";
@@ -135,7 +131,7 @@ export function VehicleHistoryDetails({ vehicleId }: { vehicleId: number }) {
                 >
                   <Chip
                     size="small"
-                    label={formatRange(it.dateFrom, it.dateTo)}
+                    label={formatHistoryRange(it.dateFrom, it.dateTo)}
                     sx={{
                       ...pillSx,
                       bgcolor: alpha(theme.palette.info.main, 0.06),
@@ -195,7 +191,7 @@ export function VehicleHistoryDetails({ vehicleId }: { vehicleId: number }) {
                 >
                   <Chip
                     size="small"
-                    label={formatRange(r.validFrom, r.validTo)}
+                    label={formatHistoryRange(r.validFrom, r.validTo)}
                     sx={{
                       ...pillSx,
                       bgcolor: alpha(theme.palette.info.main, 0.06),
@@ -341,7 +337,7 @@ export function VehicleHistoryDetails({ vehicleId }: { vehicleId: number }) {
                 >
                   <Chip
                     size="small"
-                    label={formatRange(i.validFrom, i.validTo)}
+                    label={formatHistoryRange(i.validFrom, i.validTo)}
                     sx={{
                       ...pillSx,
                       bgcolor: alpha(theme.palette.info.main, 0.06),
