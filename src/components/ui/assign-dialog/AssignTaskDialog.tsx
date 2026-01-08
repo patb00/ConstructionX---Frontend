@@ -2,28 +2,21 @@ import * as React from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import {
   alpha,
   Box,
   Button,
   Chip,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
   IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
+  Skeleton,
   Stack,
-  TextField,
   Typography,
   useTheme,
-  Skeleton,
-  CircularProgress,
-  Tooltip,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -31,16 +24,6 @@ export type AssignTaskPreviewField = {
   label: string;
   value: React.ReactNode;
   minWidth?: number;
-};
-
-export type AssignTaskDialogValues = {
-  employeeId: number | "";
-  note: string;
-};
-
-export type AssignTaskEmployeeOption = {
-  label: string;
-  value: number;
 };
 
 type Props = {
@@ -54,19 +37,23 @@ type Props = {
 
   previewTitle?: string;
   previewSubtitle?: string;
+
   dueLabel?: string;
   dueTone?: "warning" | "info" | "neutral";
+
   previewFields?: AssignTaskPreviewField[];
 
-  employeeLabel?: string;
-  employeeOptions: AssignTaskEmployeeOption[];
-  values: AssignTaskDialogValues;
-  onChange: (next: AssignTaskDialogValues) => void;
+  /** Optional right-side actions in the preview header (e.g. Edit button) */
+  headerActions?: React.ReactNode;
 
-  noteLabel?: string;
-  notePlaceholder?: string;
-  helperText?: string;
+  /** Body content: fully dynamic */
+  children?: React.ReactNode;
 
+  /** Loading/disabled states for body */
+  formLoading?: boolean;
+  formDisabled?: boolean;
+
+  /** Footer actions */
   submitText?: string;
   cancelText?: string;
   onSubmit?: () => void;
@@ -74,13 +61,6 @@ type Props = {
   submitDisabled?: boolean;
 
   submitVariant?: "primary" | "danger";
-
-  formLoading?: boolean;
-  formDisabled?: boolean;
-
-  showEdit?: boolean;
-  onEdit?: () => void;
-  isEditing?: boolean;
 };
 
 export function AssignTaskDialog({
@@ -98,14 +78,8 @@ export function AssignTaskDialog({
   dueTone = "warning",
   previewFields = [],
 
-  employeeLabel,
-  employeeOptions,
-  values,
-  onChange,
-
-  noteLabel,
-  notePlaceholder,
-  helperText,
+  headerActions,
+  children,
 
   submitText,
   cancelText,
@@ -117,28 +91,13 @@ export function AssignTaskDialog({
 
   formLoading = false,
   formDisabled,
-
-  showEdit = false,
-  isEditing = false,
-  onEdit,
 }: Props) {
   const theme = useTheme();
-
   const { t } = useTranslation();
 
-  const resolvedTitle = title ?? t("vehicleRegistrationEmployees.assign.title");
-  const resolvedPreviewTitle =
-    previewTitle ?? t("vehicleRegistrationEmployees.assign.previewTitle");
-  const resolvedPreviewSubtitle =
-    previewSubtitle ?? t("vehicleRegistrationEmployees.assign.previewSubtitle");
-  const resolvedEmployeeLabel =
-    employeeLabel ?? t("vehicleRegistrationEmployees.assign.employee");
-  const resolvedNoteLabel =
-    noteLabel ?? t("vehicleRegistrationEmployees.assign.note");
-  const resolvedNotePlaceholder =
-    notePlaceholder ?? t("vehicleRegistrationEmployees.assign.notePlaceholder");
-  const resolvedHelperText =
-    helperText ?? t("vehicleRegistrationEmployees.assign.helper");
+  const resolvedTitle = title ?? t("common.assign");
+  const resolvedPreviewTitle = previewTitle ?? t("common.details");
+  const resolvedPreviewSubtitle = previewSubtitle ?? "";
   const resolvedSubmitText = submitText ?? t("common.submit");
   const resolvedCancelText = cancelText ?? t("common.cancel");
 
@@ -164,8 +123,7 @@ export function AssignTaskDialog({
           "& .MuiChip-icon": { color: theme.palette.warning.dark },
         };
 
-  const effectiveSubmitDisabled =
-    submitDisabled ?? (values.employeeId === "" || submitting);
+  const effectiveSubmitDisabled = submitDisabled ?? submitting;
 
   const handleDialogClose = () => {
     if (submitting) return;
@@ -211,6 +169,7 @@ export function AssignTaskDialog({
         },
       }}
     >
+      {/* Header */}
       <Box
         sx={{
           display: "flex",
@@ -259,28 +218,27 @@ export function AssignTaskDialog({
           </Box>
         </Box>
 
-        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-          <IconButton
-            onClick={handleExplicitClose}
-            disabled={submitting}
-            sx={{
-              width: 32,
-              height: 32,
-              borderRadius: "999px",
-              p: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              "&:hover": { backgroundColor: "#EFF6FF" },
-            }}
-          >
-            <CloseIcon sx={{ fontSize: 16, color: "#111827" }} />
-          </IconButton>
-        </Box>
+        <IconButton
+          onClick={handleExplicitClose}
+          disabled={submitting}
+          sx={{
+            width: 32,
+            height: 32,
+            borderRadius: "999px",
+            p: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            "&:hover": { backgroundColor: "#EFF6FF" },
+          }}
+        >
+          <CloseIcon sx={{ fontSize: 16, color: "#111827" }} />
+        </IconButton>
       </Box>
 
       <DialogContent sx={{ p: 0, mb: 2 }}>
         <Stack spacing={2}>
+          {/* Preview card */}
           <Box
             sx={{
               border: "1px solid #E5E7EB",
@@ -303,13 +261,18 @@ export function AssignTaskDialog({
                 >
                   {resolvedPreviewTitle}
                 </Typography>
-                <Typography sx={{ fontSize: 12.5, color: "#6B7280", mt: 0.25 }}>
-                  {resolvedPreviewSubtitle}
-                </Typography>
+
+                {resolvedPreviewSubtitle ? (
+                  <Typography
+                    sx={{ fontSize: 12.5, color: "#6B7280", mt: 0.25 }}
+                  >
+                    {resolvedPreviewSubtitle}
+                  </Typography>
+                ) : null}
               </Box>
 
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                {dueLabel && (
+                {dueLabel ? (
                   <Chip
                     size="small"
                     icon={<EventOutlinedIcon />}
@@ -321,40 +284,14 @@ export function AssignTaskDialog({
                       ...chipStyles,
                     }}
                   />
-                )}
-                {showEdit && (
-                  <Tooltip title={t("common.edit")}>
-                    <span>
-                      <IconButton
-                        size="small"
-                        onClick={onEdit}
-                        disabled={submitting || formLoading || isEditing}
-                        sx={{
-                          width: 28,
-                          height: 28,
-                          borderRadius: 1,
-                          color: "#6B7280",
-                          border: "1px solid #E5E7EB",
-                          backgroundColor: "#ffffff",
-                          "&:hover": {
-                            backgroundColor: "#F9FAFB",
-                            color: theme.palette.primary.main,
-                          },
-                          "&.Mui-disabled": {
-                            color: "#9CA3AF",
-                            borderColor: "#E5E7EB",
-                          },
-                        }}
-                      >
-                        <EditOutlinedIcon sx={{ fontSize: 16 }} />
-                      </IconButton>
-                    </span>
-                  </Tooltip>
-                )}
+                ) : null}
+
+                {/* ✅ custom actions slot (Edit / anything) */}
+                {headerActions ? <Box>{headerActions}</Box> : null}
               </Box>
             </Box>
 
-            {previewFields.length > 0 && (
+            {previewFields.length > 0 ? (
               <>
                 <Box sx={{ height: 1, backgroundColor: "#E5E7EB", my: 1.5 }} />
                 <Stack direction="row" spacing={2} sx={{ flexWrap: "wrap" }}>
@@ -375,119 +312,29 @@ export function AssignTaskDialog({
                   ))}
                 </Stack>
               </>
-            )}
+            ) : null}
           </Box>
 
+          {/* Body card (dynamic) */}
           <Box
             sx={{
               border: "1px solid #E5E7EB",
               borderRadius: 1,
               backgroundColor: "#ffffff",
               p: 1.75,
+              opacity: formDisabled ? 0.65 : 1,
             }}
           >
-            <Stack spacing={2}>
-              <Typography
-                sx={{ fontSize: 13, fontWeight: 700, color: "#111827" }}
-              >
-                {t("vehicleRegistrationEmployees.assign.assignmentTitle")}
-              </Typography>
-
-              {formLoading ? (
-                <Box>
-                  <Skeleton variant="text" width={120} />
-                  <Skeleton variant="rounded" height={40} />
-                </Box>
-              ) : (
-                <FormControl fullWidth size="small">
-                  <InputLabel id="assign-task-employee-label">
-                    {resolvedEmployeeLabel}
-                  </InputLabel>
-                  <Select
-                    disabled={formDisabled || submitting}
-                    labelId="assign-task-employee-label"
-                    value={values.employeeId}
-                    label={resolvedEmployeeLabel}
-                    onChange={(e) =>
-                      onChange({
-                        ...values,
-                        employeeId: e.target.value as number,
-                      })
-                    }
-                    sx={{
-                      borderRadius: 1,
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#E5E7EB",
-                      },
-                      "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#D1D5DB",
-                      },
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: alpha(theme.palette.primary.main, 0.5),
-                      },
-                      backgroundColor: "#fff",
-                    }}
-                  >
-                    {employeeOptions.map((emp) => (
-                      <MenuItem key={emp.value} value={emp.value}>
-                        {emp.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-
-              {formLoading ? (
-                <Box>
-                  <Skeleton variant="text" width={140} />
-                  <Skeleton variant="rounded" height={90} />
-                </Box>
-              ) : (
-                <TextField
-                  disabled={formDisabled || submitting}
-                  size="small"
-                  label={resolvedNoteLabel}
-                  value={values.note}
-                  onChange={(e) =>
-                    onChange({ ...values, note: e.target.value })
-                  }
-                  multiline
-                  minRows={3}
-                  placeholder={resolvedNotePlaceholder}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      backgroundColor: "#fff",
-                      borderRadius: 1,
-                    },
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#E5E7EB",
-                    },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#D1D5DB",
-                    },
-                    "& .MuiInputLabel-root": { color: "#6B7280" },
-                  }}
-                />
-              )}
-
-              {resolvedHelperText && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    p: 1.25,
-                    borderRadius: 1,
-                    backgroundColor: alpha(theme.palette.info.main, 0.08),
-                    border: `1px solid ${alpha(theme.palette.info.main, 0.14)}`,
-                  }}
-                >
-                  <Typography sx={{ fontSize: 12.5, color: "#111827" }}>
-                    {resolvedHelperText}
-                  </Typography>
-                </Box>
-              )}
-            </Stack>
+            {formLoading ? (
+              <Stack spacing={1.25}>
+                <Skeleton variant="text" width={160} />
+                <Skeleton variant="rounded" height={40} />
+                <Skeleton variant="text" width={120} />
+                <Skeleton variant="rounded" height={90} />
+              </Stack>
+            ) : (
+              children ?? null
+            )}
           </Box>
         </Stack>
       </DialogContent>
@@ -498,6 +345,7 @@ export function AssignTaskDialog({
           mt: 1,
           display: "flex",
           justifyContent: "flex-end",
+          gap: 1,
         }}
       >
         <Button
