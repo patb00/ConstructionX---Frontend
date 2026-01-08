@@ -13,8 +13,7 @@ import type { VehicleBusinessTrip } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
 
-import { useAuthStore } from "../../auth/store/useAuthStore";
-import { useEmployees } from "../../administration/employees/hooks/useEmployees";
+import { useCurrentEmployeeContext } from "../../auth/hooks/useCurrentEmployeeContext";
 
 import { useVehicleBusinessTrips } from "../hooks/useVehicleBusinessTrips";
 
@@ -28,15 +27,8 @@ export default function VehicleBusinessTripsTable() {
   const navigate = useNavigate();
   const can = useCan();
 
-  const { userId, role } = useAuthStore();
-  const isAdmin = role === "Admin";
-
-  const { employeeRows = [] } = useEmployees();
-  const myEmployeeId = useMemo<number | null>(() => {
-    if (!userId) return null;
-    const me = employeeRows.find((e: any) => e.applicationUserId === userId);
-    return me?.id ?? null;
-  }, [employeeRows, userId]);
+  const { isAdmin, employeeId } = useCurrentEmployeeContext();
+  const myEmployeeId = employeeId;
 
   const adminTrips = useVehicleBusinessTrips();
   const employeeTrips = useVehicleBusinessTripsByEmployee(myEmployeeId ?? 0);

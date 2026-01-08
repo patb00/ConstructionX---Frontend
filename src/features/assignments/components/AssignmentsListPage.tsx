@@ -27,8 +27,8 @@ import type {
   AssignedVehicle,
 } from "../../administration/employees";
 
-import { useAuthStore } from "../../auth/store/useAuthStore";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
+import { useCurrentEmployeeContext } from "../../auth/hooks/useCurrentEmployeeContext";
 import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 
@@ -70,13 +70,8 @@ const AssignmentsListPage = () => {
   const { vehicleRows, isLoading: isLoadingVehicles } = useAssignedVehicles();
   const { toolRows, isLoading: isLoadingTools } = useAssignedTools();
 
-  const { userId, role } = useAuthStore();
-
-  const myEmployeeId = useMemo<number | null>(() => {
-    if (!userId) return null;
-    const me = employeeRows.find((e: any) => e.applicationUserId === userId);
-    return me?.id ?? null;
-  }, [employeeRows, userId]);
+  const { isAdmin, employeeId } = useCurrentEmployeeContext();
+  const myEmployeeId = employeeId;
 
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | "">("");
   const [weekStart, setWeekStart] = useState<Date>(() =>
@@ -84,7 +79,7 @@ const AssignmentsListPage = () => {
   );
 
   const effectiveEmployeeId: number | null =
-    role === "Admin"
+    isAdmin
       ? typeof selectedEmployeeId === "number"
         ? selectedEmployeeId
         : null
@@ -122,8 +117,8 @@ const AssignmentsListPage = () => {
       }
     : { construction: 0, vehicles: 0, tools: 0 };
 
-  const canShowAll = role === "Admin" && effectiveEmployeeId == null;
-  const shouldShowNone = role !== "Admin" && effectiveEmployeeId == null;
+  const canShowAll = isAdmin && effectiveEmployeeId == null;
+  const shouldShowNone = !isAdmin && effectiveEmployeeId == null;
 
   const constructionAssignments = useMemo<AssignedConstructionSite[]>(() => {
     if (shouldShowNone) return [];
@@ -362,7 +357,7 @@ const AssignmentsListPage = () => {
         </Box>
       </Box>
 
-      {role === "Admin" && (
+      {isAdmin && (
         <>
           <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
             <FormControl size="small" sx={{ minWidth: 280 }} variant="outlined">
