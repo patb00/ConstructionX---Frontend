@@ -35,9 +35,7 @@
     "vehicleBusinessTrips": "Službena putovanja ",
     "tasks": "Zadatci"
   },
-  "common": {
-    "comingSoon": "Ovaj dio stiže uskoro."
-  },
+
   "constructionSites": {
     "detail": {
       "title": "Pregled gradilišta",
@@ -636,7 +634,11 @@
       "quantity": "Količina",
       "unitPrice": "Jedinična cijena",
       "articleCode": "Šifra artikla",
-      "barcode": "Barkod"
+      "barcode": "Barkod",
+
+      "tool": "Alat",
+      "serviceDate": "Datum servisa",
+      "serviceCost": "Trošak servisa"
     }
   },
   "tenants": {
@@ -2018,6 +2020,49 @@
     },
     "rowActions": {
       "assign": "Dodijeli zadatak"
+    }
+  },
+  "toolRepairs": {
+    "list": {
+      "title": "Servisi alata",
+      "error": "Greška pri učitavanju servisa alata"
+    },
+
+    "create": {
+      "title": "Dodaj servis alata",
+      "back": "Natrag"
+    },
+
+    "edit": {
+      "title": "Uredi servis alata",
+      "back": "Natrag",
+      "invalidUrlId": "Neispravan ID servisa",
+      "loadError": "Greška pri učitavanju servisa alata"
+    },
+
+    "actions": "Radnje",
+
+    "delete": {
+      "title": "Obriši servis alata",
+      "description": "Jeste li sigurni da želite obrisati ovaj servis alata?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    },
+    "table": {
+      "detailView": "Pregled",
+      "edit": "Uredi",
+      "delete": "Obriši"
+    },
+
+    "form": {
+      "submit": "Spremi",
+      "field": {
+        "toolId": "Alat",
+        "repairDate": "Datum servisa",
+        "cost": "Trošak servisa",
+        "condition": "Stanje",
+        "description": "Opis"
+      }
     }
   }
 }

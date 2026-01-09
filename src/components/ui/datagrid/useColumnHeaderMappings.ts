@@ -400,5 +400,10 @@ export default function useColumnHeaderMappings(): MapItem[] {
     { original: "unitPrice", translated: t("common.columns.unitPrice") },
     { original: "articleCode", translated: t("common.columns.articleCode") },
     { original: "barcode", translated: t("common.columns.barcode") },
+
+    // TOOL REPAIRS / TOOL SERVICES
+    { original: "ToolId", translated: t("common.columns.tool") },
+    { original: "RepairDate", translated: t("common.columns.serviceDate") },
+    { original: "Cost", translated: t("common.columns.serviceCost") },
   ];
 }

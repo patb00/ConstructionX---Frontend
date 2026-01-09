@@ -35,9 +35,7 @@
     "vehicleBusinessTrips": "Vehicle Business Trips",
     "tasks": "Tasks"
   },
-  "common": {
-    "comingSoon": "This section is coming soon."
-  },
+
   "constructionSites": {
     "list": {
       "title": "Construction Sites",
@@ -637,7 +635,11 @@
       "quantity": "Quantity",
       "unitPrice": "Unit price",
       "articleCode": "Article code",
-      "barcode": "Barcode"
+      "barcode": "Barcode",
+
+      "tool": "Tool",
+      "serviceDate": "Service Date",
+      "serviceCost": "Service Cost"
     }
   },
   "tenants": {
@@ -1975,6 +1977,50 @@
     },
     "rowActions": {
       "assign": "Assign task"
+    }
+  },
+
+  "toolRepairs": {
+    "list": {
+      "title": "Tool Repairs",
+      "error": "Failed to load tool repairs"
+    },
+
+    "create": {
+      "title": "Add Tool Repair",
+      "back": "Back"
+    },
+
+    "edit": {
+      "title": "Edit Tool Repair",
+      "back": "Back",
+      "invalidUrlId": "Invalid repair ID",
+      "loadError": "Failed to load tool repair"
+    },
+
+    "actions": "Actions",
+
+    "delete": {
+      "title": "Delete Tool Repair",
+      "description": "Are you sure you want to delete this tool repair?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+
+    "table": {
+      "detailView": "View",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "form": {
+      "submit": "Save",
+      "field": {
+        "toolId": "Tool",
+        "repairDate": "Repair Date",
+        "cost": "Repair Cost",
+        "condition": "Condition",
+        "description": "Description"
+      }
     }
   }
 }
