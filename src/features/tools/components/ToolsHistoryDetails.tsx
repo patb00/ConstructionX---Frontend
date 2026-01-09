@@ -12,6 +12,7 @@ import {
 } from "../../../components/ui/history/HistoryPanelShell";
 import { HistoryCard } from "../../../components/ui/history/HistoryCard";
 import { HistoryAccordionSection } from "../../../components/ui/history/HistoryAccordionSection";
+import { useToolRepairsByTool } from "../../tools_repairs/hooks/useToolRepairByTool";
 
 function formatRange(
   from?: string | null,
@@ -35,6 +36,8 @@ export function ToolHistoryDetails({ toolId }: { toolId: number }) {
     isFetching,
     error,
   } = useToolHistory(toolId);
+
+  const repairsQuery = useToolRepairsByTool(toolId);
 
   const [accumulated, setAccumulated] = useState<ToolHistoryItem[]>([]);
 
@@ -71,6 +74,9 @@ export function ToolHistoryDetails({ toolId }: { toolId: number }) {
 
   const canLoadMore = accumulated.length < (total ?? 0);
   const rows = useMemo(() => accumulated ?? [], [accumulated]);
+
+  const repPage = repairsQuery.data;
+  const repItems = repPage?.items ?? [];
 
   const isEmpty = !isLoading && !error && (total ?? rows.length) === 0;
 
@@ -182,6 +188,60 @@ export function ToolHistoryDetails({ toolId }: { toolId: number }) {
           </Box>
 
           {isEmpty ? null : null}
+        </Stack>
+      </HistoryAccordionSection>
+      <HistoryAccordionSection
+        icon={<BuildIcon sx={{ fontSize: 18 }} />}
+        label={t("history.tool.repairs")}
+        count={repPage?.total ?? repItems.length}
+        isLoading={repairsQuery.isLoading}
+        isError={!!repairsQuery.error}
+        errorText={t("history.common.loadError")}
+        emptyText={t("history.tool.emptyRepairs")}
+      >
+        <Stack spacing={1}>
+          {repItems.map((r: any) => (
+            <HistoryCard key={String(r.id)}>
+              <Box sx={{ minWidth: 0 }}>
+                <Typography variant="body2" fontWeight={600} noWrap>
+                  {r.repairDate || t("history.tool.repairFallback")}
+                </Typography>
+
+                <Typography variant="caption" color="text.secondary" noWrap>
+                  {[r.condition].filter(Boolean).join(" · ") || "—"}
+                </Typography>
+
+                <Stack
+                  direction="row"
+                  spacing={0.75}
+                  sx={{ mt: 0.75, flexWrap: "wrap", rowGap: 0.5 }}
+                  alignItems="center"
+                >
+                  {typeof r.cost === "number" && (
+                    <Chip
+                      size="small"
+                      label={`${r.cost}`}
+                      sx={{
+                        ...pillSx,
+                        bgcolor: alpha(theme.palette.success.main, 0.06),
+                      }}
+                    />
+                  )}
+
+                  {r.description && (
+                    <Chip
+                      size="small"
+                      label={r.description}
+                      sx={{
+                        ...pillSx,
+                        bgcolor: alpha(theme.palette.secondary.main, 0.06),
+                      }}
+                    />
+                  )}
+                </Stack>
+              </Box>
+            </HistoryCard>
+          ))}
         </Stack>
       </HistoryAccordionSection>
     </HistoryPanelShell>

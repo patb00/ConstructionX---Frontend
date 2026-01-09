@@ -7,7 +7,7 @@ import FactCheckIcon from "@mui/icons-material/FactCheck";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import { useTranslation } from "react-i18next";
-
+import BuildIcon from "@mui/icons-material/Build";
 import type { VehicleHistoryItem } from "..";
 import { useVehicleHistory } from "../hooks/useVehicleHistory";
 import { useVehicleRegistrationsByVehicle } from "../../vehicle_registrations/hooks/useVehicleRegistrationsByVehicle";
@@ -20,6 +20,7 @@ import {
 } from "../../../components/ui/history/HistoryPanelShell";
 import { HistoryCard } from "../../../components/ui/history/HistoryCard";
 import { HistoryAccordionSection } from "../../../components/ui/history/HistoryAccordionSection";
+import { useVehicleRepairsByVehicle } from "../../vehicles_repairs/hooks/useVehicleRepairsByVehicle";
 
 function formatRange(from?: string | null, to?: string | null) {
   const f = from ?? "";
@@ -48,6 +49,7 @@ export function VehicleHistoryDetails({ vehicleId }: { vehicleId: number }) {
   const registrationsQuery = useVehicleRegistrationsByVehicle(vehicleId);
   const businessTripsQuery = useVehicleBusinessTripsByVehicle(vehicleId);
   const insurancesQuery = useVehicleInsurancesByVehicle(vehicleId);
+  const repairsQuery = useVehicleRepairsByVehicle(vehicleId);
 
   const [accumulated, setAccumulated] = useState<VehicleHistoryItem[]>([]);
 
@@ -88,6 +90,8 @@ export function VehicleHistoryDetails({ vehicleId }: { vehicleId: number }) {
   const regs = registrationsQuery.data ?? [];
   const trips = businessTripsQuery.data ?? [];
   const ins = insurancesQuery.data ?? [];
+  const repPage = repairsQuery.data;
+  const repItems = repPage?.items ?? [];
 
   return (
     <HistoryPanelShell
@@ -360,6 +364,61 @@ export function VehicleHistoryDetails({ vehicleId }: { vehicleId: number }) {
                       }}
                     />
                   ) : null}
+                </Stack>
+              </Box>
+            </HistoryCard>
+          ))}
+        </Stack>
+      </HistoryAccordionSection>
+
+      <HistoryAccordionSection
+        icon={<BuildIcon sx={{ fontSize: 18 }} />}
+        label={t("history.vehicle.repairs")}
+        count={repPage?.total ?? repItems.length}
+        isLoading={repairsQuery.isLoading}
+        isError={!!repairsQuery.error}
+        errorText={t("history.common.loadError")}
+        emptyText={t("history.vehicle.emptyRepairs")}
+      >
+        <Stack spacing={1}>
+          {repItems.map((r: any) => (
+            <HistoryCard key={String(r.id)}>
+              <Box sx={{ minWidth: 0 }}>
+                <Typography variant="body2" fontWeight={600} noWrap>
+                  {r.repairDate || t("history.vehicle.repairFallback")}
+                </Typography>
+
+                <Typography variant="caption" color="text.secondary" noWrap>
+                  {[r.condition].filter(Boolean).join(" · ") || "—"}
+                </Typography>
+
+                <Stack
+                  direction="row"
+                  spacing={0.75}
+                  sx={{ mt: 0.75, flexWrap: "wrap", rowGap: 0.5 }}
+                  alignItems="center"
+                >
+                  {typeof r.cost === "number" && (
+                    <Chip
+                      size="small"
+                      label={`${r.cost}`}
+                      sx={{
+                        ...pillSx,
+                        bgcolor: alpha(theme.palette.success.main, 0.06),
+                      }}
+                    />
+                  )}
+
+                  {r.description && (
+                    <Chip
+                      size="small"
+                      label={r.description}
+                      sx={{
+                        ...pillSx,
+                        bgcolor: alpha(theme.palette.secondary.main, 0.06),
+                      }}
+                    />
+                  )}
                 </Stack>
               </Box>
             </HistoryCard>

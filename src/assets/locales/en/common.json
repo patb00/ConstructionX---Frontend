@@ -1860,7 +1860,11 @@
     "tool": {
       "title": "Tool history",
       "assignments": "Assignments",
-      "emptyAssignments": "No assignments."
+      "emptyAssignments": "No assignments.",
+
+      "repairs": "Repairs",
+      "emptyRepairs": "No repair records.",
+      "repairFallback": "Tool repair"
     },
     "condo": {
       "title": "Condo history",
@@ -1886,7 +1890,11 @@
 
       "insurance": "Insurance",
       "emptyInsurance": "No insurance records.",
-      "insuranceFallback": "Insurance"
+      "insuranceFallback": "Insurance",
+
+      "repairs": "Repairs",
+      "emptyRepairs": "No repairs.",
+      "repairFallback": "Repair"
     },
     "common": {
       "assigned": "Assigned",

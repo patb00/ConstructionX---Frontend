@@ -1865,7 +1865,11 @@
     "tool": {
       "title": "Werkzeughistorie",
       "assignments": "Zuweisungen",
-      "emptyAssignments": "Keine Zuweisungen."
+      "emptyAssignments": "Keine Zuweisungen.",
+
+      "repairs": "Reparaturen",
+      "emptyRepairs": "Keine Reparatureinträge.",
+      "repairFallback": "Werkzeugreparatur"
     },
     "condo": {
       "title": "Wohnungs­historie",
@@ -1890,7 +1894,11 @@
 
       "insurance": "Versicherung",
       "emptyInsurance": "Keine Versicherungen.",
-      "insuranceFallback": "Versicherung"
+      "insuranceFallback": "Versicherung",
+
+      "repairs": "Reparaturen",
+      "emptyRepairs": "Keine Reparaturen.",
+      "repairFallback": "Reparatur"
     },
 
     "common": {

@@ -1904,7 +1904,11 @@
     "tool": {
       "title": "Povijest alata",
       "assignments": "Dodjele",
-      "emptyAssignments": "Nema dodjela."
+      "emptyAssignments": "Nema dodjela.",
+
+      "repairs": "Servisi",
+      "emptyRepairs": "Nema servisnih zapisa.",
+      "repairFallback": "Servis alata"
     },
     "condo": {
       "title": "Povijest stana",
@@ -1930,7 +1934,11 @@
 
       "insurance": "Osiguranje",
       "emptyInsurance": "Nema osiguranja.",
-      "insuranceFallback": "Osiguranje"
+      "insuranceFallback": "Osiguranje",
+
+      "repairs": "Popravci",
+      "emptyRepairs": "Nema popravaka.",
+      "repairFallback": "Popravak"
     },
     "common": {
       "assigned": "Dodijeljeno",
