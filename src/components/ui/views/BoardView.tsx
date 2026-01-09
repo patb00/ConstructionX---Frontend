@@ -14,13 +14,9 @@ export type BoardColumnConfig<T = any> = {
   title: React.ReactNode;
   loading?: boolean;
   rows: T[];
-
   count?: number;
-
   headerAction?: React.ReactNode;
-
   renderRow: (row: T) => React.ReactNode;
-
   emptyContent?: React.ReactNode;
 };
 

@@ -55,18 +55,14 @@ export type ListViewSection<T> = {
 export type ListViewColumn<T> = {
   key: string;
   header: React.ReactNode;
-
   width?: number | string;
   align?: "left" | "center" | "right";
   padding?: "normal" | "checkbox" | "none";
-
   headSx?: SxProps<Theme>;
   cellSx?: SxProps<Theme>;
   render?: (row: T) => React.ReactNode;
-
   hidden?: boolean;
   hideBelow?: "sm" | "md" | "lg";
-
   showBelow?: "sm" | "md" | "lg";
 };
 
@@ -78,16 +74,12 @@ export type ListViewProps<T> = {
   renderRow?: (row: T) => React.ReactNode;
   columns: Array<ListViewColumn<T>>;
   renderSectionEndAdornment?: (section: ListViewSection<T>) => React.ReactNode;
-
   enableHorizontalScroll?: boolean;
-
   tableMinWidth?: number;
-
   sx?: SxProps<Theme>;
   sectionHeaderSx?: SxProps<Theme>;
   tableSx?: SxProps<Theme>;
   containerSx?: SxProps<Theme>;
-
   loading?: boolean;
   loadingText?: React.ReactNode;
 };
