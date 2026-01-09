@@ -639,7 +639,7 @@
 
       "tool": "Alat",
       "serviceDate": "Datum servisa",
-      "serviceCost": "Trošak servisa"
+      "serviceCost": "Trošak servisa",
       "purposeOfTrip": "Svrha putovanja",
       "approvedByEmployeeUserId": "Odobrio (ID korisnika)",
       "approvedDate": "Datum odobrenja",

@@ -640,7 +640,7 @@
 
       "tool": "Tool",
       "serviceDate": "Service Date",
-      "serviceCost": "Service Cost"
+      "serviceCost": "Service Cost",
       "purposeOfTrip": "Purpose of trip",
       "approvedByEmployeeUserId": "Approved by (user ID)",
       "approvedDate": "Approval date",

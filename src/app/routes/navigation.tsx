@@ -15,6 +15,7 @@ import {
   FaTags,
   FaStethoscope,
   FaInbox,
+  FaWrench,
 } from "react-icons/fa";
 import { IoIosBusiness } from "react-icons/io";
 
@@ -190,6 +191,14 @@ export const NAV_ITEMS: NavItem[] = [
     labelKey: "nav.toolCategories",
     to: "/app/tool-categories",
     icon: <MdCategory />,
+    section: "SYSTEM",
+    category: "TOOLS",
+    guard: { permission: "Permission.ToolCategories.Read" },
+  },
+  {
+    labelKey: "nav.toolRepairs",
+    to: "/app/tool-repairs",
+    icon: <FaWrench />,
     section: "SYSTEM",
     category: "TOOLS",
     guard: { permission: "Permission.ToolCategories.Read" },

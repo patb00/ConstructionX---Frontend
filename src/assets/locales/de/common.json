@@ -645,7 +645,7 @@
 
       "tool": "Werkzeug",
       "serviceDate": "Servicedatum",
-      "serviceCost": "Servicekosten"
+      "serviceCost": "Servicekosten",
       "purposeOfTrip": "Zweck der Fahrt",
       "approvedByEmployeeUserId": "Genehmigt von (Benutzer-ID)",
       "approvedDate": "Genehmigungsdatum",
