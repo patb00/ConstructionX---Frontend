@@ -27,8 +27,8 @@ import type {
   AssignedVehicle,
 } from "../../administration/employees";
 
-import { useAuthStore } from "../../auth/store/useAuthStore";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
+import { useCurrentEmployeeContext } from "../../auth/hooks/useCurrentEmployeeContext";
 import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 
@@ -70,29 +70,16 @@ const AssignmentsListPage = () => {
   const { vehicleRows, isLoading: isLoadingVehicles } = useAssignedVehicles();
   const { toolRows, isLoading: isLoadingTools } = useAssignedTools();
 
-  const { userId, role } = useAuthStore();
-
-  /**
-   * IMPORTANT:
-   * JWT userId is a UUID string (e.g. "a9b50b3b-...").
-   * Assignments are keyed by numeric employeeId/responsibleEmployeeId.
-   * The bridge is employee.applicationUserId === JWT userId.
-   */
-  const myEmployeeId = useMemo<number | null>(() => {
-    if (!userId) return null;
-    const me = employeeRows.find((e: any) => e.applicationUserId === userId);
-    return me?.id ?? null;
-  }, [employeeRows, userId]);
+  const { isAdmin, employeeId } = useCurrentEmployeeContext();
+  const myEmployeeId = employeeId;
 
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | "">("");
   const [weekStart, setWeekStart] = useState<Date>(() =>
     startOfWeekMonday(new Date())
   );
 
-  // Admin: can choose employee or "all" (null)
-  // Basic: must be locked to their own employeeId (and if missing, show none)
   const effectiveEmployeeId: number | null =
-    role === "Admin"
+    isAdmin
       ? typeof selectedEmployeeId === "number"
         ? selectedEmployeeId
         : null
@@ -130,11 +117,8 @@ const AssignmentsListPage = () => {
       }
     : { construction: 0, vehicles: 0, tools: 0 };
 
-  // Safer behavior:
-  // - Admin with "all": show all rows
-  // - Basic with missing mapping: show nothing (avoid leaking all assignments)
-  const canShowAll = role === "Admin" && effectiveEmployeeId == null;
-  const shouldShowNone = role !== "Admin" && effectiveEmployeeId == null;
+  const canShowAll = isAdmin && effectiveEmployeeId == null;
+  const shouldShowNone = !isAdmin && effectiveEmployeeId == null;
 
   const constructionAssignments = useMemo<AssignedConstructionSite[]>(() => {
     if (shouldShowNone) return [];
@@ -336,11 +320,6 @@ const AssignmentsListPage = () => {
     t,
   ]);
 
-  console.log("userId", userId);
-  console.log("role", role);
-  console.log("myEmployeeId", myEmployeeId);
-  console.log("effectiveEmployeeId", effectiveEmployeeId);
-
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
       <Box
@@ -378,7 +357,7 @@ const AssignmentsListPage = () => {
         </Box>
       </Box>
 
-      {role === "Admin" && (
+      {isAdmin && (
         <>
           <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
             <FormControl size="small" sx={{ minWidth: 280 }} variant="outlined">

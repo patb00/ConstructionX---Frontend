@@ -315,6 +315,26 @@ export default function useColumnHeaderMappings(): MapItem[] {
       original: "Note",
       translated: t("common.columns.note"),
     },
+    {
+      original: "PurposeOfTrip",
+      translated: t("common.columns.purposeOfTrip"),
+    },
+    {
+      original: "ApprovedByEmployeeUserId",
+      translated: t("common.columns.approvedByEmployeeUserId"),
+    },
+    {
+      original: "ApprovedDate",
+      translated: t("common.columns.approvedDate"),
+    },
+    {
+      original: "RejectReason",
+      translated: t("common.columns.rejectReason"),
+    },
+    {
+      original: "TravelledKilometers",
+      translated: t("common.columns.travelledKilometers"),
+    },
 
     // CERTIFICATION TYPES
     {

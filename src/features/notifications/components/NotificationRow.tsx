@@ -56,7 +56,6 @@ export function NotificationRow({
       </ListItemIcon>
 
       <ListItemText
-        // ✅ important: allow it to shrink and wrap inside flex row
         sx={{ minWidth: 0 }}
         secondaryTypographyProps={{ component: "div" }}
         primary={

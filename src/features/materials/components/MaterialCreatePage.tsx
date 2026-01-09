@@ -14,7 +14,6 @@ export default function MaterialCreatePage() {
 
   const handleSubmit = async (values: any) => {
     await addMaterial(values);
-    navigate("/app/materials");
   };
 
   return (

@@ -41,9 +41,7 @@ export default function CertificationTypeEditPage() {
         ? certificationType.id
         : certificationTypeId;
 
-    updateCertificationType({ id: idForUpdate, ...values } as any, {
-      onSuccess: () => navigate("/app/certificationTypes"),
-    });
+    updateCertificationType({ id: idForUpdate, ...values } as any);
   };
 
   if (error) {

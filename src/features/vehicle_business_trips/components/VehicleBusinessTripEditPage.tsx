@@ -68,7 +68,7 @@ export default function VehicleBusinessTripEditPage() {
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           busy={busy}
-          showStatusField
+          showEmployeeField={false}
         />
       </Paper>
     </Stack>

@@ -32,11 +32,7 @@ export default function CertificationEditPage() {
   const handleSubmit = (values: Omit<UpdateCertificationRequest, "id">) => {
     const payload = certificationToUpdatePayload(certificationId, values);
 
-    updateCertification(payload as any, {
-      onSuccess: () => {
-        navigate("/app/certifications");
-      },
-    });
+    updateCertification(payload as any);
   };
 
   const busy = isLoading || updating;

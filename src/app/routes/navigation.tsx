@@ -1,26 +1,35 @@
 import {
   FaTachometerAlt,
   FaKey,
-  FaUserShield,
   FaIdBadge,
   FaBriefcase,
   FaTools,
   FaBoxes,
   FaCarSide,
-  FaTasks,
-  FaRegFileAlt,
   FaListUl,
-  FaHome,
   FaBell,
-  FaWrench,
+  FaClipboardList,
+  FaFileInvoice,
+  FaShieldAlt,
+  FaUserCog,
+  FaTags,
+  FaStethoscope,
+  FaInbox,
 } from "react-icons/fa";
 import { IoIosBusiness } from "react-icons/io";
-import { HiUsers } from "react-icons/hi";
+
 import { LuConstruction } from "react-icons/lu";
-import { MdCategory, MdMedicalServices } from "react-icons/md";
+import { MdCategory, MdVerified } from "react-icons/md";
+import { BiTrip, BiIdCard, BiBuildingHouse } from "react-icons/bi";
+import { RiFileList3Line } from "react-icons/ri";
 import type { ReactNode } from "react";
 
-export type NavCategory = "CODEBOOK" | "CONSTRUCTION" | "IDENTITY" | "VEHICLES";
+export type NavCategory =
+  | "CODEBOOK"
+  | "CONSTRUCTION"
+  | "IDENTITY"
+  | "VEHICLES"
+  | "TOOLS";
 
 export type ModuleId =
   | "dashboard"
@@ -60,7 +69,6 @@ export type NavItem = {
 };
 
 export const NAV_ITEMS: NavItem[] = [
-  // CONSTRUCTION group
   {
     labelKey: "nav.dashboard",
     to: "/app/dashboard",
@@ -71,7 +79,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     labelKey: "nav.assignments",
     to: "/app/assignments",
-    icon: <FaTasks />,
+    icon: <FaClipboardList />,
     section: "MANAGEMENT",
     category: "CONSTRUCTION",
   },
@@ -86,7 +94,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     labelKey: "nav.reports",
     to: "/app/izvjestaji",
-    icon: <FaRegFileAlt />,
+    icon: <RiFileList3Line />,
     section: "MANAGEMENT",
     category: "CONSTRUCTION",
   },
@@ -97,8 +105,14 @@ export const NAV_ITEMS: NavItem[] = [
     section: "MANAGEMENT",
     category: "CONSTRUCTION",
   },
+  {
+    labelKey: "nav.tasks",
+    to: "/app/tasks",
+    icon: <FaInbox />,
+    section: "MANAGEMENT",
+    category: "CONSTRUCTION",
+  },
 
-  // CODEBOOK group
   {
     labelKey: "nav.companies",
     to: "/app/administration/companies",
@@ -110,7 +124,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     labelKey: "nav.medicalExaminations",
     to: "/app/medicalExaminations",
-    icon: <MdMedicalServices />,
+    icon: <FaStethoscope />,
     section: "SYSTEM",
     category: "CODEBOOK",
     guard: { permission: "Permission.MedicalExaminations.Read" },
@@ -126,7 +140,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     labelKey: "nav.certifications",
     to: "/app/certifications",
-    icon: <MdMedicalServices />,
+    icon: <MdVerified />,
     section: "SYSTEM",
     category: "CODEBOOK",
     guard: { permission: "Permission.Certifications.Read" },
@@ -134,7 +148,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     labelKey: "nav.certificationTypes",
     to: "/app/certificationTypes",
-    icon: <FaListUl />,
+    icon: <FaTags />,
     section: "SYSTEM",
     category: "CODEBOOK",
     guard: { permission: "Permission.CertificationTypes.Read" },
@@ -156,20 +170,29 @@ export const NAV_ITEMS: NavItem[] = [
     guard: { permission: "Permission.JobPositions.Read" },
   },
   {
+    labelKey: "nav.condos",
+    to: "/app/condos",
+    icon: <BiBuildingHouse />,
+    section: "SYSTEM",
+    category: "CODEBOOK",
+    guard: { permission: "Permission.Condos.Read" },
+  },
+
+  {
     labelKey: "nav.tools",
     to: "/app/tools",
     icon: <FaTools />,
     section: "SYSTEM",
-    category: "CODEBOOK",
+    category: "TOOLS",
     guard: { permission: "Permission.Tools.Read" },
   },
   {
-    labelKey: "nav.toolRepairs",
-    to: "/app/tool-repairs",
-    icon: <FaWrench />,
+    labelKey: "nav.toolCategories",
+    to: "/app/tool-categories",
+    icon: <MdCategory />,
     section: "SYSTEM",
-    category: "CODEBOOK",
-    guard: { permission: "Permission.Tools.Read" },
+    category: "TOOLS",
+    guard: { permission: "Permission.ToolCategories.Read" },
   },
   {
     labelKey: "nav.materials",
@@ -179,14 +202,7 @@ export const NAV_ITEMS: NavItem[] = [
     category: "CODEBOOK",
     guard: { permission: "Permission.Materials.Read" },
   },
-  {
-    labelKey: "nav.toolCategories",
-    to: "/app/tool-categories",
-    icon: <MdCategory />,
-    section: "SYSTEM",
-    category: "CODEBOOK",
-    guard: { permission: "Permission.ToolCategories.Read" },
-  },
+
   {
     labelKey: "nav.vehicles",
     to: "/app/vehicles",
@@ -206,23 +222,16 @@ export const NAV_ITEMS: NavItem[] = [
   {
     labelKey: "nav.vehicleRegistrations",
     to: "/app/vehicle-registrations",
-    icon: <FaRegFileAlt />,
+    icon: <BiIdCard />,
     section: "SYSTEM",
     category: "VEHICLES",
     guard: { permission: "Permission.Vehicles.Read" },
   },
-  {
-    labelKey: "nav.tasks",
-    to: "/app/tasks",
-    icon: <FaTasks />,
-    section: "SYSTEM",
-    category: "VEHICLES",
-    guard: { permission: "Permission.Vehicles.Read" },
-  },
+
   {
     labelKey: "nav.vehicleInsurances",
     to: "/app/vehicle-insurances",
-    icon: <FaRegFileAlt />,
+    icon: <FaFileInvoice />,
     section: "SYSTEM",
     category: "VEHICLES",
     guard: { permission: "Permission.Vehicles.Read" },
@@ -230,21 +239,12 @@ export const NAV_ITEMS: NavItem[] = [
   {
     labelKey: "nav.vehicleBusinessTrips",
     to: "/app/vehicle-business-trips",
-    icon: <FaTasks />,
+    icon: <BiTrip />,
     section: "SYSTEM",
     category: "VEHICLES",
     guard: { permission: "Permission.Vehicles.Read" },
   },
-  {
-    labelKey: "nav.condos",
-    to: "/app/condos",
-    icon: <FaHome />,
-    section: "SYSTEM",
-    category: "CODEBOOK",
-    guard: { permission: "Permission.Condos.Read" },
-  },
 
-  // IDENTITY group
   {
     labelKey: "nav.tenants",
     to: "/app/administration/tenants",
@@ -256,7 +256,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     labelKey: "nav.roles",
     to: "/app/administration/roles",
-    icon: <FaUserShield />,
+    icon: <FaShieldAlt />,
     section: "SYSTEM",
     category: "IDENTITY",
     guard: { permission: "Permission.Roles.Read" },
@@ -264,7 +264,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     labelKey: "nav.users",
     to: "/app/administration/users",
-    icon: <HiUsers />,
+    icon: <FaUserCog />,
     section: "SYSTEM",
     category: "IDENTITY",
     guard: { permission: "Permission.Users.Read" },

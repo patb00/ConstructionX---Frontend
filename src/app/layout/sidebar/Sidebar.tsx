@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { SidebarBrand } from "./SidebarBrand";
 import { SidebarSection } from "./SidebarSection";
 import { canSeeItem } from "./SidebarGuard";
-import { FaCarSide, FaListUl, FaUserShield } from "react-icons/fa";
+import { FaCarSide, FaListUl, FaUserShield, FaTools } from "react-icons/fa";
 import { LuConstruction } from "react-icons/lu";
 import { useAuthStore } from "../../../features/auth/store/useAuthStore";
 import { NAV_ITEMS, type NavItem } from "../../routes/navigation";
@@ -37,24 +37,14 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
     (i) => i.section === "SYSTEM" && canSee(i.guard)
   );
 
-  const MANAGEMENT_GRADILISTA = MANAGEMENT.filter(
+  const MANAGEMENT_CONSTRUCTION = MANAGEMENT.filter(
     (i) => i.category === "CONSTRUCTION"
-  );
-  const MANAGEMENT_OSTALO = MANAGEMENT.filter(
-    (i) => i.category !== "CONSTRUCTION"
   );
 
   const SYSTEM_VEHICLES = SYSTEM.filter((i) => i.category === "VEHICLES");
-
-  const SYSTEM_SIFRARNIK = SYSTEM.filter((i) => i.category === "CODEBOOK");
-  const SYSTEM_IDENTITET = SYSTEM.filter((i) => i.category === "IDENTITY");
-  const SYSTEM_OSTALO = SYSTEM.filter(
-    (i) =>
-      !i.category ||
-      (i.category !== "CODEBOOK" &&
-        i.category !== "IDENTITY" &&
-        i.category !== "VEHICLES")
-  );
+  const SYSTEM_CODEBOOK = SYSTEM.filter((i) => i.category === "CODEBOOK");
+  const SYSTEM_TOOLS = SYSTEM.filter((i) => i.category === "TOOLS");
+  const SYSTEM_IDENTITY = SYSTEM.filter((i) => i.category === "IDENTITY");
 
   const ManagementContent = (
     <SidebarSection
@@ -63,10 +53,10 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
         {
           title: t("sidebar.constructionGroup"),
           icon: <LuConstruction />,
-          items: MANAGEMENT_GRADILISTA,
+          items: MANAGEMENT_CONSTRUCTION,
         },
       ]}
-      listItems={MANAGEMENT_OSTALO}
+      listItems={[]}
       pathname={pathname}
       onClose={onClose}
     />
@@ -82,17 +72,23 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
           items: SYSTEM_VEHICLES,
         },
         {
+          title: t("sidebar.toolsGroup"),
+          icon: <FaTools />,
+          items: SYSTEM_TOOLS,
+        },
+        {
           title: t("sidebar.codebookGroup"),
           icon: <FaListUl />,
-          items: SYSTEM_SIFRARNIK,
+          items: SYSTEM_CODEBOOK,
         },
+
         {
           title: t("sidebar.identityGroup"),
           icon: <FaUserShield />,
-          items: SYSTEM_IDENTITET,
+          items: SYSTEM_IDENTITY,
         },
       ]}
-      listItems={SYSTEM_OSTALO}
+      listItems={[]}
       pathname={pathname}
       onClose={onClose}
     />

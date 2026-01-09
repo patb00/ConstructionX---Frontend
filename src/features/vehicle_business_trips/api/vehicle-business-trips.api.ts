@@ -2,6 +2,10 @@ import type {
   VehicleBusinessTrip,
   NewVehicleBusinessTripRequest,
   UpdateVehicleBusinessTripRequest,
+  ApproveVehicleBusinessTripRequest,
+  RejectVehicleBusinessTripRequest,
+  CancelVehicleBusinessTripRequest,
+  CompleteVehicleBusinessTripRequest,
   PagedResult,
 } from "..";
 import { authFetch } from "../../../lib/authFetch";
@@ -24,9 +28,31 @@ export const VehicleBusinessTripsApi = {
     });
   },
 
-  delete: async (businessTripId: number) => {
-    return authFetch<ApiEnvelope<string>>(`${base}/${businessTripId}`, {
-      method: "DELETE",
+  approve: async (payload: ApproveVehicleBusinessTripRequest) => {
+    return authFetch<ApiEnvelope<string>>(`${base}/approve`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  reject: async (payload: RejectVehicleBusinessTripRequest) => {
+    return authFetch<ApiEnvelope<string>>(`${base}/reject`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  cancel: async (payload: CancelVehicleBusinessTripRequest) => {
+    return authFetch<ApiEnvelope<string>>(`${base}/cancel`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  complete: async (payload: CompleteVehicleBusinessTripRequest) => {
+    return authFetch<ApiEnvelope<string>>(`${base}/complete`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
     });
   },
 
@@ -37,9 +63,18 @@ export const VehicleBusinessTripsApi = {
     return res.data;
   },
 
-  getAll: async (page: number, pageSize: number) => {
+  getAll: async (page: number, pageSize: number, tripStatus?: number) => {
+    const params = new URLSearchParams({
+      Page: String(page),
+      PageSize: String(pageSize),
+    });
+
+    if (tripStatus !== undefined) {
+      params.set("TripStatus", String(tripStatus));
+    }
+
     const res = await authFetch<ApiEnvelope<PagedResult<VehicleBusinessTrip>>>(
-      `${base}/get-all?Page=${page}&PageSize=${pageSize}`
+      `${base}/get-all?${params.toString()}`
     );
     return res.data;
   },
@@ -58,9 +93,24 @@ export const VehicleBusinessTripsApi = {
     return res.data;
   },
 
-  hasOpenTrip: async (vehicleId: number) => {
+  isVehicleAvailable: async (args: {
+    vehicleId: number;
+    startAt: string;
+    endAt: string;
+    excludeTripId?: number;
+  }) => {
+    const params = new URLSearchParams({
+      VehicleId: String(args.vehicleId),
+      StartAt: args.startAt,
+      EndAt: args.endAt,
+    });
+
+    if (args.excludeTripId !== undefined) {
+      params.set("ExcludeTripId", String(args.excludeTripId));
+    }
+
     const res = await authFetch<ApiEnvelope<boolean>>(
-      `${base}/has-open-trip/${vehicleId}`
+      `${base}/is-vehicle-available?${params.toString()}`
     );
     return res.data;
   },

@@ -1,10 +1,11 @@
-import { useMemo, useState, useCallback, useEffect } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { type GridColDef } from "@mui/x-data-grid";
 import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 import { useTheme } from "@mui/material";
+
 import { useEmployeeOptions } from "../../constants/options/useEmployeeOptions";
 import { useVehicleRegistrations } from "../hooks/useVehicleRegistrations";
 import { useVehicleRegistration } from "../hooks/useVehicleRegistration";
@@ -15,12 +16,13 @@ import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
 import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
-import { AssignTaskDialog } from "../../../components/ui/assign-dialog/AssignTaskDialog";
+
 import { useAddVehicleRegistrationEmployee } from "../../vehicle_registration_employee/hooks/useAddVehicleRegistrationEmployee";
 import { useVehicleRegistrationEmployeesByVehicle } from "../../vehicle_registration_employee/hooks/useVehicleRegistrationEmployeesByVehicle";
 import { useUpdateVehicleRegistrationEmployee } from "../../vehicle_registration_employee/hooks/useUpdateVehicleRegistrationEmployee";
 import { useVehicle } from "../../vehicles/hooks/useVehicle";
 import { dueSoonRowSx } from "../../../components/ui/datagrid/styles/dueSoonRowSx";
+import { AssignVehicleRegistrationEmployeeDialog } from "./AssignVehicleRegistrationEmployeeDialog";
 
 export default function VehicleRegistrationsTable() {
   const { t } = useTranslation();
@@ -58,23 +60,13 @@ export default function VehicleRegistrationsTable() {
   const [selectedRegistrationId, setSelectedRegistrationId] = useState<
     number | null
   >(null);
-
   const [selectedVehicleId, setSelectedVehicleId] = useState<number | null>(
     null
   );
 
-  const [assignValues, setAssignValues] = useState({
-    employeeId: "" as number | "",
-    note: "",
-  });
-
-  const [isEditingAssignment, setIsEditingAssignment] = useState(false);
-
-  const {
-    data: selectedRegistration,
-    isLoading: selectedRegistrationLoading,
-    isError: selectedRegistrationError,
-  } = useVehicleRegistration(selectedRegistrationId ?? 0);
+  const { data: selectedRegistration } = useVehicleRegistration(
+    selectedRegistrationId ?? 0
+  );
 
   const {
     data: registrationsByVehicle,
@@ -86,13 +78,9 @@ export default function VehicleRegistrationsTable() {
   );
 
   const existingAssignment = registrationsByVehicle?.[0];
-  const hasExistingAssignment = (registrationsByVehicle?.length ?? 0) > 0;
 
   const formLoading =
     assignOpen && !!selectedVehicleId && !registrationsByVehicleFetched;
-
-  const formDisabled =
-    formLoading || (hasExistingAssignment && !isEditingAssignment);
 
   const requestDelete = useCallback((row: VehicleRegistration) => {
     setPendingRow(row);
@@ -119,8 +107,6 @@ export default function VehicleRegistrationsTable() {
   const updateMutation = useUpdateVehicleRegistrationEmployee();
 
   const openAssignDialog = useCallback((row: VehicleRegistration) => {
-    setAssignValues({ employeeId: "", note: "" });
-    setIsEditingAssignment(false);
     setSelectedRegistrationId(row.id);
     setSelectedVehicleId(row.vehicleId);
     setAssignOpen(true);
@@ -130,51 +116,7 @@ export default function VehicleRegistrationsTable() {
     setAssignOpen(false);
     setSelectedRegistrationId(null);
     setSelectedVehicleId(null);
-    setIsEditingAssignment(false);
-    setAssignValues({ employeeId: "", note: "" });
   }, []);
-
-  const handleAssignSubmit = useCallback(() => {
-    if (!selectedRegistration || assignValues.employeeId === "") return;
-
-    if (hasExistingAssignment && existingAssignment) {
-      updateMutation.mutate(
-        {
-          id: existingAssignment.id,
-          employeeId: assignValues.employeeId as number,
-          note: assignValues.note,
-          vehicleId: existingAssignment.vehicleId,
-          vehicleRegistrationId: existingAssignment.vehicleRegistrationId,
-          status: existingAssignment.status,
-          expiresOn: existingAssignment.expiresOn,
-          completedAt: existingAssignment.completedAt,
-        } as any,
-        {
-          onSuccess: () => {
-            closeAssignDialog();
-          },
-        }
-      );
-
-      return;
-    }
-
-    addMutation.mutate({
-      vehicleId: selectedRegistration.vehicleId,
-      vehicleRegistrationId: selectedRegistration.id,
-      employeeId: assignValues.employeeId,
-      note: assignValues.note,
-      status: 1,
-      expiresOn: selectedRegistration.validTo,
-    });
-  }, [
-    selectedRegistration,
-    assignValues,
-    hasExistingAssignment,
-    existingAssignment,
-    addMutation,
-    updateMutation,
-  ]);
 
   const columnsWithActions = useMemo<GridColDef<VehicleRegistration>[]>(() => {
     const base = vehicleRegistrationsColumns.slice();
@@ -270,29 +212,6 @@ export default function VehicleRegistrationsTable() {
     return diffDays >= 0 && diffDays <= 14 ? "row--dueSoon" : "";
   }, []);
 
-  /*   const dueSoonRowSx = {
-    "& .MuiDataGrid-row.row--dueSoon": {
-      backgroundColor: `${alpha(theme.palette.error.main, 0.12)} !important`,
-    },
-    "& .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell": {
-      backgroundColor: `${alpha(theme.palette.error.main, 0.12)} !important`,
-    },
-    "& .MuiDataGrid-row.row--dueSoon .MuiDataGrid-cell--pinnedRight": {
-      backgroundColor: `white !important`,
-    },
-  }; */
-
-  useEffect(() => {
-    if (!assignOpen) return;
-    if (!existingAssignment) return;
-    if (isEditingAssignment) return;
-
-    setAssignValues({
-      employeeId: existingAssignment.employeeId ?? "",
-      note: existingAssignment.note ?? "",
-    });
-  }, [assignOpen, existingAssignment, isEditingAssignment]);
-
   return (
     <>
       <ReusableDataGrid<VehicleRegistration>
@@ -312,23 +231,12 @@ export default function VehicleRegistrationsTable() {
         sx={dueSoonRowSx(theme)}
       />
 
-      <AssignTaskDialog
-        formDisabled={formDisabled}
+      <AssignVehicleRegistrationEmployeeDialog
         open={assignOpen}
         onClose={closeAssignDialog}
-        title={
-          hasExistingAssignment
-            ? t("vehicleRegistrationEmployees.assign.alreadyAssignedTitle")
-            : t("vehicleRegistrationEmployees.assign.title")
-        }
-        subtitle={t("vehicleRegistrationEmployees.assign.subtitle")}
         referenceText={
           selectedRegistration ? `#${selectedRegistration.id}` : undefined
         }
-        previewTitle={t("vehicleRegistrationEmployees.assign.previewTitle")}
-        previewSubtitle={t(
-          "vehicleRegistrationEmployees.assign.previewSubtitle"
-        )}
         dueLabel={
           selectedRegistration?.validTo
             ? t("vehicleRegistrationEmployees.assign.due", {
@@ -336,58 +244,47 @@ export default function VehicleRegistrationsTable() {
               })
             : undefined
         }
-        previewFields={[
-          {
-            label: t("vehicleRegistrationEmployees.assign.fields.vehicle"),
-            value: selectedVehicle
-              ? selectedVehicle.name
-              : vehicleLoading
-              ? t("")
-              : "-",
-          },
-          {
-            label: t("vehicleRegistrationEmployees.assign.fields.registration"),
-            value: selectedVehicle
-              ? selectedVehicle.registrationNumber
-              : vehicleLoading
-              ? t("")
-              : "-",
-          },
-        ]}
-        employeeLabel={t("vehicleRegistrationEmployees.assign.employee")}
+        vehicleName={selectedVehicle?.name}
+        registrationNumber={selectedVehicle?.registrationNumber ?? undefined}
+        vehicleLoading={vehicleLoading}
         employeeOptions={employeeOptions}
-        values={assignValues}
-        onChange={setAssignValues}
-        noteLabel={t("vehicleRegistrationEmployees.assign.note")}
-        helperText={
-          hasExistingAssignment
-            ? t("vehicleRegistrationEmployees.assign.alreadyAssignedHelper")
-            : t("vehicleRegistrationEmployees.assign.helper")
-        }
-        cancelText={t("common.cancel")}
+        employeesLoading={employeesLoading}
+        employeesError={employeesError}
         formLoading={formLoading}
-        showEdit={hasExistingAssignment}
-        isEditing={isEditingAssignment}
-        onEdit={() => setIsEditingAssignment(true)}
+        existingAssignment={existingAssignment}
         submitting={addMutation.isPending || updateMutation.isPending}
-        submitText={
-          hasExistingAssignment
-            ? isEditingAssignment
-              ? t("common.submit")
-              : t("vehicleRegistrationEmployees.assign.alreadyAssignedSubmit")
-            : t("common.submit")
-        }
-        submitDisabled={
-          formLoading ||
-          (!isEditingAssignment && hasExistingAssignment) ||
-          assignValues.employeeId === "" ||
-          employeesLoading ||
-          employeesError ||
-          selectedRegistrationLoading ||
-          selectedRegistrationError ||
-          !selectedRegistration
-        }
-        onSubmit={handleAssignSubmit}
+        onSubmit={(values, mode) => {
+          if (!selectedRegistration) return;
+
+          if (mode === "update" && existingAssignment) {
+            updateMutation.mutate(
+              {
+                id: existingAssignment.id,
+                employeeId: values.employeeId,
+                note: values.note,
+                vehicleId: existingAssignment.vehicleId,
+                vehicleRegistrationId: existingAssignment.vehicleRegistrationId,
+                status: existingAssignment.status,
+                expiresOn: existingAssignment.expiresOn,
+                completedAt: existingAssignment.completedAt,
+              } as any,
+              { onSuccess: closeAssignDialog }
+            );
+            return;
+          }
+
+          addMutation.mutate(
+            {
+              vehicleId: selectedRegistration.vehicleId,
+              vehicleRegistrationId: selectedRegistration.id,
+              employeeId: values.employeeId,
+              note: values.note,
+              status: 1,
+              expiresOn: selectedRegistration.validTo,
+            },
+            { onSuccess: closeAssignDialog }
+          );
+        }}
       />
 
       <PermissionGate guard={{ permission: "Permission.Vehicles.Delete" }}>

@@ -4,10 +4,8 @@ import { alpha, useTheme } from "@mui/material/styles";
 import BuildIcon from "@mui/icons-material/Build";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import { useTranslation } from "react-i18next";
-
 import type { ToolHistoryItem } from "..";
 import { useToolHistory } from "../hooks/useToolHistory";
-
 import {
   HistoryPanelShell,
   pillSx,

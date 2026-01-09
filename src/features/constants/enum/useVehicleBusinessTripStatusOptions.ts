@@ -11,16 +11,25 @@ export function useVehicleBusinessTripStatusOptions(): VehicleBusinessTripStatus
 
   return useMemo(
     () => [
+      { value: 0, label: t("vehicleBusinessTrips.status.pending", "Pending") },
       {
         value: 1,
-        label: t("vehicleBusinessTrips.status.open", "Open"),
+        label: t("vehicleBusinessTrips.status.approved", "Approved"),
       },
       {
         value: 2,
-        label: t("vehicleBusinessTrips.status.closed", "Closed"),
+        label: t("vehicleBusinessTrips.status.rejected", "Rejected"),
       },
       {
         value: 3,
+        label: t("vehicleBusinessTrips.status.completed", "Completed"),
+      },
+      {
+        value: 4,
+        label: t("vehicleBusinessTrips.status.inProgress", "In progress"),
+      },
+      {
+        value: 5,
         label: t("vehicleBusinessTrips.status.cancelled", "Cancelled"),
       },
     ],

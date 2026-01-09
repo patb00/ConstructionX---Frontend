@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Box,
   Collapse,
@@ -18,6 +17,9 @@ import {
 import { ChevronRightRounded, ExpandMoreRounded } from "@mui/icons-material";
 import type { ChipProps } from "@mui/material/Chip";
 import type { SystemStyleObject } from "@mui/system";
+import { CircularProgress } from "@mui/material";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import React from "react";
 
 export const listViewColDividerSx: SystemStyleObject<Theme> = {
   borderRight: "1px solid",
@@ -53,18 +55,14 @@ export type ListViewSection<T> = {
 export type ListViewColumn<T> = {
   key: string;
   header: React.ReactNode;
-
   width?: number | string;
   align?: "left" | "center" | "right";
   padding?: "normal" | "checkbox" | "none";
-
   headSx?: SxProps<Theme>;
   cellSx?: SxProps<Theme>;
   render?: (row: T) => React.ReactNode;
-
   hidden?: boolean;
   hideBelow?: "sm" | "md" | "lg";
-
   showBelow?: "sm" | "md" | "lg";
 };
 
@@ -76,15 +74,14 @@ export type ListViewProps<T> = {
   renderRow?: (row: T) => React.ReactNode;
   columns: Array<ListViewColumn<T>>;
   renderSectionEndAdornment?: (section: ListViewSection<T>) => React.ReactNode;
-
   enableHorizontalScroll?: boolean;
-
   tableMinWidth?: number;
-
   sx?: SxProps<Theme>;
   sectionHeaderSx?: SxProps<Theme>;
   tableSx?: SxProps<Theme>;
   containerSx?: SxProps<Theme>;
+  loading?: boolean;
+  loadingText?: React.ReactNode;
 };
 
 const headCellBaseSx: SxProps<Theme> = {
@@ -119,18 +116,20 @@ export default function ListView<T>({
   sectionHeaderSx,
   tableSx,
   containerSx,
+  loading = false,
+  loadingText,
 }: ListViewProps<T>) {
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down("sm"));
   const mdDown = useMediaQuery(theme.breakpoints.down("md"));
   const lgDown = useMediaQuery(theme.breakpoints.down("lg"));
 
-  const responsiveFlags = React.useMemo(
+  const responsiveFlags = useMemo(
     () => ({ smDown, mdDown, lgDown }),
     [smDown, mdDown, lgDown]
   );
 
-  const visibleColumns = React.useMemo(() => {
+  const visibleColumns = useMemo(() => {
     return columns.filter((c) => {
       if (c.hidden) return false;
 
@@ -146,11 +145,9 @@ export default function ListView<T>({
     });
   }, [columns, responsiveFlags]);
 
-  const [internalOpen, setInternalOpen] = React.useState<
-    Record<string, boolean>
-  >({});
+  const [internalOpen, setInternalOpen] = useState<Record<string, boolean>>({});
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (openByKey) return;
 
     setInternalOpen((prev) => {
@@ -177,13 +174,13 @@ export default function ListView<T>({
 
   const isControlled = Boolean(openByKey);
 
-  const getOpen = React.useCallback(
+  const getOpen = useCallback(
     (key: string) =>
       isControlled ? openByKey?.[key] ?? true : internalOpen[key] ?? true,
     [internalOpen, isControlled, openByKey]
   );
 
-  const toggle = React.useCallback(
+  const toggle = useCallback(
     (key: string) => {
       if (isControlled) {
         onToggleSection?.(key);
@@ -310,32 +307,68 @@ export default function ListView<T>({
                   </TableHead>
 
                   <TableBody>
-                    {section.items.map((row) => {
-                      const key = getRowKey(row);
+                    {loading ? (
+                      <TableRow>
+                        <TableCell
+                          colSpan={visibleColumns.length}
+                          sx={{ py: 6 }}
+                        >
+                          <Stack
+                            direction="row"
+                            spacing={1.5}
+                            alignItems="center"
+                            justifyContent="center"
+                          >
+                            <CircularProgress size={22} />
+                            <Typography variant="body2" color="text.secondary">
+                              {loadingText ?? "Loading..."}
+                            </Typography>
+                          </Stack>
+                        </TableCell>
+                      </TableRow>
+                    ) : section.items.length === 0 ? (
+                      <TableRow>
+                        <TableCell
+                          colSpan={visibleColumns.length}
+                          sx={{ py: 4 }}
+                        >
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            align="center"
+                          >
+                            —
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      section.items.map((row) => {
+                        const key = getRowKey(row);
 
-                      if (renderRow) {
+                        if (renderRow) {
+                          return (
+                            <React.Fragment key={key}>
+                              {renderRow(row)}
+                            </React.Fragment>
+                          );
+                        }
+
                         return (
-                          <React.Fragment key={key}>
-                            {renderRow(row)}
-                          </React.Fragment>
+                          <TableRow key={key} hover>
+                            {visibleColumns.map((c) => (
+                              <TableCell
+                                key={c.key}
+                                align={c.align}
+                                padding={c.padding}
+                                sx={c.cellSx}
+                              >
+                                {c.render ? c.render(row) : null}
+                              </TableCell>
+                            ))}
+                          </TableRow>
                         );
-                      }
-
-                      return (
-                        <TableRow key={key} hover>
-                          {visibleColumns.map((c) => (
-                            <TableCell
-                              key={c.key}
-                              align={c.align}
-                              padding={c.padding}
-                              sx={c.cellSx}
-                            >
-                              {c.render ? c.render(row) : null}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      );
-                    })}
+                      })
+                    )}
                   </TableBody>
                 </Table>
               </Collapse>

@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Box,
@@ -19,6 +18,7 @@ import {
   TimelineContent,
   TimelineOppositeContent,
 } from "@mui/lab";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type PagedResult<T> = {
   items: T[];
@@ -86,18 +86,18 @@ export function HistoryPanel<TItem>({
   dateColWidth = 96,
   loadMoreLabel = "Load more",
 }: HistoryPanelProps<TItem>) {
-  const [page0, setPage0] = React.useState(0);
-  const [allItems, setAllItems] = React.useState<TItem[]>([]);
+  const [page0, setPage0] = useState(0);
+  const [allItems, setAllItems] = useState<TItem[]>([]);
   const activeIndex = 0;
 
-  const loadedPagesRef = React.useRef<Set<number>>(new Set());
+  const loadedPagesRef = useRef<Set<number>>(new Set());
 
   const q = useQuery({
     queryKey: queryKey(page0, pageSize),
     queryFn: () => queryFn(page0, pageSize),
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!q.data) return;
 
     if (loadedPagesRef.current.has(page0)) return;
@@ -107,11 +107,11 @@ export function HistoryPanel<TItem>({
     setAllItems((prev) => (page0 === 0 ? incoming : [...prev, ...incoming]));
   }, [q.data, page0]);
 
-  const onLoadMore = React.useCallback(() => {
+  const onLoadMore = useCallback(() => {
     setPage0((p) => p + 1);
   }, []);
 
-  const onReset = React.useCallback(() => {
+  const onReset = useCallback(() => {
     loadedPagesRef.current.clear();
     setPage0(0);
     setAllItems([]);

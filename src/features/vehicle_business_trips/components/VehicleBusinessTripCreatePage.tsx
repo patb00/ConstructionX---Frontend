@@ -41,7 +41,6 @@ export default function VehicleBusinessTripCreatePage() {
           mode="create"
           onSubmit={handleSubmit}
           busy={busy}
-          showStatusField={false}
         />
       </Paper>
     </Stack>
