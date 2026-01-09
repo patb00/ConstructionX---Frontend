@@ -53,6 +53,7 @@ export const router = createBrowserRouter([
       materialsRoutes,
       constructionSitesRoutes,
       vehiclesRoutes,
+      //vehicleRepairsRoutes,
       vehicleRegistrationsRoutes,
       vehicleInsurancesRoutes,
       vehicleBusinessTripsRoutes,

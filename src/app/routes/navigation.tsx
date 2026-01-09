@@ -49,6 +49,8 @@ export type ModuleId =
   | "vehicleRegistrations"
   | "vehicleInsurances"
   | "vehicleBusinessTrips"
+  | "vehicleRepairs"
+  | "toolRepairs"
   | "condos"
   | "tenants"
   | "roles"
@@ -205,6 +207,14 @@ export const NAV_ITEMS: NavItem[] = [
     labelKey: "nav.vehicles",
     to: "/app/vehicles",
     icon: <FaCarSide />,
+    section: "SYSTEM",
+    category: "VEHICLES",
+    guard: { permission: "Permission.Vehicles.Read" },
+  },
+  {
+    labelKey: "nav.vehicleRepairs",
+    to: "/app/vehicle-repairs",
+    icon: <FaWrench />,
     section: "SYSTEM",
     category: "VEHICLES",
     guard: { permission: "Permission.Vehicles.Read" },

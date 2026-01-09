@@ -18,9 +18,11 @@
     "employees": "Zaposlenici",
     "jobPositions": "Radna mjesta",
     "tools": "Alati",
+    "toolRepairs": "Servis alata",
     "materials": "Materijali",
     "toolCategories": "Kategorije alata",
     "vehicles": "Vozila",
+    "vehicleRepairs": "Servis vozila",
     "assignments": "Dodjele",
     "reports": "Izvještaji",
     "examinationTypes": "Tipovi pregleda",
@@ -34,6 +36,7 @@
     "vehicleBusinessTrips": "Službena putovanja ",
     "tasks": "Zadaci"
   },
+
   "constructionSites": {
     "detail": {
       "title": "Pregled gradilišta",
@@ -545,6 +548,8 @@
       "purchasePrice": "Nabavna cijena",
       "status": "Status",
       "condition": "Stanje",
+      "repairDate": "Datum popravka",
+      "cost": "Trošak",
       "toolCategoryId": "ID kategorije alata",
       "toolCategoryName": "Kategorija alata",
       "responsibleEmployeeId": "ID odgovorne osobe",
@@ -632,6 +637,9 @@
       "articleCode": "Šifra artikla",
       "barcode": "Barkod",
 
+      "tool": "Alat",
+      "serviceDate": "Datum servisa",
+      "serviceCost": "Trošak servisa"
       "purposeOfTrip": "Svrha putovanja",
       "approvedByEmployeeUserId": "Odobrio (ID korisnika)",
       "approvedDate": "Datum odobrenja",
@@ -1692,6 +1700,43 @@
       "open": "Otvori"
     }
   },
+  "vehicleRepairs": {
+    "list": {
+      "title": "Servis vozila",
+      "error": "Neuspjelo učitavanje popravaka."
+    },
+    "actions": "Akcije",
+    "table": {
+      "edit": "Uredi",
+      "delete": "Obriši"
+    },
+    "create": {
+      "title": "Dodaj popravak vozila",
+      "back": "Natrag"
+    },
+    "edit": {
+      "title": "Uredi popravak vozila",
+      "back": "Natrag",
+      "loadError": "Neuspjelo učitavanje popravka vozila.",
+      "invalidUrlId": "Neispravan ID popravka"
+    },
+    "delete": {
+      "title": "Obriši popravak vozila",
+      "description": "Jeste li sigurni da želite obrisati ovaj popravak vozila?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    },
+    "form": {
+      "submit": "Spremi",
+      "field": {
+        "vehicleId": "Vozilo",
+        "repairDate": "Datum popravka",
+        "cost": "Trošak",
+        "condition": "Stanje",
+        "description": "Opis"
+      }
+    }
+  },
   "vehicleRegistrations": {
     "list": {
       "title": "Registracije vozila",
@@ -2046,6 +2091,49 @@
     },
     "rowActions": {
       "assign": "Dodijeli zadatak"
+    }
+  },
+  "toolRepairs": {
+    "list": {
+      "title": "Servisi alata",
+      "error": "Greška pri učitavanju servisa alata"
+    },
+
+    "create": {
+      "title": "Dodaj servis alata",
+      "back": "Natrag"
+    },
+
+    "edit": {
+      "title": "Uredi servis alata",
+      "back": "Natrag",
+      "invalidUrlId": "Neispravan ID servisa",
+      "loadError": "Greška pri učitavanju servisa alata"
+    },
+
+    "actions": "Radnje",
+
+    "delete": {
+      "title": "Obriši servis alata",
+      "description": "Jeste li sigurni da želite obrisati ovaj servis alata?",
+      "confirm": "Obriši",
+      "cancel": "Odustani"
+    },
+    "table": {
+      "detailView": "Pregled",
+      "edit": "Uredi",
+      "delete": "Obriši"
+    },
+
+    "form": {
+      "submit": "Spremi",
+      "field": {
+        "toolId": "Alat",
+        "repairDate": "Datum servisa",
+        "cost": "Trošak servisa",
+        "condition": "Stanje",
+        "description": "Opis"
+      }
     }
   }
 }

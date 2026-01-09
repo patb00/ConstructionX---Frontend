@@ -18,9 +18,11 @@
     "employees": "Mitarbeiter",
     "jobPositions": "Arbeitsstellen",
     "tools": "Werkzeuge",
+    "toolRepairs": "Werkzeugreparaturen",
     "materials": "Materialien",
     "toolCategories": "Werkzeugkategorien",
     "vehicles": "Fahrzeuge",
+    "vehicleRepairs": "Fahrzeugreparaturen",
     "assignments": "Zuweisungen",
     "reports": "Berichte",
     "examinationTypes": "Prüfarten",
@@ -551,6 +553,8 @@
       "purchasePrice": "Kaufpreis",
       "status": "Status",
       "condition": "Zustand",
+      "repairDate": "Reparaturdatum",
+      "cost": "Kosten",
       "toolCategoryId": "Werkzeugkategorie-ID",
       "toolCategoryName": "Werkzeugkategorie",
       "responsibleEmployeeId": "Verantwortlicher Mitarbeiter (ID)",
@@ -639,6 +643,9 @@
       "articleCode": "Artikelcode",
       "barcode": "Barcode",
 
+      "tool": "Werkzeug",
+      "serviceDate": "Servicedatum",
+      "serviceCost": "Servicekosten"
       "purposeOfTrip": "Zweck der Fahrt",
       "approvedByEmployeeUserId": "Genehmigt von (Benutzer-ID)",
       "approvedDate": "Genehmigungsdatum",
@@ -1652,6 +1659,43 @@
       "open": "Öffnen"
     }
   },
+  "vehicleRepairs": {
+    "list": {
+      "title": "Fahrzeugreparaturen",
+      "error": "Fehler beim Laden der Reparaturen."
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "create": {
+      "title": "Fahrzeugreparatur hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Fahrzeugreparatur bearbeiten",
+      "back": "Zurück",
+      "loadError": "Fahrzeugreparatur konnte nicht geladen werden.",
+      "invalidUrlId": "Ungültige Reparatur-ID"
+    },
+    "delete": {
+      "title": "Fahrzeugreparatur löschen",
+      "description": "Möchten Sie diese Fahrzeugreparatur wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "vehicleId": "Fahrzeug",
+        "repairDate": "Reparaturdatum",
+        "cost": "Kosten",
+        "condition": "Zustand",
+        "description": "Beschreibung"
+      }
+    }
+  },
   "vehicleRegistrations": {
     "list": {
       "title": "Fahrzeugzulassungen",
@@ -2008,6 +2052,49 @@
     },
     "rowActions": {
       "assign": "Aufgabe zuweisen"
+    }
+  },
+  "toolRepairs": {
+    "list": {
+      "title": "Werkzeugreparaturen",
+      "error": "Fehler beim Laden der Werkzeugreparaturen"
+    },
+
+    "create": {
+      "title": "Werkzeugreparatur hinzufügen",
+      "back": "Zurück"
+    },
+
+    "edit": {
+      "title": "Werkzeugreparatur bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige Reparatur-ID",
+      "loadError": "Fehler beim Laden der Werkzeugreparatur"
+    },
+
+    "actions": "Aktionen",
+
+    "delete": {
+      "title": "Werkzeugreparatur löschen",
+      "description": "Möchten Sie diese Werkzeugreparatur wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "table": {
+      "detailView": "Anzeigen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "toolId": "Werkzeug",
+        "repairDate": "Reparaturdatum",
+        "cost": "Reparaturkosten",
+        "condition": "Zustand",
+        "description": "Beschreibung"
+      }
     }
   }
 }
