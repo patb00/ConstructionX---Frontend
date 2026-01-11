@@ -37,6 +37,82 @@
     "tasks": "Tasks",
     "map": "Map"
   },
+  "map": {
+    "page": {
+      "missingOrsKey": "Missing ORS key. Add <1>VITE_OPENROUTESERVICE_API_KEY</1> to <3>.env</3> and restart.",
+      "toggle": {
+        "on": "On",
+        "off": "Off"
+      },
+      "scope": {
+        "all": "All",
+        "vehicle": "Vehicle",
+        "employee": "Employee"
+      },
+      "trips": {
+        "title": "Trips",
+        "subtitle": "Scope + visibility",
+        "scopeLabel": "Scope:",
+        "visibleLabel": "Visible:",
+        "scopeInput": "Scope",
+        "vehicleInput": "Vehicle",
+        "vehiclePlaceholder": "Select vehicle…",
+        "employeeInput": "Employee",
+        "employeePlaceholder": "Select employee…",
+        "vehicleNote": "Vehicle: {{vehicle}}",
+        "employeeNote": "Employee: {{employee}}",
+        "allNote": "Showing trips from all sources",
+        "showLabel": "Show trips",
+        "showDescription": "Routes and markers"
+      },
+      "condos": {
+        "title": "Condos",
+        "subtitle": "Visibility",
+        "visibleLabel": "Visible:",
+        "geocodedLabel": "Geocoded:",
+        "bottomNote": "Addresses are geocoded and cached in the browser",
+        "showLabel": "Show condos",
+        "showDescription": "Condo markers"
+      },
+      "sites": {
+        "title": "Construction sites",
+        "subtitle": "Visibility",
+        "visibleLabel": "Visible:",
+        "geocodedLabel": "Geocoded:",
+        "bottomNote": "Locations are geocoded and cached in the browser",
+        "showLabel": "Show sites",
+        "showDescription": "Site markers"
+      }
+    },
+    "markerDetails": {
+      "title": {
+        "condo": "Condo #{{id}}",
+        "trip": "Trip #{{id}}"
+      },
+      "fallback": {
+        "noAddress": "No address",
+        "noLocation": "No location",
+        "noStart": "No start location",
+        "noEnd": "No end location"
+      },
+      "condo": {
+        "capacity": "Capacity",
+        "occupied": "Occupied",
+        "responsible": "Responsible"
+      },
+      "site": {
+        "status": "Status",
+        "manager": "Manager",
+        "start": "Start",
+        "plannedEnd": "Planned end",
+        "description": "Description"
+      },
+      "trip": {
+        "start": "Start",
+        "end": "End"
+      }
+    }
+  },
 
   "constructionSites": {
     "list": {
@@ -215,9 +291,11 @@
   },
   "common": {
     "cancel": "Cancel",
+    "close": "Close",
     "submit": "Submit",
     "saving": "Saving...",
     "edit": "Edit",
+    "dash": "—",
     "all": "All statuses",
     "unassign": "Unassign",
     "notAvailable": "Not available",

@@ -21,6 +21,7 @@ import {
 import type { LatLngExpression } from "leaflet";
 import L from "leaflet";
 import { useMapEvents } from "react-leaflet";
+import { Trans, useTranslation } from "react-i18next";
 import { useVehicleBusinessTrips } from "../../vehicle_business_trips/hooks/useVehicleBusinessTrips";
 import { useVehicleBusinessTripsByVehicle } from "../../vehicle_business_trips/hooks/useVehicleBusinessTripsByVehicle";
 import { useVehicleBusinessTripsByEmployee } from "../../vehicle_business_trips/hooks/useVehicleBusinessTripsByEmployee";
@@ -76,6 +77,7 @@ function MapClickClearer(props: { onClear: () => void }) {
 }
 
 export default function MapPage() {
+  const { t } = useTranslation();
   const ORS_KEY = import.meta.env.VITE_OPENROUTESERVICE_API_KEY as
     | string
     | undefined;
@@ -133,9 +135,11 @@ export default function MapPage() {
   );
 
   const selectedVehicleLabel =
-    vehicleOptions.find((o) => o.value === vehicleId)?.label ?? "—";
+    vehicleOptions.find((o) => o.value === vehicleId)?.label ??
+    t("common.dash");
   const selectedEmployeeLabel =
-    employeeOptions.find((o) => o.value === employeeId)?.label ?? "—";
+    employeeOptions.find((o) => o.value === employeeId)?.label ??
+    t("common.dash");
 
   const [geoByText, setGeoByText] = useState<GeoCache>({});
   const [routeByTripId, setRouteByTripId] = useState<RouteByTripId>({});
@@ -286,8 +290,10 @@ export default function MapPage() {
             {!ORS_KEY && (
               <Marker position={center}>
                 <Popup>
-                  Missing ORS key. Add <b>VITE_OPENROUTESERVICE_API_KEY</b> to{" "}
-                  <b>.env</b> and restart.
+                  <Trans i18nKey="map.page.missingOrsKey">
+                    Missing ORS key. Add <b>VITE_OPENROUTESERVICE_API_KEY</b> to{" "}
+                    <b>.env</b> and restart.
+                  </Trans>
                 </Popup>
               </Marker>
             )}
@@ -415,52 +421,68 @@ export default function MapPage() {
             >
               <TrackingCard
                 badge={{
-                  text: showTrips ? "On" : "Off",
+                  text: showTrips
+                    ? t("map.page.toggle.on")
+                    : t("map.page.toggle.off"),
                   color: showTrips ? "success" : "default",
                 }}
-                title="Trips"
-                subtitle="Scope + visibility"
-                line1Label="Scope:"
+                title={t("map.page.trips.title")}
+                subtitle={t("map.page.trips.subtitle")}
+                line1Label={t("map.page.trips.scopeLabel")}
                 line1Value={
                   mode === "all"
-                    ? "All"
+                    ? t("map.page.scope.all")
                     : mode === "vehicle"
-                    ? "Vehicle"
-                    : "Employee"
+                    ? t("map.page.scope.vehicle")
+                    : t("map.page.scope.employee")
                 }
-                line2Label="Visible:"
+                line2Label={t("map.page.trips.visibleLabel")}
                 line2Value={`${tripsRows.length}`}
                 bottomNote={
                   mode === "vehicle"
-                    ? `Vehicle: ${selectedVehicleLabel}`
+                    ? t("map.page.trips.vehicleNote", {
+                        vehicle: selectedVehicleLabel,
+                      })
                     : mode === "employee"
-                    ? `Employee: ${selectedEmployeeLabel}`
-                    : "Showing trips from all sources"
+                    ? t("map.page.trips.employeeNote", {
+                        employee: selectedEmployeeLabel,
+                      })
+                    : t("map.page.trips.allNote")
                 }
                 accent="#1976d2"
               >
                 <Stack spacing={1}>
                   <FormControl fullWidth size="small">
-                    <InputLabel id="mode-label">Scope</InputLabel>
+                    <InputLabel id="mode-label">
+                      {t("map.page.trips.scopeInput")}
+                    </InputLabel>
                     <Select
                       labelId="mode-label"
                       value={mode}
-                      label="Scope"
+                      label={t("map.page.trips.scopeInput")}
                       onChange={(e) => setMode(e.target.value as FilterMode)}
                     >
-                      <MenuItem value="all">All</MenuItem>
-                      <MenuItem value="vehicle">Vehicle</MenuItem>
-                      <MenuItem value="employee">Employee</MenuItem>
+                      <MenuItem value="all">
+                        {t("map.page.scope.all")}
+                      </MenuItem>
+                      <MenuItem value="vehicle">
+                        {t("map.page.scope.vehicle")}
+                      </MenuItem>
+                      <MenuItem value="employee">
+                        {t("map.page.scope.employee")}
+                      </MenuItem>
                     </Select>
                   </FormControl>
 
                   {mode === "vehicle" && (
                     <FormControl fullWidth size="small">
-                      <InputLabel id="vehicle-label">Vehicle</InputLabel>
+                      <InputLabel id="vehicle-label">
+                        {t("map.page.trips.vehicleInput")}
+                      </InputLabel>
                       <Select
                         labelId="vehicle-label"
                         value={vehicleId}
-                        label="Vehicle"
+                        label={t("map.page.trips.vehicleInput")}
                         onChange={(e) => setVehicleId(Number(e.target.value))}
                         sx={{
                           "& .MuiSelect-select": {
@@ -470,7 +492,9 @@ export default function MapPage() {
                           },
                         }}
                       >
-                        <MenuItem value={0}>Select vehicle…</MenuItem>
+                        <MenuItem value={0}>
+                          {t("map.page.trips.vehiclePlaceholder")}
+                        </MenuItem>
                         {vehicleOptions.map((o) => (
                           <MenuItem key={o.value} value={o.value}>
                             {o.label}
@@ -482,11 +506,13 @@ export default function MapPage() {
 
                   {mode === "employee" && (
                     <FormControl fullWidth size="small">
-                      <InputLabel id="employee-label">Employee</InputLabel>
+                      <InputLabel id="employee-label">
+                        {t("map.page.trips.employeeInput")}
+                      </InputLabel>
                       <Select
                         labelId="employee-label"
                         value={employeeId}
-                        label="Employee"
+                        label={t("map.page.trips.employeeInput")}
                         onChange={(e) => setEmployeeId(Number(e.target.value))}
                         sx={{
                           "& .MuiSelect-select": {
@@ -496,7 +522,9 @@ export default function MapPage() {
                           },
                         }}
                       >
-                        <MenuItem value={0}>Select employee…</MenuItem>
+                        <MenuItem value={0}>
+                          {t("map.page.trips.employeePlaceholder")}
+                        </MenuItem>
                         {employeeOptions.map((o) => (
                           <MenuItem key={o.value} value={o.value}>
                             {o.label}
@@ -515,10 +543,10 @@ export default function MapPage() {
                   >
                     <Box>
                       <Typography sx={{ fontWeight: 800, fontSize: 14 }}>
-                        Show trips
+                        {t("map.page.trips.showLabel")}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Routes and markers
+                        {t("map.page.trips.showDescription")}
                       </Typography>
                     </Box>
                     <Switch
@@ -531,14 +559,16 @@ export default function MapPage() {
 
               <TrackingCard
                 badge={{
-                  text: showCondos ? "On" : "Off",
+                  text: showCondos
+                    ? t("map.page.toggle.on")
+                    : t("map.page.toggle.off"),
                   color: showCondos ? "success" : "default",
                 }}
-                title="Condos"
-                subtitle="Visibility"
-                line1Label="Visible:"
+                title={t("map.page.condos.title")}
+                subtitle={t("map.page.condos.subtitle")}
+                line1Label={t("map.page.condos.visibleLabel")}
                 line1Value={`${condos.length}`}
-                line2Label="Geocoded:"
+                line2Label={t("map.page.condos.geocodedLabel")}
                 line2Value={`${
                   condos.filter((c) => {
                     const a = c.address?.trim();
@@ -546,7 +576,7 @@ export default function MapPage() {
                     return Boolean(geoByText[normalizeLocationText(a)]);
                   }).length
                 }`}
-                bottomNote="Addresses are geocoded and cached in the browser"
+                bottomNote={t("map.page.condos.bottomNote")}
                 accent="#2e7d32"
               >
                 <Stack spacing={1}>
@@ -557,10 +587,10 @@ export default function MapPage() {
                   >
                     <Box>
                       <Typography sx={{ fontWeight: 800, fontSize: 14 }}>
-                        Show condos
+                        {t("map.page.condos.showLabel")}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Condo markers
+                        {t("map.page.condos.showDescription")}
                       </Typography>
                     </Box>
                     <Switch
@@ -573,14 +603,16 @@ export default function MapPage() {
 
               <TrackingCard
                 badge={{
-                  text: showConstructionSites ? "On" : "Off",
+                  text: showConstructionSites
+                    ? t("map.page.toggle.on")
+                    : t("map.page.toggle.off"),
                   color: showConstructionSites ? "success" : "default",
                 }}
-                title="Construction sites"
-                subtitle="Visibility"
-                line1Label="Visible:"
+                title={t("map.page.sites.title")}
+                subtitle={t("map.page.sites.subtitle")}
+                line1Label={t("map.page.sites.visibleLabel")}
                 line1Value={`${(constructionSitesRows ?? []).length}`}
-                line2Label="Geocoded:"
+                line2Label={t("map.page.sites.geocodedLabel")}
                 line2Value={`${
                   (constructionSitesRows ?? []).filter((s: any) => {
                     const l = s.location?.trim();
@@ -588,7 +620,7 @@ export default function MapPage() {
                     return Boolean(geoByText[normalizeLocationText(l)]);
                   }).length
                 }`}
-                bottomNote="Locations are geocoded and cached in the browser"
+                bottomNote={t("map.page.sites.bottomNote")}
                 accent="#ed6c02"
               >
                 <Stack spacing={1}>
@@ -599,10 +631,10 @@ export default function MapPage() {
                   >
                     <Box>
                       <Typography sx={{ fontWeight: 800, fontSize: 14 }}>
-                        Show sites
+                        {t("map.page.sites.showLabel")}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Site markers
+                        {t("map.page.sites.showDescription")}
                       </Typography>
                     </Box>
                     <Switch
