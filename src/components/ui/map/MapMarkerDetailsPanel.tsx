@@ -7,7 +7,8 @@ import {
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import type { SelectedMarker } from "../../../features/map/types";
+import type { SelectedMarker } from "../../../features/map";
+import { useTranslation } from "react-i18next";
 
 type MapMarkerDetailsPanelProps = {
   selectedMarker: SelectedMarker | null;
@@ -18,7 +19,29 @@ export default function MapMarkerDetailsPanel({
   selectedMarker,
   onClose,
 }: MapMarkerDetailsPanelProps) {
+  const { t } = useTranslation();
+
   if (!selectedMarker) return null;
+
+  const title =
+    selectedMarker.kind === "condo"
+      ? t("map.markerDetails.title.condo", { id: selectedMarker.condo.id })
+      : selectedMarker.kind === "site"
+      ? selectedMarker.site.name
+      : t("map.markerDetails.title.trip", { id: selectedMarker.trip.id });
+
+  const subtitle =
+    selectedMarker.kind === "condo"
+      ? selectedMarker.condo.address ??
+        t("map.markerDetails.fallback.noAddress")
+      : selectedMarker.kind === "site"
+      ? selectedMarker.site.location ??
+        t("map.markerDetails.fallback.noLocation")
+      : selectedMarker.kind === "trip-start"
+      ? selectedMarker.trip.startLocationText ??
+        t("map.markerDetails.fallback.noStart")
+      : selectedMarker.trip.endLocationText ??
+        t("map.markerDetails.fallback.noEnd");
 
   return (
     <Paper
@@ -49,24 +72,18 @@ export default function MapMarkerDetailsPanel({
       >
         <Box sx={{ minWidth: 0 }}>
           <Typography sx={{ fontWeight: 900 }} noWrap>
-            {selectedMarker.kind === "condo"
-              ? `Condo #${selectedMarker.condo.id}`
-              : selectedMarker.kind === "site"
-              ? selectedMarker.site.name
-              : `Trip #${selectedMarker.trip.id}`}
+            {title}
           </Typography>
           <Typography variant="body2" color="text.secondary" noWrap>
-            {selectedMarker.kind === "condo"
-              ? selectedMarker.condo.address ?? "No address"
-              : selectedMarker.kind === "site"
-              ? selectedMarker.site.location ?? "No location"
-              : selectedMarker.kind === "trip-start"
-              ? selectedMarker.trip.startLocationText ?? "No start"
-              : selectedMarker.trip.endLocationText ?? "No end"}
+            {subtitle}
           </Typography>
         </Box>
 
-        <IconButton onClick={onClose} size="small">
+        <IconButton
+          onClick={onClose}
+          size="small"
+          aria-label={t("common.close")}
+        >
           <CloseIcon fontSize="small" />
         </IconButton>
       </Box>
@@ -76,25 +93,27 @@ export default function MapMarkerDetailsPanel({
           <Stack spacing={0.75}>
             <Stack direction="row" justifyContent="space-between">
               <Typography variant="body2" sx={{ fontWeight: 800 }}>
-                Capacity
+                {t("map.markerDetails.condo.capacity")}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {selectedMarker.condo.capacity}
               </Typography>
             </Stack>
+
             <Stack direction="row" justifyContent="space-between">
               <Typography variant="body2" sx={{ fontWeight: 800 }}>
-                Occupied
+                {t("map.markerDetails.condo.occupied")}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {selectedMarker.condo.currentlyOccupied}/
                 {selectedMarker.condo.capacity}
               </Typography>
             </Stack>
+
             {selectedMarker.condo.responsibleEmployeeName && (
               <Stack direction="row" justifyContent="space-between">
                 <Typography variant="body2" sx={{ fontWeight: 800 }}>
-                  Responsible
+                  {t("map.markerDetails.condo.responsible")}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   {selectedMarker.condo.responsibleEmployeeName}
@@ -108,46 +127,50 @@ export default function MapMarkerDetailsPanel({
           <Stack spacing={0.75}>
             <Stack direction="row" justifyContent="space-between">
               <Typography variant="body2" sx={{ fontWeight: 800 }}>
-                Status
+                {t("map.markerDetails.site.status")}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {String(selectedMarker.site.status)}
               </Typography>
             </Stack>
+
             {selectedMarker.site.siteManagerName && (
               <Stack direction="row" justifyContent="space-between">
                 <Typography variant="body2" sx={{ fontWeight: 800 }}>
-                  Manager
+                  {t("map.markerDetails.site.manager")}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   {selectedMarker.site.siteManagerName}
                 </Typography>
               </Stack>
             )}
+
             {selectedMarker.site.startDate && (
               <Stack direction="row" justifyContent="space-between">
                 <Typography variant="body2" sx={{ fontWeight: 800 }}>
-                  Start
+                  {t("map.markerDetails.site.start")}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   {selectedMarker.site.startDate}
                 </Typography>
               </Stack>
             )}
+
             {selectedMarker.site.plannedEndDate && (
               <Stack direction="row" justifyContent="space-between">
                 <Typography variant="body2" sx={{ fontWeight: 800 }}>
-                  Planned end
+                  {t("map.markerDetails.site.plannedEnd")}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   {selectedMarker.site.plannedEndDate}
                 </Typography>
               </Stack>
             )}
+
             {selectedMarker.site.description && (
               <Box sx={{ pt: 0.5 }}>
                 <Typography variant="body2" sx={{ fontWeight: 800 }}>
-                  Description
+                  {t("map.markerDetails.site.description")}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   {selectedMarker.site.description}
@@ -162,10 +185,10 @@ export default function MapMarkerDetailsPanel({
           <Stack spacing={1}>
             <Box>
               <Typography variant="body2" sx={{ fontWeight: 800 }}>
-                Start
+                {t("map.markerDetails.trip.start")}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {selectedMarker.trip.startLocationText ?? "—"}
+                {selectedMarker.trip.startLocationText ?? t("common.dash")}
               </Typography>
             </Box>
 
@@ -173,10 +196,10 @@ export default function MapMarkerDetailsPanel({
 
             <Box>
               <Typography variant="body2" sx={{ fontWeight: 800 }}>
-                End
+                {t("map.markerDetails.trip.end")}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {selectedMarker.trip.endLocationText ?? "—"}
+                {selectedMarker.trip.endLocationText ?? t("common.dash")}
               </Typography>
             </Box>
           </Stack>

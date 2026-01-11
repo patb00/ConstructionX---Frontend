@@ -1,4 +1,4 @@
-import type { GeoCache, Point } from "../types";
+import type { GeoCache, Point } from "..";
 
 const GEO_CACHE_KEY = "ors_geocode_cache_v1";
 

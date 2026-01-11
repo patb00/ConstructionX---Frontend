@@ -27,7 +27,7 @@ import { useVehicleBusinessTripsByEmployee } from "../../vehicle_business_trips/
 import { useCondos } from "../../condos/hooks/useCondos";
 import { useVehicleOptions } from "../../constants/options/useVehicleOptions";
 import { useEmployeeOptions } from "../../constants/options/useEmployeeOptions";
-import { TrackingCard } from "../../../components/TrackingCard";
+import { TrackingCard } from "../../../components/ui/map/TrackingCard";
 import { useConstructionSites } from "../../construction_site/hooks/useConstructionSites";
 import MapMarkerDetailsPanel from "../../../components/ui/map/MapMarkerDetailsPanel";
 import type {
@@ -37,7 +37,7 @@ import type {
   RouteByTripId,
   SelectedMarker,
   TripRow,
-} from "../types";
+} from "..";
 import {
   geocodeORS,
   isProbablyDummy,
@@ -45,7 +45,7 @@ import {
   normalizeLocationText,
   saveGeoCache,
 } from "../utils/geocoding";
-import { fetchRouteORS } from "../utils/routes";
+import { MapApi } from "../api/map.api";
 
 const tripIcon = L.divIcon({
   className: "marker-trip",
@@ -213,7 +213,7 @@ export default function MapPage() {
           const end = nextCache[e];
           if (!start || !end) continue;
 
-          const route = await fetchRouteORS(ORS_KEY, start, end, ac.signal);
+          const route = await MapApi.getRoute(ORS_KEY, start, end, ac.signal);
           if (route) nextRoutes[t.id] = route;
         }
       }
