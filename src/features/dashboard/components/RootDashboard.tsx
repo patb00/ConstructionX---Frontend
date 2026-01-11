@@ -23,6 +23,7 @@ import { useTenantStats } from "../hooks/useTenantsStats";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useTranslation } from "react-i18next";
+import { endOfMonth, statusOnDate } from "../utils/date";
 
 type Filter = "all" | "active" | "inactive" | "expired";
 
@@ -40,22 +41,6 @@ const roman = [
   "XI",
   "XII",
 ];
-
-function endOfMonth(year: number, monthIndex0to11: number) {
-  return new Date(year, monthIndex0to11 + 1, 0, 23, 59, 59, 999);
-}
-
-function statusOnDate(
-  tenant: Tenant,
-  at: Date
-): "active" | "inactive" | "expired" {
-  if (!tenant?.isActive) return "inactive";
-  const validUntil = tenant?.validUpToDate
-    ? new Date(tenant.validUpToDate)
-    : null;
-  if (!validUntil) return "inactive";
-  return validUntil < at ? "expired" : "active";
-}
 
 export default function RootDashboard() {
   const { t } = useTranslation();

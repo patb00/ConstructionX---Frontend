@@ -22,6 +22,7 @@ import { useTranslation } from "react-i18next";
 import { DataGridToolbar } from "./DatagridToolbar";
 import useColumnHeaderMappings from "./useColumnHeaderMappings";
 import { getGridLocaleText } from "./gridLocaleText";
+import { applyHeaderMappings, safeJsonParse } from "../utils/dataGrid";
 
 import { useAuthStore } from "../../../features/auth/store/useAuthStore";
 
@@ -72,23 +73,6 @@ export type ReusableDataGridProps<
   onDetailPanelExpandedRowIdsChange?: (ids: Set<GridRowId>) => void;
 };
 
-function applyHeaderMappings<T extends GridValidRowModel>(
-  columns: GridColDef<T>[],
-  mappings: Array<{ original: string; translated: string }>
-): GridColDef<T>[] {
-  if (!mappings.length) return columns;
-
-  const map = new Map<string, string>();
-  for (const { original, translated } of mappings)
-    map.set(original, translated);
-
-  return columns.map((c) => {
-    const current = (c.headerName ?? c.field) as string;
-    const translated = map.get(current);
-    return translated ? { ...c, headerName: translated } : c;
-  });
-}
-
 type PersistedGridState = {
   version: number;
   columnVisibilityModel?: GridColumnVisibilityModel;
@@ -99,15 +83,6 @@ type PersistedGridState = {
 };
 
 const GRID_STATE_VERSION = 1;
-
-function safeJsonParse<T>(value: string | null): T | null {
-  if (!value) return null;
-  try {
-    return JSON.parse(value) as T;
-  } catch {
-    return null;
-  }
-}
 
 export default function ReusableDataGrid<
   T extends GridValidRowModel = GridValidRowModel
