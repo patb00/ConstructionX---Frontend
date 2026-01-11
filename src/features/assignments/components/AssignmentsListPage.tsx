@@ -39,7 +39,6 @@ import {
   type TimelineItem,
 } from "../../../components/ui/views/TimelineView";
 
-import { getEmployeeInitials, getEmployeeLabel } from "../utils/employee";
 import { formatIsoDate } from "../utils/date";
 import StatCardDetail from "../../../components/ui/StatCardDetail";
 
@@ -47,8 +46,13 @@ import {
   addDays,
   makeWeekRangeFormatter,
   formatWeekRange,
+  formatLocalIsoDate,
 } from "../../../utils/dateFormatters";
 import { getIntlLocale } from "../../../utils/u18nLocale";
+import {
+  getEmployeeInitials,
+  getEmployeeLabel,
+} from "../../../utils/employeeUtils";
 import { useConstructionSiteEmployeeWorkLogs } from "../../construction_site/hooks/useConstructionSiteEmployeeWorkLogs";
 import { useUpsertConstructionSiteEmployeeWorkLogs } from "../../construction_site/hooks/useUpsertConstructionSiteEmployeeWorkLogs";
 import type {
@@ -72,17 +76,6 @@ function toTimeSpanStrict(value: string): string {
   }
 
   return v;
-}
-
-function formatLocalIsoDate(d: Date) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
-function toIsoDate(d: Date) {
-  return formatLocalIsoDate(d);
 }
 
 function startOfWeekMonday(date: Date) {
@@ -215,8 +208,11 @@ const AssignmentsListPage = () => {
   const isLoadingTimeline =
     isLoadingSites || isLoadingVehicles || isLoadingTools;
 
-  const startDate = useMemo(() => toIsoDate(weekStart), [weekStart]);
-  const endDate = useMemo(() => toIsoDate(addDays(weekStart, 6)), [weekStart]);
+  const startDate = useMemo(() => formatLocalIsoDate(weekStart), [weekStart]);
+  const endDate = useMemo(
+    () => formatLocalIsoDate(addDays(weekStart, 6)),
+    [weekStart]
+  );
 
   const locale = useMemo(
     () => getIntlLocale(i18n),
