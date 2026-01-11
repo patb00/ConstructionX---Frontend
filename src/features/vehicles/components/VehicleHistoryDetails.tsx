@@ -21,11 +21,7 @@ import {
 import { HistoryCard } from "../../../components/ui/history/HistoryCard";
 import { HistoryAccordionSection } from "../../../components/ui/history/HistoryAccordionSection";
 import { useVehicleRepairsByVehicle } from "../../vehicles_repairs/hooks/useVehicleRepairsByVehicle";
-
-function formatRange(from?: string | null, to?: string | null) {
-  const f = from ?? "";
-  return to ? `${f} → ${to}` : `${f} → (ongoing)`;
-}
+import { formatRangeWithOngoingLabel } from "../../../utils/dateFormatters";
 
 function formatDateTime(iso?: string | null) {
   if (!iso) return "";
@@ -139,7 +135,7 @@ export function VehicleHistoryDetails({ vehicleId }: { vehicleId: number }) {
                 >
                   <Chip
                     size="small"
-                    label={formatRange(it.dateFrom, it.dateTo)}
+                    label={formatRangeWithOngoingLabel(it.dateFrom, it.dateTo)}
                     sx={{
                       ...pillSx,
                       bgcolor: alpha(theme.palette.info.main, 0.06),
@@ -199,7 +195,7 @@ export function VehicleHistoryDetails({ vehicleId }: { vehicleId: number }) {
                 >
                   <Chip
                     size="small"
-                    label={formatRange(r.validFrom, r.validTo)}
+                    label={formatRangeWithOngoingLabel(r.validFrom, r.validTo)}
                     sx={{
                       ...pillSx,
                       bgcolor: alpha(theme.palette.info.main, 0.06),
@@ -345,7 +341,7 @@ export function VehicleHistoryDetails({ vehicleId }: { vehicleId: number }) {
                 >
                   <Chip
                     size="small"
-                    label={formatRange(i.validFrom, i.validTo)}
+                    label={formatRangeWithOngoingLabel(i.validFrom, i.validTo)}
                     sx={{
                       ...pillSx,
                       bgcolor: alpha(theme.palette.info.main, 0.06),

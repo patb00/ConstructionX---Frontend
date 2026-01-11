@@ -13,15 +13,7 @@ import { HistoryAccordionSection } from "../../../components/ui/history/HistoryA
 import { HistoryCard } from "../../../components/ui/history/HistoryCard";
 import { useCondo } from "../hooks/useCondo";
 import type { CondoDetails } from "..";
-
-function formatRange(
-  from?: string | null,
-  to?: string | null,
-  ongoingLabel = "(ongoing)"
-) {
-  const f = from ?? "";
-  return to ? `${f} → ${to}` : `${f} → ${ongoingLabel}`;
-}
+import { formatRangeWithOngoingLabel } from "../../../utils/dateFormatters";
 
 export function CondoHistoryDetails({ condoId }: { condoId: number }) {
   const theme = useTheme();
@@ -100,7 +92,7 @@ export function CondoHistoryDetails({ condoId }: { condoId: number }) {
                   >
                     <Chip
                       size="small"
-                      label={formatRange(
+                      label={formatRangeWithOngoingLabel(
                         e.dateFrom,
                         e.dateTo,
                         t("history.common.ongoing")
@@ -146,7 +138,7 @@ export function CondoHistoryDetails({ condoId }: { condoId: number }) {
                 >
                   <Chip
                     size="small"
-                    label={formatRange(
+                    label={formatRangeWithOngoingLabel(
                       s.startDate,
                       s.plannedEndDate,
                       t("history.common.ongoing")

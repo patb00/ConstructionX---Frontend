@@ -17,6 +17,7 @@ import {
   makeHeaderFormatter,
   makeTooltipFormatter,
   safeFormatISO,
+  formatLocalIsoDate,
 } from "../../../utils/dateFormatters";
 import { getIntlLocale } from "../../../utils/u18nLocale";
 
@@ -69,13 +70,6 @@ function normalizeDate(dateStr: string) {
 function daysDiffInclusive(start: Date, end: Date) {
   const ms = end.getTime() - start.getTime();
   return Math.max(1, Math.round(ms / (1000 * 60 * 60 * 24)) + 1);
-}
-
-function formatLocalIsoDate(d: Date) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
 }
 
 function clampDate(d: Date, min: Date, max: Date) {
