@@ -16,6 +16,7 @@ import {
   FaStethoscope,
   FaInbox,
   FaWrench,
+  FaMapMarkedAlt,
 } from "react-icons/fa";
 import { IoIosBusiness } from "react-icons/io";
 
@@ -110,6 +111,13 @@ export const NAV_ITEMS: NavItem[] = [
     labelKey: "nav.tasks",
     to: "/app/tasks",
     icon: <FaInbox />,
+    section: "MANAGEMENT",
+    category: "CONSTRUCTION",
+  },
+  {
+    labelKey: "nav.map",
+    to: "/app/map",
+    icon: <FaMapMarkedAlt />,
     section: "MANAGEMENT",
     category: "CONSTRUCTION",
   },

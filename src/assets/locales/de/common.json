@@ -34,7 +34,84 @@
     "vehicleRegistrations": "Fahrzeugzulassungen",
     "vehicleInsurances": "Fahrzeugversicherungen",
     "vehicleBusinessTrips": "Dienstfahrten",
-    "tasks": "Aufgaben"
+    "tasks": "Aufgaben",
+    "map": "Karte"
+  },
+  "map": {
+    "page": {
+      "missingOrsKey": "ORS-Schlüssel fehlt. Fügen Sie <1>VITE_OPENROUTESERVICE_API_KEY</1> zu <3>.env</3> hinzu und starten Sie neu.",
+      "toggle": {
+        "on": "An",
+        "off": "Aus"
+      },
+      "scope": {
+        "all": "Alle",
+        "vehicle": "Fahrzeug",
+        "employee": "Mitarbeiter"
+      },
+      "trips": {
+        "title": "Fahrten",
+        "subtitle": "Umfang + Sichtbarkeit",
+        "scopeLabel": "Umfang:",
+        "visibleLabel": "Sichtbar:",
+        "scopeInput": "Umfang",
+        "vehicleInput": "Fahrzeug",
+        "vehiclePlaceholder": "Fahrzeug auswählen…",
+        "employeeInput": "Mitarbeiter",
+        "employeePlaceholder": "Mitarbeiter auswählen…",
+        "vehicleNote": "Fahrzeug: {{vehicle}}",
+        "employeeNote": "Mitarbeiter: {{employee}}",
+        "allNote": "Fahrten aus allen Quellen anzeigen",
+        "showLabel": "Fahrten anzeigen",
+        "showDescription": "Routen und Marker"
+      },
+      "condos": {
+        "title": "Wohnungen",
+        "subtitle": "Sichtbarkeit",
+        "visibleLabel": "Sichtbar:",
+        "geocodedLabel": "Geokodiert:",
+        "bottomNote": "Adressen werden geokodiert und im Browser zwischengespeichert",
+        "showLabel": "Wohnungen anzeigen",
+        "showDescription": "Wohnungsmarker"
+      },
+      "sites": {
+        "title": "Baustellen",
+        "subtitle": "Sichtbarkeit",
+        "visibleLabel": "Sichtbar:",
+        "geocodedLabel": "Geokodiert:",
+        "bottomNote": "Standorte werden geokodiert und im Browser zwischengespeichert",
+        "showLabel": "Baustellen anzeigen",
+        "showDescription": "Baustellenmarker"
+      }
+    },
+    "markerDetails": {
+      "title": {
+        "condo": "Wohnung #{{id}}",
+        "trip": "Fahrt #{{id}}"
+      },
+      "fallback": {
+        "noAddress": "Keine Adresse",
+        "noLocation": "Kein Standort",
+        "noStart": "Kein Startort",
+        "noEnd": "Kein Zielort"
+      },
+      "condo": {
+        "capacity": "Kapazität",
+        "occupied": "Belegt",
+        "responsible": "Verantwortlich"
+      },
+      "site": {
+        "status": "Status",
+        "manager": "Leiter",
+        "start": "Start",
+        "plannedEnd": "Geplantes Ende",
+        "description": "Beschreibung"
+      },
+      "trip": {
+        "start": "Start",
+        "end": "Ziel"
+      }
+    }
   },
 
   "constructionSites": {
@@ -217,9 +294,11 @@
   },
   "common": {
     "cancel": "Abbrechen",
+    "close": "Schließen",
     "submit": "Speichern",
     "saving": "Wird gespeichert...",
     "edit": "Bearbeiten",
+    "dash": "—",
     "all": "Alle Status",
     "unassign": "Zuweisung entfernen",
     "notAvailable": "Nicht verfügbar",

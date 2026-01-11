@@ -34,7 +34,84 @@
     "vehicleRegistrations": "Registracije vozila",
     "vehicleInsurances": "Osiguranja vozila",
     "vehicleBusinessTrips": "Službena putovanja ",
-    "tasks": "Zadaci"
+    "tasks": "Zadaci",
+    "map": "Karta"
+  },
+  "map": {
+    "page": {
+      "missingOrsKey": "Nedostaje ORS ključ. Dodajte <1>VITE_OPENROUTESERVICE_API_KEY</1> u <3>.env</3> i ponovno pokrenite.",
+      "toggle": {
+        "on": "Uključeno",
+        "off": "Isključeno"
+      },
+      "scope": {
+        "all": "Sve",
+        "vehicle": "Vozilo",
+        "employee": "Zaposlenik"
+      },
+      "trips": {
+        "title": "Putovanja",
+        "subtitle": "Opseg + vidljivost",
+        "scopeLabel": "Opseg:",
+        "visibleLabel": "Vidljivo:",
+        "scopeInput": "Opseg",
+        "vehicleInput": "Vozilo",
+        "vehiclePlaceholder": "Odaberite vozilo…",
+        "employeeInput": "Zaposlenik",
+        "employeePlaceholder": "Odaberite zaposlenika…",
+        "vehicleNote": "Vozilo: {{vehicle}}",
+        "employeeNote": "Zaposlenik: {{employee}}",
+        "allNote": "Prikazuju se putovanja iz svih izvora",
+        "showLabel": "Prikaži putovanja",
+        "showDescription": "Rute i oznake"
+      },
+      "condos": {
+        "title": "Stanovi",
+        "subtitle": "Vidljivost",
+        "visibleLabel": "Vidljivo:",
+        "geocodedLabel": "Geokodirano:",
+        "bottomNote": "Adrese su geokodirane i spremljene u pregledniku",
+        "showLabel": "Prikaži stanove",
+        "showDescription": "Oznake stanova"
+      },
+      "sites": {
+        "title": "Gradilišta",
+        "subtitle": "Vidljivost",
+        "visibleLabel": "Vidljivo:",
+        "geocodedLabel": "Geokodirano:",
+        "bottomNote": "Lokacije su geokodirane i spremljene u pregledniku",
+        "showLabel": "Prikaži gradilišta",
+        "showDescription": "Oznake gradilišta"
+      }
+    },
+    "markerDetails": {
+      "title": {
+        "condo": "Stan #{{id}}",
+        "trip": "Putovanje #{{id}}"
+      },
+      "fallback": {
+        "noAddress": "Nema adrese",
+        "noLocation": "Nema lokacije",
+        "noStart": "Nema početne lokacije",
+        "noEnd": "Nema završne lokacije"
+      },
+      "condo": {
+        "capacity": "Kapacitet",
+        "occupied": "Zauzeto",
+        "responsible": "Odgovorna osoba"
+      },
+      "site": {
+        "status": "Status",
+        "manager": "Voditelj",
+        "start": "Početak",
+        "plannedEnd": "Planirani završetak",
+        "description": "Opis"
+      },
+      "trip": {
+        "start": "Početak",
+        "end": "Kraj"
+      }
+    }
   },
 
   "constructionSites": {
@@ -217,9 +294,11 @@
   },
   "common": {
     "cancel": "Odustani",
+    "close": "Zatvori",
     "submit": "Spremi",
     "saving": "Spremanje...",
     "edit": "Uredi",
+    "dash": "—",
     "all": "Svi statusi",
     "unassign": "Ukloni dodjelu",
     "notAvailable": "Nije definirano",
