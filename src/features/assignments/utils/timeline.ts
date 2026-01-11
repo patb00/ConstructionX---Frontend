@@ -10,6 +10,10 @@ import type {
   Lane,
   TimelineItem,
 } from "../../../components/ui/views/TimelineView";
+import {
+  getEmployeeInitials,
+  getEmployeeLabel,
+} from "../../../utils/employeeUtils";
 
 type Args = {
   construction: AssignedConstructionSite[];
@@ -22,17 +26,6 @@ type Args = {
 function findEmployee(employees: Employee[], id?: number | null) {
   if (id == null) return null;
   return employees.find((e) => e.id === id) ?? null;
-}
-
-function getEmployeeLabel(e: any): string {
-  return [e?.firstName, e?.lastName].filter(Boolean).join(" ") || `#${e?.id}`;
-}
-
-function getEmployeeInitials(e: any): string {
-  const first = e?.firstName?.[0] ?? "";
-  const last = e?.lastName?.[0] ?? "";
-  const initials = `${first}${last}`.trim();
-  return initials || (e?.id != null ? String(e.id).slice(-2) : "?");
 }
 
 function toIsoDay(d: Date) {

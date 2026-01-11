@@ -13,15 +13,7 @@ import {
 import { HistoryCard } from "../../../components/ui/history/HistoryCard";
 import { HistoryAccordionSection } from "../../../components/ui/history/HistoryAccordionSection";
 import { useToolRepairsByTool } from "../../tools_repairs/hooks/useToolRepairByTool";
-
-function formatRange(
-  from?: string | null,
-  to?: string | null,
-  ongoingLabel = "(ongoing)"
-) {
-  const f = from ?? "";
-  return to ? `${f} → ${to}` : `${f} → ${ongoingLabel}`;
-}
+import { formatRangeWithOngoingLabel } from "../../../utils/dateFormatters";
 
 export function ToolHistoryDetails({ toolId }: { toolId: number }) {
   const theme = useTheme();
@@ -134,7 +126,7 @@ export function ToolHistoryDetails({ toolId }: { toolId: number }) {
                   >
                     <Chip
                       size="small"
-                      label={formatRange(
+                      label={formatRangeWithOngoingLabel(
                         from,
                         it.dateTo,
                         t("history.common.ongoing")

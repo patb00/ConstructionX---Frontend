@@ -37,3 +37,19 @@ export function formatWeekRange(weekStart: Date, fmt: Intl.DateTimeFormat) {
   const end = addDays(weekStart, 6);
   return `${fmt.format(weekStart)} – ${fmt.format(end)}`;
 }
+
+export function formatLocalIsoDate(d: Date) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+export function formatRangeWithOngoingLabel(
+  from?: string | null,
+  to?: string | null,
+  ongoingLabel = "(ongoing)"
+) {
+  const f = from ?? "";
+  return to ? `${f} → ${to}` : `${f} → ${ongoingLabel}`;
+}
