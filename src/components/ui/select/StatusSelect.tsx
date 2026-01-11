@@ -11,6 +11,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useMemo } from "react";
+import { statusColor } from "../utils/statusSelect";
 
 export type StatusOption = { value: number; label: string };
 
@@ -25,23 +26,6 @@ type Props = {
   value?: string;
   onChange?: (value: string) => void;
 };
-
-function statusColor(value: number, theme: any): string {
-  switch (value) {
-    case 1:
-      return theme.palette.secondary.main;
-    case 2:
-      return theme.palette.secondary.dark ?? theme.palette.secondary.main;
-    case 3:
-      return theme.palette.warning.main;
-    case 4:
-      return theme.palette.success.main;
-    case 5:
-      return theme.palette.error.main;
-    default:
-      return theme.palette.grey[400];
-  }
-}
 
 function Dot({ color }: { color: string }) {
   return (

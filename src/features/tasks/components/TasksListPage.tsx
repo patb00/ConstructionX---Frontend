@@ -4,19 +4,10 @@ import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 
 import VehicleRegistrationRequestsTab from "./VehicleRegistrationTasksTab";
-
-type RequestsTabKey = "vehicleRegistration" | "businessTrips";
-
-const TAB_KEYS: RequestsTabKey[] = ["vehicleRegistration", "businessTrips"];
-
-function tabIndexFromKey(key: string | null): number {
-  const idx = TAB_KEYS.indexOf((key ?? "") as RequestsTabKey);
-  return idx >= 0 ? idx : 0;
-}
-
-function tabKeyFromIndex(index: number): RequestsTabKey {
-  return TAB_KEYS[index] ?? "vehicleRegistration";
-}
+import {
+  tabIndexFromKey,
+  tabKeyFromIndex,
+} from "../utils/tabs";
 
 export default function RequestsListPage() {
   const { t } = useTranslation();

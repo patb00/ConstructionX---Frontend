@@ -21,6 +21,7 @@ import { LineChart } from "@mui/x-charts/LineChart";
 import { useConstructionSites } from "../../construction_site/hooks/useConstructionSites";
 import { StatCard } from "../../../components/ui/stats/StatCard";
 import { useTranslation } from "react-i18next";
+import { monthIndexFromISO, toLocal } from "../utils/date";
 
 type Filter = "sites" | "employees" | "tools" | "vehicles";
 
@@ -38,18 +39,6 @@ const roman = [
   "XI",
   "XII",
 ];
-
-function monthIndexFromISO(iso?: string | null) {
-  if (!iso) return null;
-  const d = new Date(iso);
-  return Number.isFinite(d.getTime()) ? d.getMonth() : null;
-}
-
-function toLocal(iso?: string | null) {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  return Number.isFinite(d.getTime()) ? d.toLocaleString() : "—";
-}
 
 export default function AdminDashboard() {
   const { t } = useTranslation();

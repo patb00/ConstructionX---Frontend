@@ -22,11 +22,7 @@ import { HistoryCard } from "../../../components/ui/history/HistoryCard";
 import { HistoryAccordionSection } from "../../../components/ui/history/HistoryAccordionSection";
 import { useVehicleRepairsByVehicle } from "../../vehicles_repairs/hooks/useVehicleRepairsByVehicle";
 import { formatRangeWithOngoingLabel } from "../../../utils/dateFormatters";
-
-function formatDateTime(iso?: string | null) {
-  if (!iso) return "";
-  return iso.replace("T", " ").slice(0, 16);
-}
+import { formatDateTime } from "../utils/formatDateTime";
 
 export function VehicleHistoryDetails({ vehicleId }: { vehicleId: number }) {
   const theme = useTheme();

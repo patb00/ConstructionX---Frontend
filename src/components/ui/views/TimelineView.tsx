@@ -20,6 +20,13 @@ import {
   formatLocalIsoDate,
 } from "../../../utils/dateFormatters";
 import { getIntlLocale } from "../../../utils/u18nLocale";
+import {
+  clampDate,
+  dayIndex,
+  daysDiffInclusive,
+  normalizeDate,
+  overlapsRange,
+} from "../utils/timelineView";
 
 export type Lane = {
   id: string;
@@ -55,41 +62,6 @@ type TimelineBoardProps = {
   endDate: string;
   onItemClick?: (args: { item: TimelineItem; dayIso: string }) => void;
 };
-
-function parseLocalIsoDate(iso: string) {
-  const [y, m, d] = iso.split("-").map(Number);
-  return new Date(y, (m ?? 1) - 1, d ?? 1);
-}
-
-function normalizeDate(dateStr: string) {
-  const d = parseLocalIsoDate(dateStr);
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
-
-function daysDiffInclusive(start: Date, end: Date) {
-  const ms = end.getTime() - start.getTime();
-  return Math.max(1, Math.round(ms / (1000 * 60 * 60 * 24)) + 1);
-}
-
-function clampDate(d: Date, min: Date, max: Date) {
-  if (d < min) return min;
-  if (d > max) return max;
-  return d;
-}
-
-function overlapsRange(
-  itemStart: Date,
-  itemEnd: Date,
-  rangeStart: Date,
-  rangeEnd: Date
-) {
-  return itemStart <= rangeEnd && itemEnd >= rangeStart;
-}
-
-function dayIndex(from: Date, to: Date) {
-  return Math.round((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
-}
 
 type Segment = {
   segmentId: string;

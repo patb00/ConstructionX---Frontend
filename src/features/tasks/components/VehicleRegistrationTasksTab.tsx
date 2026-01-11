@@ -43,15 +43,10 @@ import { useVehicleRegistrationEmployeesByEmployee } from "../../vehicle_registr
 import { useUpdateVehicleRegistrationEmployee } from "../../vehicle_registration_employee/hooks/useUpdateVehicleRegistrationEmployee";
 import { useVehicles } from "../../vehicles/hooks/useVehicles";
 import ResolveVehicleRegistrationTaskDialog from "../../vehicle_registration_employee/components/ResolveVehicleRegistrationTaskDialog";
-
-const isFinalStatus = (status?: number | null) => status === 3 || status === 4;
-
-function tagForStatus(status?: number | null): ListViewStatusTag {
-  if (status === 4) return { label: "Cancelled", color: "default" };
-  if (status === 3) return { label: "Done", color: "success" };
-  if (status === 2) return { label: "In progress", color: "warning" };
-  return { label: "New", color: "default" };
-}
+import {
+  isFinalStatus,
+  tagForStatus,
+} from "../../vehicle_registration_employee/utils/taskStatus";
 
 type RequestView = {
   task: VehicleRegistrationEmployee;
