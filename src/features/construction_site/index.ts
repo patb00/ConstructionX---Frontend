@@ -203,3 +203,40 @@ export interface AssignCondosRequest {
   constructionSiteId: number;
   condos: AssignCondoItem[];
 }
+
+export interface ConstructionSiteEmployeeWorkLogDay {
+  workDate: string;
+  startTime: string;
+  endTime: string;
+}
+
+export interface UpsertConstructionSiteEmployeeWorkLogsRequest {
+  constructionSiteId: number;
+  employeeId: number;
+  workLogs: ConstructionSiteEmployeeWorkLogDay[];
+}
+
+export interface GetConstructionSiteEmployeeWorkLogsQuery {
+  constructionSiteId: number;
+  employeeId: number;
+}
+
+export interface ConstructionSiteEmployeeWorkLog {
+  constructionSiteId: number;
+  employeeId: number;
+  workDate: string;
+  startTime: string;
+  endTime: string;
+
+  employeeName?: string | null;
+  constructionSiteName?: string | null;
+}
+
+export interface GetConstructionSiteEmployeeWorkLogsAllQuery {
+  dateFrom?: string;
+  dateTo?: string;
+  constructionSiteId?: number;
+  employeeId?: number;
+  page?: number;
+  pageSize?: number;
+}

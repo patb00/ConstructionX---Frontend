@@ -2180,5 +2180,22 @@
         "description": "Description"
       }
     }
+  },
+  "workLogs": {
+    "dialog": {
+      "title": "Work log",
+      "subtitle": "Enter start and end time",
+      "detailsTitle": "Details",
+      "employee": "Employee",
+      "site": "Construction site",
+      "date": "Date",
+      "startTime": "Start",
+      "endTime": "End",
+      "hint": "Times are saved in 24-hour format with minute precision.",
+      "preview": {
+        "employeeId": "Employee",
+        "siteId": "Site"
+      }
+    }
   }
 }

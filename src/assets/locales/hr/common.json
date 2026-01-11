@@ -2222,5 +2222,22 @@
         "description": "Opis"
       }
     }
+  },
+  "workLogs": {
+    "dialog": {
+      "title": "Evidencija rada",
+      "subtitle": "Unesite vrijeme početka i završetka",
+      "detailsTitle": "Detalji",
+      "employee": "Zaposlenik",
+      "site": "Gradilište",
+      "date": "Datum",
+      "startTime": "Početak",
+      "endTime": "Završetak",
+      "hint": "Vrijeme se sprema u 24-satnom formatu s preciznošću na minute.",
+      "preview": {
+        "employeeId": "Zaposlenik",
+        "siteId": "Gradilište"
+      }
+    }
   }
 }

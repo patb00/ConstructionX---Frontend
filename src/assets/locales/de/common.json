@@ -2183,5 +2183,22 @@
         "description": "Beschreibung"
       }
     }
+  },
+  "workLogs": {
+    "dialog": {
+      "title": "Arbeitsprotokoll",
+      "subtitle": "Start- und Endzeit eingeben",
+      "detailsTitle": "Details",
+      "employee": "Mitarbeiter",
+      "site": "Baustelle",
+      "date": "Datum",
+      "startTime": "Start",
+      "endTime": "Ende",
+      "hint": "Zeiten werden im 24-Stunden-Format mit Minutenpräzision gespeichert.",
+      "preview": {
+        "employeeId": "Mitarbeiter",
+        "siteId": "Baustelle"
+      }
+    }
   }
 }

@@ -41,6 +41,9 @@ export type TimelineItem = {
   meta?: {
     type?: string;
     laneLabel?: string;
+
+    constructionSiteId?: number;
+    employeeId?: number;
   };
 };
 
@@ -49,16 +52,30 @@ type TimelineBoardProps = {
   items: TimelineItem[];
   startDate: string;
   endDate: string;
+  onItemClick?: (args: { item: TimelineItem; dayIso: string }) => void;
 };
 
+function parseLocalIsoDate(iso: string) {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, (m ?? 1) - 1, d ?? 1);
+}
+
 function normalizeDate(dateStr: string) {
-  const d = new Date(dateStr);
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const d = parseLocalIsoDate(dateStr);
+  d.setHours(0, 0, 0, 0);
+  return d;
 }
 
 function daysDiffInclusive(start: Date, end: Date) {
   const ms = end.getTime() - start.getTime();
   return Math.max(1, Math.round(ms / (1000 * 60 * 60 * 24)) + 1);
+}
+
+function formatLocalIsoDate(d: Date) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
 
 function clampDate(d: Date, min: Date, max: Date) {
@@ -101,6 +118,7 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
   items,
   startDate,
   endDate,
+  onItemClick,
 }) => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -351,12 +369,12 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
                         const left = idx * colWidthPercent;
                         const right = (idx + 1) * colWidthPercent;
                         return `linear-gradient(to right,
-                          transparent 0%,
-                          transparent ${left}%,
-                          ${alpha(theme.palette.primary.light, 0.08)} ${left}%,
-                          ${alpha(theme.palette.primary.light, 0.08)} ${right}%,
-                          transparent ${right}%,
-                          transparent 100%)`;
+                        transparent 0%,
+                        transparent ${left}%,
+                        ${alpha(theme.palette.primary.light, 0.08)} ${left}%,
+                        ${alpha(theme.palette.primary.light, 0.08)} ${right}%,
+                        transparent ${right}%,
+                        transparent 100%)`;
                       })
                       .filter(Boolean)
                       .join(", "),
@@ -438,6 +456,19 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
                       enterDelay={150}
                     >
                       <Box
+                        onClick={() => {
+                          if (!onItemClick) return;
+
+                          const originalItem = items.find(
+                            (x) => x.id === seg.baseId
+                          );
+                          if (!originalItem) return;
+
+                          const clickedDay = addDays(start, seg.dayIdx);
+                          const dayIso = formatLocalIsoDate(clickedDay);
+
+                          onItemClick({ item: originalItem, dayIso });
+                        }}
                         sx={{
                           position: "absolute",
                           zIndex: 1,

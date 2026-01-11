@@ -9,8 +9,9 @@ import {
   type SelectChangeEvent,
   CircularProgress,
   IconButton,
+  TextField,
 } from "@mui/material";
-
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import BadgeIcon from "@mui/icons-material/Badge";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
@@ -30,7 +31,7 @@ import type {
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { useCurrentEmployeeContext } from "../../auth/hooks/useCurrentEmployeeContext";
 import { useTranslation } from "react-i18next";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   TimelineView,
@@ -48,9 +49,40 @@ import {
   formatWeekRange,
 } from "../../../utils/dateFormatters";
 import { getIntlLocale } from "../../../utils/u18nLocale";
+import { useConstructionSiteEmployeeWorkLogs } from "../../construction_site/hooks/useConstructionSiteEmployeeWorkLogs";
+import { useUpsertConstructionSiteEmployeeWorkLogs } from "../../construction_site/hooks/useUpsertConstructionSiteEmployeeWorkLogs";
+import type {
+  ConstructionSiteEmployeeWorkLogDay,
+  UpsertConstructionSiteEmployeeWorkLogsRequest,
+} from "../../construction_site";
+import { AssignTaskDialog } from "../../../components/ui/assign-dialog/AssignTaskDialog";
+
+function toTimeSpanStrict(value: string): string {
+  const v = (value ?? "").trim();
+  if (!v) return v;
+
+  if (/^\d{1,2}:\d{2}$/.test(v)) {
+    const [h, m] = v.split(":");
+    return `${h.padStart(2, "0")}:${m}:00`;
+  }
+
+  if (/^\d{1,2}:\d{2}:\d{2}$/.test(v)) {
+    const [h, m, s] = v.split(":");
+    return `${h.padStart(2, "0")}:${m}:${s}`;
+  }
+
+  return v;
+}
+
+function formatLocalIsoDate(d: Date) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
 
 function toIsoDate(d: Date) {
-  return d.toISOString().slice(0, 10);
+  return formatLocalIsoDate(d);
 }
 
 function startOfWeekMonday(date: Date) {
@@ -61,6 +93,14 @@ function startOfWeekMonday(date: Date) {
   d.setDate(d.getDate() + diff);
   return d;
 }
+
+type WorkLogDraft = {
+  constructionSiteId: number;
+  employeeId: number;
+  workDate: string;
+  startTime: string;
+  endTime: string;
+};
 
 const AssignmentsListPage = () => {
   const { t, i18n } = useTranslation();
@@ -78,12 +118,42 @@ const AssignmentsListPage = () => {
     startOfWeekMonday(new Date())
   );
 
-  const effectiveEmployeeId: number | null =
-    isAdmin
-      ? typeof selectedEmployeeId === "number"
-        ? selectedEmployeeId
-        : null
-      : myEmployeeId;
+  const [workLogOpen, setWorkLogOpen] = useState(false);
+  const [workLogDraft, setWorkLogDraft] = useState<WorkLogDraft | null>(null);
+
+  const upsertWorkLogs = useUpsertConstructionSiteEmployeeWorkLogs();
+
+  const { data: employeeSiteLogs } = useConstructionSiteEmployeeWorkLogs(
+    workLogDraft?.constructionSiteId,
+    workLogDraft?.employeeId
+  );
+
+  console.log("employeeSiteLogs", employeeSiteLogs);
+
+  useEffect(() => {
+    if (!workLogDraft) return;
+    if (!employeeSiteLogs) return;
+
+    const existing = employeeSiteLogs.find(
+      (x) => x.workDate === workLogDraft.workDate
+    );
+    if (!existing) return;
+
+    setWorkLogDraft((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        startTime: prev.startTime || existing.startTime || "",
+        endTime: prev.endTime || existing.endTime || "",
+      };
+    });
+  }, [employeeSiteLogs, workLogDraft]);
+
+  const effectiveEmployeeId: number | null = isAdmin
+    ? typeof selectedEmployeeId === "number"
+      ? selectedEmployeeId
+      : null
+    : myEmployeeId;
 
   const handleSelectChange = (e: SelectChangeEvent<number | "">) => {
     const v = e.target.value;
@@ -161,7 +231,7 @@ const AssignmentsListPage = () => {
   );
 
   const { lanes, items } = useMemo(() => {
-    const todayIso = new Date().toISOString().slice(0, 10);
+    const todayIso = formatLocalIsoDate(new Date());
 
     const employeesInScope =
       effectiveEmployeeId == null
@@ -235,6 +305,9 @@ const AssignmentsListPage = () => {
         meta: {
           type: "construction",
           laneLabel: t("assignments.timeline.laneConstruction"),
+
+          constructionSiteId: row.constructionSiteId,
+          employeeId: row.employeeId ?? undefined,
         },
       });
     });
@@ -320,184 +393,351 @@ const AssignmentsListPage = () => {
     t,
   ]);
 
+  const handleSaveWorkLog = async () => {
+    if (!workLogDraft) return;
+
+    const startTime = toTimeSpanStrict(workLogDraft.startTime);
+    const endTime = toTimeSpanStrict(workLogDraft.endTime);
+
+    const payload: UpsertConstructionSiteEmployeeWorkLogsRequest = {
+      constructionSiteId: workLogDraft.constructionSiteId,
+      employeeId: workLogDraft.employeeId,
+      workLogs: [
+        {
+          workDate: workLogDraft.workDate,
+          startTime,
+          endTime,
+        },
+      ],
+    };
+
+    await upsertWorkLogs.mutateAsync(payload);
+    setWorkLogOpen(false);
+    setWorkLogDraft(null);
+  };
+
+  const closeWorkLog = () => {
+    if (upsertWorkLogs.isPending) return;
+    setWorkLogOpen(false);
+    setWorkLogDraft(null);
+  };
+
+  console.log("lanes", lanes, "items", items);
+
   return (
-    <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 2,
-        }}
-      >
-        <Typography variant="h5" fontWeight={600}>
-          {t("assignments.title")}
-        </Typography>
-
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <IconButton
-            size="small"
-            onClick={() => setWeekStart((d) => addDays(d, -7))}
-            aria-label={t("assignments.timeline.prevWeek", "Previous week")}
-          >
-            <ChevronLeftIcon />
-          </IconButton>
-
-          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-            {weekLabel}
-          </Typography>
-
-          <IconButton
-            size="small"
-            onClick={() => setWeekStart((d) => addDays(d, 7))}
-            aria-label={t("assignments.timeline.nextWeek", "Next week")}
-          >
-            <ChevronRightIcon />
-          </IconButton>
-        </Box>
-      </Box>
-
-      {isAdmin && (
-        <>
-          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-            <FormControl size="small" sx={{ minWidth: 280 }} variant="outlined">
-              <InputLabel id="employee-select-label" shrink>
-                {t("assignments.filterByEmployee")}
-              </InputLabel>
-
-              <Select<number | "">
-                labelId="employee-select-label"
-                id="employee-select"
-                label={t("assignments.filterByEmployee")}
-                value={selectedEmployeeId}
-                onChange={handleSelectChange}
-                displayEmpty
-                renderValue={(val) => {
-                  if (val === "")
-                    return <em>{t("assignments.allEmployees")}</em>;
-                  const id = typeof val === "number" ? val : Number(val);
-                  const emp = employeeRows.find((x) => x.id === id);
-                  return emp ? getEmployeeLabel(emp) : `#${id}`;
-                }}
-              >
-                <MenuItem value="">
-                  <em>{t("assignments.allEmployees")}</em>
-                </MenuItem>
-
-                {employeeRows.map((e) => (
-                  <MenuItem key={e.id} value={e.id}>
-                    {getEmployeeLabel(e)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-
-          {selectedEmployee && (
-            <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-              <Box
-                sx={{
-                  flexBasis: {
-                    xs: "100%",
-                    sm: "calc(50% - 8px)",
-                    md: "calc(33.333% - 12px)",
-                  },
-                  flexGrow: 1,
-                }}
-              >
-                <StatCardDetail
-                  icon={<BadgeIcon />}
-                  label={t("assignments.employee.info")}
-                  value={getEmployeeLabel(selectedEmployee)}
-                  caption={
-                    selectedEmployee.oib
-                      ? `OIB: ${selectedEmployee.oib}`
-                      : t("assignments.employee.noOib")
-                  }
-                />
-              </Box>
-
-              <Box
-                sx={{
-                  flexBasis: {
-                    xs: "100%",
-                    sm: "calc(50% - 8px)",
-                    md: "calc(33.333% - 12px)",
-                  },
-                  flexGrow: 1,
-                }}
-              >
-                <StatCardDetail
-                  icon={<CalendarTodayIcon />}
-                  label={t("assignments.employee.dates")}
-                  value={
-                    selectedEmployee.dateOfBirth
-                      ? `${t("assignments.employee.birthDate")} ${formatIsoDate(
-                          selectedEmployee.dateOfBirth
-                        )}`
-                      : t("assignments.employee.birthDateUnknown")
-                  }
-                  caption={
-                    selectedEmployee.employmentDate
-                      ? `${t(
-                          "assignments.employee.employedFrom"
-                        )} ${formatIsoDate(selectedEmployee.employmentDate)}`
-                      : t("assignments.employee.notEmployed")
-                  }
-                />
-              </Box>
-
-              <Box
-                sx={{
-                  flexBasis: {
-                    xs: "100%",
-                    sm: "calc(50% - 8px)",
-                    md: "calc(33.333% - 12px)",
-                  },
-                  flexGrow: 1,
-                }}
-              >
-                <StatCardDetail
-                  icon={<AssignmentTurnedInIcon />}
-                  label={t("assignments.employee.assignments")}
-                  value={`${employeeAssignmentsCount.construction} · ${employeeAssignmentsCount.vehicles} · ${employeeAssignmentsCount.tools}`}
-                  caption={t("assignments.employee.assignmentsCaption")}
-                />
-              </Box>
-            </Box>
-          )}
-        </>
-      )}
-
-      {isLoadingTimeline ? (
+    <>
+      <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
         <Box
           sx={{
-            width: "100%",
-            mt: 1,
             display: "flex",
-            justifyContent: "center",
-            py: 4,
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 2,
           }}
         >
-          <CircularProgress />
-        </Box>
-      ) : items.length === 0 ? (
-        <Box sx={{ width: "100%", mt: 1 }}>
-          <Typography variant="body2" color="text.secondary">
-            {t("assignments.timeline.empty")}
+          <Typography variant="h5" fontWeight={600}>
+            {t("assignments.title")}
           </Typography>
+
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <IconButton
+              size="small"
+              onClick={() => setWeekStart((d) => addDays(d, -7))}
+              aria-label={t("assignments.timeline.prevWeek", "Previous week")}
+            >
+              <ChevronLeftIcon />
+            </IconButton>
+
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              {weekLabel}
+            </Typography>
+
+            <IconButton
+              size="small"
+              onClick={() => setWeekStart((d) => addDays(d, 7))}
+              aria-label={t("assignments.timeline.nextWeek", "Next week")}
+            >
+              <ChevronRightIcon />
+            </IconButton>
+          </Box>
         </Box>
-      ) : (
-        <Box sx={{ width: "100%", mt: 1 }}>
-          <TimelineView
-            lanes={lanes}
-            items={items}
-            startDate={startDate}
-            endDate={endDate}
+
+        {isAdmin && (
+          <>
+            <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+              <FormControl
+                size="small"
+                sx={{ minWidth: 280 }}
+                variant="outlined"
+              >
+                <InputLabel id="employee-select-label" shrink>
+                  {t("assignments.filterByEmployee")}
+                </InputLabel>
+
+                <Select<number | "">
+                  labelId="employee-select-label"
+                  id="employee-select"
+                  label={t("assignments.filterByEmployee")}
+                  value={selectedEmployeeId}
+                  onChange={handleSelectChange}
+                  displayEmpty
+                  renderValue={(val) => {
+                    if (val === "")
+                      return <em>{t("assignments.allEmployees")}</em>;
+                    const id = typeof val === "number" ? val : Number(val);
+                    const emp = employeeRows.find((x) => x.id === id);
+                    return emp ? getEmployeeLabel(emp) : `#${id}`;
+                  }}
+                >
+                  <MenuItem value="">
+                    <em>{t("assignments.allEmployees")}</em>
+                  </MenuItem>
+
+                  {employeeRows.map((e) => (
+                    <MenuItem key={e.id} value={e.id}>
+                      {getEmployeeLabel(e)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+            {selectedEmployee && (
+              <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                <Box
+                  sx={{
+                    flexBasis: {
+                      xs: "100%",
+                      sm: "calc(50% - 8px)",
+                      md: "calc(33.333% - 12px)",
+                    },
+                    flexGrow: 1,
+                  }}
+                >
+                  <StatCardDetail
+                    icon={<BadgeIcon />}
+                    label={t("assignments.employee.info")}
+                    value={getEmployeeLabel(selectedEmployee)}
+                    caption={
+                      selectedEmployee.oib
+                        ? `OIB: ${selectedEmployee.oib}`
+                        : t("assignments.employee.noOib")
+                    }
+                  />
+                </Box>
+
+                <Box
+                  sx={{
+                    flexBasis: {
+                      xs: "100%",
+                      sm: "calc(50% - 8px)",
+                      md: "calc(33.333% - 12px)",
+                    },
+                    flexGrow: 1,
+                  }}
+                >
+                  <StatCardDetail
+                    icon={<CalendarTodayIcon />}
+                    label={t("assignments.employee.dates")}
+                    value={
+                      selectedEmployee.dateOfBirth
+                        ? `${t(
+                            "assignments.employee.birthDate"
+                          )} ${formatIsoDate(selectedEmployee.dateOfBirth)}`
+                        : t("assignments.employee.birthDateUnknown")
+                    }
+                    caption={
+                      selectedEmployee.employmentDate
+                        ? `${t(
+                            "assignments.employee.employedFrom"
+                          )} ${formatIsoDate(selectedEmployee.employmentDate)}`
+                        : t("assignments.employee.notEmployed")
+                    }
+                  />
+                </Box>
+
+                <Box
+                  sx={{
+                    flexBasis: {
+                      xs: "100%",
+                      sm: "calc(50% - 8px)",
+                      md: "calc(33.333% - 12px)",
+                    },
+                    flexGrow: 1,
+                  }}
+                >
+                  <StatCardDetail
+                    icon={<AssignmentTurnedInIcon />}
+                    label={t("assignments.employee.assignments")}
+                    value={`${employeeAssignmentsCount.construction} · ${employeeAssignmentsCount.vehicles} · ${employeeAssignmentsCount.tools}`}
+                    caption={t("assignments.employee.assignmentsCaption")}
+                  />
+                </Box>
+              </Box>
+            )}
+          </>
+        )}
+
+        {isLoadingTimeline ? (
+          <Box
+            sx={{
+              width: "100%",
+              mt: 1,
+              display: "flex",
+              justifyContent: "center",
+              py: 4,
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : items.length === 0 ? (
+          <Box sx={{ width: "100%", mt: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              {t("assignments.timeline.empty")}
+            </Typography>
+          </Box>
+        ) : (
+          <Box sx={{ width: "100%", mt: 1 }}>
+            <TimelineView
+              lanes={lanes}
+              items={items}
+              startDate={startDate}
+              endDate={endDate}
+              onItemClick={({ item, dayIso }) => {
+                if (item.meta?.type !== "construction") return;
+
+                const constructionSiteId = item.meta?.constructionSiteId;
+                const employeeIdFromLane =
+                  item.laneId === "unassigned" ? null : Number(item.laneId);
+                const employeeIdResolved =
+                  item.meta?.employeeId ?? employeeIdFromLane;
+
+                if (!constructionSiteId || !employeeIdResolved) return;
+
+                const existing: ConstructionSiteEmployeeWorkLogDay | undefined =
+                  employeeSiteLogs?.find((x) => x.workDate === dayIso);
+
+                setWorkLogDraft({
+                  constructionSiteId,
+                  employeeId: employeeIdResolved,
+                  workDate: dayIso,
+                  startTime: existing?.startTime ?? "",
+                  endTime: existing?.endTime ?? "",
+                });
+                setWorkLogOpen(true);
+              }}
+            />
+          </Box>
+        )}
+      </Stack>
+
+      <AssignTaskDialog
+        open={workLogOpen}
+        onClose={closeWorkLog}
+        title={t("workLogs.dialog.title", "Log hours")}
+        subtitle={t("workLogs.dialog.subtitle", "Add start and end time")}
+        headerIcon={<AccessTimeIcon sx={{ fontSize: 18 }} />}
+        referenceText={
+          workLogDraft
+            ? `${t("workLogs.dialog.employee", "Employee")} #${
+                workLogDraft.employeeId
+              }`
+            : undefined
+        }
+        previewTitle={t("workLogs.dialog.detailsTitle", "Details")}
+        previewSubtitle={
+          workLogDraft
+            ? `${t("workLogs.dialog.site", "Construction site")} #${
+                workLogDraft.constructionSiteId
+              }`
+            : ""
+        }
+        dueLabel={workLogDraft?.workDate ?? undefined}
+        dueTone="info"
+        previewFields={
+          workLogDraft
+            ? [
+                {
+                  label: t("workLogs.dialog.preview.employeeId", "Employee"),
+                  value: `#${workLogDraft.employeeId}`,
+                  minWidth: 160,
+                },
+                {
+                  label: t("workLogs.dialog.preview.siteId", "Site"),
+                  value: `#${workLogDraft.constructionSiteId}`,
+                  minWidth: 160,
+                },
+              ]
+            : []
+        }
+        submitText={t("common.save", "Save")}
+        cancelText={t("common.cancel", "Cancel")}
+        onSubmit={handleSaveWorkLog}
+        submitting={upsertWorkLogs.isPending}
+        submitDisabled={!workLogDraft || upsertWorkLogs.isPending}
+        formDisabled={upsertWorkLogs.isPending}
+      >
+        <Stack spacing={1.75}>
+          <TextField
+            label={t("workLogs.dialog.date", "Date")}
+            type="date"
+            value={workLogDraft?.workDate ?? ""}
+            onChange={(e) => {
+              const v = e.target.value;
+              setWorkLogDraft((p) => (p ? { ...p, workDate: v } : p));
+            }}
+            size="small"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
           />
-        </Box>
-      )}
-    </Stack>
+
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 1.5,
+            }}
+          >
+            <TextField
+              label={t("workLogs.dialog.startTime", "Start")}
+              type="time"
+              value={(workLogDraft?.startTime ?? "").slice(0, 5)}
+              onChange={(e) =>
+                setWorkLogDraft((p) =>
+                  p ? { ...p, startTime: e.target.value } : p
+                )
+              }
+              size="small"
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              inputProps={{ step: 60 }}
+            />
+
+            <TextField
+              label={t("workLogs.dialog.endTime", "End")}
+              type="time"
+              value={(workLogDraft?.endTime ?? "").slice(0, 5)}
+              onChange={(e) =>
+                setWorkLogDraft((p) =>
+                  p ? { ...p, endTime: e.target.value } : p
+                )
+              }
+              size="small"
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              inputProps={{ step: 60 }}
+            />
+          </Box>
+
+          <Typography variant="caption" sx={{ color: "#6B7280" }}>
+            {t(
+              "workLogs.dialog.hint",
+              "Times are saved in 24-hour format with minute precision."
+            )}
+          </Typography>
+        </Stack>
+      </AssignTaskDialog>
+    </>
   );
 };
 

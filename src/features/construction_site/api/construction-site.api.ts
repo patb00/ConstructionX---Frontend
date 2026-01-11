@@ -9,6 +9,11 @@ import type {
   NewConstructionSiteRequest,
   PagedResult,
   UpdateConstructionSiteRequest,
+  UpsertConstructionSiteEmployeeWorkLogsRequest,
+  GetConstructionSiteEmployeeWorkLogsQuery,
+  GetConstructionSiteEmployeeWorkLogsAllQuery,
+  ConstructionSiteEmployeeWorkLog,
+  ConstructionSiteEmployeeWorkLogDay,
 } from "..";
 import { authFetch } from "../../../lib/authFetch";
 import type { ApiEnvelope } from "../../administration/tenants";
@@ -112,5 +117,52 @@ export const ConstructionSiteApi = {
       method: "PUT",
       body: JSON.stringify(payload),
     });
+  },
+  upsertEmployeeWorkLogs: async (
+    payload: UpsertConstructionSiteEmployeeWorkLogsRequest
+  ) => {
+    return authFetch<ApiEnvelope<string>>(`${base}/employee-work-logs`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+  },
+  getEmployeeWorkLogs: async (
+    query: GetConstructionSiteEmployeeWorkLogsQuery
+  ): Promise<ConstructionSiteEmployeeWorkLogDay[]> => {
+    const params = new URLSearchParams();
+    params.append("ConstructionSiteId", String(query.constructionSiteId));
+    params.append("EmployeeId", String(query.employeeId));
+
+    const res = await authFetch<
+      ApiEnvelope<ConstructionSiteEmployeeWorkLogDay[]>
+    >(`${base}/employee-work-logs?${params.toString()}`);
+
+    return res.data;
+  },
+  getAllEmployeeWorkLogs: async (
+    query?: GetConstructionSiteEmployeeWorkLogsAllQuery
+  ): Promise<PagedResult<ConstructionSiteEmployeeWorkLog>> => {
+    const params = new URLSearchParams();
+
+    if (query?.dateFrom) params.append("DateFrom", query.dateFrom);
+    if (query?.dateTo) params.append("DateTo", query.dateTo);
+    if (query?.constructionSiteId !== undefined)
+      params.append("ConstructionSiteId", String(query.constructionSiteId));
+    if (query?.employeeId !== undefined)
+      params.append("EmployeeId", String(query.employeeId));
+
+    params.append("Page", String(query?.page ?? 1));
+    params.append("PageSize", String(query?.pageSize ?? 20));
+
+    const qs = params.toString();
+    const url = qs
+      ? `${base}/employee-work-logs/all?${qs}`
+      : `${base}/employee-work-logs/all`;
+
+    const res = await authFetch<
+      ApiEnvelope<PagedResult<ConstructionSiteEmployeeWorkLog>>
+    >(url);
+
+    return res.data;
   },
 };
