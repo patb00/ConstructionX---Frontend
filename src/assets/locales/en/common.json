@@ -113,7 +113,6 @@
       }
     }
   },
-
   "constructionSites": {
     "list": {
       "title": "Construction Sites",
@@ -125,12 +124,10 @@
       "addEmployee": "Add employee",
       "addFirstEmployee": "Add first employee",
       "noEmployees": "No employees assigned.",
-
       "tools": "Tools",
       "addTool": "Add tool",
       "addFirstTool": "Add first tool",
       "noTools": "No tools assigned.",
-
       "vehicles": "Vehicles",
       "addVehicle": "Add vehicle",
       "addFirstVehicle": "Add first vehicle",
@@ -159,16 +156,12 @@
       "loading": "Loading details…",
       "loadError": "Failed to load construction site details.",
       "fallbackName": "Construction site",
-
       "noEmployeesAssigned": "No employees assigned.",
       "noPosition": "No position set",
-
       "noVehiclesAssigned": "No vehicles assigned.",
       "vehicleFallback": "Vehicle",
-
       "noToolsAssigned": "No tools assigned.",
       "toolFallback": "Tool",
-
       "invPrefix": "Inv:"
     },
     "fields": {
@@ -193,10 +186,8 @@
     "assign": {
       "vehiclesTitle": "Assign vehicles",
       "toolsTitle": "Assign tools",
-
       "noVehicles": "No vehicles available.",
       "noTools": "No tools available.",
-
       "pickVehicleHint": "Select vehicle(s) from the left.",
       "pickToolHint": "Select tool(s) from the left.",
       "title": "Assign employees",
@@ -323,42 +314,34 @@
       "noColumnsOverlayLabel": "No columns",
       "noColumnsOverlayManageColumns": "Manage columns",
       "emptyPivotOverlayLabel": "Add fields to rows, columns, and values to create a pivot table",
-
       "toolbarDensity": "Density",
       "toolbarDensityLabel": "Density",
       "toolbarDensityCompact": "Compact",
       "toolbarDensityStandard": "Standard",
       "toolbarDensityComfortable": "Comfortable",
-
       "toolbarColumns": "Columns",
       "toolbarColumnsLabel": "Select columns",
-
       "toolbarFilters": "Filters",
       "toolbarFiltersLabel": "Show filters",
       "toolbarFiltersTooltipHide": "Hide filters",
       "toolbarFiltersTooltipShow": "Show filters",
       "toolbarFiltersTooltipActive": "{{count}} active filter{{count, plural, one {} other {s}}}",
-
       "toolbarQuickFilterPlaceholder": "Search…",
       "toolbarQuickFilterLabel": "Search",
       "toolbarQuickFilterDeleteIconLabel": "Clear",
-
       "toolbarExport": "Export",
       "toolbarExportLabel": "Export",
       "toolbarExportCSV": "Download as CSV",
       "toolbarExportPrint": "Print",
       "toolbarExportExcel": "Download as Excel",
-
       "toolbarPivot": "Pivot",
       "toolbarCharts": "Charts",
       "toolbarAssistant": "AI Assistant",
-
       "columnsManagementSearchTitle": "Search",
       "columnsManagementNoColumns": "No columns",
       "columnsManagementShowHideAllText": "Show/Hide All",
       "columnsManagementReset": "Reset",
       "columnsManagementDeleteIconLabel": "Clear",
-
       "filterPanelAddFilter": "Add filter",
       "filterPanelRemoveAll": "Remove all",
       "filterPanelDeleteIconLabel": "Delete",
@@ -369,7 +352,6 @@
       "filterPanelColumns": "Columns",
       "filterPanelInputLabel": "Value",
       "filterPanelInputPlaceholder": "Filter value",
-
       "filterOperatorContains": "contains",
       "filterOperatorDoesNotContain": "does not contain",
       "filterOperatorEquals": "equals",
@@ -391,7 +373,6 @@
       "filterOperatorGreaterOrEqualSymbol": ">=",
       "filterOperatorLessThanSymbol": "<",
       "filterOperatorLessOrEqualSymbol": "<=",
-
       "headerFilterOperatorContains": "Contains",
       "headerFilterOperatorDoesNotContain": "Does not contain",
       "headerFilterOperatorEquals": "Equals",
@@ -414,11 +395,9 @@
       "headerFilterOperatorLessThanSymbol": "Less than",
       "headerFilterOperatorLessOrEqualSymbol": "Less than or equal to",
       "headerFilterClear": "Clear filter",
-
       "filterValueAny": "any",
       "filterValueTrue": "true",
       "filterValueFalse": "false",
-
       "columnMenuLabel": "Menu",
       "columnMenuAriaLabel": "{{columnName}} column menu",
       "columnMenuShowColumns": "Show columns",
@@ -430,42 +409,32 @@
       "columnMenuSortDesc": "Sort by DESC",
       "columnMenuManagePivot": "Manage pivot",
       "columnMenuManageCharts": "Manage charts",
-
       "columnHeaderFiltersTooltipActive": "{{count}} active filter{{count, plural, one {} other {s}}}",
       "columnHeaderFiltersLabel": "Show filters",
       "columnHeaderSortIconLabel": "Sort",
-
       "footerRowSelected": "{{count, number}} row{{count, plural, one {} other {s}}} selected",
       "footerTotalRows": "Total Rows:",
       "footerTotalVisibleRows": "{{visibleCount, number}} of {{totalCount, number}}",
-
       "checkboxSelectionHeaderName": "Checkbox selection",
       "checkboxSelectionSelectAllRows": "Select all rows",
       "checkboxSelectionUnselectAllRows": "Unselect all rows",
       "checkboxSelectionSelectRow": "Select row",
       "checkboxSelectionUnselectRow": "Unselect row",
-
       "booleanCellTrueLabel": "yes",
       "booleanCellFalseLabel": "no",
-
       "actionsCellMore": "more",
-
       "pinToLeft": "Pin to left",
       "pinToRight": "Pin to right",
       "unpin": "Unpin",
-
       "treeDataGroupingHeaderName": "Group",
       "treeDataExpand": "see children",
       "treeDataCollapse": "hide children",
-
       "groupingColumnHeaderName": "Group",
       "groupColumn": "Group by {{name}}",
       "unGroupColumn": "Stop grouping by {{name}}",
-
       "detailPanelToggle": "Detail panel toggle",
       "expandDetailPanel": "Expand",
       "collapseDetailPanel": "Collapse",
-
       "paginationRowsPerPage": "Rows per page:",
       "paginationDisplayedRows": "{{from}}–{{to}} of {{countLabel}}",
       "paginationDisplayedRowsEstimated": "{{from}}–{{to}} of {{estimatedLabel}}",
@@ -475,9 +444,7 @@
       "paginationLast": "Go to last page",
       "paginationNext": "Go to next page",
       "paginationPrevious": "Go to previous page",
-
       "rowReorderingHeaderName": "Row reordering",
-
       "aggregationMenuItemHeader": "Aggregation",
       "aggregationFunctionLabelNone": "none",
       "aggregationFunctionLabelSum": "sum",
@@ -485,7 +452,6 @@
       "aggregationFunctionLabelMin": "min",
       "aggregationFunctionLabelMax": "max",
       "aggregationFunctionLabelSize": "size",
-
       "pivotToggleLabel": "Pivot",
       "pivotRows": "Rows",
       "pivotColumns": "Columns",
@@ -513,7 +479,6 @@
       "pivotDragToValues": "Drag here to create values",
       "pivotYearColumnHeaderName": "(Year)",
       "pivotQuarterColumnHeaderName": "(Quarter)",
-
       "chartsNoCharts": "There are no charts available",
       "chartsChartNotSelected": "Select a chart type to configure its options",
       "chartsTabChart": "Chart",
@@ -538,14 +503,12 @@
       "chartsMenuRemove": "Remove",
       "chartsDragToDimensions": "Drag here to use column as {{dimensionLabel}}",
       "chartsDragToValues": "Drag here to use column as {{valuesLabel}}",
-
       "aiAssistantPanelTitle": "AI Assistant",
       "aiAssistantPanelClose": "Close AI Assistant",
       "aiAssistantPanelNewConversation": "New conversation",
       "aiAssistantPanelConversationHistory": "Conversation history",
       "aiAssistantPanelEmptyConversation": "No prompt history",
       "aiAssistantSuggestions": "Suggestions",
-
       "promptFieldLabel": "Prompt",
       "promptFieldPlaceholder": "Type a prompt…",
       "promptFieldPlaceholderWithRecording": "Type or record a prompt…",
@@ -554,11 +517,9 @@
       "promptFieldSend": "Send",
       "promptFieldRecord": "Record",
       "promptFieldStopRecording": "Stop recording",
-
       "promptRerun": "Run again",
       "promptProcessing": "Processing…",
       "promptAppliedChanges": "Applied changes",
-
       "promptChangeGroupDescription": "Group by {{column}}",
       "promptChangeAggregationLabel": "{{column}} ({{aggregation}})",
       "promptChangeAggregationDescription": "Aggregate {{column}} ({{aggregation}})",
@@ -582,7 +543,6 @@
       "name": "Name",
       "description": "Description",
       "actions": "Actions",
-
       "location": "Location",
       "startDate": "Start",
       "plannedEndDate": "Planned end",
@@ -590,12 +550,10 @@
       "siteManagerName": "Site manager",
       "constructionSiteTools": "Construction site tools",
       "constructionSiteEmployees": "Employees",
-
       "createdDate": "Created at",
       "createdBy": "Created by",
       "modifiedDate": "Modified at",
       "modifiedBy": "Modified by",
-
       "identifier": "Identifier",
       "connectionString": "Connection String",
       "email": "Email",
@@ -603,12 +561,9 @@
       "lastName": "Last name",
       "validUntil": "Valid until",
       "isActive": "Active",
-
       "dateOfCreation": "Date of creation",
-
       "permissions": "Permissions",
       "userName": "Username",
-
       "oib": "OIB",
       "dateOfBirth": "Date of birth",
       "employmentDate": "Employment date",
@@ -618,7 +573,6 @@
       "gloveSize": "Glove size",
       "shoeSize": "Shoe size",
       "jobPosition": "Job position",
-
       "inventoryNumber": "Inventory number",
       "serialNumber": "Serial number",
       "manufacturer": "Manufacturer",
@@ -634,7 +588,6 @@
       "responsibleEmployeeId": "Responsible employee ID",
       "responsibleEmployeeName": "Responsible employee",
       "responsibleEmployeeJobPosition": "Job position",
-
       "registrationNumber": "Registration number",
       "vin": "VIN",
       "brand": "Brand",
@@ -643,7 +596,6 @@
       "horsePower": "Horsepower",
       "averageConsumption": "Average consumption",
       "weight": "Weight",
-
       "constructionSiteId": "Construction site ID",
       "constructionSiteLocation": "Construction site location",
       "constructionSiteName": "Construction site name",
@@ -654,16 +606,13 @@
       "vehicleId": "Vehicle ID",
       "responsibleEmployeeFullName": "Responsible employee (full name)",
       "toolId": "Tool ID",
-
       "examinationTypeName": "Examination type name",
       "monthsToNextExamination": "Months to next examination",
-
       "examinationTypeId": "Examination Type",
       "examinationDate": "Examination Date",
       "nextExaminationDate": "Next Examination Date",
       "result": "Result",
       "note": "Note",
-
       "address": "Address",
       "capacity": "Capacity",
       "currentlyOccupied": "Currently occupied",
@@ -673,7 +622,6 @@
       "pricePerMonth": "Price per month",
       "currency": "Currency",
       "notes": "Notes",
-
       "validFrom": "Valid from",
       "validTo": "Valid to",
       "totalCostAmount": "Total cost",
@@ -682,12 +630,10 @@
       "registrationStationLocation": "Station location",
       "reportNumber": "Report number",
       "documentPath": "Document",
-
       "insurer": "Insurer",
       "policyNumber": "Policy number",
       "policyType": "Policy type",
       "costAmount": "Cost amount",
-
       "startLocationText": "Start location",
       "endLocationText": "End location",
       "startAt": "Start time",
@@ -699,24 +645,20 @@
       "fuelAmount": "Fuel cost",
       "fuelCurrency": "Currency",
       "tripStatus": "Trip status",
-
       "certificationTypeName": "Certification Type Name",
       "requiresRenewal": "Requires Renewal",
       "monthsToRenewal": "Months to Renewal",
-
       "employeeName": "Employee",
       "certificationTypeId": "Certification type ID",
       "certificationDate": "Certification date",
       "nextCertificationDate": "Next certification date",
       "certificatePath": "Certificate file",
       "reminderSentDate": "Reminder sent",
-
       "unitOfMeasure": "Unit of measure",
       "quantity": "Quantity",
       "unitPrice": "Unit price",
       "articleCode": "Article code",
       "barcode": "Barcode",
-
       "tool": "Tool",
       "serviceDate": "Service Date",
       "serviceCost": "Service Cost",
@@ -1353,17 +1295,14 @@
     "title": "Assignments",
     "filterByEmployee": "Filter by employee",
     "allEmployees": "All employees",
-
     "construction": "Construction sites",
     "vehicles": "Vehicles",
     "tools": "Tools",
-
     "view": {
       "label": "View",
       "board": "Board",
       "timeline": "Timeline"
     },
-
     "employee": {
       "info": "Employee info",
       "noOib": "OIB is not defined",
@@ -1375,7 +1314,6 @@
       "assignments": "Assignments",
       "assignmentsCaption": "Sites · Vehicles · Tools"
     },
-
     "timeline": {
       "laneConstruction": "Construction sites",
       "laneVehicles": "Vehicles",
@@ -1391,7 +1329,6 @@
         "to": "To:"
       }
     },
-
     "emptyConstruction": "No assigned construction sites.",
     "noLocation": "Location is not defined",
     "assignmentRange": "Assigned:",
@@ -1626,33 +1563,27 @@
       "title": "Condos",
       "error": "Failed to load condos."
     },
-
     "actions": "Actions",
-
     "table": {
       "edit": "Edit",
       "delete": "Delete"
     },
-
     "create": {
       "title": "Add Condo",
       "back": "Back"
     },
-
     "edit": {
       "title": "Edit Condo",
       "back": "Back",
       "invalidUrlId": "Invalid URL (id)",
       "loadError": "Failed to load condo."
     },
-
     "delete": {
       "title": "Delete condo?",
       "description": "Are you sure you want to delete this condo?",
       "confirm": "Delete",
       "cancel": "Cancel"
     },
-
     "form": {
       "submit": "Save",
       "responsible": {
@@ -1676,28 +1607,22 @@
       "empty": "No employees available.",
       "loadError": "Failed to load employees.",
       "pickHint": "Select employees from the left.",
-
       "allCount": "Employees ({{count}})",
       "selectedCount": "Selected: {{count}}",
-
       "global": {
         "startLabel": "Start date (global)",
         "endLabel": "End date (global)"
       },
-
       "chip": {
         "global": "Global",
         "custom": "Custom"
       },
-
       "tooltip": {
         "resetToGlobal": "Reset to global range"
       },
-
       "validation": {
         "invalidRange": "Start date must be before or equal to end date."
       },
-
       "actions": {
         "cancel": "Cancel",
         "save": "Save",
@@ -1819,7 +1744,6 @@
       "vehicleRegistration": "Registration Tasks"
     }
   },
-
   "vehicleRegistrationTasks": {
     "list": {
       "title": "My Vehicle Registration Tasks",
@@ -1883,7 +1807,6 @@
       "save": "Save",
       "create": "Create registration",
       "cancel": "Cancel",
-
       "snackbarNoRegistration": "There is no registration for this vehicle yet. Please create a registration before resolving the task.",
       "snackbarNoNewerRegistration": "There is no newer registration for this vehicle. Please create a new registration before changing the status.",
       "snackbarRegistrationTooOld": "The registration for this vehicle is older than the task deadline. Please renew or create a new registration and try again.",
@@ -1892,7 +1815,6 @@
       "snackbarResolved": "The task has been marked as completed."
     }
   },
-
   "vehicleInsurances": {
     "list": {
       "title": "Vehicle Insurances",
@@ -1940,7 +1862,6 @@
       "title": "Tool history",
       "assignments": "Assignments",
       "emptyAssignments": "No assignments.",
-
       "repairs": "Repairs",
       "emptyRepairs": "No repair records.",
       "repairFallback": "Tool repair"
@@ -1954,23 +1875,18 @@
     },
     "vehicle": {
       "title": "Vehicle history",
-
       "assignments": "Assignments",
       "emptyAssignments": "No assignments.",
-
       "registrations": "Registrations",
       "emptyRegistrations": "No registrations.",
       "registrationFallback": "Registration station",
-
       "trips": "Business trips",
       "emptyTrips": "No business trips.",
       "tripFallback": "Trip",
       "refueled": "Refueled",
-
       "insurance": "Insurance",
       "emptyInsurance": "No insurance records.",
       "insuranceFallback": "Insurance",
-
       "repairs": "Repairs",
       "emptyRepairs": "No repairs.",
       "repairFallback": "Repair"
@@ -1996,27 +1912,22 @@
       "changedBy": "Changed by"
     }
   },
-
   "vehicleBusinessTrips": {
     "list": {
       "title": "Vehicle Business Trips",
       "error": "Error loading vehicle business trips."
     },
-
     "create": {
       "title": "Add Vehicle Business Trip",
       "back": "Back"
     },
-
     "edit": {
       "title": "Edit Vehicle Business Trip",
       "back": "Back",
       "invalidUrlId": "Invalid URL (id)",
       "loadError": "Failed to load vehicle business trip."
     },
-
     "actions": "Actions",
-
     "table": {
       "edit": "Edit",
       "delete": "Delete",
@@ -2025,14 +1936,12 @@
       "cancel": "Cancel",
       "complete": "Complete"
     },
-
     "delete": {
       "title": "Delete vehicle business trip?",
       "description": "Are you sure you want to delete this vehicle business trip?",
       "confirm": "Delete",
       "cancel": "Cancel"
     },
-
     "form": {
       "submit": "Save",
       "field": {
@@ -2040,6 +1949,7 @@
         "employeeId": "Employee",
         "startLocationText": "Start location",
         "endLocationText": "End location",
+        "purposeOfTrip": "Purpose of trip",
         "startAt": "Start time",
         "endAt": "End time",
         "startKilometers": "Start kilometers",
@@ -2137,34 +2047,28 @@
       "assign": "Assign task"
     }
   },
-
   "toolRepairs": {
     "list": {
       "title": "Tool Repairs",
       "error": "Failed to load tool repairs"
     },
-
     "create": {
       "title": "Add Tool Repair",
       "back": "Back"
     },
-
     "edit": {
       "title": "Edit Tool Repair",
       "back": "Back",
       "invalidUrlId": "Invalid repair ID",
       "loadError": "Failed to load tool repair"
     },
-
     "actions": "Actions",
-
     "delete": {
       "title": "Delete Tool Repair",
       "description": "Are you sure you want to delete this tool repair?",
       "confirm": "Delete",
       "cancel": "Cancel"
     },
-
     "table": {
       "detailView": "View",
       "edit": "Edit",

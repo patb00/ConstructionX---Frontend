@@ -15,8 +15,8 @@ type VehicleBusinessTripMode = "create" | "edit";
 
 type VehicleBusinessTripFormValues<M extends VehicleBusinessTripMode> =
   M extends "create"
-    ? NewVehicleBusinessTripRequest
-    : Omit<UpdateVehicleBusinessTripRequest, "id">;
+  ? NewVehicleBusinessTripRequest
+  : Omit<UpdateVehicleBusinessTripRequest, "id">;
 
 type Props<M extends VehicleBusinessTripMode> = {
   mode: M;
@@ -40,17 +40,17 @@ export default function VehicleBusinessTripForm<
   const fields: FieldConfig<any>[] = [
     ...(showEmployeeField
       ? ([
-          {
-            name: "employeeId",
-            label: t("vehicleBusinessTrips.form.field.employeeId"),
-            required: true,
-            type: "select" as const,
-            options: employeeOptions,
-            props: {
-              disabled: employeesLoading || employeesError,
-            },
+        {
+          name: "employeeId",
+          label: t("vehicleBusinessTrips.form.field.employeeId"),
+          required: true,
+          type: "select" as const,
+          options: employeeOptions,
+          props: {
+            disabled: employeesLoading || employeesError,
           },
-        ] satisfies FieldConfig<any>[])
+        },
+      ] satisfies FieldConfig<any>[])
       : []),
 
     {
@@ -65,9 +65,7 @@ export default function VehicleBusinessTripForm<
     },
     {
       name: "purposeOfTrip",
-      label: t("vehicleBusinessTrips.form.field.purposeOfTrip", {
-        defaultValue: "Purpose of trip",
-      }),
+      label: t("vehicleBusinessTrips.form.field.purposeOfTrip"),
       required: true,
     },
     {
