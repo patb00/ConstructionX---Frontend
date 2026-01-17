@@ -19,6 +19,7 @@ import { notificationsKeys } from "../api/notifications.keys";
 
 import { NotificationRow } from "./NotificationRow";
 import { NotificationsActionsMenu } from "./NotificationsActionsMenu";
+import { getNavigationPath } from "../utils/notificationNavigation";
 
 type TabKey = "all" | "unread";
 
@@ -103,10 +104,10 @@ const NotificationsListPage = () => {
         items: prev[tab].items.map((x) =>
           x.id === n.id
             ? {
-                ...x,
-                isRead: true,
-                readDate: x.readDate ?? new Date().toISOString(),
-              }
+              ...x,
+              isRead: true,
+              readDate: x.readDate ?? new Date().toISOString(),
+            }
             : x
         ),
       },
@@ -122,9 +123,9 @@ const NotificationsListPage = () => {
     }
 
     if (n.actionUrl) {
-      const match = n.actionUrl.match(/construction-sites\/(\d+)/);
-      if (match) {
-        navigate(`/app/constructionSites/${match[1]}/details`);
+      const path = getNavigationPath(n.actionUrl);
+      if (path) {
+        navigate(path);
       }
     }
   };

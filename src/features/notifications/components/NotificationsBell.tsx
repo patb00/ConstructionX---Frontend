@@ -25,6 +25,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { NotificationRow } from "./NotificationRow";
 import { NotificationsActionsMenu } from "./NotificationsActionsMenu";
+import { getNavigationPath } from "../utils/notificationNavigation";
 
 type TabKey = "all" | "unread";
 
@@ -102,12 +103,10 @@ export function NotificationsBell() {
     }
 
     if (n.actionUrl) {
-      const normalized = n.actionUrl.replace(
-        /^\/?construction-sites\/(\d+)/,
-        "/app/constructionSites/$1"
-      );
-
-      navigate(`${normalized}/details`);
+      const path = getNavigationPath(n.actionUrl);
+      if (path) {
+        navigate(path);
+      }
     }
   };
 
