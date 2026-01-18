@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import type { GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -9,14 +9,20 @@ import { RowActions } from "../../../components/ui/datagrid/RowActions";
 import { useCurrentEmployeeContext } from "../../auth/hooks/useCurrentEmployeeContext";
 import { useVehicleBusinessTrips } from "../hooks/useVehicleBusinessTrips";
 import { useVehicleBusinessTripsByEmployee } from "../hooks/useVehicleBusinessTripsByEmployee";
+
 import ApproveBusinessTripDialog from "./dialogs/ApproveBusinessTripDialog";
 import RejectBusinessTripDialog from "./dialogs/RejectBusinessTripDialog";
 import CancelBusinessTripDialog from "./dialogs/CancelBusinesssTripDialog";
 import CompleteBusinessTripDialog from "./dialogs/CompleteBusinessTripDialog";
+
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import BlockOutlinedIcon from "@mui/icons-material/BlockOutlined";
 import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
+
+type Props = {
+  statusValue: string;
+};
 
 const TripStatus = {
   Pending: 0,
@@ -36,7 +42,7 @@ const canComplete = (s: number) => s === TripStatus.Approved;
 
 const canCancel = (s: number) => s !== TripStatus.Approved && !isTerminal(s);
 
-export default function VehicleBusinessTripsTable() {
+export default function VehicleBusinessTripsTable({ statusValue }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const can = useCan();
@@ -44,8 +50,16 @@ export default function VehicleBusinessTripsTable() {
   const { isAdmin, employeeId } = useCurrentEmployeeContext();
   const myEmployeeId = employeeId;
 
-  const adminTrips = useVehicleBusinessTrips();
+  const tripStatus = statusValue ? Number(statusValue) : undefined;
+
+  const adminTrips = useVehicleBusinessTrips(tripStatus);
+
   const employeeTrips = useVehicleBusinessTripsByEmployee(myEmployeeId ?? 0);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    adminTrips.setPaginationModel((p) => ({ ...p, page: 0 }));
+  }, [statusValue, isAdmin]);
 
   const vehicleBusinessTripsRows = isAdmin
     ? adminTrips.vehicleBusinessTripsRows
@@ -66,7 +80,7 @@ export default function VehicleBusinessTripsTable() {
     : undefined;
 
   const [selectedTrip, setSelectedTrip] = useState<VehicleBusinessTrip | null>(
-    null
+    null,
   );
 
   const [approveOpen, setApproveOpen] = useState(false);
@@ -193,8 +207,6 @@ export default function VehicleBusinessTripsTable() {
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   if (error) return <div>{t("vehicleBusinessTrips.list.error")}</div>;
-
-  console.log("columnsWithActions", columnsWithActions);
 
   return (
     <PermissionGate guard={{ permission: "Permission.Vehicles.Update" }}>

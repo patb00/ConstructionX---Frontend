@@ -104,18 +104,18 @@ const NotificationsListPage = () => {
         items: prev[tab].items.map((x) =>
           x.id === n.id
             ? {
-              ...x,
-              isRead: true,
-              readDate: x.readDate ?? new Date().toISOString(),
-            }
-            : x
+                ...x,
+                isRead: true,
+                readDate: x.readDate ?? new Date().toISOString(),
+              }
+            : x,
         ),
       },
     }));
 
     queryClient.setQueryData<NotificationDto[]>(
       notificationsKeys.unread(UNREAD_TAKE_FOR_BELL),
-      (prev) => (prev ?? []).filter((x) => x.id !== n.id)
+      (prev) => (prev ?? []).filter((x) => x.id !== n.id),
     );
 
     if (!n.isRead) {
@@ -123,7 +123,7 @@ const NotificationsListPage = () => {
     }
 
     if (n.actionUrl) {
-      const path = getNavigationPath(n.actionUrl);
+      const path = getNavigationPath(n);
       if (path) {
         navigate(path);
       }
@@ -131,6 +131,8 @@ const NotificationsListPage = () => {
   };
 
   const items = useMemo(() => byTab[tab].items, [byTab, tab]);
+
+  console.log("query", query.data);
 
   return (
     <Box

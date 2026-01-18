@@ -22,4 +22,13 @@ export const REPORT_HANDLERS: Partial<Record<ReportId, ReportHandler>> = {
     const blob = await ReportsApi.getEmployeesEmployeeListFile(culture);
     openBlobInNewTab(blob);
   },
+
+  "vehicle-list": async ({ culture }) => {
+    const blob = await ReportsApi.getVehiclesVehicleListFile(culture);
+    openBlobInNewTab(blob);
+  },
+  "tool-list": async ({ culture }) => {
+    const blob = await ReportsApi.getToolsToolListFile(culture);
+    openBlobInNewTab(blob);
+  },
 };

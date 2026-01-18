@@ -2,6 +2,7 @@ import { Outlet, type RouteObject } from "react-router-dom";
 import VehicleBusinessTripsListPage from "../components/VehicleBusinessTripsListPage";
 import VehicleBusinessTripCreatePage from "../components/VehicleBusinessTripCreatePage";
 import VehicleBusinessTripEditPage from "../components/VehicleBusinessTripEditPage";
+import VehicleBusinessTripDetail from "../components/VehicleBusinessTripDetailPage";
 
 function VehicleBusinessTripsLayout() {
   return (
@@ -18,5 +19,6 @@ export const vehicleBusinessTripsRoutes: RouteObject = {
     { index: true, element: <VehicleBusinessTripsListPage /> },
     { path: "create", element: <VehicleBusinessTripCreatePage /> },
     { path: ":id/edit", element: <VehicleBusinessTripEditPage /> },
+    { path: ":id/details", element: <VehicleBusinessTripDetail /> },
   ],
 };

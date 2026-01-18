@@ -1393,6 +1393,14 @@
       "employeeList": {
         "label": "Lista zaposlenika",
         "description": "Preuzmi listu svih zaposlenika."
+      },
+      "vehicleList": {
+        "label": "Popis vozila",
+        "description": "Preuzmite popis svih vozila."
+      },
+      "toolList": {
+        "label": "Popis alata",
+        "description": "Preuzmite popis svih alata."
       }
     }
   },
@@ -1696,6 +1704,30 @@
     },
     "toast": {
       "open": "Otvori"
+    },
+    "type": {
+      "unknown": "Nepoznato",
+
+      "constructionSiteStatusChanged": "Status gradilišta promijenjen",
+      "constructionSiteAssigned": "Gradilište dodijeljeno",
+      "constructionSiteUnassigned": "Dodjela gradilišta uklonjena",
+      "constructionSiteDeadlineChanged": "Rok gradilišta promijenjen",
+
+      "vehicleAssigned": "Vozilo dodijeljeno",
+      "vehicleServiceDue": "Servis vozila uskoro",
+      "vehicleRegistrationTaskAssigned": "Zadatak registracije vozila dodijeljen",
+      "vehicleBusinessTripApprovalRequested": "Zatraženo odobrenje službenog puta vozila",
+      "vehicleBusinessTripApproved": "Službeni put vozila odobren",
+      "vehicleBusinessTripRejected": "Službeni put vozila odbijen",
+      "vehicleBusinessTripCancelled": "Službeni put vozila otkazan",
+
+      "toolAssigned": "Alat dodijeljen",
+      "toolMaintenanceDue": "Održavanje alata uskoro",
+
+      "medicalExaminationExpiresSoon": "Zdravstveni pregled uskoro istječe",
+      "medicalExaminationExpired": "Zdravstveni pregled je istekao",
+
+      "systemAnnouncement": "Sistemska obavijest"
     }
   },
   "vehicleRepairs": {
@@ -1756,6 +1788,19 @@
       "invalidUrlId": "Nevažeći ID registracije",
       "submit": "Spremi promjene"
     },
+    "detail": {
+      "title": "Detalji registracije vozila",
+      "subtitle": "Pregled detalja registracije vozila.",
+      "back": "Natrag",
+      "invalidId": "Neispravan ID.",
+      "loadError": "Neuspjelo učitavanje registracije vozila.",
+      "notFound": "Registracija nije pronađena.",
+      "section": {
+        "basic": "Osnovno",
+        "details": "Detalji"
+      }
+    },
+
     "delete": {
       "title": "Brisanje registracije",
       "description": "Jeste li sigurni da želite obrisati ovu registraciju?",

@@ -1,6 +1,6 @@
 import type { ModuleId } from "../../../app/routes/navigation";
 
-export type ReportId = "employee-list";
+export type ReportId = "employee-list" | "vehicle-list" | "tool-list";
 
 export type ReportDefinition = {
   id: ReportId;
@@ -15,6 +15,18 @@ export const REPORTS: ReportDefinition[] = [
     moduleId: "employees",
     labelKey: "reports.items.employeeList.label",
     descriptionKey: "reports.items.employeeList.description",
+  },
+  {
+    id: "vehicle-list",
+    moduleId: "vehicles",
+    labelKey: "reports.items.vehicleList.label",
+    descriptionKey: "reports.items.vehicleList.description",
+  },
+  {
+    id: "tool-list",
+    moduleId: "tools",
+    labelKey: "reports.items.toolList.label",
+    descriptionKey: "reports.items.toolList.description",
   },
 ];
 

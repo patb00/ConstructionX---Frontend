@@ -1394,6 +1394,14 @@
       "employeeList": {
         "label": "Mitarbeiterliste",
         "description": "Lade die Liste aller Mitarbeiter herunter."
+      },
+      "vehicleList": {
+        "label": "Fahrzeugliste",
+        "description": "Laden Sie eine Liste aller Fahrzeuge herunter."
+      },
+      "toolList": {
+        "label": "Werkzeugliste",
+        "description": "Laden Sie eine Liste aller Werkzeuge herunter."
       }
     }
   },
@@ -1657,6 +1665,30 @@
     },
     "toast": {
       "open": "Öffnen"
+    },
+    "type": {
+      "unknown": "Unbekannt",
+
+      "constructionSiteStatusChanged": "Status der Baustelle geändert",
+      "constructionSiteAssigned": "Baustelle zugewiesen",
+      "constructionSiteUnassigned": "Baustellenzuweisung aufgehoben",
+      "constructionSiteDeadlineChanged": "Frist der Baustelle geändert",
+
+      "vehicleAssigned": "Fahrzeug zugewiesen",
+      "vehicleServiceDue": "Fahrzeugservice fällig",
+      "vehicleRegistrationTaskAssigned": "Aufgabe zur Fahrzeugzulassung zugewiesen",
+      "vehicleBusinessTripApprovalRequested": "Genehmigung für Dienstfahrt angefordert",
+      "vehicleBusinessTripApproved": "Dienstfahrt genehmigt",
+      "vehicleBusinessTripRejected": "Dienstfahrt abgelehnt",
+      "vehicleBusinessTripCancelled": "Dienstfahrt storniert",
+
+      "toolAssigned": "Werkzeug zugewiesen",
+      "toolMaintenanceDue": "Werkzeugwartung fällig",
+
+      "medicalExaminationExpiresSoon": "Medizinische Untersuchung läuft bald ab",
+      "medicalExaminationExpired": "Medizinische Untersuchung abgelaufen",
+
+      "systemAnnouncement": "Systemmeldung"
     }
   },
   "vehicleRepairs": {
@@ -1716,6 +1748,18 @@
       "loadError": "Fahrzeugzulassung konnte nicht geladen werden",
       "invalidUrlId": "Ungültige Zulassungs-ID",
       "submit": "Änderungen speichern"
+    },
+    "detail": {
+      "title": "Fahrzeugzulassung – Details",
+      "subtitle": "Details zur Fahrzeugzulassung anzeigen.",
+      "back": "Zurück",
+      "invalidId": "Ungültige ID.",
+      "loadError": "Fahrzeugzulassung konnte nicht geladen werden.",
+      "notFound": "Zulassung nicht gefunden.",
+      "section": {
+        "basic": "Grunddaten",
+        "details": "Details"
+      }
     },
     "delete": {
       "title": "Fahrzeugzulassung löschen",

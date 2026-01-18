@@ -70,17 +70,17 @@ export function NotificationsBell() {
 
   const unreadTop = useMemo(
     () => unreadItems.slice(0, UNREAD_TOP_TAKE),
-    [unreadItems]
+    [unreadItems],
   );
 
   const unreadTopIds = useMemo(
     () => new Set(unreadTop.map((x) => x.id)),
-    [unreadTop]
+    [unreadTop],
   );
 
   const earlierFiltered = useMemo(
     () => earlierAll.filter((x) => !unreadTopIds.has(x.id)),
-    [earlierAll, unreadTopIds]
+    [earlierAll, unreadTopIds],
   );
 
   const readOneMutation = useReadNotification();
@@ -95,7 +95,7 @@ export function NotificationsBell() {
 
     queryClient.setQueryData<NotificationDto[]>(
       notificationsKeys.unread(UNREAD_TAKE),
-      (prev) => (prev ?? []).filter((x) => x.id !== n.id)
+      (prev) => (prev ?? []).filter((x) => x.id !== n.id),
     );
 
     if (!n.isRead) {
@@ -103,7 +103,7 @@ export function NotificationsBell() {
     }
 
     if (n.actionUrl) {
-      const path = getNavigationPath(n.actionUrl);
+      const path = getNavigationPath(n);
       if (path) {
         navigate(path);
       }

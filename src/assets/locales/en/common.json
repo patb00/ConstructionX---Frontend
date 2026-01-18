@@ -1394,6 +1394,14 @@
       "employeeList": {
         "label": "Employee list",
         "description": "Download a list of all employees."
+      },
+      "vehicleList": {
+        "label": "Vehicle list",
+        "description": "Download a list of all vehicles."
+      },
+      "toolList": {
+        "label": "Tool list",
+        "description": "Download a list of all tools."
       }
     }
   },
@@ -1657,6 +1665,30 @@
     },
     "toast": {
       "open": "Open"
+    },
+    "type": {
+      "unknown": "Unknown",
+
+      "constructionSiteStatusChanged": "Construction site status changed",
+      "constructionSiteAssigned": "Construction site assigned",
+      "constructionSiteUnassigned": "Construction site unassigned",
+      "constructionSiteDeadlineChanged": "Construction site deadline changed",
+
+      "vehicleAssigned": "Vehicle assigned",
+      "vehicleServiceDue": "Vehicle service due",
+      "vehicleRegistrationTaskAssigned": "Vehicle registration task assigned",
+      "vehicleBusinessTripApprovalRequested": "Vehicle business trip approval requested",
+      "vehicleBusinessTripApproved": "Vehicle business trip approved",
+      "vehicleBusinessTripRejected": "Vehicle business trip rejected",
+      "vehicleBusinessTripCancelled": "Vehicle business trip cancelled",
+
+      "toolAssigned": "Tool assigned",
+      "toolMaintenanceDue": "Tool maintenance due",
+
+      "medicalExaminationExpiresSoon": "Medical examination expires soon",
+      "medicalExaminationExpired": "Medical examination expired",
+
+      "systemAnnouncement": "System announcement"
     }
   },
   "vehicleRepairs": {
@@ -1716,6 +1748,18 @@
       "loadError": "Failed to load vehicle registration",
       "invalidUrlId": "Invalid registration id",
       "submit": "Save changes"
+    },
+    "detail": {
+      "title": "Vehicle registration details",
+      "subtitle": "View vehicle registration details.",
+      "back": "Back",
+      "invalidId": "Invalid ID.",
+      "loadError": "Failed to load vehicle registration.",
+      "notFound": "Registration not found.",
+      "section": {
+        "basic": "Basic",
+        "details": "Details"
+      }
     },
     "delete": {
       "title": "Delete Vehicle Registration",
