@@ -44,15 +44,7 @@ import ListView, {
 } from "../../../components/ui/views/ListView";
 import { useSnackbar } from "notistack";
 import HeaderLabel from "../../../components/ui/HeaderLabel";
-
-const isFinalStatus = (status?: number | null) => status === 3 || status === 4;
-
-function tagForStatus(status?: number | null): ListViewStatusTag {
-  if (status === 4) return { label: "Cancelled", color: "default" };
-  if (status === 3) return { label: "Done", color: "success" };
-  if (status === 2) return { label: "In progress", color: "warning" };
-  return { label: "New", color: "default" };
-}
+import { isFinalStatus, tagForStatus } from "../utils/taskStatus";
 
 type TaskView = {
   task: VehicleRegistrationEmployee;

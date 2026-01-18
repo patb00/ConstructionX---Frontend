@@ -20,6 +20,7 @@ import type { SystemStyleObject } from "@mui/system";
 import { CircularProgress } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import React from "react";
+import { isDownOrEqual } from "../../../utils/listView";
 
 export const listViewColDividerSx: SystemStyleObject<Theme> = {
   borderRight: "1px solid",
@@ -92,15 +93,6 @@ const headCellBaseSx: SxProps<Theme> = {
   whiteSpace: "nowrap",
   py: 1.25,
 };
-
-function isDownOrEqual(
-  bp: "sm" | "md" | "lg",
-  flags: { smDown: boolean; mdDown: boolean; lgDown: boolean }
-) {
-  if (bp === "sm") return flags.smDown;
-  if (bp === "md") return flags.mdDown;
-  return flags.lgDown;
-}
 
 export default function ListView<T>({
   sections,
