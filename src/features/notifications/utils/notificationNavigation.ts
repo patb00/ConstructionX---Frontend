@@ -10,7 +10,7 @@ const byEntityType: Record<string, Resolver> = {
     n.entityId ? `/app/vehicle-registrations/${n.entityId}/details` : null,
 
   VehicleBusinessTrip: (n) =>
-    n.entityId ? `/app/vehicle-business-trips/${n.entityId}/edit` : null,
+    n.entityId ? `/app/vehicle-business-trips/${n.entityId}/details` : null,
 
   Tool: (n) => (n.entityId ? `/app/tools/${n.entityId}/details` : null),
 
@@ -34,10 +34,7 @@ export const getNavigationPath = (n: NotificationDto): string | null => {
         pattern: /^construction-sites\/(\d+)$/,
         getPath: (m) => `/app/constructionSites/${m[1]}/details`,
       },
-      {
-        pattern: /^vehicle-business-trips\/(\d+)$/,
-        getPath: (m) => `/app/vehicle-business-trips/${m[1]}/edit`,
-      },
+
       {
         pattern: /^vehicles\/(\d+)$/,
         getPath: (m) => `/app/vehicles/${m[1]}/details`,

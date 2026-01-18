@@ -282,6 +282,9 @@
     }
   },
   "common": {
+    "retry": "Pokušaj ponovno",
+    "yes": "Da",
+    "no": "Ne",
     "cancel": "Odustani",
     "close": "Zatvori",
     "submit": "Spremi",
@@ -2010,6 +2013,19 @@
       "back": "Natrag",
       "invalidUrlId": "Neispravan ID u URL-u",
       "loadError": "Neuspješno učitavanje službenog putovanja."
+    },
+    "detail": {
+      "title": "Detalji službenog putovanja",
+      "subtitle": "Pregled detalja službenog putovanja vozila.",
+      "back": "Natrag",
+      "invalidId": "Neispravan ID.",
+      "loadError": "Neuspjelo učitavanje službenog putovanja.",
+      "notFound": "Službeno putovanje nije pronađeno.",
+      "section": {
+        "basic": "Osnovno",
+        "routeAndTime": "Ruta i vrijeme",
+        "kilometersAndFuel": "Kilometri i gorivo"
+      }
     },
     "actions": "Akcije",
     "table": {

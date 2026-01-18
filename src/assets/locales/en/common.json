@@ -281,6 +281,9 @@
     }
   },
   "common": {
+    "retry": "Retry",
+    "yes": "Yes",
+    "no": "No",
     "cancel": "Cancel",
     "close": "Close",
     "submit": "Submit",
@@ -1971,6 +1974,19 @@
       "back": "Back",
       "invalidUrlId": "Invalid URL (id)",
       "loadError": "Failed to load vehicle business trip."
+    },
+    "detail": {
+      "title": "Business trip details",
+      "subtitle": "View vehicle business trip details.",
+      "back": "Back",
+      "invalidId": "Invalid ID.",
+      "loadError": "Failed to load business trip.",
+      "notFound": "Business trip not found.",
+      "section": {
+        "basic": "Basic",
+        "routeAndTime": "Route & time",
+        "kilometersAndFuel": "Kilometers & fuel"
+      }
     },
     "actions": "Actions",
     "table": {

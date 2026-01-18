@@ -87,7 +87,7 @@ export default function VehicleRegistrationDetailPage() {
           </Stack>
         ) : query.isError ? (
           <Stack spacing={1}>
-            <Typography fontWeight={800}>
+            <Typography>
               {t(
                 "vehicleRegistrations.detail.loadError",
                 "Neuspjelo učitavanje registracije vozila.",

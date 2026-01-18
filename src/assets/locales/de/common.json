@@ -281,6 +281,9 @@
     }
   },
   "common": {
+    "retry": "Erneut versuchen",
+    "yes": "Ja",
+    "no": "Nein",
     "cancel": "Abbrechen",
     "close": "Schließen",
     "submit": "Speichern",
@@ -1971,6 +1974,19 @@
       "back": "Zurück",
       "invalidUrlId": "Ungültige URL (ID)",
       "loadError": "Dienstfahrt konnte nicht geladen werden."
+    },
+    "detail": {
+      "title": "Dienstfahrt – Details",
+      "subtitle": "Details zur Dienstfahrt des Fahrzeugs anzeigen.",
+      "back": "Zurück",
+      "invalidId": "Ungültige ID.",
+      "loadError": "Dienstfahrt konnte nicht geladen werden.",
+      "notFound": "Dienstfahrt nicht gefunden.",
+      "section": {
+        "basic": "Grunddaten",
+        "routeAndTime": "Route & Zeit",
+        "kilometersAndFuel": "Kilometer & Kraftstoff"
+      }
     },
     "actions": "Aktionen",
     "table": {
