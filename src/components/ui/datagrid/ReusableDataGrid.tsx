@@ -22,7 +22,7 @@ import { useTranslation } from "react-i18next";
 import { DataGridToolbar } from "./DatagridToolbar";
 import useColumnHeaderMappings from "./useColumnHeaderMappings";
 import { getGridLocaleText } from "./gridLocaleText";
-import { applyHeaderMappings, safeJsonParse } from "../utils/dataGrid";
+import { applyHeaderMappings, safeJsonParse } from "../../../utils/dataGrid";
 
 import { useAuthStore } from "../../../features/auth/store/useAuthStore";
 

@@ -26,7 +26,7 @@ import {
   daysDiffInclusive,
   normalizeDate,
   overlapsRange,
-} from "../utils/timelineView";
+} from "../../../utils/timelineView";
 
 export type Lane = {
   id: string;

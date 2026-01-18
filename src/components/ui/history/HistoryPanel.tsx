@@ -19,7 +19,7 @@ import {
   TimelineOppositeContent,
 } from "@mui/lab";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { formatDateLabel } from "../utils/history";
+import { formatDateLabel } from "../../../utils/history";
 
 export type PagedResult<T> = {
   items: T[];

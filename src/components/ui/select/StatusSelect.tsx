@@ -11,7 +11,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useMemo } from "react";
-import { statusColor } from "../utils/statusSelect";
+import { statusColor } from "../../../utils/statusSelect";
 
 export type StatusOption = { value: number; label: string };
 

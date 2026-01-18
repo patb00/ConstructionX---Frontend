@@ -1,4 +1,4 @@
-import type { FieldConfig } from "../smartform/SmartForm";
+import type { FieldConfig } from "../components/ui/smartform/SmartForm";
 
 export function toDateOnly(v?: string | Date | null) {
   if (!v) return "";

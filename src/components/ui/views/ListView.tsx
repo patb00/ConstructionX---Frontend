@@ -20,7 +20,7 @@ import type { SystemStyleObject } from "@mui/system";
 import { CircularProgress } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import React from "react";
-import { isDownOrEqual } from "../utils/listView";
+import { isDownOrEqual } from "../../../utils/listView";
 
 export const listViewColDividerSx: SystemStyleObject<Theme> = {
   borderRight: "1px solid",

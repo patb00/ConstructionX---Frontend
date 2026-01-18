@@ -13,7 +13,7 @@ import {
 import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { buildInitial } from "../utils/smartForm";
+import { buildInitial, toDateOnly } from "../../../utils/smartForm";
 
 export type FieldType =
   | "text"
