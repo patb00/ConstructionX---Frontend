@@ -1,7 +1,3 @@
-/**
- * Helper function to map notification actionUrl to frontend route
- * Add new notification types here as needed
- */
 export const getNavigationPath = (actionUrl: string): string | null => {
   const routes: Array<{
     pattern: RegExp;
@@ -15,7 +11,6 @@ export const getNavigationPath = (actionUrl: string): string | null => {
       pattern: /vehicle-business-trips\/(\d+)/,
       getPath: (match) => `/app/vehicle-business-trips/${match[1]}/edit`,
     },
-    // Add more notification types here as needed
   ];
 
   for (const route of routes) {

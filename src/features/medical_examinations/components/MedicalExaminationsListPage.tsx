@@ -6,41 +6,63 @@ import { useMemo, useState } from "react";
 import { PermissionGate } from "../../../lib/permissions";
 import MedicalExaminationsTable from "./MedicalExaminationTable";
 import { useExaminationTypes } from "../../examination_types/hooks/useExaminationTypes";
-import { Tabs } from "../../../components/ui/tabs/Tabs";
+import FilterSelect, {
+  type SelectOption,
+} from "../../../components/ui/select/FilterSelect";
 
-type TabValue = "all" | "byEmployee" | number;
+type FilterValue = "all" | "byEmployee" | number;
 
 const MedicalExaminationsListPage = () => {
   const { t } = useTranslation();
   const { examinationTypesRows, isLoading: typesLoading } =
     useExaminationTypes();
 
-  const [tab, setTab] = useState<TabValue>("all");
+  const [filter, setFilter] = useState<FilterValue>("all");
 
-  const isByEmployee = tab === "byEmployee";
+  const isByEmployee = filter === "byEmployee";
 
   const selectedExaminationTypeId = useMemo(() => {
-    if (tab === "all" || tab === "byEmployee") return null;
-    return tab;
-  }, [tab]);
+    if (filter === "all" || filter === "byEmployee") return null;
+    return filter;
+  }, [filter]);
 
-  const tabItems = useMemo(
+  const selectValue = useMemo(() => {
+    if (filter === "all") return "";
+    if (filter === "byEmployee") return "byEmployee";
+    return String(filter);
+  }, [filter]);
+
+  const options: SelectOption[] = useMemo(
     () => [
-      { value: "all" as const, label: t("common.all", "All") },
-
       {
-        value: "byEmployee" as const,
+        value: "byEmployee",
         label: t("employees.byEmployee", "By employee"),
       },
-
       ...(examinationTypesRows ?? []).map((x: any) => ({
-        value: x.id as number,
+        value: String(x.id),
         label: x.examinationTypeName ?? String(x.id),
         disabled: typesLoading,
       })),
     ],
     [examinationTypesRows, t, typesLoading]
   );
+
+  const handleChange = (value: string) => {
+    if (!value) {
+      setFilter("all");
+      return;
+    }
+
+    if (value === "byEmployee") {
+      setFilter("byEmployee");
+      return;
+    }
+
+    const id = Number(value);
+    if (!Number.isNaN(id)) {
+      setFilter(id);
+    }
+  };
 
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
@@ -63,12 +85,18 @@ const MedicalExaminationsListPage = () => {
         </PermissionGate>
       </Stack>
 
-      <Tabs
-        value={tab}
-        onChange={setTab}
-        items={tabItems}
-        ariaLabel="Medical examinations tabs"
-      />
+      <Stack direction="row" alignItems="center">
+        <FilterSelect
+          label={t("common.filter", "Filter")}
+          placeholder={t("common.allTypes", "All types")}
+          options={options}
+          value={selectValue}
+          onChange={handleChange}
+          disabled={typesLoading}
+          showDotInValue={false}
+          showDotInMenu={false}
+        />
+      </Stack>
 
       <MedicalExaminationsTable
         examinationTypeId={selectedExaminationTypeId}

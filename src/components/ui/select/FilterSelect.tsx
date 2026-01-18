@@ -13,18 +13,25 @@ import {
 import { useMemo } from "react";
 import { statusColor } from "../../../utils/statusSelect";
 
-export type StatusOption = { value: number; label: string };
+export type SelectOption = {
+  value: string;
+  label: string;
+  dotValue?: number;
+  disabled?: boolean;
+};
 
 type Props = {
   label?: string;
   placeholder?: string;
-  options: StatusOption[];
+  options: SelectOption[];
   disabled?: boolean;
   fullWidth?: boolean;
   size?: "small" | "medium";
-
   value?: string;
   onChange?: (value: string) => void;
+  showDotInValue?: boolean;
+  showDotInMenu?: boolean;
+  width?: number | string;
 };
 
 function Dot({ color }: { color: string }) {
@@ -45,31 +52,47 @@ function Dot({ color }: { color: string }) {
   );
 }
 
-export default function StatusSelect({
-  label = "Status",
-  placeholder = "All statuses",
+export default function FilterSelect({
+  label = "Filter",
+  placeholder = "All",
   options,
   disabled,
   fullWidth,
   size = "small",
-
   value = "",
   onChange,
+  showDotInValue = true,
+  showDotInMenu = true,
+  width,
 }: Props) {
   const theme = useTheme();
   const items = useMemo(() => options ?? [], [options]);
 
-  const handleChange = (e: SelectChangeEvent) => {
+  const handleChange = (e: SelectChangeEvent<string>) => {
     onChange?.(e.target.value);
   };
 
   const selectedOption = useMemo(
-    () => items.find((o) => String(o.value) === value),
+    () => items.find((o) => o.value === value),
     [items, value]
   );
 
+  const containerWidth = fullWidth ? "100%" : width ?? 260;
+
+  const renderOptionRow = (opt: SelectOption, withDot: boolean) => {
+    const shouldShowDot = withDot && opt.dotValue != null;
+    const color = shouldShowDot ? statusColor(opt.dotValue!, theme) : undefined;
+
+    return (
+      <Stack direction="row" alignItems="center" spacing={1}>
+        {shouldShowDot && color ? <Dot color={color} /> : null}
+        <Typography variant="body2">{opt.label}</Typography>
+      </Stack>
+    );
+  };
+
   return (
-    <Stack spacing={0.5} sx={{ width: fullWidth ? "100%" : 260 }}>
+    <Stack spacing={0.5} sx={{ width: containerWidth }}>
       <Typography
         variant="caption"
         sx={{ fontWeight: 500, color: "text.secondary" }}
@@ -94,7 +117,7 @@ export default function StatusSelect({
       >
         <InputLabel sx={{ display: "none" }}>{label}</InputLabel>
 
-        <Select
+        <Select<string>
           value={value}
           onChange={handleChange}
           displayEmpty
@@ -109,12 +132,7 @@ export default function StatusSelect({
 
             if (!selectedOption) return selected as any;
 
-            return (
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <Dot color={statusColor(selectedOption.value, theme)} />
-                <Typography variant="body2">{selectedOption.label}</Typography>
-              </Stack>
-            );
+            return renderOptionRow(selectedOption, showDotInValue);
           }}
           MenuProps={{
             PaperProps: {
@@ -133,17 +151,11 @@ export default function StatusSelect({
             </Typography>
           </MenuItem>
 
-          {items.map((opt) => {
-            const color = statusColor(opt.value, theme);
-            return (
-              <MenuItem key={opt.value} value={String(opt.value)}>
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <Dot color={color} />
-                  <Typography variant="body2">{opt.label}</Typography>
-                </Stack>
-              </MenuItem>
-            );
-          })}
+          {items.map((opt) => (
+            <MenuItem key={opt.value} value={opt.value} disabled={opt.disabled}>
+              {renderOptionRow(opt, showDotInMenu)}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
     </Stack>
