@@ -38,6 +38,19 @@
     "map": "Karte",
     "workHours": "Arbeitszeiten"
   },
+  "workHours": {
+    "title": "Arbeitszeiten",
+    "record": "Erfassen",
+    "employee": {
+      "info": "Mitarbeiter",
+      "noOib": "Keine OIB",
+      "dates": "Daten",
+      "birthDate": "Geboren",
+      "birthDateUnknown": "Geburtsdatum unbekannt",
+      "employedFrom": "Beschäftigt seit",
+      "notEmployed": "Nicht angestellt"
+    }
+  },
   "map": {
     "page": {
       "missingOrsKey": "ORS-Schlüssel fehlt. Fügen Sie <1>VITE_OPENROUTESERVICE_API_KEY</1> zu <3>.env</3> hinzu und starten Sie neu.",

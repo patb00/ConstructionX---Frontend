@@ -38,6 +38,19 @@
     "map": "Map",
     "workHours": "Work Hours"
   },
+  "workHours": {
+    "title": "Work Hours",
+    "record": "Record",
+    "employee": {
+      "info": "Employee",
+      "noOib": "No OIB",
+      "dates": "Dates",
+      "birthDate": "Born",
+      "birthDateUnknown": "Birth date unknown",
+      "employedFrom": "Employed from",
+      "notEmployed": "Not employed"
+    }
+  },
   "map": {
     "page": {
       "missingOrsKey": "Missing ORS key. Add <1>VITE_OPENROUTESERVICE_API_KEY</1> to <3>.env</3> and restart.",

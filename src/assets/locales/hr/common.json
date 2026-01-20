@@ -38,6 +38,19 @@
     "map": "Karta",
     "workHours": "Radni sati"
   },
+  "workHours": {
+    "title": "Radni sati",
+    "record": "Evidentiraj",
+    "employee": {
+      "info": "Zaposlenik",
+      "noOib": "Nema OIB",
+      "dates": "Datumi",
+      "birthDate": "Rođen",
+      "birthDateUnknown": "Datum rođenja nije poznat",
+      "employedFrom": "Zaposlen od",
+      "notEmployed": "Nije zaposlen"
+    }
+  },
   "map": {
     "page": {
       "missingOrsKey": "Nedostaje ORS ključ. Dodajte <1>VITE_OPENROUTESERVICE_API_KEY</1> u <3>.env</3> i ponovno pokrenite.",
