@@ -20,16 +20,7 @@ import {
 } from "@mui/lab";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { formatDateLabel } from "../../../utils/history";
-
-export type PagedResult<T> = {
-  items: T[];
-  page: number;
-  pageSize: number;
-  total: number;
-  totalPages: number;
-  hasPrevious: boolean;
-  hasNext: boolean;
-};
+import type { PagedResult } from "../../../shared/types/api";
 
 export type HistoryMetaRow = {
   label: string;

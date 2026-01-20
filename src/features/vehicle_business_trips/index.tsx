@@ -64,12 +64,4 @@ export interface CompleteVehicleBusinessTripRequest {
   note: string;
 }
 
-export interface PagedResult<T> {
-  items: T[];
-  page: number;
-  pageSize: number;
-  total: number;
-  totalPages: number;
-  hasPrevious: boolean;
-  hasNext: boolean;
-}
+export type { PagedResult } from "../../shared/types/api";
