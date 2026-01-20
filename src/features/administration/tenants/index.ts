@@ -74,8 +74,4 @@ export type UpdateSubscriptionRequest = {
   newExpirationDate: string;
 };
 
-export type ApiEnvelope<T> = {
-  data: T;
-  messages: string[];
-  isSuccessfull: boolean;
-};
+export type { ApiEnvelope } from "../../../shared/types/api";
