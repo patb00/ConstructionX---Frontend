@@ -35,7 +35,8 @@
     "vehicleInsurances": "Osiguranja vozila",
     "vehicleBusinessTrips": "Službena putovanja ",
     "tasks": "Zadaci",
-    "map": "Karta"
+    "map": "Karta",
+    "workHours": "Radni sati"
   },
   "map": {
     "page": {

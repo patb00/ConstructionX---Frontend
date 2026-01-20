@@ -44,7 +44,7 @@ import {
   startOfWeekMonday,
   toTimeSpanStrict,
 } from "../utils/date";
-import StatCardDetail from "../../../components/ui/StatCardDetail";
+import StatCardDetail from "../../../components/ui/dashboard/StatCardDetail";
 
 import {
   addDays,
@@ -86,7 +86,7 @@ const AssignmentsListPage = () => {
 
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | "">("");
   const [weekStart, setWeekStart] = useState<Date>(() =>
-    startOfWeekMonday(new Date())
+    startOfWeekMonday(new Date()),
   );
 
   const [workLogOpen, setWorkLogOpen] = useState(false);
@@ -96,7 +96,7 @@ const AssignmentsListPage = () => {
 
   const { data: employeeSiteLogs } = useConstructionSiteEmployeeWorkLogs(
     workLogDraft?.constructionSiteId,
-    workLogDraft?.employeeId
+    workLogDraft?.employeeId,
   );
 
   console.log("employeeSiteLogs", employeeSiteLogs);
@@ -106,7 +106,7 @@ const AssignmentsListPage = () => {
     if (!employeeSiteLogs) return;
 
     const existing = employeeSiteLogs.find(
-      (x) => x.workDate === workLogDraft.workDate
+      (x) => x.workDate === workLogDraft.workDate,
     );
     if (!existing) return;
 
@@ -139,21 +139,21 @@ const AssignmentsListPage = () => {
   const selectedEmployee = useMemo(
     () =>
       typeof selectedEmployeeId === "number"
-        ? employeeRows.find((e) => e.id === selectedEmployeeId) ?? null
+        ? (employeeRows.find((e) => e.id === selectedEmployeeId) ?? null)
         : null,
-    [selectedEmployeeId, employeeRows]
+    [selectedEmployeeId, employeeRows],
   );
 
   const employeeAssignmentsCount = selectedEmployee
     ? {
         construction: acsRows.filter(
-          (r) => r.employeeId === selectedEmployee.id
+          (r) => r.employeeId === selectedEmployee.id,
         ).length,
         vehicles: vehicleRows.filter(
-          (r) => r.responsibleEmployeeId === selectedEmployee.id
+          (r) => r.responsibleEmployeeId === selectedEmployee.id,
         ).length,
         tools: toolRows.filter(
-          (r) => r.responsibleEmployeeId === selectedEmployee.id
+          (r) => r.responsibleEmployeeId === selectedEmployee.id,
         ).length,
       }
     : { construction: 0, vehicles: 0, tools: 0 };
@@ -171,7 +171,7 @@ const AssignmentsListPage = () => {
     if (shouldShowNone) return [];
     if (canShowAll) return vehicleRows;
     return vehicleRows.filter(
-      (r) => r.responsibleEmployeeId === effectiveEmployeeId
+      (r) => r.responsibleEmployeeId === effectiveEmployeeId,
     );
   }, [vehicleRows, canShowAll, shouldShowNone, effectiveEmployeeId]);
 
@@ -179,7 +179,7 @@ const AssignmentsListPage = () => {
     if (shouldShowNone) return [];
     if (canShowAll) return toolRows;
     return toolRows.filter(
-      (r) => r.responsibleEmployeeId === effectiveEmployeeId
+      (r) => r.responsibleEmployeeId === effectiveEmployeeId,
     );
   }, [toolRows, canShowAll, shouldShowNone, effectiveEmployeeId]);
 
@@ -189,19 +189,19 @@ const AssignmentsListPage = () => {
   const startDate = useMemo(() => formatLocalIsoDate(weekStart), [weekStart]);
   const endDate = useMemo(
     () => formatLocalIsoDate(addDays(weekStart, 6)),
-    [weekStart]
+    [weekStart],
   );
 
   const locale = useMemo(
     () => getIntlLocale(i18n),
-    [i18n.language, i18n.resolvedLanguage]
+    [i18n.language, i18n.resolvedLanguage],
   );
 
   const weekRangeFmt = useMemo(() => makeWeekRangeFormatter(locale), [locale]);
 
   const weekLabel = useMemo(
     () => formatWeekRange(weekStart, weekRangeFmt),
-    [weekStart, weekRangeFmt]
+    [weekStart, weekRangeFmt],
   );
 
   const { lanes, items } = useMemo(() => {
@@ -240,7 +240,7 @@ const AssignmentsListPage = () => {
     };
 
     const findEmp = (id?: number | null) =>
-      id == null ? null : employeeRows.find((e) => e.id === id) ?? null;
+      id == null ? null : (employeeRows.find((e) => e.id === id) ?? null);
 
     constructionAssignments.forEach((row) => {
       const start =
@@ -516,14 +516,14 @@ const AssignmentsListPage = () => {
                     value={
                       selectedEmployee.dateOfBirth
                         ? `${t(
-                            "assignments.employee.birthDate"
+                            "assignments.employee.birthDate",
                           )} ${formatIsoDate(selectedEmployee.dateOfBirth)}`
                         : t("assignments.employee.birthDateUnknown")
                     }
                     caption={
                       selectedEmployee.employmentDate
                         ? `${t(
-                            "assignments.employee.employedFrom"
+                            "assignments.employee.employedFrom",
                           )} ${formatIsoDate(selectedEmployee.employmentDate)}`
                         : t("assignments.employee.notEmployed")
                     }
@@ -678,7 +678,7 @@ const AssignmentsListPage = () => {
               value={(workLogDraft?.startTime ?? "").slice(0, 5)}
               onChange={(e) =>
                 setWorkLogDraft((p) =>
-                  p ? { ...p, startTime: e.target.value } : p
+                  p ? { ...p, startTime: e.target.value } : p,
                 )
               }
               size="small"
@@ -693,7 +693,7 @@ const AssignmentsListPage = () => {
               value={(workLogDraft?.endTime ?? "").slice(0, 5)}
               onChange={(e) =>
                 setWorkLogDraft((p) =>
-                  p ? { ...p, endTime: e.target.value } : p
+                  p ? { ...p, endTime: e.target.value } : p,
                 )
               }
               size="small"
@@ -706,7 +706,7 @@ const AssignmentsListPage = () => {
           <Typography variant="caption" sx={{ color: "#6B7280" }}>
             {t(
               "workLogs.dialog.hint",
-              "Times are saved in 24-hour format with minute precision."
+              "Times are saved in 24-hour format with minute precision.",
             )}
           </Typography>
         </Stack>

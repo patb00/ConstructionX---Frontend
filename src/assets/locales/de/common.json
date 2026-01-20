@@ -35,7 +35,8 @@
     "vehicleInsurances": "Fahrzeugversicherungen",
     "vehicleBusinessTrips": "Dienstfahrten",
     "tasks": "Aufgaben",
-    "map": "Karte"
+    "map": "Karte",
+    "workHours": "Arbeitszeiten"
   },
   "map": {
     "page": {

@@ -30,6 +30,7 @@ import { tasksRoutes } from "../../features/tasks/routes";
 import { vehicleRepairsRoutes } from "../../features/vehicles_repairs/routes";
 import { toolRepairsRoutes } from "../../features/tools_repairs/routes";
 import { mapRoutes } from "../../features/map/routes";
+import { workHoursRoutes } from "../../features/work_hours/routes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <LoginRoute /> },
@@ -66,6 +67,8 @@ export const router = createBrowserRouter([
       tasksRoutes,
 
       mapRoutes,
+
+      workHoursRoutes,
 
       reportsRoutes,
       medicalExaminationsRoutes,

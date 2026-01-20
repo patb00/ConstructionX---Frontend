@@ -1,6 +1,6 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import type { GridColDef, GridFilterModel } from "@mui/x-data-grid";
+import type { GridColDef } from "@mui/x-data-grid";
 import type { GridPaginationModel } from "@mui/x-data-grid-pro";
 
 import type {
@@ -16,87 +16,32 @@ type TransformedWorkLogsData = {
   total: number;
 };
 
-const FILTER_FIELDS = ["constructionSiteId", "employeeId", "workDate"] as const;
-
-function toApiDate(value: unknown): string | undefined {
-  if (!value) return undefined;
-
-  const date = value instanceof Date ? value : new Date(String(value));
-  if (isNaN(date.getTime())) return undefined;
-
-  return date.toISOString().split("T")[0];
-}
-
 function headerize(key: string) {
   return key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
-function sanitizeFilterModel(model: GridFilterModel): GridFilterModel {
-  const allowed = new Set<string>(FILTER_FIELDS);
-  return {
-    ...model,
-    items: (model.items ?? []).filter(
-      (it) => it?.field && allowed.has(it.field)
-    ),
-  };
-}
+type UseWorkLogsAllArgs = Partial<
+  Pick<
+    GetConstructionSiteEmployeeWorkLogsAllQuery,
+    "dateFrom" | "dateTo" | "employeeId" | "constructionSiteId"
+  >
+>;
 
-function mapFiltersToQuery(
-  filterModel: GridFilterModel
-): Partial<GetConstructionSiteEmployeeWorkLogsAllQuery> {
-  const query: Partial<GetConstructionSiteEmployeeWorkLogsAllQuery> = {};
-
-  for (const item of filterModel.items) {
-    if (!item?.field) continue;
-    if (item.value == null || item.value === "") continue;
-
-    switch (item.field) {
-      case "constructionSiteId":
-        query.constructionSiteId = Number(item.value);
-        break;
-      case "employeeId":
-        query.employeeId = Number(item.value);
-        break;
-      case "workDate": {
-        const d = toApiDate(item.value);
-        if (d) {
-          query.dateFrom = d;
-          query.dateTo = d;
-        }
-        break;
-      }
-    }
-  }
-
-  return query;
-}
-
-export const useConstructionSiteEmployeeWorkLogsAll = () => {
+export const useConstructionSiteEmployeeWorkLogsAll = (
+  args?: UseWorkLogsAllArgs,
+) => {
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
     pageSize: 25,
   });
 
-  const [filterModel, _setFilterModel] = useState<GridFilterModel>({
-    items: [],
-  });
-
-  const setFilterModel = useCallback(
-    (next: GridFilterModel | ((prev: GridFilterModel) => GridFilterModel)) => {
-      _setFilterModel((prev) =>
-        sanitizeFilterModel(typeof next === "function" ? next(prev) : next)
-      );
-    },
-    []
-  );
-
-  const queryParams = useMemo(
+  const queryParams = useMemo<GetConstructionSiteEmployeeWorkLogsAllQuery>(
     () => ({
       page: paginationModel.page + 1,
       pageSize: paginationModel.pageSize,
-      ...mapFiltersToQuery(filterModel),
+      ...(args ?? {}),
     }),
-    [paginationModel, filterModel]
+    [paginationModel, args],
   );
 
   const { data, error, isLoading, isError } = useQuery<
@@ -104,11 +49,7 @@ export const useConstructionSiteEmployeeWorkLogsAll = () => {
     Error,
     TransformedWorkLogsData
   >({
-    queryKey: [
-      ...constructionSitesKeys.employeeWorkLogsAll(queryParams),
-      paginationModel,
-      filterModel,
-    ],
+    queryKey: constructionSitesKeys.employeeWorkLogsAll(queryParams),
     queryFn: () => ConstructionSiteApi.getAllEmployeeWorkLogs(queryParams),
 
     select: (paged): TransformedWorkLogsData => {
@@ -126,35 +67,19 @@ export const useConstructionSiteEmployeeWorkLogsAll = () => {
         },
       };
 
-      const allowed = new Set<string>(FILTER_FIELDS);
-
       const autoKeys = rows.length
         ? Array.from(
-            new Set(rows.flatMap((r) => Object.keys(r as any)))
+            new Set(rows.flatMap((r) => Object.keys(r as any))),
           ).filter((k) => k !== "id")
         : [];
 
-      const baseFromKeys: GridColDef<ConstructionSiteEmployeeWorkLog>[] =
+      const columnDefs: GridColDef<ConstructionSiteEmployeeWorkLog>[] =
         autoKeys.map((field) => ({
           field,
           headerName: headerize(field),
           width: 180,
-          filterable: allowed.has(field),
           ...(overrides[field] ?? {}),
         }));
-
-      const ensureFilterColumns: GridColDef<ConstructionSiteEmployeeWorkLog>[] =
-        FILTER_FIELDS.filter(
-          (f) => !baseFromKeys.some((c) => c.field === f)
-        ).map((field) => ({
-          field,
-          headerName: headerize(field),
-          width: 180,
-          filterable: true,
-          ...(overrides[field] ?? {}),
-        })) as GridColDef<ConstructionSiteEmployeeWorkLog>[];
-
-      const columnDefs = [...baseFromKeys, ...ensureFilterColumns];
 
       const rowDefs = rows.map((r) => ({
         ...r,
@@ -175,8 +100,6 @@ export const useConstructionSiteEmployeeWorkLogsAll = () => {
     total: data?.total ?? 0,
     paginationModel,
     setPaginationModel,
-    filterModel,
-    setFilterModel,
     error,
     isLoading,
     isError,

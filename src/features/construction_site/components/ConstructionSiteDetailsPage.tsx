@@ -47,9 +47,9 @@ import AssignToolsDialog from "./dialogs/AssignToolsDialog";
 import AssignEmployeesDialog from "./dialogs/AssignEmployeesDialog";
 import { buildUnassign } from "../utils/unassign";
 import { EmptyColumn } from "../../../components/ui/EmptyColumn";
-import { RemoveActionButton } from "../../../components/ui/RemoveActionButton";
-import { BoardItemCard } from "../../../components/ui/BoardItemCard";
-import StatCardDetail from "../../../components/ui/StatCardDetail";
+import { RemoveActionButton } from "../../../components/ui/buttons/RemoveActionButton";
+import { BoardItemCard } from "../../../components/ui/dashboard/BoardItemCard";
+import StatCardDetail from "../../../components/ui/dashboard/StatCardDetail";
 import { AddBadgeIcon } from "../../../components/ui/icons/AddBadgeIcon";
 import { RemoveBadgeIcon } from "../../../components/ui/icons/RemoveBadgeIcon";
 import type {
@@ -122,7 +122,7 @@ export default function ConstructionSiteDetailsPage() {
       (employeeRows as any[]).map((e: any) => [
         normalizeText(fullName(e.firstName, e.lastName)),
         Number(e.id),
-      ])
+      ]),
     );
   }, [employeeRows]);
 
@@ -155,7 +155,7 @@ export default function ConstructionSiteDetailsPage() {
       console.groupEnd();
       return null;
     },
-    [employeeIdByName, employeeRows.length]
+    [employeeIdByName, employeeRows.length],
   );
 
   const unassignEmployee = useCallback(
@@ -187,7 +187,7 @@ export default function ConstructionSiteDetailsPage() {
 
       assignEmp.mutate(payload as any);
     },
-    [employees, siteId, assignEmp]
+    [employees, siteId, assignEmp],
   );
 
   const mapWithResponsible = useCallback(
@@ -202,7 +202,7 @@ export default function ConstructionSiteDetailsPage() {
       dateTo: x.dateTo ?? null,
       responsibleEmployeeId: resolveResponsibleEmployeeId(x),
     }),
-    [resolveResponsibleEmployeeId]
+    [resolveResponsibleEmployeeId],
   );
 
   const unassignTool = useCallback(
@@ -237,7 +237,7 @@ export default function ConstructionSiteDetailsPage() {
       const missing = payload.tools.flatMap((t: any) =>
         t.assignmentWindows
           .filter((w: any) => w.responsibleEmployeeId == null)
-          .map(() => t.toolId)
+          .map(() => t.toolId),
       );
       if (missing.length) {
         console.error("❌ Missing responsibleEmployeeId for tool(s):", missing);
@@ -246,7 +246,7 @@ export default function ConstructionSiteDetailsPage() {
 
       assignTools.mutate(payload as any);
     },
-    [tools, siteId, assignTools]
+    [tools, siteId, assignTools],
   );
 
   const unassignVehicle = useCallback(
@@ -281,19 +281,19 @@ export default function ConstructionSiteDetailsPage() {
       const missing = payload.vehicles.flatMap((x: any) =>
         x.assignmentWindows
           .filter((w: any) => w.responsibleEmployeeId == null)
-          .map(() => x.vehicleId)
+          .map(() => x.vehicleId),
       );
       if (missing.length) {
         console.error(
           "❌ Missing responsibleEmployeeId for vehicle(s):",
-          missing
+          missing,
         );
         return;
       }
 
       assignVeh.mutate(payload as any);
     },
-    [vehicles, siteId, assignVeh]
+    [vehicles, siteId, assignVeh],
   );
 
   const unassignCondo = useMemo(
@@ -308,7 +308,7 @@ export default function ConstructionSiteDetailsPage() {
           ...mapWithResponsible(x),
         }),
       }),
-    [siteId, condos, assignCondos.mutate, mapWithResponsible]
+    [siteId, condos, assignCondos.mutate, mapWithResponsible],
   );
 
   const columns: BoardColumnConfig[] = useMemo(() => {
@@ -707,10 +707,10 @@ export default function ConstructionSiteDetailsPage() {
           icon={<CalendarTodayIcon />}
           label={t("constructionSites.fields.period")}
           value={`${formatDate(data?.startDate)} — ${formatDate(
-            data?.plannedEndDate
+            data?.plannedEndDate,
           )}`}
           caption={`${t("constructionSites.fields.created")}: ${formatDate(
-            data?.createdDate
+            data?.createdDate,
           )}`}
         />
         <StatCardDetail

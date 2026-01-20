@@ -94,6 +94,14 @@ export const NAV_ITEMS: NavItem[] = [
     guard: { permission: "Permission.ConstructionSites.Read" },
   },
   {
+    labelKey: "nav.workHours",
+    to: "/app/work-hours",
+    icon: <FaClipboardList />,
+    section: "MANAGEMENT",
+    category: "CONSTRUCTION",
+    guard: { permission: "Permission.ConstructionSites.Read" },
+  },
+  {
     labelKey: "nav.reports",
     to: "/app/izvjestaji",
     icon: <RiFileList3Line />,
