@@ -41,6 +41,12 @@
   "workHours": {
     "title": "Work Hours",
     "record": "Record",
+    "list": {
+      "employee": "Employee",
+      "total": "Total",
+      "emptyWeek": "No work logs for this week.",
+      "error": "Error"
+    },
     "employee": {
       "info": "Employee",
       "noOib": "No OIB",
