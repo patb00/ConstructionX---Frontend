@@ -12,8 +12,18 @@ import {
   Typography,
 } from "@mui/material";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import type { SxProps, Theme } from "@mui/material/styles";
 import ApartmentIcon from "@mui/icons-material/Apartment";
+import {
+  getEmployeeInitials,
+  getEmployeeLabel,
+} from "../../../utils/employeeUtils";
+import {
+  formatMinutesToHHMM,
+  formatSitesLabel,
+  getWorkLogMinutes,
+} from "../../../utils/workHoursListUtils";
 
 type WeekDay = { iso: string; label: string };
 
@@ -35,33 +45,6 @@ type EmployeeRow = {
   jobPosition?: { id?: number; name?: string } | null;
 };
 
-function minutesToHHMM(totalMinutes: number) {
-  const h = Math.floor(totalMinutes / 60);
-  const m = totalMinutes % 60;
-  return `${h}:${String(m).padStart(2, "0")}`;
-}
-
-function getMinutes(r: WorkLogRow) {
-  if (typeof r.totalWorkMinutes === "number") return r.totalWorkMinutes;
-  const h = typeof r.hours === "number" ? r.hours : 0;
-  const m = typeof r.minutes === "number" ? r.minutes : 0;
-  const s = typeof r.seconds === "number" ? r.seconds : 0;
-  return h * 60 + m + (s ? Math.round(s / 60) : 0);
-}
-
-function initialsFromEmployee(e?: EmployeeRow | null) {
-  const fn = (e?.firstName ?? "").trim();
-  const ln = (e?.lastName ?? "").trim();
-  return `${fn[0] ?? ""}${ln[0] ?? ""}`.toUpperCase() || "?";
-}
-
-function labelFromEmployee(e?: EmployeeRow | null, fallbackId?: number) {
-  const fn = (e?.firstName ?? "").trim();
-  const ln = (e?.lastName ?? "").trim();
-  const full = [fn, ln].filter(Boolean).join(" ");
-  return full || (fallbackId != null ? `#${fallbackId}` : "—");
-}
-
 export type WorkHoursWeekListProps = {
   employeesById: Map<number, EmployeeRow>;
   weekDays: WeekDay[];
@@ -81,6 +64,8 @@ export default function WorkHoursWeekList({
   errorMessage,
   sx,
 }: WorkHoursWeekListProps) {
+  const { t } = useTranslation();
+
   const { employeeIds, minutesByEmpByDay, sitesByEmp, totals } = useMemo(() => {
     const minutesByEmpByDay = new Map<number, Map<string, number>>();
     const sitesByEmp = new Map<number, Set<string>>();
@@ -92,7 +77,7 @@ export default function WorkHoursWeekList({
       employeeIds.add(empId);
 
       const dayIso = r.workDate;
-      const mins = getMinutes(r);
+      const mins = getWorkLogMinutes(r);
 
       const dayMap = minutesByEmpByDay.get(empId) ?? new Map();
       dayMap.set(dayIso, (dayMap.get(dayIso) ?? 0) + mins);
@@ -163,7 +148,11 @@ export default function WorkHoursWeekList({
   };
 
   if (isError) {
-    return <Typography color="error">{errorMessage ?? "Error"}</Typography>;
+    return (
+      <Typography color="error">
+        {errorMessage ?? t("workHours.list.error")}
+      </Typography>
+    );
   }
 
   if (isLoading) {
@@ -177,7 +166,7 @@ export default function WorkHoursWeekList({
   if (employeeIds.length === 0) {
     return (
       <Typography variant="body2" color="text.secondary">
-        No work logs for this week.
+        {t("workHours.list.emptyWeek")}
       </Typography>
     );
   }
@@ -202,7 +191,7 @@ export default function WorkHoursWeekList({
               <TableCell
                 sx={{ ...headerCellWithDividerSx, ...stickyLeftHeaderSx }}
               >
-                Employee
+                {t("workHours.list.employee")}
               </TableCell>
               {weekDays.map((d) => (
                 <TableCell
@@ -214,7 +203,7 @@ export default function WorkHoursWeekList({
                 </TableCell>
               ))}
               <TableCell align="right" sx={headerCellWithDividerSx}>
-                Total
+                {t("workHours.list.total")}
               </TableCell>
             </TableRow>
           </TableHead>
@@ -228,12 +217,7 @@ export default function WorkHoursWeekList({
                 0,
               );
               const sites = Array.from(sitesByEmp.get(empId) ?? []);
-              const sitesLabel =
-                sites.length === 0
-                  ? "—"
-                  : sites.length <= 2
-                    ? sites.join(" · ")
-                    : `${sites.slice(0, 2).join(" · ")} +${sites.length - 2}`;
+              const sitesLabel = formatSitesLabel(sites);
 
               return (
                 <TableRow
@@ -243,11 +227,11 @@ export default function WorkHoursWeekList({
                   <TableCell sx={{ ...bodyCellWithDividerSx, ...stickyLeftSx }}>
                     <Box sx={{ display: "flex", gap: 1.25 }}>
                       <Avatar sx={{ width: 34, height: 34, fontSize: 14 }}>
-                        {initialsFromEmployee(emp)}
+                        {getEmployeeInitials(emp)}
                       </Avatar>
                       <Box>
                         <Typography sx={{ fontWeight: 600 }} noWrap>
-                          {labelFromEmployee(emp, empId)}
+                          {getEmployeeLabel({ ...emp, id: empId })}
                         </Typography>
                         {emp?.jobPosition?.name && (
                           <Typography
@@ -297,7 +281,7 @@ export default function WorkHoursWeekList({
                         {mins > 0 ? (
                           <Chip
                             size="small"
-                            label={minutesToHHMM(mins)}
+                            label={formatMinutesToHHMM(mins)}
                             variant="outlined"
                             sx={{
                               fontWeight: 600,
@@ -316,7 +300,7 @@ export default function WorkHoursWeekList({
                   })}
 
                   <TableCell align="right" sx={{ fontWeight: 600 }}>
-                    {minutesToHHMM(rowTotal)}
+                    {formatMinutesToHHMM(rowTotal)}
                   </TableCell>
                 </TableRow>
               );
@@ -330,7 +314,7 @@ export default function WorkHoursWeekList({
                   fontWeight: 600,
                 }}
               >
-                Total
+                {t("workHours.list.total")}
               </TableCell>
               {weekDays.map((d) => (
                 <TableCell
@@ -338,11 +322,11 @@ export default function WorkHoursWeekList({
                   align="center"
                   sx={{ ...bodyCellWithDividerSx, fontWeight: 600 }}
                 >
-                  {minutesToHHMM(totals.perDay.get(d.iso) ?? 0)}
+                  {formatMinutesToHHMM(totals.perDay.get(d.iso) ?? 0)}
                 </TableCell>
               ))}
               <TableCell align="right" sx={{ fontWeight: 600 }}>
-                {minutesToHHMM(totals.grand)}
+                {formatMinutesToHHMM(totals.grand)}
               </TableCell>
             </TableRow>
           </TableBody>

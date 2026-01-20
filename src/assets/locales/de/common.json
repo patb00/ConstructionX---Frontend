@@ -41,6 +41,12 @@
   "workHours": {
     "title": "Arbeitszeiten",
     "record": "Erfassen",
+    "list": {
+      "employee": "Mitarbeiter",
+      "total": "Gesamt",
+      "emptyWeek": "Keine Arbeitszeiten für diese Woche.",
+      "error": "Fehler"
+    },
     "employee": {
       "info": "Mitarbeiter",
       "noOib": "Keine OIB",
