@@ -41,6 +41,12 @@
   "workHours": {
     "title": "Radni sati",
     "record": "Evidentiraj",
+    "list": {
+      "employee": "Zaposlenik",
+      "total": "Ukupno",
+      "emptyWeek": "Nema evidencije za ovaj tjedan.",
+      "error": "Greška"
+    },
     "employee": {
       "info": "Zaposlenik",
       "noOib": "Nema OIB",
