@@ -26,6 +26,10 @@ import { formatIsoDate, startOfWeekMonday } from "../../assignments/utils/date";
 
 import { addDays, formatLocalIsoDate } from "../../../utils/dateFormatters";
 import { getIntlLocale } from "../../../utils/u18nLocale";
+import {
+  buildWeekDays,
+  shiftRange,
+} from "../utils/workHoursDateUtils";
 
 import { useConstructionSiteEmployeeWorkLogsAll } from "../../construction_site/hooks/useConstructionSiteEmployeeWorkLogsAll";
 import { useEmployeeOptions } from "../../constants/options/useEmployeeOptions";
@@ -36,28 +40,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
 import type { DateRange } from "@mui/x-date-pickers-pro/models";
-
-function shortDayLabel(date: Date, locale: string) {
-  const weekday = new Intl.DateTimeFormat(locale, { weekday: "short" }).format(
-    date,
-  );
-  const ddmm = new Intl.DateTimeFormat(locale, {
-    day: "2-digit",
-    month: "2-digit",
-  }).format(date);
-  return `${weekday}, ${ddmm}.`;
-}
-
-function shiftRange(
-  range: DateRange<Date>,
-  direction: -1 | 1,
-): DateRange<Date> {
-  const [start, end] = range;
-  if (!start || !end) return range;
-  const diffDays = Math.round((end.getTime() - start.getTime()) / 86400000) + 1;
-  const delta = diffDays * direction;
-  return [addDays(start, delta), addDays(end, delta)];
-}
 
 const WorkHoursListPage = () => {
   const { t, i18n } = useTranslation();
@@ -129,23 +111,7 @@ const WorkHoursListPage = () => {
   }, [setPaginationModel, startDate, endDate, effectiveEmployeeId]);
 
   const weekDays = useMemo(() => {
-    const start = range[0];
-    const end = range[1];
-    if (!start || !end) return [];
-    const days: { iso: string; label: string }[] = [];
-    const diffDays = Math.max(
-      0,
-      Math.round((end.getTime() - start.getTime()) / 86400000),
-    );
-    const count = Math.min(diffDays + 1, 60);
-    for (let i = 0; i < count; i++) {
-      const d = addDays(start, i);
-      days.push({
-        iso: formatLocalIsoDate(d),
-        label: shortDayLabel(d, locale),
-      });
-    }
-    return days;
+    return buildWeekDays(range, locale);
   }, [range, locale]);
 
   const employeesById = useMemo(() => {
@@ -189,11 +155,11 @@ const WorkHoursListPage = () => {
           }}
         >
           <Typography variant="h5" fontWeight={600}>
-            {t("workHours.title", "Radni sati")}
+            {t("workHours.title")}
           </Typography>
 
           <Button size="small" variant="contained">
-            EVIDENTIRAJ
+            {t("workHours.record")}
           </Button>
         </Box>
 
@@ -300,12 +266,12 @@ const WorkHoursListPage = () => {
             >
               <StatCardDetail
                 icon={<BadgeIcon />}
-                label={t("workHours.employee.info", "Employee")}
+                label={t("workHours.employee.info")}
                 value={getEmployeeLabel(selectedEmployee)}
                 caption={
                   selectedEmployee.oib
                     ? `OIB: ${selectedEmployee.oib}`
-                    : t("workHours.employee.noOib", "No OIB")
+                    : t("workHours.employee.noOib")
                 }
               />
             </Box>
@@ -322,24 +288,20 @@ const WorkHoursListPage = () => {
             >
               <StatCardDetail
                 icon={<CalendarTodayIcon />}
-                label={t("workHours.employee.dates", "Dates")}
+                label={t("workHours.employee.dates")}
                 value={
                   selectedEmployee.dateOfBirth
-                    ? `${t("workHours.employee.birthDate", "Born")} ${formatIsoDate(
+                    ? `${t("workHours.employee.birthDate")} ${formatIsoDate(
                         selectedEmployee.dateOfBirth,
                       )}`
-                    : t(
-                        "workHours.employee.birthDateUnknown",
-                        "Birth date unknown",
-                      )
+                    : t("workHours.employee.birthDateUnknown")
                 }
                 caption={
                   selectedEmployee.employmentDate
-                    ? `${t(
-                        "workHours.employee.employedFrom",
-                        "Employed from",
-                      )} ${formatIsoDate(selectedEmployee.employmentDate)}`
-                    : t("workHours.employee.notEmployed", "Not employed")
+                    ? `${t("workHours.employee.employedFrom")} ${formatIsoDate(
+                        selectedEmployee.employmentDate,
+                      )}`
+                    : t("workHours.employee.notEmployed")
                 }
               />
             </Box>
