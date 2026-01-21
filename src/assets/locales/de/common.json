@@ -6,7 +6,9 @@
     "toolsGroup": "Werkzeuge",
     "codebookGroup": "Stammdaten",
     "identityGroup": "Identität",
-    "vehiclesGroup": "Fahrzeuge"
+    "vehiclesGroup": "Fahrzeuge",
+    "medicalGroup": "Medizin",
+    "certificationsGroup": "Zertifizierungen"
   },
   "nav": {
     "dashboard": "Übersicht",

@@ -10,6 +10,7 @@ import { FaCarSide, FaListUl, FaUserShield, FaTools } from "react-icons/fa";
 import { LuConstruction } from "react-icons/lu";
 import { useAuthStore } from "../../../features/auth/store/useAuthStore";
 import { NAV_ITEMS, type NavItem } from "../../routes/navigation";
+import { MdHealthAndSafety, MdVerifiedUser } from "react-icons/md";
 
 export const SIDEBAR_WIDTH = 250;
 
@@ -30,21 +31,26 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
     canSeeItem(guard, tenant, permissions);
 
   const MANAGEMENT: NavItem[] = NAV_ITEMS.filter(
-    (i) => i.section === "MANAGEMENT" && canSee(i.guard)
+    (i) => i.section === "MANAGEMENT" && canSee(i.guard),
   );
 
   const SYSTEM: NavItem[] = NAV_ITEMS.filter(
-    (i) => i.section === "SYSTEM" && canSee(i.guard)
+    (i) => i.section === "SYSTEM" && canSee(i.guard),
   );
 
   const MANAGEMENT_CONSTRUCTION = MANAGEMENT.filter(
-    (i) => i.category === "CONSTRUCTION"
+    (i) => i.category === "CONSTRUCTION",
   );
 
   const SYSTEM_VEHICLES = SYSTEM.filter((i) => i.category === "VEHICLES");
   const SYSTEM_CODEBOOK = SYSTEM.filter((i) => i.category === "CODEBOOK");
   const SYSTEM_TOOLS = SYSTEM.filter((i) => i.category === "TOOLS");
   const SYSTEM_IDENTITY = SYSTEM.filter((i) => i.category === "IDENTITY");
+
+  const SYSTEM_MEDICAL = SYSTEM.filter((i) => i.category === "MEDICAL");
+  const SYSTEM_CERTIFICATIONS = SYSTEM.filter(
+    (i) => i.category === "CERTIFICATIONS",
+  );
 
   const ManagementContent = (
     <SidebarSection
@@ -76,12 +82,24 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
           icon: <FaTools />,
           items: SYSTEM_TOOLS,
         },
+
+        {
+          title: t("sidebar.medicalGroup"),
+          icon: <MdHealthAndSafety />,
+          items: SYSTEM_MEDICAL,
+        },
+
+        {
+          title: t("sidebar.certificationsGroup"),
+          icon: <MdVerifiedUser />,
+          items: SYSTEM_CERTIFICATIONS,
+        },
+
         {
           title: t("sidebar.codebookGroup"),
           icon: <FaListUl />,
           items: SYSTEM_CODEBOOK,
         },
-
         {
           title: t("sidebar.identityGroup"),
           icon: <FaUserShield />,

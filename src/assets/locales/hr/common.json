@@ -6,7 +6,9 @@
     "codebookGroup": "Šifrarnik",
     "toolsGroup": "Alati",
     "identityGroup": "Identitet",
-    "vehiclesGroup": "Vozila"
+    "vehiclesGroup": "Vozila",
+    "medicalGroup": "Pregledi",
+    "certificationsGroup": "Certifikati"
   },
   "nav": {
     "dashboard": "Nadzorna ploča",

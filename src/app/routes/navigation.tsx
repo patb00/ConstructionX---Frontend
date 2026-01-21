@@ -17,6 +17,7 @@ import {
   FaInbox,
   FaWrench,
   FaMapMarkedAlt,
+  FaClock,
 } from "react-icons/fa";
 import { IoIosBusiness } from "react-icons/io";
 
@@ -31,7 +32,9 @@ export type NavCategory =
   | "CONSTRUCTION"
   | "IDENTITY"
   | "VEHICLES"
-  | "TOOLS";
+  | "TOOLS"
+  | "MEDICAL"
+  | "CERTIFICATIONS";
 
 export type ModuleId =
   | "dashboard"
@@ -96,7 +99,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     labelKey: "nav.workHours",
     to: "/app/work-hours",
-    icon: <FaClipboardList />,
+    icon: <FaClock />,
     section: "MANAGEMENT",
     category: "CONSTRUCTION",
     guard: { permission: "Permission.ConstructionSites.Read" },
@@ -143,7 +146,7 @@ export const NAV_ITEMS: NavItem[] = [
     to: "/app/medicalExaminations",
     icon: <FaStethoscope />,
     section: "SYSTEM",
-    category: "CODEBOOK",
+    category: "MEDICAL",
     guard: { permission: "Permission.MedicalExaminations.Read" },
   },
   {
@@ -151,7 +154,7 @@ export const NAV_ITEMS: NavItem[] = [
     to: "/app/examinationTypes",
     icon: <FaListUl />,
     section: "SYSTEM",
-    category: "CODEBOOK",
+    category: "MEDICAL",
     guard: { permission: "Permission.ExaminationTypes.Read" },
   },
   {
@@ -159,7 +162,7 @@ export const NAV_ITEMS: NavItem[] = [
     to: "/app/certifications",
     icon: <MdVerified />,
     section: "SYSTEM",
-    category: "CODEBOOK",
+    category: "CERTIFICATIONS",
     guard: { permission: "Permission.Certifications.Read" },
   },
   {
@@ -167,9 +170,10 @@ export const NAV_ITEMS: NavItem[] = [
     to: "/app/certificationTypes",
     icon: <FaTags />,
     section: "SYSTEM",
-    category: "CODEBOOK",
+    category: "CERTIFICATIONS",
     guard: { permission: "Permission.CertificationTypes.Read" },
   },
+
   {
     labelKey: "nav.employees",
     to: "/app/administration/employees",

@@ -6,7 +6,9 @@
     "constructionGroup": "Construction sites",
     "codebookGroup": "Codebooks",
     "identityGroup": "Identity",
-    "vehiclesGroup": "Vehicles"
+    "vehiclesGroup": "Vehicles",
+    "medicalGroup": "Medical",
+    "certificationsGroup": "Certifications"
   },
   "nav": {
     "dashboard": "Dashboard",
