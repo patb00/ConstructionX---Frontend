@@ -1,10 +1,11 @@
-import { Card, Typography, type SxProps, type Theme } from "@mui/material";
+import { Box, Card, type SxProps, type Theme } from "@mui/material";
 import type { ReactNode } from "react";
 
 type BoardItemCardProps = {
   actions?: ReactNode;
   children: ReactNode;
-  dateRangeText?: string | null;
+
+  dateRangeText?: ReactNode;
   sx?: SxProps<Theme>;
 };
 
@@ -20,15 +21,7 @@ export function BoardItemCard({
 
       {children}
 
-      {!!dateRangeText && (
-        <Typography
-          variant="caption"
-          color="primary.main"
-          sx={{ display: "block", mt: 0.25 }}
-        >
-          {dateRangeText}
-        </Typography>
-      )}
+      {dateRangeText ? <Box sx={{ mt: 0.25 }}>{dateRangeText}</Box> : null}
     </Card>
   );
 }

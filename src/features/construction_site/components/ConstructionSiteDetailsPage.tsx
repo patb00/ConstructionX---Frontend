@@ -317,6 +317,28 @@ export default function ConstructionSiteDetailsPage() {
     const vehicleCount = vehicles.length;
     const condoCount = condos.length;
 
+    const renderWindows = (item: any) => {
+      const windows = item?.assignmentWindows ?? [];
+
+      if (!Array.isArray(windows) || windows.length === 0) return null;
+
+      return (
+        <Stack spacing={0.25}>
+          {windows.map((w: any, idx: number) => (
+            <Typography
+              key={idx}
+              variant="caption"
+              color="primary.main"
+              sx={{ display: "block" }}
+              noWrap
+            >
+              {formatDate(w?.dateFrom)} — {formatDate(w?.dateTo)}
+            </Typography>
+          ))}
+        </Stack>
+      );
+    };
+
     const employeeColumn: BoardColumnConfig<ConstructionSiteEmployee> = {
       id: "employees",
       icon: <GroupIcon color="primary" fontSize="small" />,
@@ -334,7 +356,6 @@ export default function ConstructionSiteDetailsPage() {
       renderRow: (e) => {
         const fullNameTxt = `${e.firstName} ${e.lastName}`.trim();
         const position = e.jobPositionName || t("common.notAvailable");
-        const dateRange = getConstructionSiteDateRange(e);
 
         return (
           <BoardItemCard
@@ -348,7 +369,7 @@ export default function ConstructionSiteDetailsPage() {
                 sx={removeBtnSx}
               />
             }
-            dateRangeText={dateRange}
+            dateRangeText={renderWindows(e) ?? "—"}
           >
             <Typography
               variant="body2"
@@ -410,8 +431,6 @@ export default function ConstructionSiteDetailsPage() {
             .filter(Boolean)
             .join(" · ") || "—";
 
-        const dateRange = getConstructionSiteDateRange(tool);
-
         return (
           <BoardItemCard
             key={tool.id}
@@ -424,7 +443,7 @@ export default function ConstructionSiteDetailsPage() {
                 sx={removeBtnSx}
               />
             }
-            dateRangeText={dateRange}
+            dateRangeText={renderWindows(tool) ?? "—"}
           >
             <Box
               sx={{
@@ -504,8 +523,6 @@ export default function ConstructionSiteDetailsPage() {
             .filter(Boolean)
             .join(" · ") || "—";
 
-        const dateRange = getConstructionSiteDateRange(v);
-
         return (
           <BoardItemCard
             key={v.id}
@@ -518,7 +535,7 @@ export default function ConstructionSiteDetailsPage() {
                 sx={removeBtnSx}
               />
             }
-            dateRangeText={dateRange}
+            dateRangeText={renderWindows(v) ?? "—"}
           >
             <Box
               sx={{
@@ -584,8 +601,6 @@ export default function ConstructionSiteDetailsPage() {
         />
       ),
       renderRow: (c) => {
-        const dateRange = getConstructionSiteDateRange(c);
-
         return (
           <BoardItemCard
             key={c.id}
@@ -630,7 +645,16 @@ export default function ConstructionSiteDetailsPage() {
                 />
               </Stack>
             }
-            dateRangeText={dateRange}
+            dateRangeText={
+              <Typography
+                variant="caption"
+                color="primary.main"
+                sx={{ display: "block" }}
+                noWrap
+              >
+                {getConstructionSiteDateRange(c) || "—"}
+              </Typography>
+            }
           >
             <Box
               sx={{

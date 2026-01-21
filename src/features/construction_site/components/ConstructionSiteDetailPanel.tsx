@@ -89,13 +89,15 @@ export function ConstructionSiteDetailPanel({ constructionSiteId }: Props) {
           size="small"
           icon={<CalendarTodayIcon sx={{ fontSize: 14 }} />}
           label={`${formatDate(data.startDate)} — ${formatDate(
-            data.plannedEndDate
+            data.plannedEndDate,
           )}`}
           sx={{ ...pillSx, bgcolor: alpha(theme.palette.info.main, 0.06) }}
         />
       )}
     </>
   );
+
+  console.log("data", employees, vehicles, tools, condos);
 
   return (
     <HistoryPanelShell
@@ -123,14 +125,24 @@ export function ConstructionSiteDetailPanel({ constructionSiteId }: Props) {
                   {emp.jobPositionName ?? "—"}
                 </Typography>
 
-                <Stack direction="row" spacing={0.5} flexWrap="wrap">
-                  <Chip
-                    size="small"
-                    label={`${formatDate(emp.dateFrom)} — ${formatDate(
-                      emp.dateTo
-                    )}`}
-                    sx={{ bgcolor: alpha(theme.palette.primary.main, 0.04) }}
-                  />
+                <Stack spacing={0.5}>
+                  {(emp.assignmentWindows ?? []).length ? (
+                    emp.assignmentWindows!.map((w, idx) => (
+                      <Chip
+                        key={`${emp.id}-win-${idx}`}
+                        size="small"
+                        label={`${formatDate(w.dateFrom)} — ${formatDate(w.dateTo)}`}
+                        sx={{
+                          bgcolor: alpha(theme.palette.primary.main, 0.04),
+                          alignSelf: "flex-start",
+                        }}
+                      />
+                    ))
+                  ) : (
+                    <Typography variant="caption" color="text.secondary">
+                      —
+                    </Typography>
+                  )}
                 </Stack>
               </Stack>
             </HistoryCard>
@@ -175,13 +187,25 @@ export function ConstructionSiteDetailPanel({ constructionSiteId }: Props) {
                     />
                   )}
 
-                  <Chip
-                    size="small"
-                    label={`${formatDate(veh.dateFrom)} — ${formatDate(
-                      veh.dateTo
-                    )}`}
-                    sx={{ bgcolor: alpha(theme.palette.primary.main, 0.04) }}
-                  />
+                  <Stack spacing={0.5}>
+                    {(veh.assignmentWindows ?? []).length ? (
+                      veh.assignmentWindows!.map((w, idx) => (
+                        <Chip
+                          key={`${veh.id}-win-${idx}`}
+                          size="small"
+                          label={`${formatDate(w.dateFrom)} — ${formatDate(w.dateTo)}`}
+                          sx={{
+                            bgcolor: alpha(theme.palette.primary.main, 0.04),
+                            alignSelf: "flex-start",
+                          }}
+                        />
+                      ))
+                    ) : (
+                      <Typography variant="caption" color="text.secondary">
+                        —
+                      </Typography>
+                    )}
+                  </Stack>
                 </Stack>
               </Stack>
             </HistoryCard>
@@ -229,14 +253,26 @@ export function ConstructionSiteDetailPanel({ constructionSiteId }: Props) {
                       sx={{ bgcolor: alpha(theme.palette.success.main, 0.06) }}
                     />
                   )}
+                </Stack>
 
-                  <Chip
-                    size="small"
-                    label={`${formatDate(tool.dateFrom)} — ${formatDate(
-                      tool.dateTo
-                    )}`}
-                    sx={{ bgcolor: alpha(theme.palette.primary.main, 0.04) }}
-                  />
+                <Stack spacing={0.5} mt={0.5}>
+                  {(tool.assignmentWindows ?? []).length ? (
+                    tool.assignmentWindows!.map((w, idx) => (
+                      <Chip
+                        key={`${tool.id}-win-${idx}`}
+                        size="small"
+                        label={`${formatDate(w.dateFrom)} — ${formatDate(w.dateTo)}`}
+                        sx={{
+                          bgcolor: alpha(theme.palette.primary.main, 0.04),
+                          alignSelf: "flex-start",
+                        }}
+                      />
+                    ))
+                  ) : (
+                    <Typography variant="caption" color="text.secondary">
+                      —
+                    </Typography>
+                  )}
                 </Stack>
               </Stack>
             </HistoryCard>
@@ -302,7 +338,7 @@ export function ConstructionSiteDetailPanel({ constructionSiteId }: Props) {
                     <Chip
                       size="small"
                       label={`${condo.pricePerDay} ${condo.currency ?? ""}/${t(
-                        "constructionSites.detailPanel.perDayShort"
+                        "constructionSites.detailPanel.perDayShort",
                       )}`}
                       sx={{ bgcolor: alpha(theme.palette.success.main, 0.06) }}
                     />
@@ -312,7 +348,7 @@ export function ConstructionSiteDetailPanel({ constructionSiteId }: Props) {
                     <Chip
                       size="small"
                       label={`${formatDate(
-                        condo.leaseStartDate
+                        condo.leaseStartDate,
                       )} — ${formatDate(condo.leaseEndDate)}`}
                       sx={{
                         bgcolor: alpha(theme.palette.secondary.main, 0.06),
@@ -323,7 +359,7 @@ export function ConstructionSiteDetailPanel({ constructionSiteId }: Props) {
                   <Chip
                     size="small"
                     label={`${formatDate(condo.dateFrom)} — ${formatDate(
-                      condo.dateTo
+                      condo.dateTo,
                     )}`}
                     sx={{ bgcolor: alpha(theme.palette.primary.main, 0.04) }}
                   />
