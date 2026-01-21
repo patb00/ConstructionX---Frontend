@@ -23,4 +23,14 @@ export const ReportsApi = {
     const url = `${base}/tools/tool-list?culture=${encodeURIComponent(culture)}`;
     return authFetchBlob(url, { method: "GET" });
   },
+
+  getConstructionSitesConstructionSiteListFile: async (
+    culture: string,
+  ): Promise<Blob> => {
+    const url = `${base}/construction-sites/construction-site-list?culture=${encodeURIComponent(
+      culture,
+    )}`;
+
+    return authFetchBlob(url, { method: "GET" });
+  },
 };

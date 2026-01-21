@@ -31,4 +31,9 @@ export const REPORT_HANDLERS: Partial<Record<ReportId, ReportHandler>> = {
     const blob = await ReportsApi.getToolsToolListFile(culture);
     openBlobInNewTab(blob);
   },
+  "construction-site-list": async ({ culture }) => {
+    const blob =
+      await ReportsApi.getConstructionSitesConstructionSiteListFile(culture);
+    openBlobInNewTab(blob);
+  },
 };

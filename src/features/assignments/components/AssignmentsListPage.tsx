@@ -99,8 +99,6 @@ const AssignmentsListPage = () => {
     workLogDraft?.employeeId,
   );
 
-  console.log("employeeSiteLogs", employeeSiteLogs);
-
   useEffect(() => {
     if (!workLogDraft) return;
     if (!employeeSiteLogs) return;

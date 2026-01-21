@@ -1,6 +1,10 @@
 import type { ModuleId } from "../../../app/routes/navigation";
 
-export type ReportId = "employee-list" | "vehicle-list" | "tool-list";
+export type ReportId =
+  | "employee-list"
+  | "vehicle-list"
+  | "tool-list"
+  | "construction-site-list";
 
 export type ReportDefinition = {
   id: ReportId;
@@ -27,6 +31,12 @@ export const REPORTS: ReportDefinition[] = [
     moduleId: "tools",
     labelKey: "reports.items.toolList.label",
     descriptionKey: "reports.items.toolList.description",
+  },
+  {
+    id: "construction-site-list",
+    moduleId: "constructionSites",
+    labelKey: "reports.items.constructionSiteList.label",
+    descriptionKey: "reports.items.constructionSiteList.description",
   },
 ];
 

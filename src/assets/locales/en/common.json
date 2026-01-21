@@ -1425,6 +1425,10 @@
       "toolList": {
         "label": "Tool list",
         "description": "Download a list of all tools."
+      },
+      "constructionSiteList": {
+        "label": "Construction site list",
+        "description": "Download a list of all construction sites."
       }
     }
   },

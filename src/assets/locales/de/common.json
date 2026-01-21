@@ -1425,6 +1425,10 @@
       "toolList": {
         "label": "Werkzeugliste",
         "description": "Laden Sie eine Liste aller Werkzeuge herunter."
+      },
+      "constructionSiteList": {
+        "label": "Baustellenliste",
+        "description": "Lade eine Liste aller Baustellen herunter."
       }
     }
   },

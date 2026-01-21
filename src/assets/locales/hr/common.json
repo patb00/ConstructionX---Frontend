@@ -1424,6 +1424,10 @@
       "toolList": {
         "label": "Popis alata",
         "description": "Preuzmite popis svih alata."
+      },
+      "constructionSiteList": {
+        "label": "Popis gradilišta",
+        "description": "Preuzmi popis svih gradilišta."
       }
     }
   },
