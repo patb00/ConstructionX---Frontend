@@ -144,15 +144,12 @@
     "detail": {
       "title": "Construction site overview",
       "employees": "Employees",
-      "addEmployee": "Add employee",
       "addFirstEmployee": "Add first employee",
       "noEmployees": "No employees assigned.",
       "tools": "Tools",
-      "addTool": "Add tool",
       "addFirstTool": "Add first tool",
       "noTools": "No tools assigned.",
       "vehicles": "Vehicles",
-      "addVehicle": "Add vehicle",
       "addFirstVehicle": "Add first vehicle",
       "noVehicles": "No vehicles assigned.",
       "vehicle": {
@@ -180,7 +177,6 @@
       "loadError": "Failed to load construction site details.",
       "fallbackName": "Construction site",
       "noEmployeesAssigned": "No employees assigned.",
-      "noPosition": "No position set",
       "noVehiclesAssigned": "No vehicles assigned.",
       "vehicleFallback": "Vehicle",
       "noToolsAssigned": "No tools assigned.",
@@ -214,7 +210,6 @@
       "pickVehicleHint": "Select vehicle(s) from the left.",
       "pickToolHint": "Select tool(s) from the left.",
       "title": "Assign employees",
-      "loading": "Loading…",
       "loadError": "Failed to load employees.",
       "empty": "No employees available.",
       "condosTitle": "Assign condos",
@@ -230,7 +225,6 @@
         "employeesCount": "Employees ({{count}})",
         "selectedCount": "Selected: {{count}}",
         "vehiclesCount": "Vehicles: {{count}}",
-        "toolsCount": "Tools: {{count}}",
         "condosCount": "Condos ({{count}})"
       },
       "global": {
@@ -240,15 +234,6 @@
       "chip": {
         "custom": "Range: Custom",
         "global": "Range: Global"
-      },
-      "grid": {
-        "employee": "Employee",
-        "start": "Start",
-        "end": "End",
-        "reset": "Reset",
-        "vehicle": "Vehicle",
-        "tool": "Tool",
-        "responsible": "Responsible"
       },
       "pickHint": "Select employees from the left.",
       "tooltip": {
@@ -274,7 +259,6 @@
         "description": "Description"
       },
       "manager": {
-        "none": "— No manager —",
         "label": "Site manager"
       },
       "status": {
@@ -289,7 +273,6 @@
     "actions": "Actions",
     "table": {
       "edit": "Edit",
-      "assignEmployees": "Assign employees",
       "delete": "Delete",
       "detailView": "View site",
       "changeStatus": "Change status"
@@ -326,27 +309,15 @@
     "unassign": "Unassign",
     "notAvailable": "Not available",
     "loading": "Loading…",
-    "add": "Add",
-    "remove": "Remove",
     "assign": "Assign",
-    "assignEmployees": "Assign employees",
-    "employees": "Employees",
     "loadError": "Failed to load data.",
     "filter": "Filters",
     "done": "Done",
-    "reset": "Reset",
     "fileInput": {
       "choose": "Choose file",
       "noFile": "No file chosen"
     },
     "datagrid": {
-      "columnsButton": "Columns",
-      "filterButton": "Filters",
-      "densitySelector": "Density",
-      "exportButton": "Export",
-      "csv": "Export CSV",
-      "print": "Print",
-      "quickFilterPlaceholder": "Search…",
       "noRowsLabel": "No rows",
       "noResultsOverlayLabel": "No results found.",
       "noColumnsOverlayLabel": "No columns",
@@ -575,7 +546,6 @@
       "promptChangePivotValuesDescription": "{{column}} ({{aggregation}})"
     },
     "columns": {
-      "constructionSiteVehicles": "Vehicles",
       "phoneNumber": "Phone number",
       "id": "Id",
       "name": "Name",
@@ -619,8 +589,6 @@
       "purchasePrice": "Purchase price",
       "status": "Status",
       "condition": "Condition",
-      "repairDate": "Repair date",
-      "cost": "Cost",
       "toolCategoryId": "Tool category ID",
       "toolCategoryName": "Tool category",
       "responsibleEmployeeId": "Responsible employee ID",
@@ -642,8 +610,6 @@
       "dateFrom": "Date from",
       "dateTo": "Date to",
       "vehicleId": "Vehicle ID",
-      "responsibleEmployeeFullName": "Responsible employee (full name)",
-      "toolId": "Tool ID",
       "examinationTypeName": "Examination type name",
       "monthsToNextExamination": "Months to next examination",
       "examinationTypeId": "Examination Type",
@@ -705,7 +671,10 @@
       "approvedDate": "Approval date",
       "rejectReason": "Rejection reason",
       "travelledKilometers": "Traveled kilometers"
-    }
+    },
+    "details": "Details",
+    "employee": "Employee",
+    "save": "Save"
   },
   "tenants": {
     "list": {
@@ -724,9 +693,6 @@
       "tenantLabel": "Tenant",
       "validUntil": "Valid until",
       "save": "Save"
-    },
-    "details": {
-      "loadError": "Failed to load tenant."
     },
     "form": {
       "field": {
@@ -749,7 +715,9 @@
         "addressCity": "City",
         "addressState": "State",
         "addressCountry": "Country",
-        "defaultLanguage": "Default language"
+        "defaultLanguage": "Default language",
+        "logo": "Logo",
+        "notes": "Notes"
       },
       "submit": "Save"
     },
@@ -779,9 +747,6 @@
       "title": "Edit company",
       "back": "Back",
       "invalidUrlId": "Invalid URL (id)",
-      "loadError": "Failed to load company."
-    },
-    "details": {
       "loadError": "Failed to load company."
     },
     "form": {
@@ -954,8 +919,7 @@
       "title": "Edit user",
       "back": "Back",
       "invalidUrlId": "Invalid URL (id)",
-      "loadError": "Failed to load user.",
-      "userLabel": "User"
+      "loadError": "Failed to load user."
     },
     "form": {
       "field": {
@@ -993,7 +957,6 @@
     },
     "rolesDialog": {
       "title": "Manage roles",
-      "loading": "Loading…",
       "error": "Failed to load roles.",
       "empty": "No roles available.",
       "cancel": "Cancel",
@@ -1042,9 +1005,6 @@
         "description": "Description",
         "toolCategoryId": "Tool category",
         "responsibleEmployeeId": "Responsible employee"
-      },
-      "responsible": {
-        "none": "Unassigned"
       }
     }
   },
@@ -1129,35 +1089,24 @@
     },
     "table": {
       "edit": "Edit",
-      "delete": "Delete",
-      "details": "Details"
+      "delete": "Delete"
     },
     "actions": "Actions",
     "create": {
       "title": "Add Vehicle",
-      "back": "Back",
-      "submit": "Save"
+      "back": "Back"
     },
     "edit": {
       "title": "Edit Vehicle",
       "back": "Back",
       "loadError": "Failed to load vehicle",
-      "invalidUrlId": "Invalid vehicle id",
-      "submit": "Save changes"
+      "invalidUrlId": "Invalid vehicle id"
     },
     "delete": {
       "title": "Delete Vehicle",
       "description": "Are you sure you want to delete this vehicle?",
       "confirm": "Confirm",
       "cancel": "Cancel"
-    },
-    "detail": {
-      "title": "Vehicle details",
-      "summary": "Vehicle summary",
-      "left": "Specifications",
-      "right": "Ownership / Status",
-      "bottom": "Additional information",
-      "back": "Back"
     },
     "form": {
       "submit": "Save",
@@ -1272,7 +1221,6 @@
       "currentPassword": "Current password",
       "newPassword": "New password",
       "confirmNewPassword": "Confirm new password",
-      "success": "Password has been changed successfully.",
       "error": "Failed to change password."
     },
     "fields": {
@@ -1333,14 +1281,6 @@
     "title": "Assignments",
     "filterByEmployee": "Filter by employee",
     "allEmployees": "All employees",
-    "construction": "Construction sites",
-    "vehicles": "Vehicles",
-    "tools": "Tools",
-    "view": {
-      "label": "View",
-      "board": "Board",
-      "timeline": "Timeline"
-    },
     "employee": {
       "info": "Employee info",
       "noOib": "OIB is not defined",
@@ -1361,26 +1301,21 @@
       "toolItem": "Tool",
       "empty": "No assignments to display on the timeline.",
       "tooltip": {
-        "assignedTo": "Assigned to:",
-        "lane": "Lane:",
         "from": "From:",
-        "to": "To:"
-      }
-    },
-    "emptyConstruction": "No assigned construction sites.",
-    "noLocation": "Location is not defined",
-    "assignmentRange": "Assigned:",
-    "siteRange": "Site period:",
-    "managerLabel": "Site manager:",
-    "emptyVehicles": "No assigned vehicles.",
-    "noSite": "Not linked to a construction site",
-    "emptyTools": "No assigned tools."
+        "to": "To:",
+        "type": "Type"
+      },
+      "item": "Item",
+      "nextWeek": "Next week",
+      "prevWeek": "Previous week",
+      "unassigned": "Unassigned"
+    }
   },
   "appShell": {
     "a11y": {
-      "openMenu": "Open menu"
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
     },
-    "userAvatarAlt": "User",
     "snackbar": {
       "loggedOut": "You have been signed out."
     },
@@ -1389,26 +1324,11 @@
       "logout": "Sign out"
     },
     "profile": {
-      "title": "User profile",
-      "userId": "User ID",
       "tenant": "Tenant",
-      "userData": "User details",
-      "firstName": "First name",
-      "lastName": "Last name",
-      "email": "Email",
       "username": "Username",
       "phone": "Phone",
-      "status": "Status",
       "active": "active",
-      "inactive": "inactive",
-      "role": "Role",
-      "permissions": "Permissions ({{count}})",
-      "tokenStatus": "Token status",
-      "accessToken": "Access token",
-      "expired": "expired",
-      "refreshTokenExpires": "Refresh token expires",
-      "notFound": "No user with the signed-in ID was found in the users list.",
-      "close": "Close"
+      "inactive": "inactive"
     }
   },
   "reports": {
@@ -1474,8 +1394,7 @@
     "actions": "Actions",
     "table": {
       "edit": "Edit",
-      "delete": "Delete",
-      "detailView": "Details"
+      "delete": "Delete"
     },
     "form": {
       "submit": "Save",
@@ -1497,7 +1416,6 @@
     "edit": {
       "title": "Edit Medical Examination",
       "back": "Back",
-      "invalidUrlId": "Invalid URL (id)",
       "loadError": "Failed to load medical examination."
     },
     "form": {
@@ -1552,8 +1470,7 @@
     "actions": "Actions",
     "table": {
       "edit": "Edit",
-      "delete": "Delete",
-      "detailView": "Details"
+      "delete": "Delete"
     },
     "form": {
       "submit": "Save",
@@ -1580,7 +1497,6 @@
     "edit": {
       "title": "Edit Certification",
       "back": "Back",
-      "invalidUrlId": "Invalid URL (id)",
       "loadError": "Failed to load certification."
     },
     "form": {
@@ -1640,9 +1556,6 @@
     },
     "form": {
       "submit": "Save",
-      "responsible": {
-        "none": "— No responsible person —"
-      },
       "field": {
         "address": "Address",
         "capacity": "Capacity",
@@ -1659,29 +1572,9 @@
     "assignEmployees": {
       "title": "Assign employees to condo",
       "empty": "No employees available.",
-      "loadError": "Failed to load employees.",
       "pickHint": "Select employees from the left.",
       "allCount": "Employees ({{count}})",
-      "selectedCount": "Selected: {{count}}",
-      "global": {
-        "startLabel": "Start date (global)",
-        "endLabel": "End date (global)"
-      },
-      "chip": {
-        "global": "Global",
-        "custom": "Custom"
-      },
-      "tooltip": {
-        "resetToGlobal": "Reset to global range"
-      },
-      "validation": {
-        "invalidRange": "Start date must be before or equal to end date."
-      },
-      "actions": {
-        "cancel": "Cancel",
-        "save": "Save",
-        "saving": "Saving..."
-      }
+      "selectedCount": "Selected: {{count}}"
     }
   },
   "notifications": {
@@ -1706,19 +1599,17 @@
     },
     "page": {
       "subtitle": "View all notifications and unread messages.",
-      "loadingMore": "Loading..."
+      "loading": "Loading..."
     },
     "toast": {
       "open": "Open"
     },
     "type": {
       "unknown": "Unknown",
-
       "constructionSiteStatusChanged": "Construction site status changed",
       "constructionSiteAssigned": "Construction site assigned",
       "constructionSiteUnassigned": "Construction site unassigned",
       "constructionSiteDeadlineChanged": "Construction site deadline changed",
-
       "vehicleAssigned": "Vehicle assigned",
       "vehicleServiceDue": "Vehicle service due",
       "vehicleRegistrationTaskAssigned": "Vehicle registration task assigned",
@@ -1726,14 +1617,14 @@
       "vehicleBusinessTripApproved": "Vehicle business trip approved",
       "vehicleBusinessTripRejected": "Vehicle business trip rejected",
       "vehicleBusinessTripCancelled": "Vehicle business trip cancelled",
-
       "toolAssigned": "Tool assigned",
       "toolMaintenanceDue": "Tool maintenance due",
-
       "medicalExaminationExpiresSoon": "Medical examination expires soon",
       "medicalExaminationExpired": "Medical examination expired",
-
       "systemAnnouncement": "System announcement"
+    },
+    "a11y": {
+      "openMenu": "Open notifications"
     }
   },
   "vehicleRepairs": {
@@ -1744,7 +1635,8 @@
     "actions": "Actions",
     "table": {
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "detailView": "Detail view"
     },
     "create": {
       "title": "Add Vehicle Repair",
@@ -1779,10 +1671,6 @@
       "error": "Error loading vehicle registrations"
     },
     "actions": "Actions",
-    "table": {
-      "edit": "Edit",
-      "delete": "Delete"
-    },
     "create": {
       "title": "Add Vehicle Registration",
       "back": "Back"
@@ -1791,13 +1679,11 @@
       "title": "Edit Vehicle Registration",
       "back": "Back",
       "loadError": "Failed to load vehicle registration",
-      "invalidUrlId": "Invalid registration id",
-      "submit": "Save changes"
+      "invalidUrlId": "Invalid registration id"
     },
     "detail": {
       "title": "Vehicle registration details",
       "subtitle": "View vehicle registration details.",
-      "back": "Back",
       "invalidId": "Invalid ID.",
       "loadError": "Failed to load vehicle registration.",
       "notFound": "Registration not found.",
@@ -1826,6 +1712,9 @@
         "documentPath": "Document",
         "note": "Note"
       }
+    },
+    "columns": {
+      "id": "ID"
     }
   },
   "myTasks": {
@@ -1836,7 +1725,6 @@
   },
   "vehicleRegistrationTasks": {
     "list": {
-      "title": "My Vehicle Registration Tasks",
       "empty": "No tasks available.",
       "sections": {
         "assigned": "Assigned",
@@ -1847,48 +1735,14 @@
       }
     },
     "columns": {
-      "id": "ID",
-      "vehicleId": "Vehicle ID",
-      "status": "Status",
       "actions": "Actions",
       "taskName": "Request name",
       "description": "Description",
       "deadline": "Deadline",
-      "type": "Type",
-      "priority": "Priority"
-    },
-    "detail": {
-      "title": "Task details",
-      "back": "Back",
-      "empty": "Task not found.",
-      "invalidId": "Invalid task ID.",
-      "fields": {
-        "id": "ID",
-        "vehicleId": "Vehicle ID",
-        "employeeId": "Employee ID",
-        "vehicleRegistrationId": "Vehicle registration ID",
-        "expiresOn": "Expires on",
-        "completedAt": "Completed at",
-        "status": "Status",
-        "note": "Note"
-      }
-    },
-    "status": {
-      "assigned": "Assigned",
-      "inProgress": "In progress",
-      "completed": "Completed",
-      "cancelled": "Cancelled",
-      "unknown": "Unknown"
+      "type": "Type"
     },
     "actions": {
-      "view": "View",
-      "changeStatus": "Change status",
       "completeTask": "Complete task"
-    },
-    "dialog": {
-      "title": "Change status",
-      "save": "Save",
-      "cancel": "Cancel"
     },
     "resolveDialog": {
       "title": "Confirmation",
@@ -1897,12 +1751,8 @@
       "save": "Save",
       "create": "Create registration",
       "cancel": "Cancel",
-      "snackbarNoRegistration": "There is no registration for this vehicle yet. Please create a registration before resolving the task.",
       "snackbarNoNewerRegistration": "There is no newer registration for this vehicle. Please create a new registration before changing the status.",
-      "snackbarRegistrationTooOld": "The registration for this vehicle is older than the task deadline. Please renew or create a new registration and try again.",
-      "snackbarBadDate": "Invalid task expiration date.",
-      "snackbarBadRegDate": "Invalid vehicle registration date.",
-      "snackbarResolved": "The task has been marked as completed."
+      "snackbarBadDate": "Invalid task expiration date."
     }
   },
   "vehicleInsurances": {
@@ -1923,8 +1773,7 @@
       "title": "Edit Vehicle Insurance",
       "back": "Back",
       "loadError": "Failed to load vehicle insurance",
-      "invalidUrlId": "Invalid insurance id",
-      "submit": "Save changes"
+      "invalidUrlId": "Invalid insurance id"
     },
     "delete": {
       "title": "Delete Vehicle Insurance",
@@ -1982,9 +1831,6 @@
       "repairFallback": "Repair"
     },
     "common": {
-      "assigned": "Assigned",
-      "updated": "Updated",
-      "event": "Event",
       "ongoing": "ongoing",
       "loadMore": "Load more",
       "vehicleId": "Vehicle ID",
@@ -1992,14 +1838,6 @@
       "loadError": "Failed to load.",
       "toolId": "Tool ID",
       "condoId": "Condo ID"
-    },
-    "meta": {
-      "siteId": "Site ID",
-      "employee": "Employee",
-      "employeeId": "Employee ID",
-      "dateRange": "Date range",
-      "changedAt": "Changed at",
-      "changedBy": "Changed by"
     }
   },
   "vehicleBusinessTrips": {
@@ -2033,17 +1871,10 @@
     "actions": "Actions",
     "table": {
       "edit": "Edit",
-      "delete": "Delete",
       "approve": "Approve",
       "reject": "Reject",
       "cancel": "Cancel",
       "complete": "Complete"
-    },
-    "delete": {
-      "title": "Delete vehicle business trip?",
-      "description": "Are you sure you want to delete this vehicle business trip?",
-      "confirm": "Delete",
-      "cancel": "Cancel"
     },
     "form": {
       "submit": "Save",
@@ -2123,7 +1954,50 @@
         "placeholder": "e.g. Dates conflict / Missing info / Policy reason…",
         "minChars": "Please enter at least 3 characters.",
         "note": "Note: rejecting will notify the requester and stop the approval flow."
+      },
+      "complete": {
+        "title": "Complete business trip",
+        "subtitle": "Fill in kilometers and optional fuel info",
+        "previewSubtitle": "Review dates and complete the trip with final data.",
+        "submit": "Complete",
+        "tooltip": {
+          "submitting": "Submitting…",
+          "invalidKilometers": "Enter valid start/end kilometers (end ≥ start)",
+          "invalidFuelDetails": "If refueled, fill fuel amount, currency and liters"
+        },
+        "fields": {
+          "startKilometers": "Start kilometers",
+          "endKilometers": "End kilometers",
+          "refueled": "Refueled",
+          "fuelAmount": "Fuel amount",
+          "fuelCurrency": "Currency",
+          "fuelLiters": "Fuel liters",
+          "note": "Note"
+        },
+        "placeholders": {
+          "startKilometers": "e.g. 12450",
+          "endKilometers": "e.g. 12610",
+          "fuelAmount": "e.g. 45.20",
+          "fuelLiters": "e.g. 28.4",
+          "note": "Optional note…"
+        },
+        "validation": {
+          "invalidNumber": "Invalid number",
+          "endBeforeStart": "End must be ≥ start"
+        }
       }
+    },
+    "fields": {
+      "id": "ID"
+    },
+    "status": {
+      "label": "Status",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "completed": "Completed",
+      "inProgress": "In progress",
+      "cancelled": "Cancelled"
     }
   },
   "vehicleRegistrationEmployees": {
@@ -2173,7 +2047,6 @@
       "cancel": "Cancel"
     },
     "table": {
-      "detailView": "View",
       "edit": "Edit",
       "delete": "Delete"
     },
@@ -2204,5 +2077,11 @@
         "siteId": "Site"
       }
     }
+  },
+  "currency": {
+    "eur": "EUR",
+    "usd": "USD",
+    "gbp": "GBP",
+    "hrk": "HRK"
   }
 }

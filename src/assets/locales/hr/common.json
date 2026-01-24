@@ -140,15 +140,12 @@
     "detail": {
       "title": "Pregled gradilišta",
       "employees": "Zaposlenici",
-      "addEmployee": "Dodaj zaposlenika",
       "addFirstEmployee": "Dodaj prvog zaposlenika",
       "noEmployees": "Nema dodijeljenih zaposlenika.",
       "tools": "Alati",
-      "addTool": "Dodaj alat",
       "addFirstTool": "Dodaj prvi alat",
       "noTools": "Nema dodijeljenih alata.",
       "vehicles": "Vozila",
-      "addVehicle": "Dodaj vozilo",
       "addFirstVehicle": "Dodaj prvo vozilo",
       "noVehicles": "Nema dodijeljenih vozila.",
       "vehicle": {
@@ -161,7 +158,6 @@
         "serialShort": "Serijski broj"
       },
       "condos": "Stanovi",
-      "addCondo": "Dodaj stan",
       "addFirstCondo": "Dodaj prvi stan",
       "noCondos": "Nema dodijeljenih stanova."
     },
@@ -177,7 +173,6 @@
       "loadError": "Neuspjelo učitavanje detalja gradilišta.",
       "fallbackName": "Gradilište",
       "noEmployeesAssigned": "Nema dodijeljenih zaposlenika.",
-      "noPosition": "Radno mjesto nije definirano",
       "noVehiclesAssigned": "Nema dodijeljenih vozila.",
       "vehicleFallback": "Vozilo",
       "noToolsAssigned": "Nema dodijeljenih alata.",
@@ -215,7 +210,6 @@
       "pickVehicleHint": "Odaberite vozilo(a) s lijeve strane.",
       "pickToolHint": "Odaberite alat(e) s lijeve strane.",
       "title": "Dodjela zaposlenika",
-      "loading": "Učitavanje…",
       "loadError": "Neuspjelo učitavanje zaposlenika.",
       "empty": "Nema dostupnih zaposlenika.",
       "window": {
@@ -231,8 +225,7 @@
         "condosCount": "Stanovi ({{count}})",
         "employeesCount": "Zaposlenici ({{count}})",
         "selectedCount": "Odabrano: {{count}}",
-        "vehiclesCount": "Vozila: {{count}}",
-        "toolsCount": "Alati: {{count}}"
+        "vehiclesCount": "Vozila: {{count}}"
       },
       "global": {
         "startLabel": "Početak (globalno)",
@@ -241,15 +234,6 @@
       "chip": {
         "custom": "Raspon: Prilagođeno",
         "global": "Raspon: Globalno"
-      },
-      "grid": {
-        "employee": "Zaposlenik",
-        "start": "Početak",
-        "end": "Završetak",
-        "reset": "Reset",
-        "vehicle": "Vozilo",
-        "tool": "Alat",
-        "responsible": "Odgovorna osoba"
       },
       "pickHint": "Odaberite zaposlenike s lijeve strane.",
       "tooltip": {
@@ -275,7 +259,6 @@
         "description": "Opis"
       },
       "manager": {
-        "none": "— Bez voditelja —",
         "label": "Voditelj gradilišta"
       },
       "status": {
@@ -290,7 +273,6 @@
     "actions": "Akcije",
     "table": {
       "edit": "Uredi",
-      "assignEmployees": "Dodijeli zaposlenike",
       "delete": "Izbriši",
       "detailView": "Pregled gradilišta",
       "changeStatus": "Promijeni status"
@@ -328,24 +310,13 @@
     "notAvailable": "Nije definirano",
     "loading": "Učitavanje…",
     "assign": "Dodijeli",
-    "assignEmployees": "Dodijeli zaposlenike",
-    "employees": "Zaposlenici",
-    "condo": "Stan",
     "filter": "Filteri",
     "done": "Gotovo",
-    "reset": "Reset",
     "fileInput": {
       "choose": "Odaberi datoteku",
       "noFile": "Nije odabrana nijedna datoteka"
     },
     "datagrid": {
-      "columnsButton": "Stupci",
-      "filterButton": "Filteri",
-      "densitySelector": "Gustoća",
-      "exportButton": "Izvoz",
-      "csv": "Izvoz CSV",
-      "print": "Ispis",
-      "quickFilterPlaceholder": "Pretraži…",
       "noRowsLabel": "Nema redaka",
       "noResultsOverlayLabel": "Nema pronađenih rezultata.",
       "noColumnsOverlayLabel": "Nema stupaca",
@@ -574,7 +545,6 @@
       "promptChangePivotValuesDescription": "{{column}} ({{aggregation}})"
     },
     "columns": {
-      "constructionSiteVehicles": "Vozila",
       "id": "Id",
       "name": "Naziv",
       "description": "Opis",
@@ -618,8 +588,6 @@
       "purchasePrice": "Nabavna cijena",
       "status": "Status",
       "condition": "Stanje",
-      "repairDate": "Datum popravka",
-      "cost": "Trošak",
       "toolCategoryId": "ID kategorije alata",
       "toolCategoryName": "Kategorija alata",
       "responsibleEmployeeId": "ID odgovorne osobe",
@@ -641,8 +609,6 @@
       "dateFrom": "Datum od",
       "dateTo": "Datum do",
       "vehicleId": "ID vozila",
-      "responsibleEmployeeFullName": "Odgovorni zaposlenik (puno ime)",
-      "toolId": "ID alata",
       "examinationTypeName": "Naziv vrste pregleda",
       "monthsToNextExamination": "Mjeseci do sljedećeg pregleda",
       "examinationTypeId": "Vrsta pregleda",
@@ -704,7 +670,11 @@
       "approvedDate": "Datum odobrenja",
       "rejectReason": "Razlog odbijanja",
       "travelledKilometers": "Prijeđeni kilometri"
-    }
+    },
+    "details": "Detalji",
+    "employee": "Zaposlenik",
+    "save": "Spremi",
+    "loadError": "Pogreška pri učitavanju."
   },
   "tenants": {
     "list": {
@@ -723,9 +693,6 @@
       "tenantLabel": "Tenant",
       "validUntil": "Vrijedi do",
       "save": "Spremi"
-    },
-    "details": {
-      "loadError": "Neuspjelo učitavanje tenanta."
     },
     "form": {
       "field": {
@@ -748,7 +715,9 @@
         "addressCity": "Grad",
         "addressState": "Županija",
         "addressCountry": "Država",
-        "defaultLanguage": "Zadani jezik"
+        "defaultLanguage": "Zadani jezik",
+        "logo": "Logo",
+        "notes": "Bilješke"
       },
       "submit": "Spremi"
     },
@@ -778,9 +747,6 @@
       "title": "Uredi tvrtku",
       "back": "Natrag",
       "invalidUrlId": "Neispravan URL (id)",
-      "loadError": "Neuspjelo učitavanje tvrtke."
-    },
-    "details": {
       "loadError": "Neuspjelo učitavanje tvrtke."
     },
     "form": {
@@ -953,8 +919,7 @@
       "title": "Uredi korisnika",
       "back": "Natrag",
       "invalidUrlId": "Neispravan URL (id)",
-      "loadError": "Neuspjelo učitavanje korisnika.",
-      "userLabel": "Korisnik"
+      "loadError": "Neuspjelo učitavanje korisnika."
     },
     "form": {
       "field": {
@@ -992,7 +957,6 @@
     },
     "rolesDialog": {
       "title": "Upravljanje ulogama",
-      "loading": "Učitavanje...",
       "error": "Neuspjelo učitavanje uloga.",
       "empty": "Nema dostupnih uloga.",
       "cancel": "Odustani",
@@ -1041,9 +1005,6 @@
         "description": "Opis",
         "toolCategoryId": "Kategorija alata",
         "responsibleEmployeeId": "Odgovorna osoba"
-      },
-      "responsible": {
-        "none": "Nije dodijeljeno"
       }
     }
   },
@@ -1128,35 +1089,24 @@
     },
     "table": {
       "edit": "Uredi",
-      "delete": "Obriši",
-      "details": "Detalji"
+      "delete": "Obriši"
     },
     "actions": "Akcije",
     "create": {
       "title": "Dodaj vozilo",
-      "back": "Natrag",
-      "submit": "Spremi"
+      "back": "Natrag"
     },
     "edit": {
       "title": "Uredi vozilo",
       "back": "Natrag",
       "loadError": "Neuspješno učitavanje vozila",
-      "invalidUrlId": "Nevažeći ID vozila",
-      "submit": "Spremi promjene"
+      "invalidUrlId": "Nevažeći ID vozila"
     },
     "delete": {
       "title": "Brisanje vozila",
       "description": "Jeste li sigurni da želite obrisati ovo vozilo?",
       "confirm": "Potvrdi",
       "cancel": "Odustani"
-    },
-    "detail": {
-      "title": "Pregled vozila",
-      "summary": "Sažetak vozila",
-      "left": "Specifikacije",
-      "right": "Status / stanje",
-      "bottom": "Dodatne informacije",
-      "back": "Natrag"
     },
     "form": {
       "submit": "Spremi",
@@ -1271,7 +1221,6 @@
       "currentPassword": "Trenutna lozinka",
       "newPassword": "Nova lozinka",
       "confirmNewPassword": "Potvrdite novu lozinku",
-      "success": "Lozinka je uspješno promijenjena.",
       "error": "Neuspješna promjena lozinke."
     },
     "fields": {
@@ -1332,14 +1281,6 @@
     "title": "Dodjele",
     "filterByEmployee": "Filtriraj po zaposleniku",
     "allEmployees": "Svi zaposlenici",
-    "construction": "Gradilišta",
-    "vehicles": "Vozila",
-    "tools": "Alati",
-    "view": {
-      "label": "Prikaz",
-      "board": "Ploča",
-      "timeline": "Vremenska crta"
-    },
     "employee": {
       "info": "Podaci o zaposleniku",
       "noOib": "OIB nije definiran",
@@ -1360,26 +1301,21 @@
       "toolItem": "Alat",
       "empty": "Nema dodjela za prikaz na vremenskoj crti.",
       "tooltip": {
-        "assignedTo": "Dodijeljeno:",
-        "lane": "Traka:",
         "from": "Od:",
-        "to": "Do:"
-      }
-    },
-    "emptyConstruction": "Nema dodijeljenih gradilišta.",
-    "noLocation": "Lokacija nije definirana",
-    "assignmentRange": "Dodijeljen:",
-    "siteRange": "Razdoblje gradilišta:",
-    "managerLabel": "Voditelj gradilišta:",
-    "emptyVehicles": "Nema dodijeljenih vozila.",
-    "noSite": "Nije povezano s gradilištem",
-    "emptyTools": "Nema dodijeljenih alata."
+        "to": "Do:",
+        "type": "Vrsta"
+      },
+      "item": "Stavka",
+      "nextWeek": "Sljedeći tjedan",
+      "prevWeek": "Prethodni tjedan",
+      "unassigned": "Nedodijeljeno"
+    }
   },
   "appShell": {
     "a11y": {
-      "openMenu": "Otvori izbornik"
+      "openMenu": "Otvori izbornik",
+      "closeMenu": "Zatvori izbornik"
     },
-    "userAvatarAlt": "Korisnik",
     "snackbar": {
       "loggedOut": "Odjavljeni ste."
     },
@@ -1388,26 +1324,11 @@
       "logout": "Odjava"
     },
     "profile": {
-      "title": "Profil korisnika",
-      "userId": "ID korisnika",
       "tenant": "Tenant",
-      "userData": "Korisnički podaci",
-      "firstName": "Ime",
-      "lastName": "Prezime",
-      "email": "Email",
       "username": "Korisničko ime",
       "phone": "Telefon",
-      "status": "Status",
       "active": "aktivan",
-      "inactive": "neaktivan",
-      "role": "Uloga",
-      "permissions": "Dozvole ({{count}})",
-      "tokenStatus": "Status tokena",
-      "accessToken": "Access token",
-      "expired": "istekao",
-      "refreshTokenExpires": "Refresh token istječe",
-      "notFound": "Nije pronađen korisnik s ID-om iz prijave u listi korisnika.",
-      "close": "Zatvori"
+      "inactive": "neaktivan"
     }
   },
   "reports": {
@@ -1473,8 +1394,7 @@
     "actions": "Akcije",
     "table": {
       "edit": "Uredi",
-      "delete": "Izbriši",
-      "detailView": "Detalji"
+      "delete": "Izbriši"
     },
     "form": {
       "submit": "Spremi",
@@ -1496,7 +1416,6 @@
     "edit": {
       "title": "Uredi zdravstveni pregled",
       "back": "Natrag",
-      "invalidUrlId": "Neispravan URL (id)",
       "loadError": "Neuspjelo učitavanje zdravstvenog pregleda."
     },
     "form": {
@@ -1551,8 +1470,7 @@
     "actions": "Akcije",
     "table": {
       "edit": "Uredi",
-      "delete": "Izbriši",
-      "detailView": "Detalji"
+      "delete": "Izbriši"
     },
     "form": {
       "submit": "Spremi",
@@ -1579,7 +1497,6 @@
     "edit": {
       "title": "Uredi certifikat",
       "back": "Natrag",
-      "invalidUrlId": "Neispravan URL (id)",
       "loadError": "Neuspjelo učitavanje certifikata."
     },
     "form": {
@@ -1639,9 +1556,6 @@
     },
     "form": {
       "submit": "Spremi",
-      "responsible": {
-        "none": "— Bez odgovorne osobe —"
-      },
       "field": {
         "address": "Adresa",
         "capacity": "Kapacitet",
@@ -1655,72 +1569,12 @@
         "notes": "Napomena"
       }
     },
-    "assign": {
-      "title": "Dodjela zaposlenika stanu",
-      "empty": "Nema dostupnih zaposlenika.",
-      "loadError": "Neuspjelo učitavanje zaposlenika.",
-      "pickHint": "Odaberite zaposlenike s lijeve strane.",
-      "left": {
-        "employeesCount": "Zaposlenici ({{count}})",
-        "selectedCount": "Odabrano: {{count}}"
-      },
-      "global": {
-        "startLabel": "Početak (globalno)",
-        "endLabel": "Završetak (globalno)"
-      },
-      "chip": {
-        "global": "Raspon: Globalno",
-        "custom": "Raspon: Prilagođeno"
-      },
-      "grid": {
-        "employee": "Zaposlenik",
-        "start": "Početak",
-        "end": "Završetak",
-        "reset": "Reset"
-      },
-      "tooltip": {
-        "resetToGlobal": "Vrati na globalni raspon"
-      },
-      "validation": {
-        "invalidRange": "Provjerite datume (Početak ≤ Završetak)."
-      },
-      "actions": {
-        "cancel": "Odustani",
-        "save": "Spremi",
-        "saving": "Spremanje..."
-      }
-    },
-    "fields": {
-      "address": "Adresa",
-      "capacity": "Kapacitet",
-      "occupied": "Popunjeno"
-    },
     "assignEmployees": {
       "title": "Dodjela zaposlenika stanu",
       "empty": "Nema dostupnih zaposlenika.",
-      "loadError": "Neuspjelo učitavanje zaposlenika.",
       "pickHint": "Odaberite zaposlenike s lijeve strane.",
       "allCount": "Zaposlenici ({{count}})",
-      "selectedCount": "Odabrano: {{count}}",
-      "global": {
-        "startLabel": "Početak (globalno)",
-        "endLabel": "Završetak (globalno)"
-      },
-      "chip": {
-        "global": "Globalno",
-        "custom": "Prilagođeno"
-      },
-      "tooltip": {
-        "resetToGlobal": "Vrati na globalni raspon"
-      },
-      "validation": {
-        "invalidRange": "Početni datum mora biti prije završnog."
-      },
-      "actions": {
-        "cancel": "Odustani",
-        "save": "Spremi",
-        "saving": "Spremanje..."
-      }
+      "selectedCount": "Odabrano: {{count}}"
     }
   },
   "notifications": {
@@ -1745,19 +1599,17 @@
     },
     "page": {
       "subtitle": "Pregled svih obavijesti i nepročitanih poruka.",
-      "loadingMore": "Učitavanje..."
+      "loading": "Učitavanje..."
     },
     "toast": {
       "open": "Otvori"
     },
     "type": {
       "unknown": "Nepoznato",
-
       "constructionSiteStatusChanged": "Status gradilišta promijenjen",
       "constructionSiteAssigned": "Gradilište dodijeljeno",
       "constructionSiteUnassigned": "Dodjela gradilišta uklonjena",
       "constructionSiteDeadlineChanged": "Rok gradilišta promijenjen",
-
       "vehicleAssigned": "Vozilo dodijeljeno",
       "vehicleServiceDue": "Servis vozila uskoro",
       "vehicleRegistrationTaskAssigned": "Zadatak registracije vozila dodijeljen",
@@ -1765,14 +1617,14 @@
       "vehicleBusinessTripApproved": "Službeni put vozila odobren",
       "vehicleBusinessTripRejected": "Službeni put vozila odbijen",
       "vehicleBusinessTripCancelled": "Službeni put vozila otkazan",
-
       "toolAssigned": "Alat dodijeljen",
       "toolMaintenanceDue": "Održavanje alata uskoro",
-
       "medicalExaminationExpiresSoon": "Zdravstveni pregled uskoro istječe",
       "medicalExaminationExpired": "Zdravstveni pregled je istekao",
-
       "systemAnnouncement": "Sistemska obavijest"
+    },
+    "a11y": {
+      "openMenu": "Otvori obavijesti"
     }
   },
   "vehicleRepairs": {
@@ -1783,7 +1635,8 @@
     "actions": "Akcije",
     "table": {
       "edit": "Uredi",
-      "delete": "Obriši"
+      "delete": "Obriši",
+      "detailView": "Detaljni prikaz"
     },
     "create": {
       "title": "Dodaj popravak vozila",
@@ -1818,10 +1671,6 @@
       "error": "Greška kod učitavanja registracija vozila"
     },
     "actions": "Akcije",
-    "table": {
-      "edit": "Uredi",
-      "delete": "Obriši"
-    },
     "create": {
       "title": "Dodaj registraciju vozila",
       "back": "Natrag"
@@ -1830,13 +1679,11 @@
       "title": "Uredi registraciju vozila",
       "back": "Natrag",
       "loadError": "Neuspješno učitavanje registracije vozila",
-      "invalidUrlId": "Nevažeći ID registracije",
-      "submit": "Spremi promjene"
+      "invalidUrlId": "Nevažeći ID registracije"
     },
     "detail": {
       "title": "Detalji registracije vozila",
       "subtitle": "Pregled detalja registracije vozila.",
-      "back": "Natrag",
       "invalidId": "Neispravan ID.",
       "loadError": "Neuspjelo učitavanje registracije vozila.",
       "notFound": "Registracija nije pronađena.",
@@ -1845,7 +1692,6 @@
         "details": "Detalji"
       }
     },
-
     "delete": {
       "title": "Brisanje registracije",
       "description": "Jeste li sigurni da želite obrisati ovu registraciju?",
@@ -1866,6 +1712,9 @@
         "documentPath": "Dokument",
         "note": "Napomena"
       }
+    },
+    "columns": {
+      "id": "ID"
     }
   },
   "myTasks": {
@@ -1876,7 +1725,6 @@
   },
   "vehicleRegistrationTasks": {
     "list": {
-      "title": "Moji zadaci registracije vozila",
       "empty": "Nema zadataka.",
       "sections": {
         "assigned": "Dodijeljeno",
@@ -1887,48 +1735,14 @@
       }
     },
     "columns": {
-      "id": "ID",
-      "vehicleId": "ID vozila",
-      "status": "Status",
       "actions": "Akcije",
       "taskName": "Naziv zahtjeva",
       "description": "Opis",
       "deadline": "Rok",
-      "type": "Tip",
-      "priority": "Prioritet"
-    },
-    "detail": {
-      "title": "Detalji zadatka",
-      "back": "Natrag",
-      "empty": "Zadatak nije pronađen.",
-      "invalidId": "Neispravan ID zadatka.",
-      "fields": {
-        "id": "ID",
-        "vehicleId": "ID vozila",
-        "employeeId": "ID zaposlenika",
-        "vehicleRegistrationId": "ID registracije vozila",
-        "expiresOn": "Istječe",
-        "completedAt": "Završeno",
-        "status": "Status",
-        "note": "Napomena"
-      }
-    },
-    "status": {
-      "assigned": "Dodijeljeno",
-      "inProgress": "U tijeku",
-      "completed": "Završeno",
-      "cancelled": "Otkazano",
-      "unknown": "Nepoznato"
+      "type": "Tip"
     },
     "actions": {
-      "view": "Pregled",
-      "changeStatus": "Promijeni status",
       "completeTask": "Završi zadatak"
-    },
-    "dialog": {
-      "title": "Promijeni status",
-      "save": "Spremi",
-      "cancel": "Odustani"
     },
     "resolveDialog": {
       "title": "Potvrda",
@@ -1937,12 +1751,8 @@
       "save": "Spremi",
       "create": "Kreiraj registraciju",
       "cancel": "Odustani",
-      "snackbarNoRegistration": "Za ovo vozilo još nema registracije. Kreirajte registraciju prije rješavanja zadatka.",
       "snackbarNoNewerRegistration": "Ne postoji novija registracija za ovo vozilo. Kreirajte novu registraciju prije promjene statusa.",
-      "snackbarRegistrationTooOld": "Registracija za ovo vozilo je starija od roka zadatka. Kreirajte ili produžite registraciju pa pokušajte ponovno.",
-      "snackbarBadDate": "Neispravan datum roka na zadatku.",
-      "snackbarBadRegDate": "Neispravan datum na registraciji vozila.",
-      "snackbarResolved": "Zadatak je označen kao završen."
+      "snackbarBadDate": "Neispravan datum roka na zadatku."
     }
   },
   "vehicleInsurances": {
@@ -2021,9 +1831,6 @@
       "repairFallback": "Popravak"
     },
     "common": {
-      "assigned": "Dodijeljeno",
-      "updated": "Ažurirano",
-      "event": "Događaj",
       "ongoing": "u tijeku",
       "loadMore": "Učitaj više",
       "loading": "Učitavanje…",
@@ -2031,14 +1838,6 @@
       "loadError": "Neuspjelo učitavanje.",
       "toolId": "ID alata",
       "condoId": "ID stana"
-    },
-    "meta": {
-      "siteId": "ID gradilišta",
-      "employee": "Zaposlenik",
-      "employeeId": "ID zaposlenika",
-      "dateRange": "Raspon datuma",
-      "changedAt": "Promijenjeno",
-      "changedBy": "Promijenio"
     }
   },
   "vehicleBusinessTrips": {
@@ -2072,17 +1871,10 @@
     "actions": "Akcije",
     "table": {
       "edit": "Uredi",
-      "delete": "Obriši",
       "approve": "Odobri",
       "reject": "Odbij",
       "cancel": "Otkaži",
       "complete": "Završi"
-    },
-    "delete": {
-      "title": "Obrisati službeno putovanje?",
-      "description": "Jeste li sigurni da želite obrisati ovo službeno putovanje?",
-      "confirm": "Obriši",
-      "cancel": "Odustani"
     },
     "form": {
       "submit": "Spremi",
@@ -2162,7 +1954,50 @@
         "placeholder": "npr. Sukob termina / Nedostaju podaci / Pravila…",
         "minChars": "Unesite najmanje 3 znaka.",
         "note": "Napomena: odbijanje će obavijestiti podnositelja i zaustaviti tijek odobravanja."
+      },
+      "complete": {
+        "title": "Završi službeni put",
+        "subtitle": "Unesite kilometre i opcionalne informacije o gorivu",
+        "previewSubtitle": "Pregledajte datume i završite put s konačnim podacima.",
+        "submit": "Završi",
+        "tooltip": {
+          "submitting": "Slanje…",
+          "invalidKilometers": "Unesite valjane početne/završne kilometre (kraj ≥ početak)",
+          "invalidFuelDetails": "Ako je točeno, unesite iznos, valutu i litre goriva"
+        },
+        "fields": {
+          "startKilometers": "Početni kilometri",
+          "endKilometers": "Završni kilometri",
+          "refueled": "Točeno gorivo",
+          "fuelAmount": "Iznos goriva",
+          "fuelCurrency": "Valuta",
+          "fuelLiters": "Litara goriva",
+          "note": "Napomena"
+        },
+        "placeholders": {
+          "startKilometers": "npr. 12450",
+          "endKilometers": "npr. 12610",
+          "fuelAmount": "npr. 45,20",
+          "fuelLiters": "npr. 28,4",
+          "note": "Opcionalna napomena…"
+        },
+        "validation": {
+          "invalidNumber": "Neispravan broj",
+          "endBeforeStart": "Kraj mora biti ≥ početak"
+        }
       }
+    },
+    "fields": {
+      "id": "ID"
+    },
+    "status": {
+      "label": "Status",
+      "pending": "Na čekanju",
+      "approved": "Odobreno",
+      "rejected": "Odbijeno",
+      "completed": "Završeno",
+      "inProgress": "U tijeku",
+      "cancelled": "Otkazano"
     }
   },
   "vehicleRegistrationEmployees": {
@@ -2212,7 +2047,6 @@
       "cancel": "Odustani"
     },
     "table": {
-      "detailView": "Pregled",
       "edit": "Uredi",
       "delete": "Obriši"
     },
@@ -2243,5 +2077,11 @@
         "siteId": "Gradilište"
       }
     }
+  },
+  "currency": {
+    "eur": "EUR",
+    "usd": "USD",
+    "gbp": "GBP",
+    "hrk": "HRK"
   }
 }

@@ -118,7 +118,10 @@ export function NotificationsBell() {
 
   return (
     <>
-      <IconButton onClick={handleOpen} aria-label="notifications">
+      <IconButton
+        onClick={handleOpen}
+        aria-label={t("notifications.a11y.openMenu")}
+      >
         <Badge badgeContent={unreadCount} color="error" max={99}>
           <NotificationsNoneIcon />
         </Badge>
