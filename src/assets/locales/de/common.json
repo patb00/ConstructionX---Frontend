@@ -8,7 +8,8 @@
     "identityGroup": "Identität",
     "vehiclesGroup": "Fahrzeuge",
     "medicalGroup": "Medizin",
-    "certificationsGroup": "Zertifizierungen"
+    "certificationsGroup": "Zertifizierungen",
+    "condosGroup": "Wohnungen"
   },
   "nav": {
     "dashboard": "Übersicht",

@@ -11,6 +11,7 @@ import { LuConstruction } from "react-icons/lu";
 import { useAuthStore } from "../../../features/auth/store/useAuthStore";
 import { NAV_ITEMS, type NavItem } from "../../routes/navigation";
 import { MdHealthAndSafety, MdVerifiedUser } from "react-icons/md";
+import { BiBuildingHouse } from "react-icons/bi";
 
 export const SIDEBAR_WIDTH = 250;
 
@@ -52,6 +53,8 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
     (i) => i.category === "CERTIFICATIONS",
   );
 
+  const SYSTEM_CONDOS = SYSTEM.filter((i) => i.category === "CONDOS");
+
   const ManagementContent = (
     <SidebarSection
       sectionLabelKey="sidebar.management"
@@ -82,7 +85,11 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
           icon: <FaTools />,
           items: SYSTEM_TOOLS,
         },
-
+        {
+          title: t("sidebar.condosGroup"),
+          icon: <BiBuildingHouse />,
+          items: SYSTEM_CONDOS,
+        },
         {
           title: t("sidebar.medicalGroup"),
           icon: <MdHealthAndSafety />,

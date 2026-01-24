@@ -29,6 +29,7 @@ import type { ReactNode } from "react";
 
 export type NavCategory =
   | "CODEBOOK"
+  | "CONDOS"
   | "CONSTRUCTION"
   | "IDENTITY"
   | "VEHICLES"
@@ -195,7 +196,7 @@ export const NAV_ITEMS: NavItem[] = [
     to: "/app/condos",
     icon: <BiBuildingHouse />,
     section: "SYSTEM",
-    category: "CODEBOOK",
+    category: "CONDOS",
     guard: { permission: "Permission.Condos.Read" },
   },
 

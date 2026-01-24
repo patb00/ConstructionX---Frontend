@@ -8,7 +8,8 @@
     "identityGroup": "Identitet",
     "vehiclesGroup": "Vozila",
     "medicalGroup": "Pregledi",
-    "certificationsGroup": "Certifikati"
+    "certificationsGroup": "Certifikati",
+    "condosGroup": "Stanovi"
   },
   "nav": {
     "dashboard": "Nadzorna ploča",
