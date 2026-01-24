@@ -17,6 +17,7 @@ import type { VehicleBusinessTrip } from "../..";
 import { useCompleteVehicleBusinessTrip } from "../../hooks/useCompleteVehicleBusinessTrip";
 import { AssignTaskDialog } from "../../../../components/ui/assign-dialog/AssignTaskDialog";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   open: boolean;
@@ -39,6 +40,7 @@ export default function CompleteBusinessTripDialog({
   onClose,
   trip,
 }: Props) {
+  const { t } = useTranslation();
   const completeMutation = useCompleteVehicleBusinessTrip();
   const submitting = completeMutation.isPending;
 
@@ -100,10 +102,16 @@ export default function CompleteBusinessTripDialog({
   const submitDisabled = submitting || !tripId || !kmValid || !fuelValid;
 
   const submitTooltip = (() => {
-    if (submitting) return "Submitting…";
-    if (!tripId) return "No trip selected";
-    if (!kmValid) return "Enter valid start/end kilometers (end ≥ start)";
-    if (!fuelValid) return "If refueled, fill fuel amount, currency and liters";
+    if (submitting) {
+      return t("vehicleBusinessTrips.dialogs.complete.tooltip.submitting");
+    }
+    if (!tripId) return t("vehicleBusinessTrips.dialogs.common.noTripSelected");
+    if (!kmValid) {
+      return t("vehicleBusinessTrips.dialogs.complete.tooltip.invalidKilometers");
+    }
+    if (!fuelValid) {
+      return t("vehicleBusinessTrips.dialogs.complete.tooltip.invalidFuelDetails");
+    }
     return "";
   })();
 
@@ -130,19 +138,33 @@ export default function CompleteBusinessTripDialog({
     <AssignTaskDialog
       open={open}
       onClose={onClose}
-      title="Complete business trip"
-      subtitle="Fill in kilometers and optional fuel info"
+      title={t("vehicleBusinessTrips.dialogs.complete.title")}
+      subtitle={t("vehicleBusinessTrips.dialogs.complete.subtitle")}
       headerIcon={<TaskAltOutlinedIcon sx={{ fontSize: 18 }} />}
-      referenceText={tripId ? `Trip #${tripId}` : "No trip selected"}
-      previewTitle="Trip details"
-      previewSubtitle="Review dates and complete the trip with final data."
+      referenceText={
+        tripId
+          ? t("vehicleBusinessTrips.dialogs.common.referenceTrip", {
+              id: tripId,
+            })
+          : t("vehicleBusinessTrips.dialogs.common.noTripSelected")
+      }
+      previewTitle={t("vehicleBusinessTrips.dialogs.common.tripDetailsTitle")}
+      previewSubtitle={t("vehicleBusinessTrips.dialogs.complete.previewSubtitle")}
       dueTone="neutral"
       previewFields={[
-        { label: "Start", value: startAt || "-", minWidth: 180 },
-        { label: "End", value: endAt || "-", minWidth: 180 },
+        {
+          label: t("vehicleBusinessTrips.dialogs.common.start"),
+          value: startAt || "-",
+          minWidth: 180,
+        },
+        {
+          label: t("vehicleBusinessTrips.dialogs.common.end"),
+          value: endAt || "-",
+          minWidth: 180,
+        },
       ]}
-      submitText="Complete"
-      cancelText="Cancel"
+      submitText={t("vehicleBusinessTrips.dialogs.complete.submit")}
+      cancelText={t("common.cancel")}
       onSubmit={handleSubmit}
       submitting={submitting}
       submitDisabled={submitDisabled}
@@ -153,16 +175,18 @@ export default function CompleteBusinessTripDialog({
           <TextField
             fullWidth
             size="small"
-            label="Start kilometers"
+            label={t("vehicleBusinessTrips.dialogs.complete.fields.startKilometers")}
             value={form.startKilometers}
             onChange={(e) => setField("startKilometers", e.target.value)}
             disabled={submitting}
             inputMode="decimal"
-            placeholder="e.g. 12450"
+            placeholder={t(
+              "vehicleBusinessTrips.dialogs.complete.placeholders.startKilometers",
+            )}
             error={form.startKilometers !== "" && startKm === null}
             helperText={
               form.startKilometers !== "" && startKm === null
-                ? "Invalid number"
+                ? t("vehicleBusinessTrips.dialogs.complete.validation.invalidNumber")
                 : " "
             }
           />
@@ -170,12 +194,14 @@ export default function CompleteBusinessTripDialog({
           <TextField
             fullWidth
             size="small"
-            label="End kilometers"
+            label={t("vehicleBusinessTrips.dialogs.complete.fields.endKilometers")}
             value={form.endKilometers}
             onChange={(e) => setField("endKilometers", e.target.value)}
             disabled={submitting}
             inputMode="decimal"
-            placeholder="e.g. 12610"
+            placeholder={t(
+              "vehicleBusinessTrips.dialogs.complete.placeholders.endKilometers",
+            )}
             error={
               form.endKilometers !== "" &&
               (endKm === null ||
@@ -186,9 +212,11 @@ export default function CompleteBusinessTripDialog({
               startKm !== null &&
               endKm !== null &&
               endKm < startKm
-                ? "End must be ≥ start"
+                ? t(
+                    "vehicleBusinessTrips.dialogs.complete.validation.endBeforeStart",
+                  )
                 : form.endKilometers !== "" && endKm === null
-                ? "Invalid number"
+                ? t("vehicleBusinessTrips.dialogs.complete.validation.invalidNumber")
                 : " "
             }
           />
@@ -223,7 +251,7 @@ export default function CompleteBusinessTripDialog({
                 disabled={submitting}
               />
             }
-            label="Refueled"
+            label={t("vehicleBusinessTrips.dialogs.complete.fields.refueled")}
           />
         </Box>
 
@@ -231,18 +259,20 @@ export default function CompleteBusinessTripDialog({
           <TextField
             fullWidth
             size="small"
-            label="Fuel amount"
+            label={t("vehicleBusinessTrips.dialogs.complete.fields.fuelAmount")}
             value={form.fuelAmount}
             onChange={(e) => setField("fuelAmount", e.target.value)}
             disabled={submitting || !form.refueled}
             inputMode="decimal"
-            placeholder="e.g. 45.20"
+            placeholder={t(
+              "vehicleBusinessTrips.dialogs.complete.placeholders.fuelAmount",
+            )}
             error={
               form.refueled && form.fuelAmount !== "" && fuelAmount === null
             }
             helperText={
               form.refueled && form.fuelAmount !== "" && fuelAmount === null
-                ? "Invalid number"
+                ? t("vehicleBusinessTrips.dialogs.complete.validation.invalidNumber")
                 : " "
             }
           />
@@ -252,34 +282,38 @@ export default function CompleteBusinessTripDialog({
             size="small"
             disabled={submitting || !form.refueled}
           >
-            <InputLabel id="fuel-currency-label">Currency</InputLabel>
+            <InputLabel id="fuel-currency-label">
+              {t("vehicleBusinessTrips.dialogs.complete.fields.fuelCurrency")}
+            </InputLabel>
             <Select
               labelId="fuel-currency-label"
               value={form.fuelCurrency}
-              label="Currency"
+              label={t("vehicleBusinessTrips.dialogs.complete.fields.fuelCurrency")}
               onChange={(e) => setField("fuelCurrency", e.target.value)}
             >
-              <MenuItem value="EUR">EUR</MenuItem>
-              <MenuItem value="USD">USD</MenuItem>
-              <MenuItem value="GBP">GBP</MenuItem>
+              <MenuItem value="EUR">{t("currency.eur")}</MenuItem>
+              <MenuItem value="USD">{t("currency.usd")}</MenuItem>
+              <MenuItem value="GBP">{t("currency.gbp")}</MenuItem>
             </Select>
           </FormControl>
 
           <TextField
             fullWidth
             size="small"
-            label="Fuel liters"
+            label={t("vehicleBusinessTrips.dialogs.complete.fields.fuelLiters")}
             value={form.fuelLiters}
             onChange={(e) => setField("fuelLiters", e.target.value)}
             disabled={submitting || !form.refueled}
             inputMode="decimal"
-            placeholder="e.g. 28.4"
+            placeholder={t(
+              "vehicleBusinessTrips.dialogs.complete.placeholders.fuelLiters",
+            )}
             error={
               form.refueled && form.fuelLiters !== "" && fuelLiters === null
             }
             helperText={
               form.refueled && form.fuelLiters !== "" && fuelLiters === null
-                ? "Invalid number"
+                ? t("vehicleBusinessTrips.dialogs.complete.validation.invalidNumber")
                 : " "
             }
           />
@@ -287,13 +321,15 @@ export default function CompleteBusinessTripDialog({
 
         <TextField
           size="small"
-          label="Note"
+          label={t("vehicleBusinessTrips.dialogs.complete.fields.note")}
           value={form.note}
           onChange={(e) => setField("note", e.target.value)}
           disabled={submitting}
           multiline
           minRows={3}
-          placeholder="Optional note…"
+          placeholder={t(
+            "vehicleBusinessTrips.dialogs.complete.placeholders.note",
+          )}
         />
 
         {submitDisabled && submitTooltip ? (
