@@ -164,7 +164,7 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
         }}
       >
         <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
-          <IconButton aria-label="Close menu" onClick={onClose}>
+          <IconButton aria-label={t("appShell.a11y.closeMenu")} onClick={onClose}>
             <CloseIcon />
           </IconButton>
         </Box>

@@ -87,7 +87,7 @@ export default function AssignEmployeesToCondoDialog({
       items={employeeRows}
       loading={isLoading}
       error={isError}
-      emptyText={t("condos.assignEmployees.noEmployees")}
+      emptyText={t("condos.assignEmployees.empty")}
       loadErrorText={t("common.loadError")}
       busy={assign.isPending}
       preselected={preselected}
