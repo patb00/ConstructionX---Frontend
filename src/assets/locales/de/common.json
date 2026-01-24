@@ -273,7 +273,15 @@
         "description": "Beschreibung"
       },
       "manager": {
-        "none": "— Kein Leiter —"
+        "none": "— Kein Leiter —",
+        "label": "Bauleiter"
+      },
+      "status": {
+        "label": "Status",
+        "all": "Alle"
+      },
+      "period": {
+        "all": "Alle Zeiträume"
       },
       "submit": "Speichern"
     },
@@ -323,6 +331,9 @@
     "assignEmployees": "Mitarbeiter zuweisen",
     "employees": "Mitarbeiter",
     "loadError": "Daten konnten nicht geladen werden.",
+    "filter": "Filter",
+    "done": "Done",
+    "reset": "Zurücksetzen",
     "fileInput": {
       "choose": "Datei auswählen",
       "noFile": "Keine Datei ausgewählt"

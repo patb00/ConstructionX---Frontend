@@ -14,6 +14,9 @@ import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { buildInitial, toDateOnly } from "../../../utils/smartForm";
+import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
+import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
+import type { DateRange } from "@mui/x-date-pickers-pro/models";
 
 export type FieldType =
   | "text"
@@ -22,6 +25,7 @@ export type FieldType =
   | "number"
   | "datetime-local"
   | "date"
+  | "date-range"
   | "checkbox"
   | "textarea"
   | "select"
@@ -85,7 +89,7 @@ export function SmartForm<TValues extends Record<string, any>>({
   renderFooterActions,
 }: SmartFormProps<TValues>) {
   const [values, setValues] = useState<TValues>(() =>
-    buildInitial(fields, defaultValues)
+    buildInitial(fields, defaultValues),
   );
   const { t } = useTranslation();
   const [hasInteracted, setHasInteracted] = useState(false);
@@ -123,6 +127,13 @@ export function SmartForm<TValues extends Record<string, any>>({
 
       if (f.type === "number") {
         return value !== null && value !== "";
+      }
+
+      if (f.type === "date-range") {
+        const v = (values as any)[f.name] as DateRange<Date> | null | undefined;
+        const start = v?.[0];
+        const end = v?.[1];
+        return !!start && !!end;
       }
 
       return value !== null && value !== undefined && value !== "";
@@ -260,8 +271,8 @@ export function SmartForm<TValues extends Record<string, any>>({
         raw && typeof raw === "string"
           ? new Date(raw)
           : raw instanceof Date
-          ? raw
-          : null;
+            ? raw
+            : null;
 
       return (
         <Box key={f.name} sx={{ flex: 1, minWidth: 0 }}>
@@ -308,8 +319,8 @@ export function SmartForm<TValues extends Record<string, any>>({
         typeof raw === "string"
           ? new Date(raw)
           : raw instanceof Date
-          ? raw
-          : null;
+            ? raw
+            : null;
 
       return (
         <Box key={f.name} sx={{ flex: 1, minWidth: 0 }}>
@@ -342,6 +353,47 @@ export function SmartForm<TValues extends Record<string, any>>({
                 sx: commonSx,
                 label: undefined,
                 placeholder: textFieldProps.placeholder ?? f.label,
+                ...textFieldProps,
+              },
+            }}
+          />
+        </Box>
+      );
+    }
+
+    if (type === "date-range") {
+      const raw = (values as any)[f.name] as DateRange<Date> | null | undefined;
+      const range: DateRange<Date> = Array.isArray(raw) ? raw : [null, null];
+
+      return (
+        <Box key={f.name} sx={{ flex: 1, minWidth: 0 }}>
+          <Typography
+            variant="caption"
+            sx={{ fontWeight: 500, color: "text.secondary" }}
+          >
+            {f.label}
+            {f.required && (
+              <Box component="span" sx={{ color: "error.main", ml: 0.25 }}>
+                *
+              </Box>
+            )}
+          </Typography>
+
+          <DateRangePicker
+            value={range}
+            onChange={(newValue) => {
+              setHasInteracted(true);
+              setValues((v) => ({ ...v, [f.name]: newValue }));
+            }}
+            calendars={2}
+            slots={{ field: SingleInputDateRangeField }}
+            slotProps={{
+              textField: {
+                size: "small",
+                fullWidth: true,
+                required: f.required,
+                sx: commonSx,
+                label: undefined,
                 ...textFieldProps,
               },
             }}
@@ -445,6 +497,8 @@ export function SmartForm<TValues extends Record<string, any>>({
         out[f.name] = raw ? raw : null;
       } else if (f.type === "date") {
         out[f.name] = raw ? toDateOnly(raw) : null;
+      } else if (f.type === "date-range") {
+        out[f.name] = raw ?? [null, null];
       } else {
         out[f.name] = raw;
       }

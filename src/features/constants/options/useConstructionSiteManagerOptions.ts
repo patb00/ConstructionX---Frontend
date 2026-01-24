@@ -11,7 +11,7 @@ export function useConstructionSiteManagerOptions() {
   const options: Option[] = useMemo(
     () => [
       {
-        label: t("constructionSites.form.manager.none"),
+        label: t("constructionSites.form.status.all"),
         value: null,
       },
       ...(employeeRows ?? []).map((e: any) => ({
@@ -21,7 +21,7 @@ export function useConstructionSiteManagerOptions() {
           `#${e?.id ?? ""}`,
       })),
     ],
-    [employeeRows, t]
+    [employeeRows, t],
   );
 
   return { options, isLoading, isError, error };

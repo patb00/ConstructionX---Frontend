@@ -273,7 +273,15 @@
         "description": "Description"
       },
       "manager": {
-        "none": "— No manager —"
+        "none": "— No manager —",
+        "label": "Site manager"
+      },
+      "status": {
+        "label": "Status",
+        "all": "All"
+      },
+      "period": {
+        "all": "All periods"
       },
       "submit": "Save"
     },
@@ -323,6 +331,9 @@
     "assignEmployees": "Assign employees",
     "employees": "Employees",
     "loadError": "Failed to load data.",
+    "filter": "Filters",
+    "done": "Done",
+    "reset": "Reset",
     "fileInput": {
       "choose": "Choose file",
       "noFile": "No file chosen"

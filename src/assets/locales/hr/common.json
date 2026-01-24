@@ -274,7 +274,15 @@
         "description": "Opis"
       },
       "manager": {
-        "none": "— Bez voditelja —"
+        "none": "— Bez voditelja —",
+        "label": "Voditelj gradilišta"
+      },
+      "status": {
+        "label": "Status",
+        "all": "Svi"
+      },
+      "period": {
+        "all": "Sva razdoblja"
       },
       "submit": "Spremi"
     },
@@ -322,6 +330,9 @@
     "assignEmployees": "Dodijeli zaposlenike",
     "employees": "Zaposlenici",
     "condo": "Stan",
+    "filter": "Filteri",
+    "done": "Gotovo",
+    "reset": "Reset",
     "fileInput": {
       "choose": "Odaberi datoteku",
       "noFile": "Nije odabrana nijedna datoteka"

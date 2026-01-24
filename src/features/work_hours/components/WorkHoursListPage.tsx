@@ -26,10 +26,7 @@ import { formatIsoDate, startOfWeekMonday } from "../../assignments/utils/date";
 
 import { addDays, formatLocalIsoDate } from "../../../utils/dateFormatters";
 import { getIntlLocale } from "../../../utils/u18nLocale";
-import {
-  buildWeekDays,
-  shiftRange,
-} from "../utils/workHoursDateUtils";
+import { buildWeekDays, shiftRange } from "../utils/workHoursDateUtils";
 
 import { useConstructionSiteEmployeeWorkLogsAll } from "../../construction_site/hooks/useConstructionSiteEmployeeWorkLogsAll";
 import { useEmployeeOptions } from "../../constants/options/useEmployeeOptions";

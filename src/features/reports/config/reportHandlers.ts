@@ -3,6 +3,12 @@ import type { ReportId } from "./reports.config";
 
 export type ReportHandlerContext = {
   culture: string;
+  params?: {
+    startDate?: string;
+    plannedEndDate?: string;
+    siteManagerId?: number | null;
+    status?: string;
+  };
 };
 
 export type ReportHandler = (ctx: ReportHandlerContext) => Promise<void>;
@@ -27,13 +33,21 @@ export const REPORT_HANDLERS: Partial<Record<ReportId, ReportHandler>> = {
     const blob = await ReportsApi.getVehiclesVehicleListFile(culture);
     openBlobInNewTab(blob);
   },
+
   "tool-list": async ({ culture }) => {
     const blob = await ReportsApi.getToolsToolListFile(culture);
     openBlobInNewTab(blob);
   },
-  "construction-site-list": async ({ culture }) => {
-    const blob =
-      await ReportsApi.getConstructionSitesConstructionSiteListFile(culture);
+
+  "construction-site-list": async ({ culture, params }) => {
+    const blob = await ReportsApi.getConstructionSitesConstructionSiteListFile(
+      culture,
+      params?.startDate,
+      params?.plannedEndDate,
+      params?.siteManagerId,
+      params?.status,
+    );
+
     openBlobInNewTab(blob);
   },
 };

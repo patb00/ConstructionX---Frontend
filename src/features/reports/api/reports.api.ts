@@ -7,7 +7,6 @@ export const ReportsApi = {
     const url = `${base}/employees/employee-list?culture=${encodeURIComponent(
       culture,
     )}`;
-
     return authFetchBlob(url, { method: "GET" });
   },
 
@@ -15,7 +14,6 @@ export const ReportsApi = {
     const url = `${base}/vehicles/vehicle-list?culture=${encodeURIComponent(
       culture,
     )}`;
-
     return authFetchBlob(url, { method: "GET" });
   },
 
@@ -26,10 +24,20 @@ export const ReportsApi = {
 
   getConstructionSitesConstructionSiteListFile: async (
     culture: string,
+    startDate?: string,
+    plannedEndDate?: string,
+    siteManagerId?: number | null,
+    status?: string,
   ): Promise<Blob> => {
-    const url = `${base}/construction-sites/construction-site-list?culture=${encodeURIComponent(
-      culture,
-    )}`;
+    let url =
+      `${base}/construction-sites/construction-site-list` +
+      `?culture=${encodeURIComponent(culture)}`;
+
+    if (startDate) url += `&startDate=${encodeURIComponent(startDate)}`;
+    if (plannedEndDate)
+      url += `&plannedEndDate=${encodeURIComponent(plannedEndDate)}`;
+    if (siteManagerId != null) url += `&siteManagerId=${siteManagerId}`;
+    if (status) url += `&status=${encodeURIComponent(status)}`;
 
     return authFetchBlob(url, { method: "GET" });
   },
