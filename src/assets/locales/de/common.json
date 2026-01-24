@@ -1442,6 +1442,10 @@
       "constructionSiteList": {
         "label": "Baustellenliste",
         "description": "Lade eine Liste aller Baustellen herunter."
+      },
+      "constructionSiteTotalHours": {
+        "label": "Gesamtstunden nach Baustelle",
+        "description": "Laden Sie einen Bericht über die gesamten Arbeitsstunden nach Baustelle für den ausgewählten Zeitraum herunter."
       }
     }
   },

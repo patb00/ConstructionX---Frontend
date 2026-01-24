@@ -1442,6 +1442,10 @@
       "constructionSiteList": {
         "label": "Construction site list",
         "description": "Download a list of all construction sites."
+      },
+      "constructionSiteTotalHours": {
+        "label": "Total hours by construction site",
+        "description": "Download a report of total work hours by construction site for the selected period."
       }
     }
   },

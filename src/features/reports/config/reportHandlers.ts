@@ -8,6 +8,8 @@ export type ReportHandlerContext = {
     plannedEndDate?: string;
     siteManagerId?: number | null;
     status?: string;
+    dateFrom?: string;
+    dateTo?: string;
   };
 };
 
@@ -48,6 +50,14 @@ export const REPORT_HANDLERS: Partial<Record<ReportId, ReportHandler>> = {
       params?.status,
     );
 
+    openBlobInNewTab(blob);
+  },
+  "construction-site-total-hours": async ({ culture, params }) => {
+    const blob = await ReportsApi.getConstructionSitesTotalHoursFile(
+      culture,
+      params?.dateFrom,
+      params?.dateTo,
+    );
     openBlobInNewTab(blob);
   },
 };

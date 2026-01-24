@@ -1441,6 +1441,10 @@
       "constructionSiteList": {
         "label": "Popis gradilišta",
         "description": "Preuzmi popis svih gradilišta."
+      },
+      "constructionSiteTotalHours": {
+        "label": "Ukupni sati po gradilištu",
+        "description": "Preuzmi izvještaj ukupnih radnih sati po gradilištu za odabrano razdoblje."
       }
     }
   },

@@ -24,7 +24,6 @@ import type { ModuleId } from "../../../app/routes/navigation";
 import { getNavItemByModuleId } from "../../../utils/navigationUtils";
 
 import { languageToCulture } from "../utils/culture";
-import { reportsCardColumnSx } from "../utils/layout";
 import { openReport } from "../utils/openReport";
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -69,14 +68,23 @@ const ModuleReportsPage = () => {
 
   const [openingReportId, setOpeningReportId] = useState<string | null>(null);
 
-  const [constructionRange, setConstructionRange] = useState<DateRange<Date>>([
+  const [siteListRange, setSiteListRange] = useState<DateRange<Date>>([
     null,
     null,
   ]);
+  const [totalHoursRange, setTotalHoursRange] = useState<DateRange<Date>>([
+    null,
+    null,
+  ]);
+
   const [siteManagerId, setSiteManagerId] = useState<number | null>(null);
   const [status, setStatus] = useState<number | null>(null);
 
   const [filtersOpen, setFiltersOpen] = useState(false);
+
+  const [activeConstructionReportId, setActiveConstructionReportId] = useState<
+    string | null
+  >(null);
 
   const { options: managerOptions, isLoading: managersLoading } =
     useConstructionSiteManagerOptions();
@@ -87,10 +95,14 @@ const ModuleReportsPage = () => {
     ? getReportsByModuleId(moduleId)
     : [];
 
-  const isConstructionReportId = (id: string) =>
+  const isConstructionSiteListReportId = (id: string) =>
     id === "construction-site-list";
 
-  const isRangeEmpty = !constructionRange[0] && !constructionRange[1];
+  const isConstructionTotalHoursReportId = (id: string) =>
+    id === "construction-site-total-hours";
+
+  const isAnyConstructionReportId = (id: string) =>
+    isConstructionSiteListReportId(id) || isConstructionTotalHoursReportId(id);
 
   const selectedManagerLabel = useMemo(() => {
     if (siteManagerId == null)
@@ -105,24 +117,29 @@ const ModuleReportsPage = () => {
     return found?.label ?? t("common.notAvailable", "—");
   }, [status, statusOptions, t]);
 
-  const dateChipLabel = useMemo(() => {
-    if (isRangeEmpty) return t("constructionSites.form.period.all", "All");
-    const start = constructionRange[0]
-      ? formatLocalIsoDate(constructionRange[0])
-      : "";
-    const end = constructionRange[1]
-      ? formatLocalIsoDate(constructionRange[1])
-      : "";
+  const getRangeForReport = (reportId: string): DateRange<Date> => {
+    if (isConstructionSiteListReportId(reportId)) return siteListRange;
+    if (isConstructionTotalHoursReportId(reportId)) return totalHoursRange;
+    return [null, null];
+  };
+
+  const formatRangeLabel = (range: DateRange<Date>) => {
+    const isEmpty = !range[0] && !range[1];
+    if (isEmpty) return t("constructionSites.form.period.all", "All");
+
+    const start = range[0] ? formatLocalIsoDate(range[0]) : "";
+    const end = range[1] ? formatLocalIsoDate(range[1]) : "";
     return `${start} → ${end}`;
-  }, [constructionRange, isRangeEmpty, t]);
+  };
 
   const handleReportClick = async (reportId: string) => {
     setOpeningReportId(reportId);
 
     try {
-      if (isConstructionReportId(reportId)) {
-        const start = constructionRange[0];
-        const end = constructionRange[1];
+      if (isConstructionSiteListReportId(reportId)) {
+        const range = siteListRange;
+        const start = range[0];
+        const end = range[1];
         const statusValue =
           status != null ? STATUS_KEY_BY_VALUE[status] : undefined;
 
@@ -139,6 +156,22 @@ const ModuleReportsPage = () => {
         return;
       }
 
+      if (isConstructionTotalHoursReportId(reportId)) {
+        const range = totalHoursRange;
+        const from = range[0];
+        const to = range[1];
+
+        await openReport(reportId as any, {
+          culture,
+          params: {
+            dateFrom: from ? formatLocalIsoDate(from) : undefined,
+            dateTo: to ? formatLocalIsoDate(to) : undefined,
+          },
+        });
+
+        return;
+      }
+
       await openReport(reportId as any, { culture });
     } catch (error) {
       console.error("Greška pri otvaranju izvještaja", error);
@@ -148,47 +181,69 @@ const ModuleReportsPage = () => {
     }
   };
 
-  const filterDefaults = useMemo<Partial<ConstructionReportFilters>>(
-    () => ({
-      period: constructionRange,
+  const filterDefaults = useMemo<Partial<ConstructionReportFilters>>(() => {
+    const range =
+      activeConstructionReportId === "construction-site-total-hours"
+        ? totalHoursRange
+        : siteListRange;
+
+    return {
+      period: range,
       siteManagerId: siteManagerId ?? "",
       status: status ?? "",
-    }),
-    [constructionRange, siteManagerId, status],
-  );
+    };
+  }, [
+    activeConstructionReportId,
+    siteListRange,
+    totalHoursRange,
+    siteManagerId,
+    status,
+  ]);
 
-  const filterFields = useMemo<FieldConfig<ConstructionReportFilters>[]>(
-    () => [
+  const filterFields = useMemo<FieldConfig<ConstructionReportFilters>[]>(() => {
+    const fields: FieldConfig<ConstructionReportFilters>[] = [
       {
         name: "period",
         label: t("constructionSites.fields.period", "Period"),
         type: "date-range" as any,
         props: {},
       },
-      {
-        name: "siteManagerId",
-        label: t("constructionSites.form.manager.label", "Site manager"),
-        type: "select",
-        options: managerOptions.map((m) => ({
-          label: m.label,
-          value: m.value ?? "",
-        })),
-        props: {
-          disabled: managersLoading,
+    ];
+
+    if (activeConstructionReportId === "construction-site-list") {
+      fields.push(
+        {
+          name: "siteManagerId",
+          label: t("constructionSites.form.manager.label", "Site manager"),
+          type: "select",
+          options: managerOptions.map((m) => ({
+            label: m.label,
+            value: m.value ?? "",
+          })),
+          props: {
+            disabled: managersLoading,
+          },
         },
-      },
-      {
-        name: "status",
-        label: t("constructionSites.form.status.label", "Status"),
-        type: "select",
-        options: [
-          { label: t("constructionSites.form.status.all", "All"), value: "" },
-          ...statusOptions.map((s) => ({ label: s.label, value: s.value })),
-        ],
-      },
-    ],
-    [t, managerOptions, managersLoading, statusOptions],
-  );
+        {
+          name: "status",
+          label: t("constructionSites.form.status.label", "Status"),
+          type: "select",
+          options: [
+            { label: t("constructionSites.form.status.all", "All"), value: "" },
+            ...statusOptions.map((s) => ({ label: s.label, value: s.value })),
+          ],
+        },
+      );
+    }
+
+    return fields;
+  }, [
+    t,
+    activeConstructionReportId,
+    managerOptions,
+    managersLoading,
+    statusOptions,
+  ]);
 
   if (!moduleId || !navItem) {
     return (
@@ -256,14 +311,22 @@ const ModuleReportsPage = () => {
           </Typography>
         ) : (
           <Box
-            sx={{ display: "flex", flexWrap: "wrap", gap: 2, width: "100%" }}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              width: "100%",
+            }}
           >
             {reports.map((report) => {
               const isOpening = openingReportId === report.id;
-              const isConstruction = isConstructionReportId(report.id);
+              const isConstruction = isAnyConstructionReportId(report.id);
+
+              const thisRange = getRangeForReport(report.id);
+              const dateChipLabel = formatRangeLabel(thisRange);
 
               return (
-                <Box key={report.id} sx={reportsCardColumnSx}>
+                <Box key={report.id} sx={{ width: "100%" }}>
                   <Card
                     elevation={0}
                     sx={{
@@ -319,14 +382,19 @@ const ModuleReportsPage = () => {
                                 size="small"
                                 label={`${t("constructionSites.fields.period", "Period")}: ${dateChipLabel}`}
                               />
-                              <Chip
-                                size="small"
-                                label={`${t("constructionSites.form.manager.label", "Site manager")}: ${selectedManagerLabel}`}
-                              />
-                              <Chip
-                                size="small"
-                                label={`${t("constructionSites.form.status.label", "Status")}: ${selectedStatusLabel}`}
-                              />
+
+                              {isConstructionSiteListReportId(report.id) && (
+                                <>
+                                  <Chip
+                                    size="small"
+                                    label={`${t("constructionSites.form.manager.label", "Site manager")}: ${selectedManagerLabel}`}
+                                  />
+                                  <Chip
+                                    size="small"
+                                    label={`${t("constructionSites.form.status.label", "Status")}: ${selectedStatusLabel}`}
+                                  />
+                                </>
+                              )}
                             </Stack>
                           )}
                         </Box>
@@ -336,7 +404,10 @@ const ModuleReportsPage = () => {
                             size="small"
                             variant="outlined"
                             startIcon={<FilterListIcon />}
-                            onClick={() => setFiltersOpen(true)}
+                            onClick={() => {
+                              setActiveConstructionReportId(report.id);
+                              setFiltersOpen(true);
+                            }}
                             sx={{ whiteSpace: "nowrap" }}
                           >
                             {t("common.filter", "Filters")}
@@ -395,15 +466,31 @@ const ModuleReportsPage = () => {
 
           <SmartForm<ConstructionReportFilters>
             fields={filterFields}
-            rows={[["period"], ["siteManagerId"], ["status"]]}
+            rows={
+              activeConstructionReportId === "construction-site-list"
+                ? [["period"], ["siteManagerId"], ["status"]]
+                : [["period"]]
+            }
             defaultValues={filterDefaults}
             submitLabel={t("common.done", "Done")}
             onSubmit={(vals) => {
-              setConstructionRange(vals.period ?? [null, null]);
-              setSiteManagerId(
-                vals.siteManagerId === "" ? null : Number(vals.siteManagerId),
-              );
-              setStatus(vals.status === "" ? null : Number(vals.status));
+              const nextRange = vals.period ?? [null, null];
+
+              if (
+                activeConstructionReportId === "construction-site-total-hours"
+              ) {
+                setTotalHoursRange(nextRange);
+              } else {
+                setSiteListRange(nextRange);
+              }
+
+              if (activeConstructionReportId === "construction-site-list") {
+                setSiteManagerId(
+                  vals.siteManagerId === "" ? null : Number(vals.siteManagerId),
+                );
+                setStatus(vals.status === "" ? null : Number(vals.status));
+              }
+
               setFiltersOpen(false);
             }}
             formProps={{

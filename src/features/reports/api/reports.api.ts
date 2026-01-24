@@ -41,4 +41,19 @@ export const ReportsApi = {
 
     return authFetchBlob(url, { method: "GET" });
   },
+
+  getConstructionSitesTotalHoursFile: async (
+    culture: string,
+    dateFrom?: string,
+    dateTo?: string,
+  ): Promise<Blob> => {
+    let url =
+      `${base}/construction-sites/total-hours` +
+      `?culture=${encodeURIComponent(culture)}`;
+
+    if (dateFrom) url += `&dateFrom=${encodeURIComponent(dateFrom)}`;
+    if (dateTo) url += `&dateTo=${encodeURIComponent(dateTo)}`;
+
+    return authFetchBlob(url, { method: "GET" });
+  },
 };

@@ -4,7 +4,8 @@ export type ReportId =
   | "employee-list"
   | "vehicle-list"
   | "tool-list"
-  | "construction-site-list";
+  | "construction-site-list"
+  | "construction-site-total-hours";
 
 export type ReportDefinition = {
   id: ReportId;
@@ -37,6 +38,12 @@ export const REPORTS: ReportDefinition[] = [
     moduleId: "constructionSites",
     labelKey: "reports.items.constructionSiteList.label",
     descriptionKey: "reports.items.constructionSiteList.description",
+  },
+  {
+    id: "construction-site-total-hours",
+    moduleId: "constructionSites",
+    labelKey: "reports.items.constructionSiteTotalHours.label",
+    descriptionKey: "reports.items.constructionSiteTotalHours.description",
   },
 ];
 

@@ -7,6 +7,8 @@ type OpenReportArgs = {
     plannedEndDate?: string;
     siteManagerId?: number | null;
     status?: string;
+    dateFrom?: string;
+    dateTo?: string;
   };
 };
 
