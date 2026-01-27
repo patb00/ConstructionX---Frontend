@@ -37,12 +37,13 @@
     "vehicleRegistrations": "Fahrzeugzulassungen",
     "vehicleInsurances": "Fahrzeugversicherungen",
     "vehicleBusinessTrips": "Dienstfahrten",
-    "tasks": "Aufgaben",
-    "map": "Karte",
-    "workHours": "Arbeitszeiten"
+
+    "tasks": "Arbeitsaufgaben",
+    "workHours": "Zeiterfassung",
+    "map": "Standortübersicht"
   },
   "workHours": {
-    "title": "Arbeitszeiten",
+    "title": "Zeiterfassung",
     "record": "Erfassen",
     "list": {
       "employee": "Mitarbeiter",
@@ -1173,7 +1174,8 @@
         "sites": "Baustellen",
         "employees": "Mitarbeiter",
         "tools": "Werkzeuge",
-        "vehicles": "Fahrzeuge"
+        "vehicles": "Fahrzeuge",
+        "condos": "Wohnungen"
       },
       "bar": {
         "sites": "Baustellen — Monatlich ({{year}})",
@@ -1718,7 +1720,7 @@
     }
   },
   "myTasks": {
-    "title": "Aufgaben",
+    "title": "Arbeitsaufgaben",
     "tabs": {
       "vehicleRegistration": "Registrierungsaufgaben"
     }

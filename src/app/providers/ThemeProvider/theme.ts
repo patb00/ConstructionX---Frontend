@@ -52,6 +52,21 @@ export const theme = createTheme({
       },
     },
 
+    MuiInputBase: {
+      styleOverrides: {
+        input: {
+          textTransform: "none",
+        },
+      },
+    },
+    MuiAutocomplete: {
+      styleOverrides: {
+        option: {
+          textTransform: "none",
+        },
+      },
+    },
+
     MuiCard: {
       styleOverrides: {
         root: {

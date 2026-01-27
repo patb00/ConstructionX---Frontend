@@ -92,7 +92,7 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
 
   const locale = useMemo(
     () => getIntlLocale(i18n),
-    [i18n.language, i18n.resolvedLanguage]
+    [i18n.language, i18n.resolvedLanguage],
   );
 
   const headerFmt = useMemo(() => makeHeaderFormatter(locale), [locale]);
@@ -114,7 +114,7 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
   const baseTopOffset = 4;
 
   const [expandedLanes, setExpandedLanes] = useState<Record<string, boolean>>(
-    {}
+    {},
   );
 
   useEffect(() => {
@@ -293,10 +293,7 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
                       fontSize: 12,
                       bgcolor: alpha(theme.palette.grey[700], 0.08),
                       color: theme.palette.text.primary,
-                      border: `1px solid ${alpha(
-                        theme.palette.grey[700],
-                        0.15
-                      )}`,
+                      border: `1px solid ${alpha(theme.palette.grey[700], 0.15)}`,
                     }}
                   >
                     {lane.initials}
@@ -335,12 +332,12 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
                         const left = idx * colWidthPercent;
                         const right = (idx + 1) * colWidthPercent;
                         return `linear-gradient(to right,
-                        transparent 0%,
-                        transparent ${left}%,
-                        ${alpha(theme.palette.primary.light, 0.08)} ${left}%,
-                        ${alpha(theme.palette.primary.light, 0.08)} ${right}%,
-                        transparent ${right}%,
-                        transparent 100%)`;
+                    transparent 0%,
+                    transparent ${left}%,
+                    ${alpha(theme.palette.primary.light, 0.08)} ${left}%,
+                    ${alpha(theme.palette.primary.light, 0.08)} ${right}%,
+                    transparent ${right}%,
+                    transparent 100%)`;
                       })
                       .filter(Boolean)
                       .join(", "),
@@ -391,7 +388,11 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
                           sx={{ display: "block", mb: 0.25 }}
                         >
                           <strong>
-                            {t("assignments.timeline.tooltip.type", "Type")}:
+                            {t(
+                              "assignments.timeline.tooltip.type",
+                              "Type",
+                            ).replace(/:\s*$/, "")}
+                            :
                           </strong>{" "}
                           {seg.meta.laneLabel}
                         </Typography>
@@ -399,14 +400,22 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
 
                       <Typography variant="caption" sx={{ display: "block" }}>
                         <strong>
-                          {t("assignments.timeline.tooltip.from", "From")}:
+                          {t(
+                            "assignments.timeline.tooltip.from",
+                            "From",
+                          ).replace(/:\s*$/, "")}
+                          :
                         </strong>{" "}
                         {safeFormatISO(seg.originalStart, tooltipFmt)}
                       </Typography>
 
                       <Typography variant="caption" sx={{ display: "block" }}>
                         <strong>
-                          {t("assignments.timeline.tooltip.to", "To")}:
+                          {t("assignments.timeline.tooltip.to", "To").replace(
+                            /:\s*$/,
+                            "",
+                          )}
+                          :
                         </strong>{" "}
                         {safeFormatISO(seg.originalEnd, tooltipFmt)}
                       </Typography>
@@ -426,7 +435,7 @@ export const TimelineView: React.FC<TimelineBoardProps> = ({
                           if (!onItemClick) return;
 
                           const originalItem = items.find(
-                            (x) => x.id === seg.baseId
+                            (x) => x.id === seg.baseId,
                           );
                           if (!originalItem) return;
 

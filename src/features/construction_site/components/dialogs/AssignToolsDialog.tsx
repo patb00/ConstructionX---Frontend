@@ -56,7 +56,7 @@ export default function AssignToolsDialog({
       (employeeRows as any[]).map((e: any) => [
         normalizeText(fullName(e.firstName, e.lastName)),
         Number(e.id),
-      ])
+      ]),
     );
 
     const bucket = new Map<number, ToolWindow[]>();
@@ -140,17 +140,19 @@ export default function AssignToolsDialog({
         <Autocomplete
           size="small"
           options={(employeeRows as any[]) ?? []}
-          getOptionLabel={(e: any) =>
-            e ? fullName(e.firstName, e.lastName) : ""
-          }
+          getOptionLabel={(e: any) => {
+            const label = e ? fullName(e.firstName, e.lastName) : "";
+            console.log("[getOptionLabel] option:", e, "label:", label);
+            return label;
+          }}
           isOptionEqualToValue={(opt: any, val: any) =>
             Number(opt?.id) === Number(val?.id)
           }
           value={
             window.responsibleEmployeeId != null
-              ? ((employeeRows as any[]) ?? []).find(
-                  (e) => Number(e.id) === Number(window.responsibleEmployeeId)
-                ) ?? null
+              ? (((employeeRows as any[]) ?? []).find(
+                  (e) => Number(e.id) === Number(window.responsibleEmployeeId),
+                ) ?? null)
               : null
           }
           onChange={(_, val: any | null) =>
@@ -176,7 +178,7 @@ export default function AssignToolsDialog({
         chipGlobal: t("constructionSites.assign.chip.global"),
         chipCustom: t("constructionSites.assign.chip.custom"),
         resetToGlobalTooltip: t(
-          "constructionSites.assign.tooltip.resetToGlobal"
+          "constructionSites.assign.tooltip.resetToGlobal",
         ),
         addWindow: t("constructionSites.assign.window.add"),
         windowLabel: (i: number) =>

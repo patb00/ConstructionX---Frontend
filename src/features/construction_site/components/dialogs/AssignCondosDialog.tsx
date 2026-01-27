@@ -56,7 +56,7 @@ export default function AssignCondosDialog({
       (employeeRows as any[]).map((e: any) => [
         normalizeText(fullName(e.firstName, e.lastName)),
         Number(e.id),
-      ])
+      ]),
     );
 
     const bucket = new Map<number, CondoWindow[]>();
@@ -108,10 +108,27 @@ export default function AssignCondosDialog({
       detailGridMd="minmax(140px,1fr) 180px 180px minmax(220px,1fr)"
       allowMultipleWindows={false}
       getItemId={(condo) => Number(condo.id)}
-      getItemPrimary={(condo) => condo.name ?? condo.code ?? `#${condo.id}`}
-      getItemSecondary={(condo) =>
-        condo.address ? String(condo.address) : null
+      getItemPrimary={(condo) =>
+        condo.address ?? condo.name ?? condo.code ?? `#${condo.id}`
       }
+      getItemSecondary={(condo) => {
+        const capacity =
+          (condo as any).capacity ??
+          (condo as any).cap ??
+          (condo as any).maxPeople ??
+          null;
+
+        const occupied =
+          (condo as any).occupied ??
+          (condo as any).currentlyOccupied ??
+          (condo as any).currentOccupancy ??
+          (condo as any).trenutnoZauzeto ??
+          null;
+
+        if (capacity == null || occupied == null) return null;
+
+        return `${occupied}/${capacity}`;
+      }}
       createWindow={({ globalFrom, globalTo }) => ({
         from: globalFrom,
         to: globalTo,
@@ -130,9 +147,9 @@ export default function AssignCondosDialog({
           }
           value={
             window.responsibleEmployeeId != null
-              ? ((employeeRows as any[]) ?? []).find(
-                  (e) => Number(e.id) === Number(window.responsibleEmployeeId)
-                ) ?? null
+              ? (((employeeRows as any[]) ?? []).find(
+                  (e) => Number(e.id) === Number(window.responsibleEmployeeId),
+                ) ?? null)
               : null
           }
           onChange={(_, val: any | null) =>
@@ -158,7 +175,7 @@ export default function AssignCondosDialog({
         chipGlobal: t("constructionSites.assign.chip.global"),
         chipCustom: t("constructionSites.assign.chip.custom"),
         resetToGlobalTooltip: t(
-          "constructionSites.assign.tooltip.resetToGlobal"
+          "constructionSites.assign.tooltip.resetToGlobal",
         ),
       }}
       buildPayload={({ selected, ranges, globalFrom, globalTo }) => ({

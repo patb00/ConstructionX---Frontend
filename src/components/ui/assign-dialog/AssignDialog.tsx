@@ -104,7 +104,7 @@ type Props<TItem, TWindow extends AssignBaseWindow, TPayload> = {
 export function ReusableAssignDialog<
   TItem,
   TWindow extends AssignBaseWindow,
-  TPayload
+  TPayload,
 >({
   open,
   title,
@@ -158,7 +158,7 @@ export function ReusableAssignDialog<
   const [globalFrom, setGlobalFrom] = useState<string>(todayStr());
   const [globalTo, setGlobalTo] = useState<string>(todayStr());
   const [ranges, setRanges] = useState<Record<number, AssignRange<TWindow>>>(
-    {}
+    {},
   );
   const [touched, setTouched] = useState(false);
 
@@ -238,7 +238,7 @@ export function ReusableAssignDialog<
         updated[id] = {
           ...r,
           windows: r.windows.map((window) =>
-            window.custom ? window : { ...window, from: nextFrom, to: nextTo }
+            window.custom ? window : { ...window, from: nextFrom, to: nextTo },
           ),
         };
       });
@@ -263,7 +263,7 @@ export function ReusableAssignDialog<
     setRanges((old) => {
       const prev = getOrCreateRange(id);
       const windows = prev.windows.map((window, i) =>
-        i === index ? { ...window, from: v, custom: true } : window
+        i === index ? { ...window, from: v, custom: true } : window,
       );
       return { ...old, [id]: { ...prev, windows } };
     });
@@ -274,7 +274,7 @@ export function ReusableAssignDialog<
     setRanges((old) => {
       const prev = getOrCreateRange(id);
       const windows = prev.windows.map((window, i) =>
-        i === index ? { ...window, to: v, custom: true } : window
+        i === index ? { ...window, to: v, custom: true } : window,
       );
       return { ...old, [id]: { ...prev, windows } };
     });
@@ -322,7 +322,7 @@ export function ReusableAssignDialog<
           windows: prev.windows.map((window, i) =>
             i === index
               ? { ...window, from: globalFrom, to: globalTo, custom: false }
-              : window
+              : window,
           ),
         },
       };
@@ -335,7 +335,7 @@ export function ReusableAssignDialog<
       const r = ranges[id];
       if (!r) return false;
       return r.windows.some(
-        (window) => window.from !== globalFrom || window.to !== globalTo
+        (window) => window.from !== globalFrom || window.to !== globalTo,
       );
     });
   }, [selected, ranges, globalFrom, globalTo]);
@@ -430,7 +430,6 @@ export function ReusableAssignDialog<
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: `${leftWidthMd} 1fr` },
-              minHeight: 420,
             }}
           >
             <Box
@@ -490,13 +489,16 @@ export function ReusableAssignDialog<
                           variant="body2"
                           sx={{
                             fontWeight: 600,
-                            whiteSpace: "nowrap",
+                            whiteSpace: "normal",
                             overflow: "hidden",
-                            textOverflow: "ellipsis",
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
                           }}
                         >
                           {primary || `ID ${id}`}
                         </Typography>
+
                         {getItemSecondary ? (
                           <Typography variant="caption" color="text.secondary">
                             {getItemSecondary(it)}
@@ -545,7 +547,10 @@ export function ReusableAssignDialog<
               {selected.length === 0 ? (
                 <Typography color="text.secondary">{L.pickHint}</Typography>
               ) : (
-                <Stack spacing={1.5} sx={{ maxHeight: 420, overflowY: "auto" }}>
+                <Stack
+                  spacing={1.5}
+                  sx={{ maxHeight: 420 /* overflowY: "auto" */ }}
+                >
                   {selectedItems.map(({ id, item }) => {
                     const range = getOrCreateRange(id);
 
@@ -621,7 +626,7 @@ export function ReusableAssignDialog<
                                     setWindowFrom(
                                       id,
                                       index,
-                                      fromPickerValue(nv)
+                                      fromPickerValue(nv),
                                     )
                                   }
                                   slotProps={{
@@ -629,7 +634,7 @@ export function ReusableAssignDialog<
                                       size: "small",
                                       error: !isValidRange(
                                         window.from,
-                                        window.to
+                                        window.to,
                                       ),
                                     },
                                   }}
@@ -645,7 +650,7 @@ export function ReusableAssignDialog<
                                       size: "small",
                                       error: !isValidRange(
                                         window.from,
-                                        window.to
+                                        window.to,
                                       ),
                                     },
                                   }}
@@ -666,7 +671,7 @@ export function ReusableAssignDialog<
                                             (entry, i) =>
                                               i === index
                                                 ? { ...entry, ...patch }
-                                                : entry
+                                                : entry,
                                           );
                                           return {
                                             ...old,

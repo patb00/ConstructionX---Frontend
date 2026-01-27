@@ -135,9 +135,7 @@ export default function AppShell() {
             <Typography
               variant="body1"
               sx={{ fontWeight: 600, color: "primary.main" }}
-            >
-              ConstructionX
-            </Typography>
+            ></Typography>
           </Box>
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>

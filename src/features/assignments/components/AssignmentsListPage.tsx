@@ -394,8 +394,8 @@ const AssignmentsListPage = () => {
     setWorkLogDraft(null);
   };
 
-  console.log("lanes", lanes, "items", items);
-
+  //console.log("lanes", lanes, "items", items);
+  console.log("employeeSiteLogs", employeeSiteLogs);
   return (
     <>
       <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>

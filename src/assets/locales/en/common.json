@@ -37,12 +37,13 @@
     "vehicleRegistrations": "Vehicle Registrations",
     "vehicleInsurances": "Vehicle Insurances",
     "vehicleBusinessTrips": "Vehicle Business Trips",
-    "tasks": "Tasks",
-    "map": "Map",
-    "workHours": "Work Hours"
+
+    "tasks": "Work Tasks",
+    "workHours": "Time Tracking",
+    "map": "Location Overview"
   },
   "workHours": {
-    "title": "Work Hours",
+    "title": "Time Tracking",
     "record": "Record",
     "list": {
       "employee": "Employee",
@@ -1173,7 +1174,8 @@
         "sites": "Construction Sites",
         "employees": "Employees",
         "tools": "Tools",
-        "vehicles": "Vehicles"
+        "vehicles": "Vehicles",
+        "condos": "Condos"
       },
       "bar": {
         "sites": "Sites — Monthly ({{year}})",
@@ -1718,11 +1720,12 @@
     }
   },
   "myTasks": {
-    "title": "Tasks",
+    "title": "Work Tasks",
     "tabs": {
       "vehicleRegistration": "Registration Tasks"
     }
   },
+
   "vehicleRegistrationTasks": {
     "list": {
       "empty": "No tasks available.",

@@ -55,7 +55,7 @@ export default function AssignVehiclesDialog({
       (employeeRows as any[]).map((e: any) => [
         normalizeText(fullName(e.firstName, e.lastName)),
         Number(e.id),
-      ])
+      ]),
     );
 
     const bucket = new Map<number, VehWindow[]>();
@@ -143,9 +143,9 @@ export default function AssignVehiclesDialog({
           }
           value={
             window.responsibleEmployeeId != null
-              ? ((employeeRows as any[]) ?? []).find(
-                  (e) => Number(e.id) === Number(window.responsibleEmployeeId)
-                ) ?? null
+              ? (((employeeRows as any[]) ?? []).find(
+                  (e) => Number(e.id) === Number(window.responsibleEmployeeId),
+                ) ?? null)
               : null
           }
           onChange={(_, val: any | null) =>
@@ -176,7 +176,7 @@ export default function AssignVehiclesDialog({
         chipGlobal: t("constructionSites.assign.chip.global"),
         chipCustom: t("constructionSites.assign.chip.custom"),
         resetToGlobalTooltip: t(
-          "constructionSites.assign.tooltip.resetToGlobal"
+          "constructionSites.assign.tooltip.resetToGlobal",
         ),
         addWindow: t("constructionSites.assign.window.add"),
         windowLabel: (i: number) =>

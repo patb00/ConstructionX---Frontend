@@ -37,12 +37,12 @@
     "vehicleRegistrations": "Registracije vozila",
     "vehicleInsurances": "Osiguranja vozila",
     "vehicleBusinessTrips": "Službena putovanja ",
-    "tasks": "Zadaci",
-    "map": "Karta",
-    "workHours": "Radni sati"
+    "tasks": "Radni zadaci",
+    "map": "Pregled lokacija",
+    "workHours": "Evidencija sati"
   },
   "workHours": {
-    "title": "Radni sati",
+    "title": "Evidencija sati",
     "record": "Evidentiraj",
     "list": {
       "employee": "Zaposlenik",
@@ -1173,13 +1173,15 @@
         "sites": "Gradilišta",
         "employees": "Zaposlenici",
         "tools": "Alati",
-        "vehicles": "Vozila"
+        "vehicles": "Vozila",
+        "condos": "Stanovi"
       },
       "bar": {
         "sites": "Gradilišta — Mjesečno ({{year}})",
         "employees": "Zaposlenici — Mjesečno ({{year}})",
         "tools": "Alati — Mjesečno ({{year}})",
         "vehicles": "Vozila — Mjesečno ({{year}})",
+        "condos": "Stanovi — Mjesečno ({{year}})",
         "yAxis": "Broj"
       },
       "line": {
@@ -1718,7 +1720,7 @@
     }
   },
   "myTasks": {
-    "title": "Zadaci",
+    "title": "Radni zadaci",
     "tabs": {
       "vehicleRegistration": "Zadaci za registraciju"
     }

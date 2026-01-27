@@ -61,8 +61,8 @@ export function VehicleHistoryDetails({ vehicleId }: { vehicleId: number }) {
           (x) =>
             `${x.constructionSiteId}-${x.responsibleEmployeeId}-${x.dateFrom}-${
               x.dateTo ?? "ongoing"
-            }`
-        )
+            }`,
+        ),
       );
 
       const next = [...prev];
@@ -84,6 +84,8 @@ export function VehicleHistoryDetails({ vehicleId }: { vehicleId: number }) {
   const ins = insurancesQuery.data ?? [];
   const repPage = repairsQuery.data;
   const repItems = repPage?.items ?? [];
+
+  console.log("trips", trips);
 
   return (
     <HistoryPanelShell
@@ -202,7 +204,7 @@ export function VehicleHistoryDetails({ vehicleId }: { vehicleId: number }) {
                     <Chip
                       size="small"
                       label={`${r.totalCostAmount} ${String(
-                        r.costCurrency ?? ""
+                        r.costCurrency ?? "",
                       ).toUpperCase()}`}
                       sx={{
                         ...pillSx,
@@ -249,7 +251,7 @@ export function VehicleHistoryDetails({ vehicleId }: { vehicleId: number }) {
 
                 <Typography variant="caption" color="text.secondary" noWrap>
                   {[
-                    bt.employeeId && `Employee #${bt.employeeId}`,
+                    bt.employeeId && `ID Zaposlenika: ${bt.employeeId}`,
                     bt.tripStatus != null && `Status ${bt.tripStatus}`,
                   ]
                     .filter(Boolean)
@@ -348,7 +350,7 @@ export function VehicleHistoryDetails({ vehicleId }: { vehicleId: number }) {
                     <Chip
                       size="small"
                       label={`${i.costAmount} ${String(
-                        i.costCurrency ?? ""
+                        i.costCurrency ?? "",
                       ).toUpperCase()}`}
                       sx={{
                         ...pillSx,
