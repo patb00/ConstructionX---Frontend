@@ -1,6 +1,9 @@
 export interface VehicleRegistration {
   id: number;
   vehicleId: number;
+  vehicleRegistrationNumber: string | null;
+  vehicleBrand: string | null;
+  vehicleModel: string | null;
 
   validFrom: string;
   validTo: string;
