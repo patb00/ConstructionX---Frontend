@@ -2,6 +2,11 @@ export interface VehicleBusinessTrip {
   id: number;
   vehicleId: number;
   employeeId: number;
+  employeeName: string | null;
+  vehicleRegistrationNumber: string | null;
+  vehicleBrand: string | null;
+  vehicleModel: string | null;
+  approvedByEmployeeName: string | null;
   startLocationText: string | null;
   endLocationText: string | null;
   purposeOfTrip: string | null;

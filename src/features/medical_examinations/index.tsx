@@ -1,6 +1,8 @@
 export interface MedicalExamination {
   id: number;
   employeeId: number;
+  employeeName: string | null;
+  employeeOIB: string | null;
   examinationTypeId: number;
   examinationTypeName: string;
   examinationDate: string;
