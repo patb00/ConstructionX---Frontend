@@ -671,7 +671,11 @@
       "approvedByEmployeeUserId": "Approved by (user ID)",
       "approvedDate": "Approval date",
       "rejectReason": "Rejection reason",
-      "travelledKilometers": "Traveled kilometers"
+      "travelledKilometers": "Traveled kilometers",
+      "registrationValidFrom": "Registration valid from",
+      "registrationValidTo": "Registration valid to",
+      "approvedByEmployeeName": "Approved by",
+      "employeeOib": "Employee OIB"
     },
     "details": "Details",
     "employee": "Employee",

@@ -669,7 +669,11 @@
       "approvedByEmployeeUserId": "Odobrio (ID korisnika)",
       "approvedDate": "Datum odobrenja",
       "rejectReason": "Razlog odbijanja",
-      "travelledKilometers": "Prijeđeni kilometri"
+      "travelledKilometers": "Prijeđeni kilometri",
+      "registrationValidFrom": "Registracija vrijedi od",
+      "registrationValidTo": "Registracija vrijedi do",
+      "approvedByEmployeeName": "Odobrio",
+      "employeeOib": "OIB djelatnika"
     },
     "details": "Detalji",
     "employee": "Zaposlenik",

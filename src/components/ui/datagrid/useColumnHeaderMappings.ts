@@ -139,6 +139,12 @@ export default function useColumnHeaderMappings(): MapItem[] {
       translated: t("common.columns.averageConsumption"),
     },
     { original: "Weight", translated: t("common.columns.weight") },
+    {
+      original: "VehicleRegistrationNumber",
+      translated: t("common.columns.registrationNumber"),
+    },
+    { original: "VehicleBrand", translated: t("common.columns.brand") },
+    { original: "VehicleModel", translated: t("common.columns.model") },
 
     //  CONSTRUCTION / ASSIGNMENTS
     {
@@ -195,6 +201,7 @@ export default function useColumnHeaderMappings(): MapItem[] {
     },
     { original: "Result", translated: t("common.columns.result") },
     { original: "Note", translated: t("common.columns.note") },
+    { original: "EmployeeOIB", translated: t("common.columns.employeeOib") },
 
     { original: "Address", translated: t("common.columns.address") },
     { original: "Capacity", translated: t("common.columns.capacity") },
@@ -247,6 +254,14 @@ export default function useColumnHeaderMappings(): MapItem[] {
     },
     { original: "ReportNumber", translated: t("common.columns.reportNumber") },
     { original: "DocumentPath", translated: t("common.columns.documentPath") },
+    {
+      original: "RegistrationValidFrom",
+      translated: t("common.columns.registrationValidFrom"),
+    },
+    {
+      original: "RegistrationValidTo",
+      translated: t("common.columns.registrationValidTo"),
+    },
 
     // VEHICLE INSURANCES
     { original: "Insurer", translated: t("common.columns.insurer") },
@@ -334,6 +349,10 @@ export default function useColumnHeaderMappings(): MapItem[] {
     {
       original: "TravelledKilometers",
       translated: t("common.columns.travelledKilometers"),
+    },
+    {
+      original: "ApprovedByEmployeeName",
+      translated: t("common.columns.approvedByEmployeeName"),
     },
 
     // CERTIFICATION TYPES
