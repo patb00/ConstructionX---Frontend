@@ -1,6 +1,9 @@
 export interface VehicleInsurance {
   id: number;
   vehicleId: number;
+  vehicleRegistrationNumber: string | null;
+  vehicleBrand: string | null;
+  vehicleModel: string | null;
   insurer: string | null;
   policyNumber: string | null;
   policyType: number | null;
