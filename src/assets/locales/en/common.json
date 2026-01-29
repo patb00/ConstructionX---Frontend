@@ -37,7 +37,6 @@
     "vehicleRegistrations": "Vehicle Registrations",
     "vehicleInsurances": "Vehicle Insurances",
     "vehicleBusinessTrips": "Vehicle Business Trips",
-
     "tasks": "Work Tasks",
     "workHours": "Time Tracking",
     "map": "Location Overview"
@@ -296,6 +295,7 @@
     }
   },
   "common": {
+    "navigate": "Navigate",
     "retry": "Retry",
     "yes": "Yes",
     "no": "No",
@@ -1729,7 +1729,6 @@
       "vehicleRegistration": "Registration Tasks"
     }
   },
-
   "vehicleRegistrationTasks": {
     "list": {
       "empty": "No tasks available.",

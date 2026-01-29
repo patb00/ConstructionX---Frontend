@@ -7,7 +7,8 @@ import { SnackbarProvider } from "./app/providers/SnackbarProvider";
 import { LicenseInfo } from "@mui/x-license";
 import { MuiDateProvider } from "./app/providers/MuiDateProvider";
 import { registerSW } from "virtual:pwa-register";
-import "leaflet/dist/leaflet.css";
+
+
 
 LicenseInfo.setLicenseKey(import.meta.env.VITE_MUI_X_LICENSE_KEY as string);
 

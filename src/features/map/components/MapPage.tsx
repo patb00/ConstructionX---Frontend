@@ -11,17 +11,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  Polyline,
-} from "react-leaflet";
-import type { LatLngExpression } from "leaflet";
-import L from "leaflet";
-import { useMapEvents } from "react-leaflet";
-import { Trans, useTranslation } from "react-i18next";
+import { Marker, Source, Layer } from "react-map-gl/maplibre";
+import type { LayerProps } from "react-map-gl/maplibre";
+import { useTranslation } from "react-i18next";
 import { useVehicleBusinessTrips } from "../../vehicle_business_trips/hooks/useVehicleBusinessTrips";
 import { useVehicleBusinessTripsByVehicle } from "../../vehicle_business_trips/hooks/useVehicleBusinessTripsByVehicle";
 import { useVehicleBusinessTripsByEmployee } from "../../vehicle_business_trips/hooks/useVehicleBusinessTripsByEmployee";
@@ -31,6 +23,7 @@ import { useEmployeeOptions } from "../../constants/options/useEmployeeOptions";
 import { TrackingCard } from "../../../components/ui/map/TrackingCard";
 import { useConstructionSites } from "../../construction_site/hooks/useConstructionSites";
 import MapMarkerDetailsPanel from "../../../components/ui/map/MapMarkerDetailsPanel";
+import MapLibreLayer from "./MapLibreLayer";
 import type {
   CondoRow,
   FilterMode,
@@ -40,7 +33,7 @@ import type {
   TripRow,
 } from "..";
 import {
-  geocodeORS,
+  geocodePhoton,
   isProbablyDummy,
   loadGeoCache,
   normalizeLocationText,
@@ -48,39 +41,21 @@ import {
 } from "../utils/geocoding";
 import { MapApi } from "../api/map.api";
 
-const tripIcon = L.divIcon({
-  className: "marker-trip",
-  html: `<div style="width:14px;height:14px;border-radius:50%;background:#1976d2;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.35);"></div>`,
-  iconSize: [14, 14],
-  iconAnchor: [7, 7],
-});
+// Styles for route lines
+const routeLayerStyle: LayerProps = {
+  id: 'route',
+  type: 'line',
+  paint: {
+    'line-color': '#1976d2',
+    'line-width': 4,
+    'line-opacity': 0.8
+  }
+};
 
-const condoIcon = L.divIcon({
-  className: "marker-condo",
-  html: `<div style="width:14px;height:14px;border-radius:50%;background:#2e7d32;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.35);"></div>`,
-  iconSize: [14, 14],
-  iconAnchor: [7, 7],
-});
-
-const siteIcon = L.divIcon({
-  className: "marker-site",
-  html: `<div style="width:14px;height:14px;border-radius:50%;background:#ed6c02;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.35);"></div>`,
-  iconSize: [14, 14],
-  iconAnchor: [7, 7],
-});
-
-function MapClickClearer(props: { onClear: () => void }) {
-  useMapEvents({
-    click: () => props.onClear(),
-  });
-  return null;
-}
 
 export default function MapPage() {
   const { t } = useTranslation();
-  const ORS_KEY = import.meta.env.VITE_OPENROUTESERVICE_API_KEY as
-    | string
-    | undefined;
+
 
   const [mode, setMode] = useState<FilterMode>("all");
   const [vehicleId, setVehicleId] = useState<number>(0);
@@ -142,13 +117,19 @@ export default function MapPage() {
     t("common.dash");
 
   const [geoByText, setGeoByText] = useState<GeoCache>({});
+  // Routes in State: Record<TripID, Array<[Lat, Lon]>>
+  // MapLibre expects [Lon, Lat] for GeoJSON, but our MapApi returns [Lat, Lon] to match old Leaflet logic.
+  // We should align this. OSRM returns [Lon, Lat] natively.
+  // Our updated MapApi returns [Lat, Lon] to keep types compatible?
+  // Let's check MapApi.ts - yes it swaps them back: "return coords.map(([lon, lat]) => [lat, lon]);"
+  // So we have [Lat, Lon].
   const [routeByTripId, setRouteByTripId] = useState<RouteByTripId>({});
 
   useEffect(() => {
     const ac = new AbortController();
 
     async function run() {
-      if (!ORS_KEY) return;
+      // No ORS Key check needed for Nominatim
 
       const cache = loadGeoCache();
       setGeoByText(cache);
@@ -185,14 +166,9 @@ export default function MapPage() {
         if (ac.signal.aborted) return;
         if (nextCache[text]) continue;
 
-        let p = await geocodeORS(ORS_KEY, text, ac.signal, {
-          boundaryCountry: "HR",
-          suffix: "Croatia",
-        });
-
-        if (!p) {
-          p = await geocodeORS(ORS_KEY, text, ac.signal);
-        }
+        // Use Photon
+        const p = await geocodePhoton(text, ac.signal);
+        
         if (p) {
           nextCache[text] = p;
           saveGeoCache(nextCache);
@@ -200,7 +176,7 @@ export default function MapPage() {
         }
       }
 
-      const nextRoutes: Record<number, LatLngExpression[]> = {};
+      const nextRoutes: Record<number, [number, number][]> = {};
       if (showTrips) {
         for (const t of tripsRows) {
           if (ac.signal.aborted) return;
@@ -217,7 +193,8 @@ export default function MapPage() {
           const end = nextCache[e];
           if (!start || !end) continue;
 
-          const route = await MapApi.getRoute(ORS_KEY, start, end, ac.signal);
+          // MapApi uses OSRM now
+          const route = await MapApi.getRoute(undefined, start, end, ac.signal);
           if (route) nextRoutes[t.id] = route;
         }
       }
@@ -228,7 +205,6 @@ export default function MapPage() {
     run().catch(() => {});
     return () => ac.abort();
   }, [
-    ORS_KEY,
     tripsRows,
     condos,
     constructionSitesRows,
@@ -236,8 +212,6 @@ export default function MapPage() {
     showCondos,
     showConstructionSites,
   ]);
-
-  const center: LatLngExpression = [45.815, 15.9819];
 
   useEffect(() => {
     if (mode === "all") {
@@ -251,6 +225,124 @@ export default function MapPage() {
       setVehicleId(0);
     }
   }, [mode]);
+
+  // Render logic helpers
+  const renderCondos = () => {
+    if (!showCondos) return null;
+    return condos.map((c) => {
+      const addrRaw = c.address?.trim();
+      if (!addrRaw || isProbablyDummy(addrRaw)) return null;
+      const addr = normalizeLocationText(addrRaw);
+      const p = geoByText[addr];
+      if (!p) return null;
+
+      return (
+        <Marker
+          key={`condo-${c.id}`}
+          longitude={p.lon}
+          latitude={p.lat}
+          anchor="center"
+          onClick={e => {
+            e.originalEvent.stopPropagation();
+            setSelectedMarker({ kind: "condo", condo: c });
+          }}
+          style={{cursor: 'pointer'}}
+        >
+          <div style={{
+            width: 14, height: 14, borderRadius: '50%', background: '#2e7d32', 
+            border: '2px solid white', boxShadow: '0 1px 4px rgba(0,0,0,.35)'
+          }} />
+        </Marker>
+      );
+    });
+  };
+
+  const renderSites = () => {
+    if (!showConstructionSites) return null;
+    return (constructionSitesRows ?? []).map((s: any) => {
+      const locRaw = s.location?.trim();
+      if (!locRaw || isProbablyDummy(locRaw)) return null;
+      const loc = normalizeLocationText(locRaw);
+      const p = geoByText[loc];
+      if (!p) return null;
+
+      return (
+        <Marker
+          key={`site-${s.id}`}
+          longitude={p.lon}
+          latitude={p.lat}
+          anchor="center"
+          onClick={e => {
+            e.originalEvent.stopPropagation();
+            setSelectedMarker({ kind: "site", site: s });
+          }}
+          style={{cursor: 'pointer'}}
+        >
+           <div style={{
+            width: 14, height: 14, borderRadius: '50%', background: '#ed6c02', 
+            border: '2px solid white', boxShadow: '0 1px 4px rgba(0,0,0,.35)'
+          }} />
+        </Marker>
+      );
+    });
+  };
+
+  const renderTrips = () => {
+    if (!showTrips) return null;
+    return tripsRows.map((t) => {
+      const sRaw = t.startLocationText?.trim();
+      const eRaw = t.endLocationText?.trim();
+      if (!sRaw || !eRaw) return null;
+      if (isProbablyDummy(sRaw) || isProbablyDummy(eRaw)) return null;
+
+      const s = normalizeLocationText(sRaw);
+      const e = normalizeLocationText(eRaw);
+      const start = geoByText[s];
+      const end = geoByText[e];
+      if (!start || !end) return null;
+
+      // Routes: MapApi returns [Lat, Lon]. MapLibre GeoJSON needs [Lon, Lat].
+      const route = routeByTripId[t.id]; 
+      // Convert route to [Lon, Lat]
+      const geometryCoordinates = route 
+        ? route.map(([lat, lon]) => [lon, lat]) 
+        : [[start.lon, start.lat], [end.lon, end.lat]];
+
+      const tripGeoJson: any = {
+        type: 'Feature',
+        geometry: {
+          type: 'LineString',
+          coordinates: geometryCoordinates
+        },
+        properties: { tripId: t.id }
+      };
+
+      return (
+        <div key={`trip-${t.id}`}>
+            {/* Markers */}
+            <Marker longitude={start.lon} latitude={start.lat} anchor="center" 
+                onClick={e => {e.originalEvent.stopPropagation(); setSelectedMarker({ kind: "trip-start", trip: t });}}>
+                <div style={{
+                    width:14, height:14, borderRadius:'50%', background:'#1976d2', 
+                    border:'2px solid white', boxShadow:'0 1px 4px rgba(0,0,0,.35)'
+                }} />
+            </Marker>
+             <Marker longitude={end.lon} latitude={end.lat} anchor="center" 
+                onClick={e => {e.originalEvent.stopPropagation(); setSelectedMarker({ kind: "trip-end", trip: t });}}>
+                <div style={{
+                    width:14, height:14, borderRadius:'50%', background:'#1976d2', 
+                    border:'2px solid white', boxShadow:'0 1px 4px rgba(0,0,0,.35)'
+                }} />
+            </Marker>
+
+            {/* Line */}
+            <Source id={`trip-source-${t.id}`} type="geojson" data={tripGeoJson}>
+                <Layer {...routeLayerStyle} id={`trip-layer-${t.id}`} />
+            </Source>
+        </div>
+      );
+    });
+  };
 
   return (
     <Box sx={{ height: "100%", width: "100%" }}>
@@ -275,121 +367,11 @@ export default function MapPage() {
             borderRadius: 2,
           }}
         >
-          <MapContainer
-            center={center}
-            zoom={12}
-            style={{ height: "100%", width: "100%" }}
-          >
-            <TileLayer
-              attribution="&copy; OpenStreetMap contributors"
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-
-            <MapClickClearer onClear={() => setSelectedMarker(null)} />
-
-            {!ORS_KEY && (
-              <Marker position={center}>
-                <Popup>
-                  <Trans i18nKey="map.page.missingOrsKey">
-                    Missing ORS key. Add <b>VITE_OPENROUTESERVICE_API_KEY</b> to{" "}
-                    <b>.env</b> and restart.
-                  </Trans>
-                </Popup>
-              </Marker>
-            )}
-
-            {showCondos &&
-              condos.map((c) => {
-                const addrRaw = c.address?.trim();
-                if (!addrRaw || isProbablyDummy(addrRaw)) return null;
-                const addr = normalizeLocationText(addrRaw);
-
-                const p = geoByText[addr];
-                if (!p) return null;
-
-                const ll: LatLngExpression = [p.lat, p.lon];
-
-                return (
-                  <Marker
-                    key={`condo-${c.id}`}
-                    position={ll}
-                    icon={condoIcon}
-                    eventHandlers={{
-                      click: () =>
-                        setSelectedMarker({ kind: "condo", condo: c }),
-                    }}
-                  />
-                );
-              })}
-
-            {showTrips &&
-              tripsRows.map((t) => {
-                const sRaw = t.startLocationText?.trim();
-                const eRaw = t.endLocationText?.trim();
-                if (!sRaw || !eRaw) return null;
-                if (isProbablyDummy(sRaw) || isProbablyDummy(eRaw)) return null;
-
-                const s = normalizeLocationText(sRaw);
-                const e = normalizeLocationText(eRaw);
-
-                const start = geoByText[s];
-                const end = geoByText[e];
-                if (!start || !end) return null;
-
-                const startLL: LatLngExpression = [start.lat, start.lon];
-                const endLL: LatLngExpression = [end.lat, end.lon];
-
-                const route = routeByTripId[t.id];
-                const line: LatLngExpression[] = route ?? [startLL, endLL];
-
-                return (
-                  <div key={`trip-${t.id}`}>
-                    <Marker
-                      position={startLL}
-                      icon={tripIcon}
-                      eventHandlers={{
-                        click: () =>
-                          setSelectedMarker({ kind: "trip-start", trip: t }),
-                      }}
-                    />
-
-                    <Marker
-                      position={endLL}
-                      icon={tripIcon}
-                      eventHandlers={{
-                        click: () =>
-                          setSelectedMarker({ kind: "trip-end", trip: t }),
-                      }}
-                    />
-
-                    <Polyline positions={line} />
-                  </div>
-                );
-              })}
-
-            {showConstructionSites &&
-              (constructionSitesRows ?? []).map((s: any) => {
-                const locRaw = s.location?.trim();
-                if (!locRaw || isProbablyDummy(locRaw)) return null;
-
-                const loc = normalizeLocationText(locRaw);
-                const p = geoByText[loc];
-                if (!p) return null;
-
-                const ll: LatLngExpression = [p.lat, p.lon];
-
-                return (
-                  <Marker
-                    key={`site-${s.id}`}
-                    position={ll}
-                    icon={siteIcon}
-                    eventHandlers={{
-                      click: () => setSelectedMarker({ kind: "site", site: s }),
-                    }}
-                  />
-                );
-              })}
-          </MapContainer>
+          <MapLibreLayer>
+            {renderCondos()}
+            {renderSites()}
+            {renderTrips()}
+          </MapLibreLayer>
 
           <MapMarkerDetailsPanel
             selectedMarker={selectedMarker}

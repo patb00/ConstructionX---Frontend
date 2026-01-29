@@ -1,40 +1,43 @@
-import type { LatLngExpression } from "leaflet";
 import type { Point } from "..";
 
-const ORS_BASE_URL =
-  "https://api.openrouteservice.org/v2/directions/driving-car/geojson";
+// LatLngExpression in Leaflet was LatLng | LatLngLiteral | [number, number]
+// For our purposes [number, number] (lat, lon) is fine.
+type LatLon = [number, number];
+
+const OSRM_BASE_URL = "https://router.project-osrm.org/route/v1/driving";
 
 export const MapApi = {
   getRoute: async (
-    apiKey: string,
+    _apiKey: string | undefined, // Ignored for OSRM public demo
     start: Point,
     end: Point,
     signal?: AbortSignal
-  ): Promise<LatLngExpression[] | null> => {
-    const res = await fetch(ORS_BASE_URL, {
-      method: "POST",
-      signal,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: apiKey,
-      },
-      body: JSON.stringify({
-        coordinates: [
-          [start.lon, start.lat],
-          [end.lon, end.lat],
-        ],
-      }),
-    });
+  ): Promise<LatLon[] | null> => {
+    // OSRM expects {lon},{lat}
+    const startStr = `${start.lon},${start.lat}`;
+    const endStr = `${end.lon},${end.lat}`;
+    
+    const url = `${OSRM_BASE_URL}/${startStr};${endStr}?overview=full&geometries=geojson`;
 
-    if (!res.ok) return null;
+    try {
+      const res = await fetch(url, {
+        signal,
+      });
 
-    const geo = await res.json();
+      if (!res.ok) return null;
 
-    const coords: [number, number][] | undefined =
-      geo?.features?.[0]?.geometry?.coordinates;
+      const json = await res.json();
+      
+      // OSRM response structure: { routes: [ { geometry: { coordinates: [[lon, lat], ...] } } ] }
+      const coords: [number, number][] | undefined = json?.routes?.[0]?.geometry?.coordinates;
 
-    if (!coords?.length) return null;
+      if (!coords?.length) return null;
 
-    return coords.map(([lon, lat]) => [lat, lon]);
+      // Convert [lon, lat] back to [lat, lon] for consistency with previous return type
+      return coords.map(([lon, lat]) => [lat, lon]);
+    } catch (e) {
+      console.error("Routing error:", e);
+      return null;
+    }
   },
 };

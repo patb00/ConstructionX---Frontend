@@ -42,11 +42,22 @@ export const useCondos = () => {
           .replace(/_/g, " ")
           .replace(/\b\w/g, (l) => l.toUpperCase());
 
-        return {
+        const colDef: GridColDef = {
           field: key,
           headerName,
           width: 180,
         };
+
+        if (key === "constructionSites") {
+           colDef.valueGetter = (_, row) => {
+              if (Array.isArray(row.constructionSites)) {
+                  return row.constructionSites.map((cs: any) => cs.name).join(", ");
+              }
+              return "";
+           };
+        }
+        
+        return colDef;
       });
 
       const rowDefs = rows.map((r) => ({ ...r, id: r.id }));

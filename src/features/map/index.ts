@@ -1,4 +1,5 @@
-import type { LatLngExpression } from "leaflet";
+// Replace Leaflet type with local tuple
+export type LatLngExpression = [number, number];
 
 export type TripRow = {
   id: number;

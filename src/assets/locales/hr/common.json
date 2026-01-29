@@ -295,6 +295,7 @@
     }
   },
   "common": {
+    "navigate": "Navigiraj",
     "retry": "Pokušaj ponovno",
     "yes": "Da",
     "no": "Ne",

@@ -37,7 +37,6 @@
     "vehicleRegistrations": "Fahrzeugzulassungen",
     "vehicleInsurances": "Fahrzeugversicherungen",
     "vehicleBusinessTrips": "Dienstfahrten",
-
     "tasks": "Arbeitsaufgaben",
     "workHours": "Zeiterfassung",
     "map": "Standortübersicht"
@@ -296,6 +295,7 @@
     }
   },
   "common": {
+    "navigate": "Navigieren",
     "retry": "Erneut versuchen",
     "yes": "Ja",
     "no": "Nein",
