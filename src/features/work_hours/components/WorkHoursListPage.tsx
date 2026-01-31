@@ -9,6 +9,7 @@ import {
   type SelectChangeEvent,
   Button,
   IconButton,
+  Paper,
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -162,9 +163,8 @@ const WorkHoursListPage = () => {
           </Button>
         </Box>
 
-        <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1.25 }}>
-            <FormControl size="small" sx={{ minWidth: 280 }} variant="outlined">
+        <Paper variant="outlined" sx={{ p: 2, display: "flex", alignItems: "center", gap: 2, bgcolor: "background.paper", border: "1px solid #E5E7EB" }}>
+           <FormControl size="small" sx={{ minWidth: 260 }} variant="outlined">
               <InputLabel id="employee-select-label" shrink>
                 {t("assignments.filterByEmployee")}
               </InputLabel>
@@ -206,9 +206,9 @@ const WorkHoursListPage = () => {
               </Select>
             </FormControl>
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <IconButton size="small" onClick={handlePrevRange} sx={navBtnSx}>
-                <ChevronLeftIcon sx={{ fontSize: 18 }} />
+                <ChevronLeftIcon sx={{ fontSize: 20 }} />
               </IconButton>
 
               <DateRangePicker
@@ -220,23 +220,16 @@ const WorkHoursListPage = () => {
                   textField: {
                     size: "small",
                     sx: {
-                      minWidth: 220,
+                      minWidth: 240,
                       "& .MuiInputBase-root": {
-                        height: 28,
+                        height: 40, // Standardize height with Select
                         borderRadius: 1,
-                        fontSize: 12,
                       },
                       "& .MuiInputBase-input": {
                         py: 0,
                       },
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#E5E7EB",
-                      },
-                      "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#CBD5E1",
-                      },
                       "& .MuiSvgIcon-root": {
-                        fontSize: 18,
+                        fontSize: 20,
                         color: "#64748B",
                       },
                     },
@@ -245,11 +238,10 @@ const WorkHoursListPage = () => {
               />
 
               <IconButton size="small" onClick={handleNextRange} sx={navBtnSx}>
-                <ChevronRightIcon sx={{ fontSize: 18 }} />
+                <ChevronRightIcon sx={{ fontSize: 20 }} />
               </IconButton>
             </Box>
-          </Box>
-        </Box>
+        </Paper>
 
         {selectedEmployee && (
           <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>

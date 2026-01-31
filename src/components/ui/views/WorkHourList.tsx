@@ -222,7 +222,7 @@ export default function WorkHoursWeekList({
               return (
                 <TableRow
                   key={empId}
-                  sx={{ "& td": { borderBottom: "1px solid #EEF2FF" } }}
+                  sx={{ "& td": { borderBottom: "1px solid #EEF2FF" }, "&:hover": { backgroundColor: "#fafafa" } }} 
                 >
                   <TableCell sx={{ ...bodyCellWithDividerSx, ...stickyLeftSx }}>
                     <Box sx={{ display: "flex", gap: 1.25 }}>
@@ -282,14 +282,14 @@ export default function WorkHoursWeekList({
                           <Chip
                             size="small"
                             label={formatMinutesToHHMM(mins)}
-                            variant="outlined"
+                            variant="filled"
                             sx={{
                               fontWeight: 600,
-                              borderRadius: 1,
+                              borderRadius: 1, // Keep it slightly rounded (4px) or use 0 if strictly square preferred, sticking to 1 for small consistency
                               minWidth: 64,
                               backgroundColor: "#FFF7E6",
-                              borderColor: "#F1B103",
                               color: "#A16207",
+                              "& .MuiChip-label": { padding: "0 8px" }
                             }}
                           />
                         ) : (
