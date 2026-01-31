@@ -192,6 +192,7 @@
     },
     "list": {
       "title": "Gradilišta",
+      "filterBySite": "Filtriraj po gradilištu",
       "error": "Pogreška pri učitavanju gradilišta."
     },
     "create": {
@@ -309,6 +310,7 @@
     "edit": "Uredi",
     "dash": "—",
     "all": "Svi statusi",
+    "allSites": "Sva gradilišta",
     "allTypes": "Svi tipovi",
     "unassign": "Ukloni dodjelu",
     "notAvailable": "Nije definirano",

@@ -32,6 +32,7 @@ import { buildWeekDays, shiftRange } from "../utils/workHoursDateUtils";
 import { useConstructionSiteEmployeeWorkLogsAll } from "../../construction_site/hooks/useConstructionSiteEmployeeWorkLogsAll";
 import { useEmployeeOptions } from "../../constants/options/useEmployeeOptions";
 import WorkHoursWeekList from "../../../components/ui/views/WorkHourList";
+import { useConstructionSiteOptions } from "../../constants/options/useConstructionSiteOptions";
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -44,11 +45,13 @@ const WorkHoursListPage = () => {
 
   const { employeeRows = [] } = useEmployees();
   const { options: employeeOptions } = useEmployeeOptions();
+  const { options: constructionSiteOptions } = useConstructionSiteOptions();
 
   const { isAdmin, employeeId } = useCurrentEmployeeContext();
   const myEmployeeId = employeeId;
 
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | "">("");
+  const [selectedConstructionSiteId, setSelectedConstructionSiteId] = useState<number | "">("");
 
   const [range, setRange] = useState<DateRange<Date>>(() => {
     const start = startOfWeekMonday(new Date());
@@ -92,6 +95,16 @@ const WorkHoursListPage = () => {
     setSelectedEmployeeId(Number.isFinite(num) ? num : "");
   };
 
+  const handleSiteSelectChange = (e: SelectChangeEvent<number | "">) => {
+    const v = e.target.value;
+    if (v === "") {
+      setSelectedConstructionSiteId("");
+      return;
+    }
+    const num = typeof v === "number" ? v : Number(v);
+    setSelectedConstructionSiteId(Number.isFinite(num) ? num : "");
+  };
+
   const selectedEmployee =
     effectiveEmployeeId != null
       ? (employeeRows.find((e) => e.id === effectiveEmployeeId) ?? null)
@@ -100,13 +113,14 @@ const WorkHoursListPage = () => {
   const { rows, isLoading, isError, error, setPaginationModel } =
     useConstructionSiteEmployeeWorkLogsAll({
       employeeId: effectiveEmployeeId ?? undefined,
+      constructionSiteId: typeof selectedConstructionSiteId === "number" ? selectedConstructionSiteId : undefined,
       dateFrom: startDate,
       dateTo: endDate,
     });
 
   useEffect(() => {
     setPaginationModel((p) => ({ ...p, page: 0, pageSize: 500 }));
-  }, [setPaginationModel, startDate, endDate, effectiveEmployeeId]);
+  }, [setPaginationModel, startDate, endDate, effectiveEmployeeId, selectedConstructionSiteId]);
 
   const weekDays = useMemo(() => {
     return buildWeekDays(range, locale);
@@ -141,8 +155,6 @@ const WorkHoursListPage = () => {
     },
   };
 
-  console.log("rows", rows);
-
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
@@ -163,84 +175,139 @@ const WorkHoursListPage = () => {
           </Button>
         </Box>
 
-        <Paper variant="outlined" sx={{ p: 2, display: "flex", alignItems: "center", gap: 2, bgcolor: "background.paper", border: "1px solid #E5E7EB" }}>
-           <FormControl size="small" sx={{ minWidth: 260 }} variant="outlined">
-              <InputLabel id="employee-select-label" shrink>
-                {t("assignments.filterByEmployee")}
-              </InputLabel>
+        <Paper
+          variant="outlined"
+          sx={{
+            p: 2,
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            alignItems: { xs: "stretch", md: "center" },
+            gap: 2,
+            bgcolor: "background.paper",
+            border: "1px solid #E5E7EB",
+            flexWrap: { xs: "nowrap", md: "wrap" },
+          }}
+        >
+          <FormControl
+            size="small"
+            sx={{ minWidth: 260, width: { xs: "100%", md: "auto" } }}
+            variant="outlined"
+          >
+            <InputLabel id="employee-select-label" shrink>
+              {t("assignments.filterByEmployee")}
+            </InputLabel>
 
-              <Select<number | "">
-                labelId="employee-select-label"
-                id="employee-select"
-                label={t("assignments.filterByEmployee")}
-                value={isAdmin ? selectedEmployeeId : (myEmployeeId ?? "")}
-                onChange={handleSelectChange}
-                displayEmpty
-                disabled={!isAdmin}
-                renderValue={(val) => {
-                  if (!isAdmin) {
-                    const emp = employeeRows.find((x) => x.id === myEmployeeId);
-                    return emp
-                      ? getEmployeeLabel(emp)
-                      : `#${myEmployeeId ?? ""}`;
-                  }
+            <Select<number | "">
+              labelId="employee-select-label"
+              id="employee-select"
+              label={t("assignments.filterByEmployee")}
+              value={isAdmin ? selectedEmployeeId : (myEmployeeId ?? "")}
+              onChange={handleSelectChange}
+              displayEmpty
+              disabled={!isAdmin}
+              renderValue={(val) => {
+                if (!isAdmin) {
+                  const emp = employeeRows.find((x) => x.id === myEmployeeId);
+                  return emp ? getEmployeeLabel(emp) : `#${myEmployeeId ?? ""}`;
+                }
 
-                  if (val === "")
-                    return <em>{t("assignments.allEmployees")}</em>;
-                  const id = typeof val === "number" ? val : Number(val);
-                  const opt = employeeOptions.find((o) => o.value === id);
-                  return opt ? opt.label : `#${id}`;
-                }}
-              >
-                {isAdmin && (
-                  <MenuItem value="">
-                    <em>{t("assignments.allEmployees")}</em>
-                  </MenuItem>
-                )}
+                if (val === "") return <em>{t("assignments.allEmployees")}</em>;
+                const id = typeof val === "number" ? val : Number(val);
+                const opt = employeeOptions.find((o) => o.value === id);
+                return opt ? opt.label : `#${id}`;
+              }}
+            >
+              {isAdmin && (
+                <MenuItem value="">
+                  <em>{t("assignments.allEmployees")}</em>
+                </MenuItem>
+              )}
 
-                {employeeOptions.map((o) => (
-                  <MenuItem key={o.value} value={o.value} disabled={!isAdmin}>
-                    {o.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+              {employeeOptions.map((o) => (
+                <MenuItem key={o.value} value={o.value} disabled={!isAdmin}>
+                  {o.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <IconButton size="small" onClick={handlePrevRange} sx={navBtnSx}>
-                <ChevronLeftIcon sx={{ fontSize: 20 }} />
-              </IconButton>
+          <FormControl
+            size="small"
+            sx={{ minWidth: 260, width: { xs: "100%", md: "auto" } }}
+            variant="outlined"
+          >
+            <InputLabel id="site-select-label" shrink>
+              {t("constructionSites.list.filterBySite")}
+            </InputLabel>
+            <Select<number | "">
+              labelId="site-select-label"
+              id="site-select"
+              label={t("constructionSites.list.filterBySite")}
+              value={selectedConstructionSiteId}
+              onChange={handleSiteSelectChange}
+              displayEmpty
+              renderValue={(val) => {
+                if (val === "") return <em>{t("common.allSites")}</em>;
+                const id = typeof val === "number" ? val : Number(val);
+                const opt = constructionSiteOptions.find((o) => o.value === id);
+                return opt ? opt.label : `#${id}`;
+              }}
+            >
+              <MenuItem value="">
+                <em>{t("common.allSites")}</em>
+              </MenuItem>
+              {constructionSiteOptions.map((o) => (
+                <MenuItem key={o.value} value={o.value}>
+                  {o.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-              <DateRangePicker
-                value={range}
-                onChange={(newValue) => setRange(newValue)}
-                calendars={2}
-                slots={{ field: SingleInputDateRangeField }}
-                slotProps={{
-                  textField: {
-                    size: "small",
-                    sx: {
-                      minWidth: 240,
-                      "& .MuiInputBase-root": {
-                        height: 40, // Standardize height with Select
-                        borderRadius: 1,
-                      },
-                      "& .MuiInputBase-input": {
-                        py: 0,
-                      },
-                      "& .MuiSvgIcon-root": {
-                        fontSize: 20,
-                        color: "#64748B",
-                      },
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              width: { xs: "100%", md: "auto" },
+              justifyContent: "space-between",
+            }}
+          >
+            <IconButton size="small" onClick={handlePrevRange} sx={navBtnSx}>
+              <ChevronLeftIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+
+            <DateRangePicker
+              value={range}
+              onChange={(newValue) => setRange(newValue)}
+              calendars={2}
+              slots={{ field: SingleInputDateRangeField }}
+              slotProps={{
+                textField: {
+                  size: "small",
+                  sx: {
+                    minWidth: { xs: 0, md: 240 },
+                    width: "100%",
+                    "& .MuiInputBase-root": {
+                      height: 40, // Standardize height with Select
+                      borderRadius: 1,
+                    },
+                    "& .MuiInputBase-input": {
+                      py: 0,
+                    },
+                    "& .MuiSvgIcon-root": {
+                      fontSize: 20,
+                      color: "#64748B",
                     },
                   },
-                }}
-              />
+                },
+              }}
+            />
 
-              <IconButton size="small" onClick={handleNextRange} sx={navBtnSx}>
-                <ChevronRightIcon sx={{ fontSize: 20 }} />
-              </IconButton>
-            </Box>
+            <IconButton size="small" onClick={handleNextRange} sx={navBtnSx}>
+              <ChevronRightIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+          </Box>
         </Paper>
 
         {selectedEmployee && (

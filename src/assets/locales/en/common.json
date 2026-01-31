@@ -140,6 +140,7 @@
   "constructionSites": {
     "list": {
       "title": "Construction Sites",
+      "filterBySite": "Filter by Site",
       "error": "Failed to load construction sites."
     },
     "detail": {
@@ -308,6 +309,7 @@
     "edit": "Edit",
     "dash": "—",
     "all": "All statuses",
+    "allSites": "All Sites",
     "allTypes": "All types",
     "unassign": "Unassign",
     "notAvailable": "Not available",

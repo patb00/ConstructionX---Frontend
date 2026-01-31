@@ -140,6 +140,7 @@
   "constructionSites": {
     "list": {
       "title": "Baustellen",
+      "filterBySite": "Nach Baustelle filtern",
       "error": "Fehler beim Laden der Baustellen."
     },
     "detail": {
@@ -308,6 +309,7 @@
     "edit": "Bearbeiten",
     "dash": "—",
     "all": "Alle Status",
+    "allSites": "Alle Baustellen",
     "allTypes": "Alle Typen",
     "unassign": "Zuweisung entfernen",
     "notAvailable": "Nicht verfügbar",
