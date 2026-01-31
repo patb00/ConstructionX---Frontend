@@ -39,6 +39,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
 import type { DateRange } from "@mui/x-date-pickers-pro/models";
+import WorkHoursCreateDialog from "./WorkHoursCreateDialog";
 
 const WorkHoursListPage = () => {
   const { t, i18n } = useTranslation();
@@ -52,6 +53,7 @@ const WorkHoursListPage = () => {
 
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | "">("");
   const [selectedConstructionSiteId, setSelectedConstructionSiteId] = useState<number | "">("");
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const [range, setRange] = useState<DateRange<Date>>(() => {
     const start = startOfWeekMonday(new Date());
@@ -170,7 +172,11 @@ const WorkHoursListPage = () => {
             {t("workHours.title")}
           </Typography>
 
-          <Button size="small" variant="contained">
+          <Button
+            size="small"
+            variant="contained"
+            onClick={() => setCreateDialogOpen(true)}
+          >
             {t("workHours.record")}
           </Button>
         </Box>
@@ -374,6 +380,13 @@ const WorkHoursListPage = () => {
           isError={isError}
           errorMessage={error?.message}
         />
+        
+        {createDialogOpen && (
+          <WorkHoursCreateDialog
+            open={createDialogOpen}
+            onClose={() => setCreateDialogOpen(false)}
+          />
+        )}
       </Stack>
     </LocalizationProvider>
   );

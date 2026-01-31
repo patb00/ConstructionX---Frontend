@@ -44,8 +44,11 @@
     "workHours": "Evidencija sati"
   },
   "workHours": {
-    "title": "Evidencija sati",
+    "title": "Radni Sati",
     "record": "Evidentiraj",
+    "date": "Datum",
+    "startTime": "Početak",
+    "endTime": "Kraj",
     "list": {
       "employee": "Zaposlenik",
       "total": "Ukupno",
@@ -59,7 +62,8 @@
       "birthDate": "Rođen",
       "birthDateUnknown": "Datum rođenja nije poznat",
       "employedFrom": "Zaposlen od",
-      "notEmployed": "Nije zaposlen"
+      "notEmployed": "Nije zaposlen",
+      "createSubtitle": "Unesite detalje rada"
     }
   },
   "map": {

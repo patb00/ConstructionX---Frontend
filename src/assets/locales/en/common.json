@@ -45,6 +45,9 @@
   "workHours": {
     "title": "Time Tracking",
     "record": "Record",
+    "date": "Date",
+    "startTime": "Start Time",
+    "endTime": "End Time",
     "list": {
       "employee": "Employee",
       "total": "Total",
@@ -58,7 +61,8 @@
       "birthDate": "Born",
       "birthDateUnknown": "Birth date unknown",
       "employedFrom": "Employed from",
-      "notEmployed": "Not employed"
+      "notEmployed": "Not employed",
+      "createSubtitle": "Enter work details"
     }
   },
   "map": {
