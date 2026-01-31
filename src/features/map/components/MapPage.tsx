@@ -41,21 +41,18 @@ import {
 } from "../utils/geocoding";
 import { MapApi } from "../api/map.api";
 
-// Styles for route lines
 const routeLayerStyle: LayerProps = {
-  id: 'route',
-  type: 'line',
+  id: "route",
+  type: "line",
   paint: {
-    'line-color': '#1976d2',
-    'line-width': 4,
-    'line-opacity': 0.8
-  }
+    "line-color": "#1976d2",
+    "line-width": 4,
+    "line-opacity": 0.8,
+  },
 };
-
 
 export default function MapPage() {
   const { t } = useTranslation();
-
 
   const [mode, setMode] = useState<FilterMode>("all");
   const [vehicleId, setVehicleId] = useState<number>(0);
@@ -66,7 +63,7 @@ export default function MapPage() {
   const [showConstructionSites, setShowConstructionSites] = useState(true);
 
   const [selectedMarker, setSelectedMarker] = useState<SelectedMarker | null>(
-    null
+    null,
   );
 
   const allTripsQ = useVehicleBusinessTrips();
@@ -106,7 +103,7 @@ export default function MapPage() {
         currentlyOccupied: c.currentlyOccupied ?? 0,
         responsibleEmployeeName: c.responsibleEmployeeName ?? null,
       })),
-    [condosRows]
+    [condosRows],
   );
 
   const selectedVehicleLabel =
@@ -117,20 +114,13 @@ export default function MapPage() {
     t("common.dash");
 
   const [geoByText, setGeoByText] = useState<GeoCache>({});
-  // Routes in State: Record<TripID, Array<[Lat, Lon]>>
-  // MapLibre expects [Lon, Lat] for GeoJSON, but our MapApi returns [Lat, Lon] to match old Leaflet logic.
-  // We should align this. OSRM returns [Lon, Lat] natively.
-  // Our updated MapApi returns [Lat, Lon] to keep types compatible?
-  // Let's check MapApi.ts - yes it swaps them back: "return coords.map(([lon, lat]) => [lat, lon]);"
-  // So we have [Lat, Lon].
+
   const [routeByTripId, setRouteByTripId] = useState<RouteByTripId>({});
 
   useEffect(() => {
     const ac = new AbortController();
 
     async function run() {
-      // No ORS Key check needed for Nominatim
-
       const cache = loadGeoCache();
       setGeoByText(cache);
 
@@ -168,7 +158,7 @@ export default function MapPage() {
 
         // Use Photon
         const p = await geocodePhoton(text, ac.signal);
-        
+
         if (p) {
           nextCache[text] = p;
           saveGeoCache(nextCache);
@@ -193,7 +183,6 @@ export default function MapPage() {
           const end = nextCache[e];
           if (!start || !end) continue;
 
-          // MapApi uses OSRM now
           const route = await MapApi.getRoute(undefined, start, end, ac.signal);
           if (route) nextRoutes[t.id] = route;
         }
@@ -226,7 +215,6 @@ export default function MapPage() {
     }
   }, [mode]);
 
-  // Render logic helpers
   const renderCondos = () => {
     if (!showCondos) return null;
     return condos.map((c) => {
@@ -242,16 +230,22 @@ export default function MapPage() {
           longitude={p.lon}
           latitude={p.lat}
           anchor="center"
-          onClick={e => {
+          onClick={(e) => {
             e.originalEvent.stopPropagation();
             setSelectedMarker({ kind: "condo", condo: c });
           }}
-          style={{cursor: 'pointer'}}
+          style={{ cursor: "pointer" }}
         >
-          <div style={{
-            width: 14, height: 14, borderRadius: '50%', background: '#2e7d32', 
-            border: '2px solid white', boxShadow: '0 1px 4px rgba(0,0,0,.35)'
-          }} />
+          <div
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: "50%",
+              background: "#2e7d32",
+              border: "2px solid white",
+              boxShadow: "0 1px 4px rgba(0,0,0,.35)",
+            }}
+          />
         </Marker>
       );
     });
@@ -272,16 +266,22 @@ export default function MapPage() {
           longitude={p.lon}
           latitude={p.lat}
           anchor="center"
-          onClick={e => {
+          onClick={(e) => {
             e.originalEvent.stopPropagation();
             setSelectedMarker({ kind: "site", site: s });
           }}
-          style={{cursor: 'pointer'}}
+          style={{ cursor: "pointer" }}
         >
-           <div style={{
-            width: 14, height: 14, borderRadius: '50%', background: '#ed6c02', 
-            border: '2px solid white', boxShadow: '0 1px 4px rgba(0,0,0,.35)'
-          }} />
+          <div
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: "50%",
+              background: "#ed6c02",
+              border: "2px solid white",
+              boxShadow: "0 1px 4px rgba(0,0,0,.35)",
+            }}
+          />
         </Marker>
       );
     });
@@ -301,44 +301,71 @@ export default function MapPage() {
       const end = geoByText[e];
       if (!start || !end) return null;
 
-      // Routes: MapApi returns [Lat, Lon]. MapLibre GeoJSON needs [Lon, Lat].
-      const route = routeByTripId[t.id]; 
-      // Convert route to [Lon, Lat]
-      const geometryCoordinates = route 
-        ? route.map(([lat, lon]) => [lon, lat]) 
-        : [[start.lon, start.lat], [end.lon, end.lat]];
+      const route = routeByTripId[t.id];
+
+      const geometryCoordinates = route
+        ? route.map(([lat, lon]) => [lon, lat])
+        : [
+            [start.lon, start.lat],
+            [end.lon, end.lat],
+          ];
 
       const tripGeoJson: any = {
-        type: 'Feature',
+        type: "Feature",
         geometry: {
-          type: 'LineString',
-          coordinates: geometryCoordinates
+          type: "LineString",
+          coordinates: geometryCoordinates,
         },
-        properties: { tripId: t.id }
+        properties: { tripId: t.id },
       };
 
       return (
         <div key={`trip-${t.id}`}>
-            {/* Markers */}
-            <Marker longitude={start.lon} latitude={start.lat} anchor="center" 
-                onClick={e => {e.originalEvent.stopPropagation(); setSelectedMarker({ kind: "trip-start", trip: t });}}>
-                <div style={{
-                    width:14, height:14, borderRadius:'50%', background:'#1976d2', 
-                    border:'2px solid white', boxShadow:'0 1px 4px rgba(0,0,0,.35)'
-                }} />
-            </Marker>
-             <Marker longitude={end.lon} latitude={end.lat} anchor="center" 
-                onClick={e => {e.originalEvent.stopPropagation(); setSelectedMarker({ kind: "trip-end", trip: t });}}>
-                <div style={{
-                    width:14, height:14, borderRadius:'50%', background:'#1976d2', 
-                    border:'2px solid white', boxShadow:'0 1px 4px rgba(0,0,0,.35)'
-                }} />
-            </Marker>
+          <Marker
+            longitude={start.lon}
+            latitude={start.lat}
+            anchor="center"
+            onClick={(e) => {
+              e.originalEvent.stopPropagation();
+              setSelectedMarker({ kind: "trip-start", trip: t });
+            }}
+          >
+            <div
+              style={{
+                width: 14,
+                height: 14,
+                borderRadius: "50%",
+                background: "#1976d2",
+                border: "2px solid white",
+                boxShadow: "0 1px 4px rgba(0,0,0,.35)",
+              }}
+            />
+          </Marker>
+          <Marker
+            longitude={end.lon}
+            latitude={end.lat}
+            anchor="center"
+            onClick={(e) => {
+              e.originalEvent.stopPropagation();
+              setSelectedMarker({ kind: "trip-end", trip: t });
+            }}
+          >
+            <div
+              style={{
+                width: 14,
+                height: 14,
+                borderRadius: "50%",
+                background: "#1976d2",
+                border: "2px solid white",
+                boxShadow: "0 1px 4px rgba(0,0,0,.35)",
+              }}
+            />
+          </Marker>
 
-            {/* Line */}
-            <Source id={`trip-source-${t.id}`} type="geojson" data={tripGeoJson}>
-                <Layer {...routeLayerStyle} id={`trip-layer-${t.id}`} />
-            </Source>
+          {/* Line */}
+          <Source id={`trip-source-${t.id}`} type="geojson" data={tripGeoJson}>
+            <Layer {...routeLayerStyle} id={`trip-layer-${t.id}`} />
+          </Source>
         </div>
       );
     });
@@ -415,8 +442,8 @@ export default function MapPage() {
                   mode === "all"
                     ? t("map.page.scope.all")
                     : mode === "vehicle"
-                    ? t("map.page.scope.vehicle")
-                    : t("map.page.scope.employee")
+                      ? t("map.page.scope.vehicle")
+                      : t("map.page.scope.employee")
                 }
                 line2Label={t("map.page.trips.visibleLabel")}
                 line2Value={`${tripsRows.length}`}
@@ -426,10 +453,10 @@ export default function MapPage() {
                         vehicle: selectedVehicleLabel,
                       })
                     : mode === "employee"
-                    ? t("map.page.trips.employeeNote", {
-                        employee: selectedEmployeeLabel,
-                      })
-                    : t("map.page.trips.allNote")
+                      ? t("map.page.trips.employeeNote", {
+                          employee: selectedEmployeeLabel,
+                        })
+                      : t("map.page.trips.allNote")
                 }
                 accent="#1976d2"
               >
@@ -444,9 +471,7 @@ export default function MapPage() {
                       label={t("map.page.trips.scopeInput")}
                       onChange={(e) => setMode(e.target.value as FilterMode)}
                     >
-                      <MenuItem value="all">
-                        {t("map.page.scope.all")}
-                      </MenuItem>
+                      <MenuItem value="all">{t("map.page.scope.all")}</MenuItem>
                       <MenuItem value="vehicle">
                         {t("map.page.scope.vehicle")}
                       </MenuItem>
