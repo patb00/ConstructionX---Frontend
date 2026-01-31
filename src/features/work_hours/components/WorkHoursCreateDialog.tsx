@@ -26,7 +26,7 @@ type Props = {
 export default function WorkHoursCreateDialog({
   open,
   onClose,
-  defaultDate = new Date(),
+  defaultDate,
 }: Props) {
   const { t } = useTranslation();
   const { mutateAsync: upsert, isPending } =
@@ -40,7 +40,11 @@ export default function WorkHoursCreateDialog({
 
   const [constructionSiteId, setConstructionSiteId] = useState<number | "">("");
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | "">("");
-  const [workDate, setWorkDate] = useState<Date | null>(defaultDate);
+
+  const [workDate, setWorkDate] = useState<Date | null>(
+    defaultDate ?? new Date(),
+  );
+
   const [startTime, setStartTime] = useState<Date | null>(() => {
     const d = new Date();
     d.setHours(8, 0, 0, 0);
@@ -57,10 +61,11 @@ export default function WorkHoursCreateDialog({
       if (employeeId && !selectedEmployeeId) {
         setSelectedEmployeeId(employeeId);
       }
-      setWorkDate(defaultDate);
+      if (defaultDate) {
+        setWorkDate(defaultDate);
+      }
     }
-
-  }, [open, employeeId, defaultDate]);
+  }, [open]);
 
   const handleSubmit = async () => {
     if (
@@ -80,8 +85,8 @@ export default function WorkHoursCreateDialog({
         workLogs: [
           {
             workDate: format(workDate, "yyyy-MM-dd"),
-            startTime: format(startTime, "HH:mm"),
-            endTime: format(endTime, "HH:mm"),
+            startTime: format(startTime, "HH:mm:ss"),
+            endTime: format(endTime, "HH:mm:ss"),
           },
         ],
       });
@@ -104,13 +109,13 @@ export default function WorkHoursCreateDialog({
       open={open}
       onClose={onClose}
       title={t("workHours.record")}
-      subtitle={t("workHours.employee.createSubtitle")} // Updated key
+      subtitle={t("workHours.employee.createSubtitle")}
       submitText={t("common.save")}
       submitting={isPending}
       submitDisabled={submitDisabled || formLoading}
       formLoading={formLoading}
       onSubmit={handleSubmit}
-      previewFields={[]} 
+      previewFields={[]}
     >
       <Stack spacing={2}>
         {formLoading ? (
