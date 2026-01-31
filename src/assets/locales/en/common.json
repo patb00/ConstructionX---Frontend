@@ -11,6 +11,7 @@
     "certificationsGroup": "Certifications",
     "condosGroup": "Condos"
   },
+
   "nav": {
     "dashboard": "Dashboard",
     "constructionSites": "Construction Sites",
@@ -139,6 +140,7 @@
   "constructionSites": {
     "list": {
       "title": "Construction Sites",
+      "filterBySite": "Filter by Site",
       "error": "Failed to load construction sites."
     },
     "detail": {
@@ -296,6 +298,7 @@
   },
   "common": {
     "navigate": "Navigate",
+    "back": "Back",
     "retry": "Retry",
     "yes": "Yes",
     "no": "No",
@@ -306,6 +309,7 @@
     "edit": "Edit",
     "dash": "—",
     "all": "All statuses",
+    "allSites": "All Sites",
     "allTypes": "All types",
     "unassign": "Unassign",
     "notAvailable": "Not available",
@@ -1490,7 +1494,8 @@
   "certifications": {
     "status": {
       "passed": "Passed",
-      "failed": "Failed"
+      "failed": "Failed",
+      "aktivan": "Active"
     },
     "list": {
       "title": "Certifications",
@@ -1538,6 +1543,20 @@
     "list": {
       "title": "Condos",
       "error": "Failed to load condos."
+    },
+    "detail": {
+      "title": "Condo Details",
+      "occupancy": "Occupancy",
+      "leaseStart": "Lease Start",
+      "leaseEnd": "Lease End",
+      "responsiblePerson": "Responsible Person",
+      "financials": "Financials",
+      "pricePerDay": "Price per Day",
+      "pricePerMonth": "Price per Month",
+      "assignedEmployees": "Assigned Employees",
+      "noEmployees": "No employees assigned.",
+      "constructionSites": "Construction Sites",
+      "noSites": "No linked construction sites."
     },
     "actions": "Actions",
     "table": {
@@ -1843,7 +1862,17 @@
       "loading": "Loading…",
       "loadError": "Failed to load.",
       "toolId": "Tool ID",
-      "condoId": "Condo ID"
+      "condoId": "Condo ID",
+      "employeeId": "Employee ID"
+    },
+    "employee": {
+      "title": "Employee history",
+      "medicalExaminations": "Medical examinations",
+      "emptyMedicalExaminations": "No medical examinations.",
+      "medicalExaminationFallback": "Medical examination",
+      "certifications": "Certifications",
+      "emptyCertifications": "No certifications.",
+      "certificationFallback": "Certification"
     }
   },
   "vehicleBusinessTrips": {

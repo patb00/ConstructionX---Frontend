@@ -1,17 +1,17 @@
 import { useMemo, useState, useCallback } from "react";
-import { type GridColDef } from "@mui/x-data-grid";
+import { type GridColDef, type GridRowId } from "@mui/x-data-grid";
 import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import type { Employee } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
-import { GridDetailPanel } from "../../../../components/ui/datagrid/GridDetailPanel";
 import { useEmployees } from "../hooks/useEmployees";
 import { useDeleteEmployee } from "../hooks/useDeleteEmployee";
 import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialog";
 import { useCan, PermissionGate } from "../../../../lib/permissions";
 import { RowActions } from "../../../../components/ui/datagrid/RowActions";
+import { EmployeeHistoryDetails } from "./EmployeeHistoryDetails";
 
 export default function EmployeesTable() {
   const { t } = useTranslation();
@@ -34,6 +34,10 @@ export default function EmployeesTable() {
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingEmployee, setPendingEmployee] = useState<Employee | null>(null);
+
+  const [expandedIds, setExpandedIds] = useState<Set<GridRowId>>(
+    () => new Set()
+  );
 
   const requestDelete = useCallback((employee: Employee) => {
     setPendingEmployee(employee);
@@ -103,26 +107,14 @@ export default function EmployeesTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
-  const renderDetailPanel = useCallback(
-    (params: GridRowParams<Employee>) => {
-      return (
-        <GridDetailPanel<Employee>
-          row={params.row}
-          columns={employeeColumns as GridColDef<Employee>[]}
-        />
-      );
-    },
-    [employeeColumns]
-  );
+  const renderDetailPanel = useCallback((params: GridRowParams<Employee>) => {
+    const employeeId = Number(params.row.id);
+    return <EmployeeHistoryDetails employeeId={employeeId} />;
+  }, []);
 
-  const getDetailPanelHeight = useCallback(
-    (_params: GridRowParams<Employee>) => 220,
-    []
-  );
+  const getDetailPanelHeight = useCallback(() => "auto" as const, []);
 
   if (error) return <div>{t("employees.list.error")}</div>;
-
-  console.log("employeeRows", employeeRows);
 
   return (
     <>
@@ -135,11 +127,16 @@ export default function EmployeesTable() {
         loading={!!isLoading}
         getDetailPanelContent={renderDetailPanel}
         getDetailPanelHeight={getDetailPanelHeight}
-        detailPanelMode="mobile-only"
+        detailPanelMode="desktop-only"
         paginationMode="server"
         rowCount={total}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
+        detailPanelExpandedRowIds={expandedIds}
+        onDetailPanelExpandedRowIdsChange={(ids) => {
+          const arr = Array.from(ids as Set<GridRowId>);
+          setExpandedIds(new Set(arr.slice(-1)));
+        }}
       />
 
       <PermissionGate guard={{ permission: "Permission.Employees.Delete" }}>

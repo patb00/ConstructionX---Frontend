@@ -11,6 +11,8 @@
     "certificationsGroup": "Certifikati",
     "condosGroup": "Stanovi"
   },
+
+
   "nav": {
     "dashboard": "Nadzorna ploča",
     "constructionSites": "Gradilišta",
@@ -190,6 +192,7 @@
     },
     "list": {
       "title": "Gradilišta",
+      "filterBySite": "Filtriraj po gradilištu",
       "error": "Pogreška pri učitavanju gradilišta."
     },
     "create": {
@@ -296,6 +299,7 @@
   },
   "common": {
     "navigate": "Navigiraj",
+    "back": "Natrag",
     "retry": "Pokušaj ponovno",
     "yes": "Da",
     "no": "Ne",
@@ -306,6 +310,7 @@
     "edit": "Uredi",
     "dash": "—",
     "all": "Svi statusi",
+    "allSites": "Sva gradilišta",
     "allTypes": "Svi tipovi",
     "unassign": "Ukloni dodjelu",
     "notAvailable": "Nije definirano",
@@ -1495,7 +1500,8 @@
     },
     "status": {
       "passed": "Prošao",
-      "failed": "Pao"
+      "failed": "Pao",
+      "aktivan": "Aktivan"
     },
     "create": {
       "title": "Dodaj certifikat",
@@ -1539,6 +1545,20 @@
     "list": {
       "title": "Stanovi",
       "error": "Pogreška pri učitavanju stanova."
+    },
+    "detail": {
+      "title": "Detalji stana",
+      "occupancy": "Popunjenost",
+      "leaseStart": "Početak najma",
+      "leaseEnd": "Kraj najma",
+      "responsiblePerson": "Odgovorna osoba",
+      "financials": "Financije",
+      "pricePerDay": "Cijena po danu",
+      "pricePerMonth": "Cijena po mjesecu",
+      "assignedEmployees": "Dodijeljeni zaposlenici",
+      "noEmployees": "Nema dodijeljenih zaposlenika.",
+      "constructionSites": "Gradilišta",
+      "noSites": "Nema povezanih gradilišta."
     },
     "actions": "Akcije",
     "table": {
@@ -1844,7 +1864,17 @@
       "vehicleId": "ID vozila",
       "loadError": "Neuspjelo učitavanje.",
       "toolId": "ID alata",
-      "condoId": "ID stana"
+      "condoId": "ID stana",
+      "employeeId": "ID zaposlenika"
+    },
+    "employee": {
+      "title": "Povijest zaposlenika",
+      "medicalExaminations": "Zdravstveni pregledi",
+      "emptyMedicalExaminations": "Nema zdravstvenih pregleda.",
+      "medicalExaminationFallback": "Zdravstveni pregled",
+      "certifications": "Certifikati",
+      "emptyCertifications": "Nema certifikata.",
+      "certificationFallback": "Certifikat"
     }
   },
   "vehicleBusinessTrips": {

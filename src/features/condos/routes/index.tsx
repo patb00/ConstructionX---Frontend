@@ -1,6 +1,7 @@
 import { Outlet, type RouteObject } from "react-router-dom";
 
 import CondoCreatePage from "../components/CondoCreatePage";
+import CondoDetailPage from "../components/CondoDetailPage";
 import CondoEditPage from "../components/CondoEditPage";
 import CondosListPage from "../components/CondosListPage";
 
@@ -18,6 +19,7 @@ export const condosRoutes: RouteObject = {
   children: [
     { index: true, element: <CondosListPage /> },
     { path: "create", element: <CondoCreatePage /> },
+    { path: ":id/details", element: <CondoDetailPage /> },
     { path: ":id/edit", element: <CondoEditPage /> },
   ],
 };

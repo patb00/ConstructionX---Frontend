@@ -9,21 +9,21 @@ interface MapLibreLayerProps {
 
 export default function MapLibreLayer({ children }: MapLibreLayerProps) {
   const mapRef = useRef<MapRef>(null);
-  
+
   // Default to Zagreb center
   const [viewState, setViewState] = useState({
     longitude: 15.9819,
     latitude: 45.815,
-    zoom: 12
+    zoom: 12,
   });
 
   return (
     <Map
-        ref={mapRef}
-        {...viewState}
-        onMove={evt => setViewState(evt.viewState)}
-        style={{width: '100%', height: '100%'}}
-        mapStyle="https://tiles.openfreemap.org/styles/liberty"
+      ref={mapRef}
+      {...viewState}
+      onMove={(evt) => setViewState(evt.viewState)}
+      style={{ width: "100%", height: "100%" }}
+      mapStyle="https://tiles.openfreemap.org/styles/liberty"
     >
       <NavigationControl position="top-right" />
       {children}
