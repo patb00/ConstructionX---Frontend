@@ -87,17 +87,23 @@ export default function CondoDetailPage() {
     );
   }
 
-  // Calculate occupancy percentage
   const occupancyPercent =
     condo.capacity > 0
-      ? Math.min(100, Math.round((condo.currentlyOccupied / condo.capacity) * 100))
+      ? Math.min(
+          100,
+          Math.round((condo.currentlyOccupied / condo.capacity) * 100),
+        )
       : 0;
-  
-  const occupancyColor = occupancyPercent >= 100 ? "error" : occupancyPercent >= 80 ? "warning" : "success";
+
+  const occupancyColor =
+    occupancyPercent >= 100
+      ? "error"
+      : occupancyPercent >= 80
+        ? "warning"
+        : "success";
 
   return (
-    <Stack spacing={3} sx={{ pb: 4, height: "100%", overflowY: "auto" }}>
-      {/* HEADER */}
+    <Stack spacing={3} sx={{ pb: 4 }}>
       <Stack
         direction={{ xs: "column", sm: "row" }}
         justifyContent="space-between"
@@ -107,12 +113,16 @@ export default function CondoDetailPage() {
         <Box>
           <Stack direction="row" alignItems="center" spacing={1.5}>
             <Typography variant="h4" fontWeight={700}>
-               {t("condos.detail.title")}
+              {t("condos.detail.title")}
             </Typography>
             <Chip
               label={`#${condo.id}`}
               size="small"
-              sx={{ fontWeight: 600, bgcolor: alpha(theme.palette.success.main, 0.1), color: "success.main" }}
+              sx={{
+                fontWeight: 600,
+                bgcolor: alpha(theme.palette.success.main, 0.1),
+                color: "success.main",
+              }}
             />
           </Stack>
           <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>
@@ -121,226 +131,343 @@ export default function CondoDetailPage() {
         </Box>
 
         <Stack direction="row" spacing={1}>
-             <Button
-              variant="outlined"
-              startIcon={<ArrowBackIcon />}
-              onClick={() => navigate("/app/condos")}
-            >
-              {t("common.back")}
-            </Button>
+          <Button
+            variant="outlined"
+            startIcon={<ArrowBackIcon />}
+            onClick={() => navigate("/app/condos")}
+          >
+            {t("common.back")}
+          </Button>
         </Stack>
       </Stack>
 
-      {/* OVERVIEW ROW */}
-      <Paper elevation={0} sx={{ p: 3, border: `1px solid ${theme.palette.divider}` }}>
-         <Stack direction={{ xs: "column", md: "row" }} spacing={3} divider={<Divider orientation="vertical" flexItem sx={{ display: { xs: "none", md: "block" } }} />}>
-             {/* Occupancy */}
-             <Box sx={{ flex: 1.5 }}>
-                <Stack spacing={1}>
-                     <Stack direction="row" alignItems="center" spacing={1} color="text.secondary">
-                        <GroupsIcon fontSize="small" />
-                        <Typography variant="caption" fontWeight={600} textTransform="uppercase">
-                            {t("condos.detail.occupancy")}
-                        </Typography>
-                     </Stack>
-                     <Stack direction="row" alignItems="flex-end" spacing={1}>
-                        <Typography variant="h4" fontWeight={700}>
-                            {condo.currentlyOccupied}
-                        </Typography>
-                        <Typography variant="h6" color="text.secondary" sx={{ mb: 0.5 }}>
-                            / {condo.capacity}
-                        </Typography>
-                     </Stack>
-                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Box sx={{ width: '100%', mr: 1 }}>
-                            <LinearProgress variant="determinate" value={occupancyPercent} color={occupancyColor} sx={{ height: 8, borderRadius: 4 }} />
-                        </Box>
-                        <Box sx={{ minWidth: 35 }}>
-                            <Typography variant="body2" color="text.secondary">{`${occupancyPercent}%`}</Typography>
-                        </Box>
-                     </Box>
-                </Stack>
-             </Box>
-             
-             {/* Dates */}
-             <Box sx={{ flex: 1 }}>
-                <Stack spacing={2}>
-                    <Box>
-                        <Stack direction="row" alignItems="center" spacing={1} color="text.secondary" mb={0.5}>
-                            <CalendarTodayIcon fontSize="small" />
-                            <Typography variant="caption" fontWeight={600} textTransform="uppercase">{t("condos.detail.leaseStart")}</Typography>
-                        </Stack>
-                        <Typography variant="body1" fontWeight={500}>
-                            {formatDate(condo.leaseStartDate)}
-                        </Typography>
-                    </Box>
-                     <Box>
-                        <Stack direction="row" alignItems="center" spacing={1} color="text.secondary" mb={0.5}>
-                            <CalendarTodayIcon fontSize="small" />
-                            <Typography variant="caption" fontWeight={600} textTransform="uppercase">{t("condos.detail.leaseEnd")}</Typography>
-                        </Stack>
-                        <Typography variant="body1" fontWeight={500}>
-                            {formatDate(condo.leaseEndDate)}
-                        </Typography>
-                    </Box>
-                </Stack>
-             </Box>
+      <Paper
+        elevation={0}
+        sx={{ p: 3, border: `1px solid ${theme.palette.divider}` }}
+      >
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={3}
+          divider={
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{ display: { xs: "none", md: "block" } }}
+            />
+          }
+        >
+          <Box sx={{ flex: 1.5 }}>
+            <Stack spacing={1}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                spacing={1}
+                color="text.secondary"
+              >
+                <GroupsIcon fontSize="small" />
+                <Typography
+                  variant="caption"
+                  fontWeight={600}
+                  textTransform="uppercase"
+                >
+                  {t("condos.detail.occupancy")}
+                </Typography>
+              </Stack>
+              <Stack direction="row" alignItems="flex-end" spacing={1}>
+                <Typography variant="h4" fontWeight={700}>
+                  {condo.currentlyOccupied}
+                </Typography>
+                <Typography
+                  variant="h6"
+                  color="text.secondary"
+                  sx={{ mb: 0.5 }}
+                >
+                  / {condo.capacity}
+                </Typography>
+              </Stack>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box sx={{ width: "100%", mr: 1 }}>
+                  <LinearProgress
+                    variant="determinate"
+                    value={occupancyPercent}
+                    color={occupancyColor}
+                    sx={{ height: 8, borderRadius: 4 }}
+                  />
+                </Box>
+                <Box sx={{ minWidth: 35 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                  >{`${occupancyPercent}%`}</Typography>
+                </Box>
+              </Box>
+            </Stack>
+          </Box>
 
-             {/* Responsible Person */}
-             <Box sx={{ flex: 1.5 }}>
-                 <Stack spacing={1} height="100%" justifyContent="center">
-                    <Stack direction="row" alignItems="center" spacing={1} color="text.secondary" mb={1}>
-                            <PersonIcon fontSize="small" />
-                            <Typography variant="caption" fontWeight={600} textTransform="uppercase">
-                                {t("condos.detail.responsiblePerson")}
-                            </Typography>
-                    </Stack>
-                    <Stack direction="row" alignItems="center" spacing={2}>
-                        <Box
-                             display="flex"
-                             alignItems="center"
-                             justifyContent="center"
-                             sx={{ width: 48, height: 48, borderRadius: "50%", bgcolor: alpha(theme.palette.info.main, 0.1), color: "info.main" }}
-                           >
-                                <PersonIcon />
-                        </Box>
-                        <Box>
-                            <Typography variant="h6" fontWeight={600}>
-                                {/* @ts-ignore */}
-                                {condo.responsibleEmployeeName || "—"}
-                            </Typography>
-                            {/* @ts-ignore */}
-                            {condo.responsibleEmployeeJobPosition && (
-                                <Typography variant="body2" color="text.secondary">
-                                    {/* @ts-ignore */}
-                                    {condo.responsibleEmployeeJobPosition}
-                                </Typography>
-                            )}
-                        </Box>
-                    </Stack>
-                 </Stack>
-             </Box>
-         </Stack>
+          <Box sx={{ flex: 1 }}>
+            <Stack spacing={2}>
+              <Box>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={1}
+                  color="text.secondary"
+                  mb={0.5}
+                >
+                  <CalendarTodayIcon fontSize="small" />
+                  <Typography
+                    variant="caption"
+                    fontWeight={600}
+                    textTransform="uppercase"
+                  >
+                    {t("condos.detail.leaseStart")}
+                  </Typography>
+                </Stack>
+                <Typography variant="body1" fontWeight={500}>
+                  {formatDate(condo.leaseStartDate)}
+                </Typography>
+              </Box>
+              <Box>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={1}
+                  color="text.secondary"
+                  mb={0.5}
+                >
+                  <CalendarTodayIcon fontSize="small" />
+                  <Typography
+                    variant="caption"
+                    fontWeight={600}
+                    textTransform="uppercase"
+                  >
+                    {t("condos.detail.leaseEnd")}
+                  </Typography>
+                </Stack>
+                <Typography variant="body1" fontWeight={500}>
+                  {formatDate(condo.leaseEndDate)}
+                </Typography>
+              </Box>
+            </Stack>
+          </Box>
+
+          <Box sx={{ flex: 1.5 }}>
+            <Stack spacing={1} height="100%" justifyContent="center">
+              <Stack
+                direction="row"
+                alignItems="center"
+                spacing={1}
+                color="text.secondary"
+                mb={1}
+              >
+                <PersonIcon fontSize="small" />
+                <Typography
+                  variant="caption"
+                  fontWeight={600}
+                  textTransform="uppercase"
+                >
+                  {t("condos.detail.responsiblePerson")}
+                </Typography>
+              </Stack>
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  sx={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: "50%",
+                    bgcolor: alpha(theme.palette.info.main, 0.1),
+                    color: "info.main",
+                  }}
+                >
+                  <PersonIcon />
+                </Box>
+                <Box>
+                  <Typography variant="h6" fontWeight={600}>
+                    {condo.responsibleEmployeeName || "—"}
+                  </Typography>
+
+                  {condo.responsibleEmployeeJobPosition && (
+                    <Typography variant="body2" color="text.secondary">
+                      {condo.responsibleEmployeeJobPosition}
+                    </Typography>
+                  )}
+                </Box>
+              </Stack>
+            </Stack>
+          </Box>
+        </Stack>
       </Paper>
 
-      {/* FINANCIALS & DETAILS ROW */}
-      <Stack direction={{ xs: "column", md: "row" }} spacing={3} alignItems="stretch">
-        
-        {/* FINANCIALS CARD */}
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        spacing={3}
+        alignItems="stretch"
+      >
         <Box sx={{ width: { xs: "100%", md: 350 }, flexShrink: 0 }}>
-             <Paper elevation={0} sx={{ p: 3, border: `1px solid ${theme.palette.divider}`, height: "100%" }}>
-                <Typography variant="h6" fontWeight={600} mb={3}>
-                    {t("condos.detail.financials")}
+          <Paper
+            elevation={0}
+            sx={{
+              p: 3,
+              border: `1px solid ${theme.palette.divider}`,
+              height: "100%",
+            }}
+          >
+            <Typography variant="h6" fontWeight={600} mb={3}>
+              {t("condos.detail.financials")}
+            </Typography>
+            <Stack spacing={3}>
+              <Box>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  display="block"
+                  mb={0.5}
+                >
+                  {t("condos.detail.pricePerDay")}
                 </Typography>
-                <Stack spacing={3}>
-                    <Box>
-                        <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>
-                            {t("condos.detail.pricePerDay")}
-                        </Typography>
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                            <AttachMoneyIcon color="action" />
-                            <Typography variant="h5" fontWeight={700}>
-                                {formatMoney(condo.pricePerDay, condo.currency)}
-                            </Typography>
-                        </Stack>
-                    </Box>
-                    <Divider />
-                     <Box>
-                        <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>
-                            {t("condos.detail.pricePerMonth")}
-                        </Typography>
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                            <AttachMoneyIcon color="action" />
-                            <Typography variant="h5" fontWeight={700}>
-                                {formatMoney(condo.pricePerMonth, condo.currency)}
-                            </Typography>
-                        </Stack>
-                    </Box>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <AttachMoneyIcon color="action" />
+                  <Typography variant="h5" fontWeight={700}>
+                    {formatMoney(condo.pricePerDay, condo.currency)}
+                  </Typography>
                 </Stack>
-             </Paper>
+              </Box>
+              <Divider />
+              <Box>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  display="block"
+                  mb={0.5}
+                >
+                  {t("condos.detail.pricePerMonth")}
+                </Typography>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <AttachMoneyIcon color="action" />
+                  <Typography variant="h5" fontWeight={700}>
+                    {formatMoney(condo.pricePerMonth, condo.currency)}
+                  </Typography>
+                </Stack>
+              </Box>
+            </Stack>
+          </Paper>
         </Box>
 
-        {/* ASSOCIATIONS */}
         <Box sx={{ flex: 1, minWidth: 0 }}>
-             <Paper elevation={0} sx={{ p: 3, border: `1px solid ${theme.palette.divider}`, height: "100%" }}>
-                <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
-                    <Box flex={1}>
-                        <Stack direction="row" alignItems="center" spacing={1} mb={2}>
-                            <GroupsIcon color="primary" />
-                            <Typography variant="h6" fontWeight={600}>
-                                {t("condos.detail.assignedEmployees")}
-                            </Typography>
-                        </Stack>
-                        {/* @ts-ignore */}
-                        {condo.employees && condo.employees.length > 0 ? (
-                            <Stack spacing={1}>
-                                {/* @ts-ignore */}
-                                {condo.employees.map((emp: any) => (
-                                    <Stack key={emp.id} direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 1, bgcolor: "action.hover", borderRadius: 1 }}>
-                                        <Stack direction="row" spacing={1} alignItems="center">
-                                            <PersonIcon fontSize="small" color="action" />
-                                            <Typography variant="body2" fontWeight={500}>
-                                                {emp.firstName} {emp.lastName}
-                                            </Typography>
-                                        </Stack>
-                                    </Stack>
-                                ))}
-                            </Stack>
-                        ) : (
-                             <Typography variant="body2" color="text.secondary" fontStyle="italic">
-                                {t("condos.detail.noEmployees")}
-                            </Typography>
-                        )}
-                    </Box>
-
-                    {/* Divider for mobile/desktop */}
-                    <Divider orientation="vertical" flexItem sx={{ display: { xs: "none", md: "block" } }} />
-                    <Divider flexItem sx={{ display: { xs: "block", md: "none" } }} />
-
-                    <Box flex={1}>
-                         <Stack direction="row" alignItems="center" spacing={1} mb={2}>
-                            <ConstructionIcon color="warning" />
-                            <Typography variant="h6" fontWeight={600}>
-                                {t("condos.detail.constructionSites")}
-                            </Typography>
-                        </Stack>
-                         {/* @ts-ignore */}
-                        {condo.constructionSites && condo.constructionSites.length > 0 ? (
-                            <Stack spacing={1}>
-                                {/* @ts-ignore */}
-                                {condo.constructionSites.map((site: any) => (
-                                    <Stack key={site.id} sx={{ p: 1, bgcolor: "action.hover", borderRadius: 1 }}>
-                                        <Typography variant="body2" fontWeight={600}>
-                                            {site.name}
-                                        </Typography>
-                                        <Typography variant="caption" color="text.secondary">
-                                            {site.location}
-                                        </Typography>
-                                    </Stack>
-                                ))}
-                            </Stack>
-                        ) : (
-                             <Typography variant="body2" color="text.secondary" fontStyle="italic">
-                                {t("condos.detail.noSites")}
-                            </Typography>
-                        )}
-                    </Box>
+          <Paper
+            elevation={0}
+            sx={{
+              p: 3,
+              border: `1px solid ${theme.palette.divider}`,
+              height: "100%",
+            }}
+          >
+            <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
+              <Box flex={1}>
+                <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+                  <GroupsIcon color="primary" />
+                  <Typography variant="h6" fontWeight={600}>
+                    {t("condos.detail.assignedEmployees")}
+                  </Typography>
                 </Stack>
-             </Paper>
+
+                {condo.employees && condo.employees.length > 0 ? (
+                  <Stack spacing={1}>
+                    {condo.employees.map((emp: any) => (
+                      <Stack
+                        key={emp.id}
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        sx={{ p: 1, bgcolor: "action.hover" }}
+                      >
+                        <Stack direction="row" spacing={1} alignItems="center">
+                          <PersonIcon fontSize="small" color="action" />
+                          <Typography variant="body2" fontWeight={500}>
+                            {emp.firstName} {emp.lastName}
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                    ))}
+                  </Stack>
+                ) : (
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontStyle="italic"
+                  >
+                    {t("condos.detail.noEmployees")}
+                  </Typography>
+                )}
+              </Box>
+
+              <Divider
+                orientation="vertical"
+                flexItem
+                sx={{ display: { xs: "none", md: "block" } }}
+              />
+              <Divider flexItem sx={{ display: { xs: "block", md: "none" } }} />
+
+              <Box flex={1}>
+                <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+                  <ConstructionIcon color="warning" />
+                  <Typography variant="h6" fontWeight={600}>
+                    {t("condos.detail.constructionSites")}
+                  </Typography>
+                </Stack>
+
+                {condo.constructionSites &&
+                condo.constructionSites.length > 0 ? (
+                  <Stack spacing={1}>
+                    {condo.constructionSites.map((site: any) => (
+                      <Stack
+                        key={site.id}
+                        sx={{ p: 1, bgcolor: "action.hover" }}
+                      >
+                        <Typography variant="body2" fontWeight={600}>
+                          {site.name}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {site.location}
+                        </Typography>
+                      </Stack>
+                    ))}
+                  </Stack>
+                ) : (
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontStyle="italic"
+                  >
+                    {t("condos.detail.noSites")}
+                  </Typography>
+                )}
+              </Box>
+            </Stack>
+          </Paper>
         </Box>
       </Stack>
 
-      {/* NOTE CARD */}
-      <Paper elevation={0} sx={{ p: 3, border: `1px solid ${theme.palette.divider}` }}>
-            <Stack direction="row" alignItems="center" spacing={1} mb={2}>
-                <DescriptionIcon color="action" />
-                <Typography variant="h6" fontWeight={600}>
-                    {t("condos.form.field.notes")}
-                </Typography>
-            </Stack>
-            <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: "pre-wrap" }}>
-                {condo.notes || t("common.dash")}
-            </Typography>
+      <Paper
+        elevation={0}
+        sx={{ p: 3, border: `1px solid ${theme.palette.divider}` }}
+      >
+        <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+          <DescriptionIcon color="action" />
+          <Typography variant="h6" fontWeight={600}>
+            {t("condos.form.field.notes")}
+          </Typography>
+        </Stack>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ whiteSpace: "pre-wrap" }}
+        >
+          {condo.notes || t("common.dash")}
+        </Typography>
       </Paper>
     </Stack>
   );
