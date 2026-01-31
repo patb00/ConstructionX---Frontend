@@ -43,9 +43,12 @@
     "map": "Standortübersicht"
   },
   "workHours": {
-    "title": "Zeiterfassung",
-    "record": "Erfassen",
-    "list": {
+    "title": "Arbeitsstunden",
+    "record": "Aufzeichnen",
+    "date": "Datum",
+    "startTime": "Startzeit",
+    "endTime": "Endzeit",
+    "employee": {
       "employee": "Mitarbeiter",
       "total": "Gesamt",
       "emptyWeek": "Keine Arbeitszeiten für diese Woche.",
