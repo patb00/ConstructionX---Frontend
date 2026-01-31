@@ -11,6 +11,8 @@
     "certificationsGroup": "Certifikati",
     "condosGroup": "Stanovi"
   },
+
+
   "nav": {
     "dashboard": "Nadzorna ploča",
     "constructionSites": "Gradilišta",
@@ -296,6 +298,7 @@
   },
   "common": {
     "navigate": "Navigiraj",
+    "back": "Natrag",
     "retry": "Pokušaj ponovno",
     "yes": "Da",
     "no": "Ne",
@@ -1540,6 +1543,20 @@
     "list": {
       "title": "Stanovi",
       "error": "Pogreška pri učitavanju stanova."
+    },
+    "detail": {
+      "title": "Detalji stana",
+      "occupancy": "Popunjenost",
+      "leaseStart": "Početak najma",
+      "leaseEnd": "Kraj najma",
+      "responsiblePerson": "Odgovorna osoba",
+      "financials": "Financije",
+      "pricePerDay": "Cijena po danu",
+      "pricePerMonth": "Cijena po mjesecu",
+      "assignedEmployees": "Dodijeljeni zaposlenici",
+      "noEmployees": "Nema dodijeljenih zaposlenika.",
+      "constructionSites": "Gradilišta",
+      "noSites": "Nema povezanih gradilišta."
     },
     "actions": "Akcije",
     "table": {

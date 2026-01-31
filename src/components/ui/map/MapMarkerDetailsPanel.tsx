@@ -155,7 +155,7 @@ export default function MapMarkerDetailsPanel({
                 if (selectedMarker.kind === "site") {
                     path = `/app/constructionSites/${selectedMarker.site.id}/details`;
                 } else if (selectedMarker.kind === "condo") {
-                    path = `/app/condos/${selectedMarker.condo.id}/edit`;
+                    path = `/app/condos/${selectedMarker.condo.id}/details`;
                 } else {
                     // trip
                     path = `/app/vehicle-business-trips/${selectedMarker.trip.id}/details`;

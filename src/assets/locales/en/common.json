@@ -11,6 +11,7 @@
     "certificationsGroup": "Certifications",
     "condosGroup": "Condos"
   },
+
   "nav": {
     "dashboard": "Dashboard",
     "constructionSites": "Construction Sites",
@@ -296,6 +297,7 @@
   },
   "common": {
     "navigate": "Navigate",
+    "back": "Back",
     "retry": "Retry",
     "yes": "Yes",
     "no": "No",
@@ -1539,6 +1541,20 @@
     "list": {
       "title": "Condos",
       "error": "Failed to load condos."
+    },
+    "detail": {
+      "title": "Condo Details",
+      "occupancy": "Occupancy",
+      "leaseStart": "Lease Start",
+      "leaseEnd": "Lease End",
+      "responsiblePerson": "Responsible Person",
+      "financials": "Financials",
+      "pricePerDay": "Price per Day",
+      "pricePerMonth": "Price per Month",
+      "assignedEmployees": "Assigned Employees",
+      "noEmployees": "No employees assigned.",
+      "constructionSites": "Construction Sites",
+      "noSites": "No linked construction sites."
     },
     "actions": "Actions",
     "table": {

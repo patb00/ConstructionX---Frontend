@@ -11,6 +11,7 @@
     "certificationsGroup": "Zertifizierungen",
     "condosGroup": "Wohnungen"
   },
+
   "nav": {
     "dashboard": "Übersicht",
     "constructionSites": "Baustellen",
@@ -296,6 +297,7 @@
   },
   "common": {
     "navigate": "Navigieren",
+    "back": "Zurück",
     "retry": "Erneut versuchen",
     "yes": "Ja",
     "no": "Nein",
@@ -682,6 +684,7 @@
       "title": "Mandanten",
       "error": "Fehler beim Laden der Mandanten."
     },
+
     "create": {
       "title": "Mandanten erstellen",
       "back": "Zurück"
@@ -1534,6 +1537,20 @@
     "list": {
       "title": "Wohnungen",
       "error": "Fehler beim Laden der Wohnungen."
+    },
+    "detail": {
+      "title": "Wohnungsdetails",
+      "occupancy": "Belegung",
+      "leaseStart": "Mietbeginn",
+      "leaseEnd": "Mietende",
+      "responsiblePerson": "Verantwortliche Person",
+      "financials": "Finanzen",
+      "pricePerDay": "Preis pro Tag",
+      "pricePerMonth": "Preis pro Monat",
+      "assignedEmployees": "Zugewiesene Mitarbeiter",
+      "noEmployees": "Keine Mitarbeiter zugewiesen.",
+      "constructionSites": "Baustellen",
+      "noSites": "Keine verknüpften Baustellen."
     },
     "actions": "Aktionen",
     "table": {
