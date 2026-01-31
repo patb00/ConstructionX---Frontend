@@ -1495,7 +1495,8 @@
     },
     "status": {
       "passed": "Prošao",
-      "failed": "Pao"
+      "failed": "Pao",
+      "aktivan": "Aktivan"
     },
     "create": {
       "title": "Dodaj certifikat",
@@ -1844,7 +1845,17 @@
       "vehicleId": "ID vozila",
       "loadError": "Neuspjelo učitavanje.",
       "toolId": "ID alata",
-      "condoId": "ID stana"
+      "condoId": "ID stana",
+      "employeeId": "ID zaposlenika"
+    },
+    "employee": {
+      "title": "Povijest zaposlenika",
+      "medicalExaminations": "Zdravstveni pregledi",
+      "emptyMedicalExaminations": "Nema zdravstvenih pregleda.",
+      "medicalExaminationFallback": "Zdravstveni pregled",
+      "certifications": "Certifikati",
+      "emptyCertifications": "Nema certifikata.",
+      "certificationFallback": "Certifikat"
     }
   },
   "vehicleBusinessTrips": {

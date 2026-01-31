@@ -1490,7 +1490,8 @@
   "certifications": {
     "status": {
       "passed": "Passed",
-      "failed": "Failed"
+      "failed": "Failed",
+      "aktivan": "Active"
     },
     "list": {
       "title": "Certifications",
@@ -1843,7 +1844,17 @@
       "loading": "Loading…",
       "loadError": "Failed to load.",
       "toolId": "Tool ID",
-      "condoId": "Condo ID"
+      "condoId": "Condo ID",
+      "employeeId": "Employee ID"
+    },
+    "employee": {
+      "title": "Employee history",
+      "medicalExaminations": "Medical examinations",
+      "emptyMedicalExaminations": "No medical examinations.",
+      "medicalExaminationFallback": "Medical examination",
+      "certifications": "Certifications",
+      "emptyCertifications": "No certifications.",
+      "certificationFallback": "Certification"
     }
   },
   "vehicleBusinessTrips": {
