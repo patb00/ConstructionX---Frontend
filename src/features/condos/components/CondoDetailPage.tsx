@@ -112,7 +112,7 @@ export default function CondoDetailPage() {
       >
         <Box>
           <Stack direction="row" alignItems="center" spacing={1.5}>
-            <Typography variant="h4" fontWeight={700}>
+            <Typography variant="h5" fontWeight={600}>
               {t("condos.detail.title")}
             </Typography>
             <Chip

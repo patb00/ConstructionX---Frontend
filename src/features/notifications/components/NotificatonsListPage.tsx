@@ -4,8 +4,6 @@ import {
   Button,
   Card,
   CircularProgress,
-  Tab,
-  Tabs,
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +18,7 @@ import { notificationsKeys } from "../api/notifications.keys";
 import { NotificationRow } from "./NotificationRow";
 import { NotificationsActionsMenu } from "./NotificationsActionsMenu";
 import { getNavigationPath } from "../utils/notificationNavigation";
+import { PillTabs } from "../../../components/ui/tabs/PillTabs";
 
 type TabKey = "all" | "unread";
 
@@ -173,29 +172,14 @@ const NotificationsListPage = () => {
             gap: 1,
           }}
         >
-          <Tabs
+          <PillTabs
             value={tab}
             onChange={(_, v) => setTab(v)}
-            TabIndicatorProps={{ style: { display: "none" } }}
-            sx={{
-              "& .MuiTabs-flexContainer": { gap: 1 },
-              "& .MuiTab-root": {
-                textTransform: "none",
-                fontWeight: 700,
-                borderRadius: 999,
-                minHeight: 36,
-                px: 2,
-                py: 0.5,
-              },
-              "& .MuiTab-root.Mui-selected": {
-                bgcolor: "primary.main",
-                color: "#fff",
-              },
-            }}
-          >
-            <Tab value="all" label={t("notifications.tabs.all")} />
-            <Tab value="unread" label={t("notifications.tabs.unread")} />
-          </Tabs>
+            items={[
+              { value: "all", label: t("notifications.tabs.all") },
+              { value: "unread", label: t("notifications.tabs.unread") },
+            ]}
+          />
 
           <NotificationsActionsMenu unreadTake={UNREAD_TAKE_FOR_BELL} />
         </Box>

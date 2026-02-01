@@ -1,4 +1,4 @@
-import { Box, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
@@ -8,6 +8,7 @@ import {
   tabIndexFromKey,
   tabKeyFromIndex,
 } from "../utils/tabs";
+import { LineTabs } from "../../../components/ui/tabs/LineTabs";
 
 export default function RequestsListPage() {
   const { t } = useTranslation();
@@ -38,17 +39,17 @@ export default function RequestsListPage() {
           {t("myTasks.title")}
         </Typography>
 
-        <Tabs
+        <LineTabs
           value={tab}
-          onChange={handleTabChange}
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          <Tab
-            label={t("myTasks.tabs.vehicleRegistration")}
-            {...a11yProps(0)}
-          />
-        </Tabs>
+          onChange={(e, v) => handleTabChange(e, v)}
+          items={[
+            {
+              value: 0,
+              label: t("myTasks.tabs.vehicleRegistration"),
+              props: a11yProps(0),
+            },
+          ]}
+        />
       </Box>
 
       {tab === 0 && (
