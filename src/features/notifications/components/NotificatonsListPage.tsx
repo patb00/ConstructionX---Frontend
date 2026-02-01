@@ -1,12 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  Box,
-  Button,
-  Card,
-  CircularProgress,
-  Typography,
-} from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
+import { Box, Button, Card, CircularProgress, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -21,7 +14,6 @@ import { NotificationsActionsMenu } from "./NotificationsActionsMenu";
 import { getNavigationPath } from "../utils/notificationNavigation";
 import { PillTabs } from "../../../components/ui/tabs/PillTabs";
 import CreateNotificationDialog from "./CreateNotificationDialog";
-
 
 const PAGE_SIZE = 10;
 const UNREAD_TAKE_FOR_BELL = 10;
@@ -63,11 +55,11 @@ const NotificationsListPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
- const [tab, setTab] = useState<TabKey>("all");
+  const [tab, setTab] = useState<TabKey>("all");
   const isUnreadTab = tab === "unread";
   const [openCreateNotif, setOpenCreateNotif] = useState(false);
 
- const [streams, setStreams] = useState<{
+  const [streams, setStreams] = useState<{
     all: TabState;
     unread: TabState;
   }>({
@@ -78,11 +70,7 @@ const NotificationsListPage = () => {
   const activeStreamKey = isUnreadTab ? "unread" : "all";
   const activeStream = streams[activeStreamKey];
 
-  const query = useMyNotifications(
-    !isUnreadTab, 
-    activeStream.page,
-    PAGE_SIZE
-  );
+  const query = useMyNotifications(!isUnreadTab, activeStream.page, PAGE_SIZE);
 
   const readOneMutation = useReadNotification();
 
@@ -108,7 +96,7 @@ const NotificationsListPage = () => {
         [activeStreamKey]: { ...current, items: merged },
       };
     });
-  }, [query.data, activeStreamKey]); 
+  }, [query.data, activeStreamKey]);
 
   const hasNext = query.data?.hasNext ?? false;
 
@@ -131,23 +119,31 @@ const NotificationsListPage = () => {
         ...prev.all,
         items: prev.all.items.map((x) =>
           x.id === n.id
-            ? { ...x, isRead: true, readDate: x.readDate ?? new Date().toISOString() }
-            : x
+            ? {
+                ...x,
+                isRead: true,
+                readDate: x.readDate ?? new Date().toISOString(),
+              }
+            : x,
         ),
       },
       unread: {
         ...prev.unread,
         items: prev.unread.items.map((x) =>
           x.id === n.id
-            ? { ...x, isRead: true, readDate: x.readDate ?? new Date().toISOString() }
-            : x
+            ? {
+                ...x,
+                isRead: true,
+                readDate: x.readDate ?? new Date().toISOString(),
+              }
+            : x,
         ),
       },
     }));
 
     queryClient.setQueryData<NotificationDto[]>(
       notificationsKeys.unread(UNREAD_TAKE_FOR_BELL),
-      (prev) => (prev ?? []).filter((x) => x.id !== n.id)
+      (prev) => (prev ?? []).filter((x) => x.id !== n.id),
     );
 
     if (!n.isRead) {
@@ -175,21 +171,23 @@ const NotificationsListPage = () => {
         gap: 3,
       }}
     >
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+        }}
+      >
         <Box>
-            <Typography variant="h5" fontWeight={600}>
+          <Typography variant="h5" fontWeight={600}>
             {t("notifications.title")}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
             {t("notifications.page.subtitle")}
-            </Typography>
+          </Typography>
         </Box>
-        <Button
-            variant="contained"
-            startIcon={<SendIcon />}
-            onClick={() => setOpenCreateNotif(true)}
-        >
-            {t("notifications.create.button", "Send Notification")}
+        <Button variant="contained" onClick={() => setOpenCreateNotif(true)}>
+          {t("notifications.create.button")}
         </Button>
       </Box>
 
@@ -279,13 +277,13 @@ const NotificationsListPage = () => {
         </Box>
       </Card>
 
-    {openCreateNotif && (
+      {openCreateNotif && (
         <CreateNotificationDialog
-            open={openCreateNotif}
-            onClose={() => setOpenCreateNotif(false)}
+          open={openCreateNotif}
+          onClose={() => setOpenCreateNotif(false)}
         />
-    )}
-  </Box>
+      )}
+    </Box>
   );
 };
 

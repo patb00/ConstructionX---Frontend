@@ -32,12 +32,11 @@ export default function CreateNotificationDialog({ open, onClose }: Props) {
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
 
-  // Filter users if needed? For now show all.
   const users = useMemo(() => usersRows, [usersRows]);
 
   const handleToggleUser = (id: string) => {
     setSelectedUserIds((prev) =>
-      prev.includes(id) ? prev.filter((u) => u !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((u) => u !== id) : [...prev, id],
     );
   };
 
@@ -59,12 +58,10 @@ export default function CreateNotificationDialog({ open, onClose }: Props) {
         actionUrl: actionUrl || undefined,
         entityType: entityType || undefined,
         entityId: entityId || undefined,
-        // createdByName is optional, backend probably infers it from token
       },
       {
         onSuccess: () => {
           onClose();
-          // Reset form?
           setTitle("");
           setMessage("");
           setActionUrl("");
@@ -72,7 +69,7 @@ export default function CreateNotificationDialog({ open, onClose }: Props) {
           setEntityId("");
           setSelectedUserIds([]);
         },
-      }
+      },
     );
   };
 
@@ -90,15 +87,21 @@ export default function CreateNotificationDialog({ open, onClose }: Props) {
       submitting={createMutation.isPending}
       submitDisabled={!isValid}
       formLoading={usersLoading}
-      previewTitle={t("notifications.create.preview", "Details")}
+      previewTitle={t("notifications.create.preview")}
       previewFields={[
-        { label: t("notifications.create.titleLabel", "Title"), value: title || "-" },
-        { label: t("notifications.create.recipients", "Recipients"), value: selectedUserIds.length },
+        {
+          label: t("notifications.create.titleLabel"),
+          value: title || "-",
+        },
+        {
+          label: t("notifications.create.recipients"),
+          value: selectedUserIds.length,
+        },
       ]}
     >
       <Stack spacing={2}>
         <TextField
-          label={t("notifications.create.titleLabel", "Title")}
+          label={t("notifications.create.titleLabel")}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           fullWidth
@@ -106,7 +109,7 @@ export default function CreateNotificationDialog({ open, onClose }: Props) {
           size="small"
         />
         <TextField
-          label={t("notifications.create.messageLabel", "Message")}
+          label={t("notifications.create.messageLabel")}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           fullWidth
@@ -118,7 +121,7 @@ export default function CreateNotificationDialog({ open, onClose }: Props) {
 
         <Stack direction="row" spacing={2}>
           <TextField
-            label={t("notifications.create.url", "Action URL")}
+            label={t("notifications.create.url")}
             value={actionUrl}
             onChange={(e) => setActionUrl(e.target.value)}
             fullWidth
@@ -126,15 +129,15 @@ export default function CreateNotificationDialog({ open, onClose }: Props) {
           />
         </Stack>
         <Stack direction="row" spacing={2}>
-           <TextField
-            label={t("notifications.create.entityType", "Entity Type")}
+          <TextField
+            label={t("notifications.create.entityType")}
             value={entityType}
             onChange={(e) => setEntityType(e.target.value)}
             fullWidth
             size="small"
           />
           <TextField
-            label={t("notifications.create.entityId", "Entity ID")}
+            label={t("notifications.create.entityId")}
             value={entityId}
             onChange={(e) => setEntityId(e.target.value)}
             fullWidth
@@ -142,35 +145,57 @@ export default function CreateNotificationDialog({ open, onClose }: Props) {
           />
         </Stack>
 
-        <Box sx={{ border: 1, borderColor: "divider", borderRadius: 1, p: 2, maxHeight: 300, overflowY: "auto" }}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1}>
-                <Typography variant="subtitle2">{t("notifications.create.selectUsers", "Select Users")}</Typography>
-                <FormControlLabel
-                    control={<Checkbox checked={selectAll} onChange={handleSelectAll} size="small" />}
-                    label={t("common.selectAll", "Select All")}
+        <Box
+          sx={{
+            border: 1,
+            borderColor: "divider",
+            borderRadius: 1,
+            p: 2,
+            maxHeight: 300,
+            overflowY: "auto",
+          }}
+        >
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={1}
+          >
+            <Typography variant="subtitle2">
+              {t("notifications.create.selectUsers")}
+            </Typography>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selectAll}
+                  onChange={handleSelectAll}
+                  size="small"
                 />
-            </Stack>
-            <Grid container spacing={1}>
-                {users.map((u) => (
-                    <Grid size={{ xs: 12, sm: 6 }} key={u.id}>
-                         <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={selectedUserIds.includes(u.id)}
-                                    onChange={() => handleToggleUser(u.id)}
-                                    size="small"
-                                />
-                            }
-                            label={
-                                <Typography variant="body2" noWrap title={u.userName}>
-                                    {u.userName}
-                                </Typography>
-                            }
-                            sx={{ width: "100%", mr: 0 }}
-                         />
-                    </Grid>
-                ))}
-            </Grid>
+              }
+              label={t("common.selectAll")}
+            />
+          </Stack>
+          <Grid container spacing={1}>
+            {users.map((u) => (
+              <Grid size={{ xs: 12, sm: 6 }} key={u.id}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={selectedUserIds.includes(u.id)}
+                      onChange={() => handleToggleUser(u.id)}
+                      size="small"
+                    />
+                  }
+                  label={
+                    <Typography variant="body2" noWrap title={u.userName}>
+                      {u.userName}
+                    </Typography>
+                  }
+                  sx={{ width: "100%", mr: 0 }}
+                />
+              </Grid>
+            ))}
+          </Grid>
         </Box>
       </Stack>
     </AssignTaskDialog>
