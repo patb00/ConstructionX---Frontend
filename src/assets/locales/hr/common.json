@@ -1720,8 +1720,11 @@
       "notFound": "Registracija nije pronađena.",
       "section": {
         "basic": "Osnovno",
-        "details": "Detalji"
-      }
+        "details": "Detalji",
+        "costDetails": "Detalji troškova"
+      },
+      "costDescription": "Trošak registracije za vozilo {{vehicleId}}",
+      "noDocument": "Nema dokumenta"
     },
     "delete": {
       "title": "Brisanje registracije",

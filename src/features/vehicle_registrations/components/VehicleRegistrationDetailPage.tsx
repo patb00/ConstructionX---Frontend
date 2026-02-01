@@ -303,7 +303,10 @@ export default function VehicleRegistrationDetailPage() {
             <Stack direction="row" alignItems="center" spacing={1} mb={3}>
               <AttachMoneyIcon color="warning" />
               <Typography variant="h6" fontWeight={600}>
-                Detalji troškova
+                {t(
+                  "vehicleRegistrations.detail.section.costDetails",
+                  "Detalji troškova",
+                )}
               </Typography>
             </Stack>
 
@@ -333,7 +336,11 @@ export default function VehicleRegistrationDetailPage() {
               <Divider />
               <Box>
                 <Typography variant="body2" color="text.secondary">
-                  Trošak registracije za vozilo {reg.vehicleId}
+                  {t(
+                    "vehicleRegistrations.detail.costDescription",
+                    "Trošak registracije za vozilo {{vehicleId}}",
+                    { vehicleId: reg.vehicleId },
+                  )}
                 </Typography>
               </Box>
             </Stack>
@@ -412,7 +419,10 @@ export default function VehicleRegistrationDetailPage() {
                       fontStyle="italic"
                       color="text.secondary"
                     >
-                      Nema dokumenta
+                      {t(
+                        "vehicleRegistrations.detail.noDocument",
+                        "Nema dokumenta",
+                      )}
                     </Typography>
                   )}
                 </Box>

@@ -1718,8 +1718,11 @@
       "notFound": "Registration not found.",
       "section": {
         "basic": "Basic",
-        "details": "Details"
-      }
+        "details": "Details",
+        "costDetails": "Cost details"
+      },
+      "costDescription": "Registration cost for vehicle {{vehicleId}}",
+      "noDocument": "No document"
     },
     "delete": {
       "title": "Delete Vehicle Registration",
