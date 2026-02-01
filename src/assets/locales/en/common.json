@@ -322,6 +322,8 @@
     "loadError": "Failed to load data.",
     "filter": "Filters",
     "done": "Done",
+    "send": "Send",
+    "selectAll": "Select All",
     "fileInput": {
       "choose": "Choose file",
       "noFile": "No file chosen"

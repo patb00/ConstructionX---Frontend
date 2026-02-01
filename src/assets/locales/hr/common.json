@@ -322,6 +322,8 @@
     "assign": "Dodijeli",
     "filter": "Filteri",
     "done": "Gotovo",
+    "send": "Pošalji",
+    "selectAll": "Odaberi sve",
     "fileInput": {
       "choose": "Odaberi datoteku",
       "noFile": "Nije odabrana nijedna datoteka"

@@ -320,7 +320,9 @@
     "assign": "Zuweisen",
     "loadError": "Daten konnten nicht geladen werden.",
     "filter": "Filter",
-    "done": "Done",
+    "done": "Erledigt",
+    "send": "Senden",
+    "selectAll": "Alle auswählen",
     "fileInput": {
       "choose": "Datei auswählen",
       "noFile": "Keine Datei ausgewählt"
