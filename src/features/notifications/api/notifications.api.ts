@@ -1,6 +1,7 @@
-import type { PagedResult } from "..";
+import type { CreateNotificationRequest, PagedResult } from "..";
 import { authFetch } from "../../../lib/authFetch";
 import type { ApiEnvelope } from "../../administration/tenants";
+
 
 const base = "/api/Notifications";
 
@@ -33,5 +34,12 @@ export const NotificationsApi = {
       `${base}/my-unread?Take=${take}`
     );
     return res.data;
+  },
+
+  create: async (req: CreateNotificationRequest) => {
+    return authFetch<ApiEnvelope<string>>(`${base}/create`, {
+      method: "POST",
+      body: JSON.stringify({ createNotificationRequest: req }),
+    });
   },
 };

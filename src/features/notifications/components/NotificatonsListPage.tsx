@@ -6,6 +6,7 @@ import {
   CircularProgress,
   Typography,
 } from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -19,6 +20,7 @@ import { NotificationRow } from "./NotificationRow";
 import { NotificationsActionsMenu } from "./NotificationsActionsMenu";
 import { getNavigationPath } from "../utils/notificationNavigation";
 import { PillTabs } from "../../../components/ui/tabs/PillTabs";
+import CreateNotificationDialog from "./CreateNotificationDialog";
 
 
 const PAGE_SIZE = 10;
@@ -63,6 +65,7 @@ const NotificationsListPage = () => {
 
  const [tab, setTab] = useState<TabKey>("all");
   const isUnreadTab = tab === "unread";
+  const [openCreateNotif, setOpenCreateNotif] = useState(false);
 
  const [streams, setStreams] = useState<{
     all: TabState;
@@ -172,13 +175,22 @@ const NotificationsListPage = () => {
         gap: 3,
       }}
     >
-      <Box>
-        <Typography variant="h5" fontWeight={600}>
-          {t("notifications.title")}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-          {t("notifications.page.subtitle")}
-        </Typography>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <Box>
+            <Typography variant="h5" fontWeight={600}>
+            {t("notifications.title")}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+            {t("notifications.page.subtitle")}
+            </Typography>
+        </Box>
+        <Button
+            variant="contained"
+            startIcon={<SendIcon />}
+            onClick={() => setOpenCreateNotif(true)}
+        >
+            {t("notifications.create.button", "Send Notification")}
+        </Button>
       </Box>
 
       <Card
@@ -266,7 +278,14 @@ const NotificationsListPage = () => {
           </Button>
         </Box>
       </Card>
-    </Box>
+
+    {openCreateNotif && (
+        <CreateNotificationDialog
+            open={openCreateNotif}
+            onClose={() => setOpenCreateNotif(false)}
+        />
+    )}
+  </Box>
   );
 };
 

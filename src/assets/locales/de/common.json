@@ -1603,6 +1603,18 @@
   },
   "notifications": {
     "title": "Benachrichtigungen",
+    "create": {
+      "title": "Benachrichtigung senden",
+      "preview": "Details",
+      "titleLabel": "Titel",
+      "recipients": "Empfänger",
+      "messageLabel": "Nachricht",
+      "url": "Aktions-URL",
+      "entityType": "Entitätstyp",
+      "entityId": "Entitäts-ID",
+      "selectUsers": "Benutzer auswählen",
+      "button": "Benachrichtigung senden"
+    },
     "tabs": {
       "all": "Alle",
       "unread": "Ungelesen",

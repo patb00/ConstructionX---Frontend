@@ -24,3 +24,5 @@ export type NotificationsHubClientToServer = {
   MarkRead: (notificationId: number) => Promise<void>;
   MarkAllRead: () => Promise<void>;
 };
+
+

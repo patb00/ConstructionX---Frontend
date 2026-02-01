@@ -34,22 +34,24 @@ export default function RequestsListPage() {
 
   return (
     <Stack spacing={2} sx={{ width: "100%" }}>
-      <Box>
-        <Typography variant="h5" fontWeight={600}>
-          {t("myTasks.title")}
-        </Typography>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+        <Box>
+            <Typography variant="h5" fontWeight={600}>
+            {t("myTasks.title")}
+            </Typography>
 
-        <LineTabs
-          value={tab}
-          onChange={(e, v) => handleTabChange(e, v)}
-          items={[
-            {
-              value: 0,
-              label: t("myTasks.tabs.vehicleRegistration"),
-              props: a11yProps(0),
-            },
-          ]}
-        />
+            <LineTabs
+            value={tab}
+            onChange={(e, v) => handleTabChange(e, v)}
+            items={[
+                {
+                value: 0,
+                label: t("myTasks.tabs.vehicleRegistration"),
+                props: a11yProps(0),
+                },
+            ]}
+            />
+        </Box>
       </Box>
 
       {tab === 0 && (
@@ -62,6 +64,8 @@ export default function RequestsListPage() {
           <VehicleRegistrationRequestsTab />
         </Box>
       )}
+
+
     </Stack>
   );
 }

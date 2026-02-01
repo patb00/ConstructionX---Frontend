@@ -1608,6 +1608,18 @@
   },
   "notifications": {
     "title": "Notifications",
+    "create": {
+      "title": "Send Notification",
+      "preview": "Details",
+      "titleLabel": "Title",
+      "recipients": "Recipients",
+      "messageLabel": "Message",
+      "url": "Action URL",
+      "entityType": "Entity Type",
+      "entityId": "Entity ID",
+      "selectUsers": "Select Users",
+      "button": "Send Notification"
+    },
     "tabs": {
       "all": "All",
       "unread": "Unread",

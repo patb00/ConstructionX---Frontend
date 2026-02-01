@@ -1610,6 +1610,18 @@
   },
   "notifications": {
     "title": "Obavijesti",
+    "create": {
+      "title": "Pošalji obavijest",
+      "preview": "Detalji",
+      "titleLabel": "Naslov",
+      "recipients": "Primatelji",
+      "messageLabel": "Poruka",
+      "url": "Akcijski URL",
+      "entityType": "Tip entiteta",
+      "entityId": "ID entiteta",
+      "selectUsers": "Odaberi korisnike",
+      "button": "Pošalji obavijest"
+    },
     "tabs": {
       "all": "Sve",
       "unread": "Nepročitano",
