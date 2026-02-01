@@ -130,7 +130,6 @@ export default function VehicleRegistrationDetailPage() {
         </Button>
       </Stack>
 
-   
       <Paper
         elevation={0}
         sx={{ p: 3, border: `1px solid ${theme.palette.divider}` }}
@@ -146,7 +145,6 @@ export default function VehicleRegistrationDetailPage() {
             />
           }
         >
-      
           <Box sx={{ flex: 1 }}>
             <Stack spacing={1} height="100%" justifyContent="center">
               <Stack
@@ -189,7 +187,6 @@ export default function VehicleRegistrationDetailPage() {
             </Stack>
           </Box>
 
-       
           <Box sx={{ flex: 1 }}>
             <Stack spacing={1} height="100%" justifyContent="center">
               <Stack
@@ -235,7 +232,6 @@ export default function VehicleRegistrationDetailPage() {
             </Stack>
           </Box>
 
-      
           <Box sx={{ flex: 1.5 }}>
             <Stack spacing={2}>
               <Box>
@@ -290,7 +286,6 @@ export default function VehicleRegistrationDetailPage() {
         spacing={3}
         alignItems="stretch"
       >
-       
         <Box sx={{ width: { xs: "100%", md: 350 }, flexShrink: 0 }}>
           <Paper
             elevation={0}
@@ -325,7 +320,7 @@ export default function VehicleRegistrationDetailPage() {
                 </Typography>
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <Typography
-                    variant="h4"
+                    variant="h6"
                     fontWeight={700}
                     color="warning.main"
                   >
@@ -347,7 +342,6 @@ export default function VehicleRegistrationDetailPage() {
           </Paper>
         </Box>
 
-      
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Paper
             elevation={0}
@@ -432,7 +426,6 @@ export default function VehicleRegistrationDetailPage() {
         </Box>
       </Stack>
 
-   
       <Paper
         elevation={0}
         sx={{ p: 3, border: `1px solid ${theme.palette.divider}` }}

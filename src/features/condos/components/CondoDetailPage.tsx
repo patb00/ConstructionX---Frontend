@@ -174,7 +174,7 @@ export default function CondoDetailPage() {
                 </Typography>
               </Stack>
               <Stack direction="row" alignItems="flex-end" spacing={1}>
-                <Typography variant="h4" fontWeight={700}>
+                <Typography variant="h5" fontWeight={700}>
                   {condo.currentlyOccupied}
                 </Typography>
                 <Typography
@@ -285,7 +285,7 @@ export default function CondoDetailPage() {
                   <PersonIcon />
                 </Box>
                 <Box>
-                  <Typography variant="h6" fontWeight={600}>
+                  <Typography variant="body1" fontWeight={600}>
                     {condo.responsibleEmployeeName || "—"}
                   </Typography>
 
@@ -330,7 +330,7 @@ export default function CondoDetailPage() {
                 </Typography>
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <AttachMoneyIcon color="action" />
-                  <Typography variant="h5" fontWeight={700}>
+                  <Typography variant="h6" fontWeight={700}>
                     {formatMoney(condo.pricePerDay, condo.currency)}
                   </Typography>
                 </Stack>
@@ -347,7 +347,7 @@ export default function CondoDetailPage() {
                 </Typography>
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <AttachMoneyIcon color="action" />
-                  <Typography variant="h5" fontWeight={700}>
+                  <Typography variant="h6" fontWeight={700}>
                     {formatMoney(condo.pricePerMonth, condo.currency)}
                   </Typography>
                 </Stack>
