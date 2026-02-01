@@ -50,6 +50,9 @@ export const LineTabs = ({
           },
         },
       }}
+      variant="scrollable"
+      scrollButtons="auto"
+      allowScrollButtonsMobile
       {...tabsProps}
     >
       {items.map((item) => (
