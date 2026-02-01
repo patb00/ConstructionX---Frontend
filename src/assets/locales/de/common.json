@@ -1605,7 +1605,12 @@
     "title": "Benachrichtigungen",
     "tabs": {
       "all": "Alle",
-      "unread": "Ungelesen"
+      "unread": "Ungelesen",
+      "construction": "Baustellen",
+      "vehicles": "Fahrzeuge",
+      "tools": "Werkzeuge",
+      "hr": "Personal",
+      "system": "System"
     },
     "empty": {
       "unread": "Keine ungelesenen Benachrichtigungen",

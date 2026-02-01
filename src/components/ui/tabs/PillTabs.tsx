@@ -26,14 +26,17 @@ export const PillTabs = ({
       onChange={onChange}
       TabIndicatorProps={{ style: { display: "none" } }}
       sx={{
+        minHeight: "unset",
         "& .MuiTabs-flexContainer": { gap: 1 },
         "& .MuiTab-root": {
           textTransform: "none",
           fontWeight: 700,
           borderRadius: 999,
-          minHeight: 36,
+          minHeight: "auto",
+          minWidth: "auto",
+          height: 32,
           px: 2,
-          py: 0.5,
+          py: 0,
           transition: "all 0.2s ease",
         },
         "& .MuiTab-root.Mui-selected": {
@@ -41,6 +44,9 @@ export const PillTabs = ({
           color: "#fff",
         },
       }}
+      variant="scrollable"
+      scrollButtons="auto"
+      allowScrollButtonsMobile
       {...tabsProps}
     >
       {items.map((item) => (

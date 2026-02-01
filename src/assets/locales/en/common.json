@@ -1610,7 +1610,12 @@
     "title": "Notifications",
     "tabs": {
       "all": "All",
-      "unread": "Unread"
+      "unread": "Unread",
+      "construction": "Construction",
+      "vehicles": "Vehicles",
+      "tools": "Tools",
+      "hr": "HR",
+      "system": "System"
     },
     "empty": {
       "unread": "No unread notifications",

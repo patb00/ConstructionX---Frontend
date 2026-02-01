@@ -1612,7 +1612,12 @@
     "title": "Obavijesti",
     "tabs": {
       "all": "Sve",
-      "unread": "Nepročitano"
+      "unread": "Nepročitano",
+      "construction": "Gradilišta",
+      "vehicles": "Vozila",
+      "tools": "Alati",
+      "hr": "Ljudski resursi",
+      "system": "Sustav"
     },
     "empty": {
       "unread": "Nema nepročitanih obavijesti",
