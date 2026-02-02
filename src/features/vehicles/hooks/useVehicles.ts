@@ -37,11 +37,20 @@ export const useVehicles = () => {
           .replace(/_/g, " ")
           .replace(/\b\w/g, (l) => l.toUpperCase());
 
-        return {
+        const colDef: GridColDef = {
           field: key,
           headerName,
           width: 180,
         };
+
+        if (key === "vehicleRegistrations" || key === "vehicleInsurances") {
+          colDef.valueGetter = (_value, row: any) =>
+            row?.[key]?.length ?? 0;
+          colDef.sortable = false;
+          colDef.filterable = false;
+        }
+
+        return colDef;
       });
 
       const rowDefs = rows.map((r) => ({ ...r, id: (r as any).id }));

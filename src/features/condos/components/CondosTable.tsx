@@ -106,6 +106,8 @@ export default function CondosTable() {
 
   if (error) return <div>{t("condos.list.error")}</div>;
 
+  console.log(condosRows, "condosRows");
+
   return (
     <>
       <ReusableDataGrid<Condo>

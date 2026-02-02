@@ -47,7 +47,7 @@ export default function ConstructionSitesTable({ statusValue }: Props) {
         value: e.id,
         label: `${e.firstName} ${e.lastName}`.trim(),
       })),
-    [employeeRows]
+    [employeeRows],
   );
 
   const toolOptions = useMemo(
@@ -56,7 +56,7 @@ export default function ConstructionSitesTable({ statusValue }: Props) {
         value: tool.id,
         label: tool.name ?? tool.model ?? `#${tool.id}`,
       })),
-    [toolsRows]
+    [toolsRows],
   );
 
   const vehicleOptions = useMemo(
@@ -66,7 +66,7 @@ export default function ConstructionSitesTable({ statusValue }: Props) {
         label:
           v.name ?? [v.brand, v.model].filter(Boolean).join(" ") ?? `#${v.id}`,
       })),
-    [vehiclesRows]
+    [vehiclesRows],
   );
 
   const {
@@ -89,7 +89,7 @@ export default function ConstructionSitesTable({ statusValue }: Props) {
   useEffect(() => {
     setFilterModel((prev) => {
       const items = (prev.items ?? []).filter(
-        (item) => item.field !== "status"
+        (item) => item.field !== "status",
       );
 
       if (!statusValue) {
@@ -160,10 +160,10 @@ export default function ConstructionSitesTable({ statusValue }: Props) {
             setStatusDialogOpen(false);
             setStatusRow(null);
           },
-        }
+        },
       );
     },
-    [changeStatus, statusRow]
+    [changeStatus, statusRow],
   );
 
   const columns = useMemo<GridColDef<ConstructionSite>[]>(() => {
@@ -230,12 +230,14 @@ export default function ConstructionSitesTable({ statusValue }: Props) {
 
   const hasActions = useMemo(
     () => columns.some((c) => c.field === "actions"),
-    [columns]
+    [columns],
   );
 
   const getDetailPanelHeight = useCallback(() => "auto" as const, []);
 
   if (error) return <div>{t("constructionSites.list.error")}</div>;
+
+  console.log("constructionSitesRows", constructionSitesRows);
 
   return (
     <>

@@ -48,13 +48,11 @@ export const useCondos = () => {
           width: 180,
         };
 
-        if (key === "constructionSites") {
-           colDef.valueGetter = (_, row) => {
-              if (Array.isArray(row.constructionSites)) {
-                  return row.constructionSites.map((cs: any) => cs.name).join(", ");
-              }
-              return "";
-           };
+        if (key === "constructionSites" || key === "employees") {
+          colDef.valueGetter = (_value, row: any) =>
+            row?.[key]?.length ?? 0;
+          colDef.sortable = false;
+          colDef.filterable = false;
         }
         
         return colDef;
