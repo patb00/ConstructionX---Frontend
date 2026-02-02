@@ -70,7 +70,7 @@ export default function MapPage() {
   const tripsByVehicleQ = useVehicleBusinessTripsByVehicle(vehicleId);
   const tripsByEmployeeQ = useVehicleBusinessTripsByEmployee(employeeId);
 
-  const { condosRows } = useCondos();
+  const { condosRows } = useCondos({ page: 0, pageSize: 1000 });
   const { options: vehicleOptions } = useVehicleOptions();
   const { options: employeeOptions } = useEmployeeOptions();
   const { constructionSitesRows } = useConstructionSites({

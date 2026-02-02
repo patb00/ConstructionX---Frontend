@@ -12,18 +12,26 @@ interface TransformedCondosData {
   total: number;
 }
 
-export const useCondos = () => {
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 25,
-  });
+export const useCondos = (paginationOverride?: {
+  page: number;
+  pageSize: number;
+}) => {
+  const [paginationModel, setPaginationModel] = useState(
+    paginationOverride ?? {
+      page: 0,
+      pageSize: 25,
+    },
+  );
 
   const { data, error, isLoading, isError } = useQuery<
     PagedResult<Condo>,
     Error,
     TransformedCondosData
   >({
-    queryKey: condosKeys.list(),
+    queryKey: condosKeys.list({
+      page: paginationModel.page + 1,
+      pageSize: paginationModel.pageSize,
+    }),
     queryFn: () =>
       CondosApi.getAll({
         page: paginationModel.page + 1,
@@ -49,14 +57,14 @@ export const useCondos = () => {
         };
 
         if (key === "constructionSites") {
-           colDef.valueGetter = (_, row) => {
-              if (Array.isArray(row.constructionSites)) {
-                  return row.constructionSites.map((cs: any) => cs.name).join(", ");
-              }
-              return "";
-           };
+          colDef.valueGetter = (_, row) => {
+            if (Array.isArray(row.constructionSites)) {
+              return row.constructionSites.map((cs: any) => cs.name).join(", ");
+            }
+            return "";
+          };
         }
-        
+
         return colDef;
       });
 

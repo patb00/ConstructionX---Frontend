@@ -41,7 +41,7 @@ export default function AssignCondosDialog({
     condosRows = [],
     isLoading: condosLoading,
     isError: condosError,
-  } = useCondos();
+  } = useCondos({ page: 0, pageSize: 1000 });
 
   const assign = useAssignCondosToConstructionSite();
 
