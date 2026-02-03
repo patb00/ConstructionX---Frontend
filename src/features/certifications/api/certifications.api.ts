@@ -44,6 +44,27 @@ export const CertificationsApi = {
     return res.data;
   },
 
+  uploadCertificate: async (certificationId: number, file: File) => {
+    const formData = new FormData();
+
+    formData.append("Id", String(certificationId));
+    formData.append("File", file);
+
+    return authFetch<ApiEnvelope<string>>(
+      `${base}/${certificationId}/upload-certificate`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+  },
+
+  downloadCertificate: async (certificationId: number) => {
+    return authFetchBlob(`${base}/${certificationId}/download-certificate`, {
+      method: "GET",
+    });
+  },
+
   export: async () => {
     return authFetchBlob(`${base}/export`, { method: "GET" });
   },

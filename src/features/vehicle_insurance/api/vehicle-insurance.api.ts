@@ -4,7 +4,7 @@ import type {
   UpdateVehicleInsuranceRequest,
   PagedResult,
 } from "..";
-import { authFetch } from "../../../lib/authFetch";
+import { authFetch, authFetchBlob } from "../../../lib/authFetch";
 import type { ApiEnvelope } from "../../administration/tenants";
 
 const base = "/api/VehicleInsurances";
@@ -49,5 +49,26 @@ export const VehicleInsurancesApi = {
       `${base}/by-vehicle/${vehicleId}`
     );
     return res.data;
+  },
+
+  uploadDocument: async (insuranceId: number, file: File) => {
+    const formData = new FormData();
+
+    formData.append("Id", String(insuranceId));
+    formData.append("File", file);
+
+    return authFetch<ApiEnvelope<string>>(
+      `${base}/${insuranceId}/upload-document`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+  },
+
+  downloadDocument: async (insuranceId: number) => {
+    return authFetchBlob(`${base}/${insuranceId}/download-document`, {
+      method: "GET",
+    });
   },
 };

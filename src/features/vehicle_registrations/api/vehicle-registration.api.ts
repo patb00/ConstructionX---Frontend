@@ -4,7 +4,7 @@ import type {
   UpdateVehicleRegistrationRequest,
   PagedResult,
 } from "..";
-import { authFetch } from "../../../lib/authFetch";
+import { authFetch, authFetchBlob } from "../../../lib/authFetch";
 import type { ApiEnvelope } from "../../administration/tenants";
 
 const base = "/api/VehicleRegistrations";
@@ -49,5 +49,26 @@ export const VehicleRegistrationsApi = {
       `${base}/by-vehicle/${vehicleId}`
     );
     return res.data;
+  },
+
+  uploadDocument: async (registrationId: number, file: File) => {
+    const formData = new FormData();
+
+    formData.append("Id", String(registrationId));
+    formData.append("File", file);
+
+    return authFetch<ApiEnvelope<string>>(
+      `${base}/${registrationId}/upload-document`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+  },
+
+  downloadDocument: async (registrationId: number) => {
+    return authFetchBlob(`${base}/${registrationId}/download-document`, {
+      method: "GET",
+    });
   },
 };

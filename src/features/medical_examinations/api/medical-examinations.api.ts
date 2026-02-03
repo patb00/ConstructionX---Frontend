@@ -77,6 +77,15 @@ export const MedicalExaminationsApi = {
     );
   },
 
+  downloadCertificate: async (medicalExaminationId: number) => {
+    return authFetchBlob(
+      `${base}/${medicalExaminationId}/download-certificate`,
+      {
+        method: "GET",
+      }
+    );
+  },
+
   export: async () => {
     return authFetchBlob(`${base}/export`, { method: "GET" });
   },
