@@ -4,7 +4,7 @@ import type {
   PagedResult,
   UpdateMedicalExaminationRequest,
 } from "..";
-import { authFetch } from "../../../lib/authFetch";
+import { authFetch, authFetchBlob } from "../../../lib/authFetch";
 import type { ApiEnvelope } from "../../administration/tenants";
 
 const base = "/api/MedicalExaminations";
@@ -75,5 +75,18 @@ export const MedicalExaminationsApi = {
         body: formData,
       }
     );
+  },
+
+  export: async () => {
+    return authFetchBlob(`${base}/export`, { method: "GET" });
+  },
+
+  import: async (file: File) => {
+    const formData = new FormData();
+    formData.append("UploadFile", file);
+    return authFetchBlob(`${base}/import`, {
+      method: "POST",
+      body: formData,
+    });
   },
 };

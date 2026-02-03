@@ -5,16 +5,23 @@ import { PermissionGate } from "../../../lib/permissions";
 import { useTranslation } from "react-i18next";
 
 import { useConstructionSiteStatusOptions } from "../../constants/enum/useConstructionSiteStatusOptions";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import FilterSelect, {
   type SelectOption,
 } from "../../../components/ui/select/FilterSelect";
+import { ConstructionSiteApi } from "../api/construction-site.api";
+import { ImportExportActions } from "../../../components/ui/import-export/ImportExportActions";
 
 const ConstructionSitesListPage = () => {
   const { t } = useTranslation();
   const statusOptions = useConstructionSiteStatusOptions();
 
   const [statusValue, setStatusValue] = useState<string>("");
+  const handleExport = useCallback(() => ConstructionSiteApi.export(), []);
+  const handleImport = useCallback(
+    (file: File) => ConstructionSiteApi.import(file),
+    []
+  );
 
   const selectOptions: SelectOption[] = useMemo(
     () =>
@@ -33,18 +40,26 @@ const ConstructionSitesListPage = () => {
           {t("constructionSites.list.title")}
         </Typography>
 
-        <PermissionGate
-          guard={{ permission: "Permission.ConstructionSites.Create" }}
-        >
-          <Button
-            size="small"
-            component={RouterLink}
-            to="create"
-            variant="contained"
+        <Stack direction="row" spacing={1} alignItems="center">
+          <ImportExportActions
+            onExport={handleExport}
+            onImport={handleImport}
+            exportFileName="construction-sites.xlsx"
+            importResultFileName="construction-sites-import-result.xlsx"
+          />
+          <PermissionGate
+            guard={{ permission: "Permission.ConstructionSites.Create" }}
           >
-            {t("constructionSites.create.title")}
-          </Button>
-        </PermissionGate>
+            <Button
+              size="small"
+              component={RouterLink}
+              to="create"
+              variant="contained"
+            >
+              {t("constructionSites.create.title")}
+            </Button>
+          </PermissionGate>
+        </Stack>
       </Stack>
 
       <Stack direction="row" alignItems="center">

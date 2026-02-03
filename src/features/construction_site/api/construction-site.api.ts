@@ -15,7 +15,7 @@ import type {
   ConstructionSiteEmployeeWorkLog,
   ConstructionSiteEmployeeWorkLogDay,
 } from "..";
-import { authFetch } from "../../../lib/authFetch";
+import { authFetch, authFetchBlob } from "../../../lib/authFetch";
 import type { ApiEnvelope } from "../../administration/tenants";
 
 const base = "/api/ConstructionSite";
@@ -164,5 +164,18 @@ export const ConstructionSiteApi = {
     >(url);
 
     return res.data;
+  },
+
+  export: async () => {
+    return authFetchBlob(`${base}/export`, { method: "GET" });
+  },
+
+  import: async (file: File) => {
+    const formData = new FormData();
+    formData.append("UploadFile", file);
+    return authFetchBlob(`${base}/import`, {
+      method: "POST",
+      body: formData,
+    });
   },
 };
