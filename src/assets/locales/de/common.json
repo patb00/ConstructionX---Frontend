@@ -335,7 +335,10 @@
       "noFile": "Bitte wählen Sie eine Datei für den Import aus.",
       "importing": "Import wird ausgeführt...",
       "success": "Import erfolgreich abgeschlossen.",
-      "error": "Import fehlgeschlagen."
+      "error": "Import fehlgeschlagen.",
+      "clickToUpload": "Datei zum Hochladen auswählen",
+      "dragNDrop": "oder ziehen Sie sie per Drag & Drop hierher",
+      "limitsSimple": "Excel oder CSV, max. 10 MB"
     },
     "exportDialog": {
       "success": "Export erfolgreich heruntergeladen.",

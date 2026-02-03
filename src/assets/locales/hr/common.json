@@ -338,7 +338,10 @@
       "noFile": "Odaberite datoteku za uvoz.",
       "importing": "Uvoz u tijeku...",
       "success": "Uvoz je uspješno dovršen.",
-      "error": "Neuspješan uvoz podataka."
+      "error": "Neuspješan uvoz podataka.",
+      "clickToUpload": "Odaberite datoteku za učitavanje",
+      "dragNDrop": "ili je povucite i ispustite ovdje",
+      "limitsSimple": "Excel ili CSV, maksimalno 10 MB"
     },
     "exportDialog": {
       "success": "Izvoz je preuzet.",

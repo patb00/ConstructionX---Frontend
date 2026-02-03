@@ -338,7 +338,10 @@
       "noFile": "Please choose a file to import.",
       "importing": "Importing...",
       "success": "Import completed successfully.",
-      "error": "Failed to import data."
+      "error": "Failed to import data.",
+      "clickToUpload": "Select a file to upload",
+      "dragNDrop": "or drag and drop it here",
+      "limitsSimple": "Excel or CSV, max 10MB"
     },
     "exportDialog": {
       "success": "Export downloaded successfully.",
