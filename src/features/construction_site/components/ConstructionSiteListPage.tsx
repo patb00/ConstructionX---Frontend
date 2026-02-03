@@ -11,6 +11,7 @@ import FilterSelect, {
 } from "../../../components/ui/select/FilterSelect";
 import { ConstructionSiteApi } from "../api/construction-site.api";
 import { ImportExportActions } from "../../../components/ui/import-export/ImportExportActions";
+import { useImportConstructionSites } from "../hooks/useImportConstructionSites";
 
 const ConstructionSitesListPage = () => {
   const { t } = useTranslation();
@@ -18,10 +19,7 @@ const ConstructionSitesListPage = () => {
 
   const [statusValue, setStatusValue] = useState<string>("");
   const handleExport = useCallback(() => ConstructionSiteApi.export(), []);
-  const handleImport = useCallback(
-    (file: File) => ConstructionSiteApi.import(file),
-    []
-  );
+  const handleImport = useImportConstructionSites();
 
   const selectOptions: SelectOption[] = useMemo(
     () =>

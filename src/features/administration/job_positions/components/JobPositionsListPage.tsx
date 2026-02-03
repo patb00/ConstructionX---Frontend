@@ -6,14 +6,12 @@ import { PermissionGate } from "../../../../lib/permissions";
 import { useTranslation } from "react-i18next";
 import { JobPositionsApi } from "../api/job-positions.api";
 import { ImportExportActions } from "../../../../components/ui/import-export/ImportExportActions";
+import { useImportJobPositions } from "../hooks/useImportJobPositions";
 
 const JobPositionsListPage = () => {
   const { t } = useTranslation();
   const handleExport = useCallback(() => JobPositionsApi.export(), []);
-  const handleImport = useCallback(
-    (file: File) => JobPositionsApi.import(file),
-    []
-  );
+  const handleImport = useImportJobPositions();
 
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>

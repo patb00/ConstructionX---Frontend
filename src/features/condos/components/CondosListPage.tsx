@@ -7,11 +7,12 @@ import { PermissionGate } from "../../../lib/permissions";
 import CondosTable from "./CondosTable";
 import { CondosApi } from "../api/condos.api";
 import { ImportExportActions } from "../../../components/ui/import-export/ImportExportActions";
+import { useImportCondos } from "../hooks/useImportCondos";
 
 const CondosListPage = () => {
   const { t } = useTranslation();
   const handleExport = useCallback(() => CondosApi.export(), []);
-  const handleImport = useCallback((file: File) => CondosApi.import(file), []);
+  const handleImport = useImportCondos();
 
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
