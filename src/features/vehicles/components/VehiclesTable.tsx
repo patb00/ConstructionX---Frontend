@@ -124,6 +124,8 @@ export default function VehiclesTable() {
     return <div>{t("vehicles.list.error")}</div>;
   }
 
+  console.log("vehiclesRows", vehiclesRows)
+
   return (
     <>
       <ReusableDataGrid<Vehicle>

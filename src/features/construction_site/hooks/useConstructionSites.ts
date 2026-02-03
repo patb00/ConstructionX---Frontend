@@ -95,7 +95,8 @@ export const useConstructionSites = (args: {
   toolOptions: Option[];
   vehicleOptions: Option[];
 }) => {
-  const { statusOptions, employeeOptions, toolOptions, vehicleOptions } = args;
+  const { statusOptions, employeeOptions, toolOptions, vehicleOptions } =
+    args;
 
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
@@ -173,7 +174,6 @@ export const useConstructionSites = (args: {
           width: 200,
         },
         constructionSiteEmployees: {
-          headerName: "Employees",
           width: 140,
           filterable: false,
           sortable: false,
@@ -181,7 +181,6 @@ export const useConstructionSites = (args: {
             row?.constructionSiteEmployees?.length ?? 0,
         },
         constructionSiteTools: {
-          headerName: "Tools",
           width: 120,
           filterable: false,
           sortable: false,
@@ -189,12 +188,18 @@ export const useConstructionSites = (args: {
             row?.constructionSiteTools?.length ?? 0,
         },
         constructionSiteVehicles: {
-          headerName: "Vehicles",
           width: 120,
           filterable: false,
           sortable: false,
           valueGetter: (_value, row: any) =>
             row?.constructionSiteVehicles?.length ?? 0,
+        },
+        constructionSiteCondos: {
+          width: 120,
+          filterable: false,
+          sortable: false,
+          valueGetter: (_value, row: any) =>
+            row?.constructionSiteCondos?.length ?? 0,
         },
       };
 
@@ -207,25 +212,29 @@ export const useConstructionSites = (args: {
         : [];
 
       const baseFromKeys: GridColDef<ConstructionSite>[] = autoKeys.map(
-        (field) => ({
-          field,
-          headerName: headerize(field),
-          width: 180,
-          filterable: allowed.has(field),
-          ...(overrides[field] ?? {}),
-        })
+        (field) => {
+          return {
+            field,
+            headerName: headerize(field),
+            width: 180,
+            filterable: allowed.has(field),
+            ...(overrides[field] ?? {}),
+          };
+        }
       );
 
       const ensureFilterColumns: GridColDef<ConstructionSite>[] =
         FILTER_FIELDS.filter(
           (f) => !baseFromKeys.some((c) => c.field === f)
-        ).map((field) => ({
-          field,
-          headerName: headerize(field),
-          width: 180,
-          filterable: true,
-          ...(overrides[field] ?? {}),
-        })) as GridColDef<ConstructionSite>[];
+        ).map((field) => {
+          return {
+            field,
+            headerName: headerize(field),
+            width: 180,
+            filterable: true,
+            ...(overrides[field] ?? {}),
+          };
+        }) as GridColDef<ConstructionSite>[];
 
       const columnDefs = [...baseFromKeys, ...ensureFilterColumns];
 

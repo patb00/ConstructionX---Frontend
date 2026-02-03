@@ -73,12 +73,15 @@ export default function MapPage() {
   const { condosRows } = useCondos({ page: 0, pageSize: 1000 });
   const { options: vehicleOptions } = useVehicleOptions();
   const { options: employeeOptions } = useEmployeeOptions();
-  const { constructionSitesRows } = useConstructionSites({
+  
+  const constructionSiteArgs = useMemo(() => ({
     statusOptions: [],
     employeeOptions: [],
     toolOptions: [],
     vehicleOptions: [],
-  });
+  }), []);
+
+  const { constructionSitesRows } = useConstructionSites(constructionSiteArgs);
 
   const tripsRows: TripRow[] = useMemo(() => {
     if (mode === "vehicle") return (tripsByVehicleQ.data ?? []) as any;
@@ -121,9 +124,6 @@ export default function MapPage() {
     const ac = new AbortController();
 
     async function run() {
-      const cache = loadGeoCache();
-      setGeoByText(cache);
-
       const texts = new Set<string>();
 
       if (showTrips) {
@@ -150,31 +150,38 @@ export default function MapPage() {
         }
       }
 
-      const nextCache = { ...cache };
+      // Collect only what we don't have
+      let hasNewGeo = false;
+      const nextCache = { ...loadGeoCache() };
 
       for (const text of texts) {
         if (ac.signal.aborted) return;
         if (nextCache[text]) continue;
 
-        // Use Photon
         const p = await geocodePhoton(text, ac.signal);
-
         if (p) {
           nextCache[text] = p;
+          hasNewGeo = true;
           saveGeoCache(nextCache);
-          setGeoByText({ ...nextCache });
         }
+      }
+      
+      if (hasNewGeo && !ac.signal.aborted) {
+        setGeoByText(nextCache);
+      } else if (Object.keys(geoByText).length === 0) {
+        // Initial load
+        setGeoByText(nextCache);
       }
 
       const nextRoutes: Record<number, [number, number][]> = {};
+      let hasRouteChanges = false;
       if (showTrips) {
         for (const t of tripsRows) {
           if (ac.signal.aborted) return;
 
           const sRaw = t.startLocationText?.trim();
           const eRaw = t.endLocationText?.trim();
-          if (!sRaw || !eRaw) continue;
-          if (isProbablyDummy(sRaw) || isProbablyDummy(eRaw)) continue;
+          if (!sRaw || !eRaw || isProbablyDummy(sRaw) || isProbablyDummy(eRaw)) continue;
 
           const s = normalizeLocationText(sRaw);
           const e = normalizeLocationText(eRaw);
@@ -183,12 +190,25 @@ export default function MapPage() {
           const end = nextCache[e];
           if (!start || !end) continue;
 
+          // Only fetch if not already in state
+          if (routeByTripId[t.id]) {
+            nextRoutes[t.id] = routeByTripId[t.id];
+            continue;
+          }
+
           const route = await MapApi.getRoute(undefined, start, end, ac.signal);
-          if (route) nextRoutes[t.id] = route;
+          if (route) {
+            nextRoutes[t.id] = route;
+            hasRouteChanges = true;
+          }
         }
       }
 
-      setRouteByTripId(nextRoutes);
+      if (hasRouteChanges && !ac.signal.aborted) {
+        setRouteByTripId(nextRoutes);
+      } else if (Object.keys(nextRoutes).length !== Object.keys(routeByTripId).length) {
+        setRouteByTripId(nextRoutes);
+      }
     }
 
     run().catch(() => {});
