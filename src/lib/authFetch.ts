@@ -22,7 +22,7 @@ function pickMessage(data: any, fallback: string) {
 
 export async function authFetch<T = any>(
   url: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
   const jwt = getCookie(ACCESS_COOKIE);
   const refreshToken = useAuthStore.getState().refreshToken;
@@ -39,7 +39,10 @@ export async function authFetch<T = any>(
   if (tenant) headers.set("tenant", tenant);
   if (jwt) headers.set("Authorization", `Bearer ${jwt}`);
 
-  let res = await fetch(url, { ...options, headers });
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+  const finalUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;
+
+  let res = await fetch(finalUrl, { ...options, headers });
 
   if (res.status === 401 && refreshToken && jwt) {
     if (!refreshInFlight) {
@@ -94,7 +97,7 @@ export async function authFetch<T = any>(
 
 export async function authFetchBlob(
   url: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<Blob> {
   const jwt = getCookie(ACCESS_COOKIE);
   const refreshToken = useAuthStore.getState().refreshToken;
@@ -154,14 +157,15 @@ export async function authFetchBlob(
 
 export async function refreshTokens(
   currentJwt: string,
-  currentRefreshToken: string
+  currentRefreshToken: string,
 ) {
   try {
     const refreshTokenExpirationDate =
       useAuthStore.getState().refreshTokenExpirationDate ??
       new Date().toISOString();
 
-    const res = await fetch("/api/Token/refresh-token", {
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+    const res = await fetch(`${baseUrl}/api/Token/refresh-token`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
