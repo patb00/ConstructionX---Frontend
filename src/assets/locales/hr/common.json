@@ -328,6 +328,25 @@
       "choose": "Odaberi datoteku",
       "noFile": "Nije odabrana nijedna datoteka"
     },
+    "import": "Uvoz",
+    "export": "Izvoz",
+    "importDialog": {
+      "title": "Uvoz podataka",
+      "description": "Učitajte datoteku za uvoz zapisa u sustav.",
+      "selectFile": "Odaberite datoteku",
+      "supportedFormats": "Podržani formati: .xlsx, .csv",
+      "noFile": "Odaberite datoteku za uvoz.",
+      "importing": "Uvoz u tijeku...",
+      "success": "Uvoz je uspješno dovršen.",
+      "error": "Neuspješan uvoz podataka.",
+      "clickToUpload": "Odaberite datoteku za učitavanje",
+      "dragNDrop": "ili je povucite i ispustite ovdje",
+      "limitsSimple": "Excel ili CSV, maksimalno 10 MB"
+    },
+    "exportDialog": {
+      "success": "Izvoz je preuzet.",
+      "error": "Neuspješan izvoz podataka."
+    },
     "datagrid": {
       "noRowsLabel": "Nema redaka",
       "noResultsOverlayLabel": "Nema pronađenih rezultata.",

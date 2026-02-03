@@ -325,6 +325,25 @@
       "choose": "Datei auswählen",
       "noFile": "Keine Datei ausgewählt"
     },
+    "import": "Import",
+    "export": "Export",
+    "importDialog": {
+      "title": "Daten importieren",
+      "description": "Laden Sie eine Datei hoch, um Datensätze zu importieren.",
+      "selectFile": "Datei auswählen",
+      "supportedFormats": "Unterstützte Formate: .xlsx, .csv",
+      "noFile": "Bitte wählen Sie eine Datei für den Import aus.",
+      "importing": "Import wird ausgeführt...",
+      "success": "Import erfolgreich abgeschlossen.",
+      "error": "Import fehlgeschlagen.",
+      "clickToUpload": "Datei zum Hochladen auswählen",
+      "dragNDrop": "oder ziehen Sie sie per Drag & Drop hierher",
+      "limitsSimple": "Excel oder CSV, max. 10 MB"
+    },
+    "exportDialog": {
+      "success": "Export erfolgreich heruntergeladen.",
+      "error": "Export fehlgeschlagen."
+    },
     "datagrid": {
       "noRowsLabel": "Keine Zeilen",
       "noResultsOverlayLabel": "Keine Ergebnisse gefunden.",

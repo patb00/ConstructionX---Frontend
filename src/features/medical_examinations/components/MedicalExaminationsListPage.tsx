@@ -1,7 +1,7 @@
 import { Button, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { PermissionGate } from "../../../lib/permissions";
 import MedicalExaminationsTable from "./MedicalExaminationTable";
@@ -9,6 +9,9 @@ import { useExaminationTypes } from "../../examination_types/hooks/useExaminatio
 import FilterSelect, {
   type SelectOption,
 } from "../../../components/ui/select/FilterSelect";
+import { MedicalExaminationsApi } from "../api/medical-examinations.api";
+import { ImportExportActions } from "../../../components/ui/import-export/ImportExportActions";
+import { useImportMedicalExaminations } from "../hooks/useImportMedicalExaminations";
 
 type FilterValue = "all" | "byEmployee" | number;
 
@@ -25,6 +28,9 @@ const MedicalExaminationsListPage = () => {
     if (filter === "all" || filter === "byEmployee") return null;
     return filter;
   }, [filter]);
+
+  const handleExport = useCallback(() => MedicalExaminationsApi.export(), []);
+  const handleImport = useImportMedicalExaminations();
 
   const selectValue = useMemo(() => {
     if (filter === "all") return "";
@@ -71,18 +77,26 @@ const MedicalExaminationsListPage = () => {
           {t("medicalExaminations.list.title")}
         </Typography>
 
-        <PermissionGate
-          guard={{ permission: "Permission.MedicalExaminations.Create" }}
-        >
-          <Button
-            size="small"
-            component={RouterLink}
-            to="create"
-            variant="contained"
+        <Stack direction="row" spacing={1} alignItems="center">
+          <ImportExportActions
+            onExport={handleExport}
+            onImport={handleImport}
+            exportFileName="medical-examinations.xlsx"
+            importResultFileName="medical-examinations-import-result.xlsx"
+          />
+          <PermissionGate
+            guard={{ permission: "Permission.MedicalExaminations.Create" }}
           >
-            {t("medicalExaminations.create.title")}
-          </Button>
-        </PermissionGate>
+            <Button
+              size="small"
+              component={RouterLink}
+              to="create"
+              variant="contained"
+            >
+              {t("medicalExaminations.create.title")}
+            </Button>
+          </PermissionGate>
+        </Stack>
       </Stack>
 
       <Stack direction="row" alignItems="center">
