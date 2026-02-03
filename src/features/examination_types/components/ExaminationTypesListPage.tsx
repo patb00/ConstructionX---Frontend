@@ -7,14 +7,12 @@ import { useTranslation } from "react-i18next";
 import ExaminationTypesTable from "./ExaminationTypesTable";
 import { ExaminationTypesApi } from "../api/examination-types.api";
 import { ImportExportActions } from "../../../components/ui/import-export/ImportExportActions";
+import { useImportExaminationTypes } from "../hooks/useImportExaminationTypes";
 
 const ExaminationTypesListPage = () => {
   const { t } = useTranslation();
   const handleExport = useCallback(() => ExaminationTypesApi.export(), []);
-  const handleImport = useCallback(
-    (file: File) => ExaminationTypesApi.import(file),
-    []
-  );
+  const handleImport = useImportExaminationTypes();
 
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>

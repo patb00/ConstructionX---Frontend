@@ -6,14 +6,12 @@ import VehiclesTable from "./VehiclesTable";
 import { PermissionGate } from "../../../lib/permissions";
 import { VehiclesApi } from "../api/vehicles.api";
 import { ImportExportActions } from "../../../components/ui/import-export/ImportExportActions";
+import { useImportVehicles } from "../hooks/useImportVehicles";
 
 export default function VehiclesListPage() {
   const { t } = useTranslation();
   const handleExport = useCallback(() => VehiclesApi.export(), []);
-  const handleImport = useCallback(
-    (file: File) => VehiclesApi.import(file),
-    []
-  );
+  const handleImport = useImportVehicles();
 
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>

@@ -6,14 +6,12 @@ import { PermissionGate } from "../../../../lib/permissions";
 import { useTranslation } from "react-i18next";
 import { EmployeesApi } from "../api/employees.api";
 import { ImportExportActions } from "../../../../components/ui/import-export/ImportExportActions";
+import { useImportEmployees } from "../hooks/useImportEmployees";
 
 const EmployeesListPage = () => {
   const { t } = useTranslation();
   const handleExport = useCallback(() => EmployeesApi.export(), []);
-  const handleImport = useCallback(
-    (file: File) => EmployeesApi.import(file),
-    []
-  );
+  const handleImport = useImportEmployees();
 
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>

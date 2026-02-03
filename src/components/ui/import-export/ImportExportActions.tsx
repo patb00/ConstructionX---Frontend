@@ -18,6 +18,7 @@ import { downloadBlob } from "../../../utils/downloadBlob";
 type ImportExportActionsProps = {
   onExport: () => Promise<Blob>;
   onImport: (file: File) => Promise<Blob | void>;
+  onImportSuccess?: () => void | Promise<void>;
   exportFileName: string;
   importResultFileName?: string;
   accept?: string;
@@ -26,6 +27,7 @@ type ImportExportActionsProps = {
 export function ImportExportActions({
   onExport,
   onImport,
+  onImportSuccess,
   exportFileName,
   importResultFileName = "import-result.xlsx",
   accept = ".xlsx,.csv",
@@ -66,6 +68,7 @@ export function ImportExportActions({
       if (result instanceof Blob && result.size > 0) {
         downloadBlob(result, importResultFileName);
       }
+      await onImportSuccess?.();
       enqueueSnackbar(
         t("common.importDialog.success", "Import completed successfully."),
         { variant: "success" }

@@ -11,6 +11,7 @@ import FilterSelect, {
 } from "../../../components/ui/select/FilterSelect";
 import { MedicalExaminationsApi } from "../api/medical-examinations.api";
 import { ImportExportActions } from "../../../components/ui/import-export/ImportExportActions";
+import { useImportMedicalExaminations } from "../hooks/useImportMedicalExaminations";
 
 type FilterValue = "all" | "byEmployee" | number;
 
@@ -29,10 +30,7 @@ const MedicalExaminationsListPage = () => {
   }, [filter]);
 
   const handleExport = useCallback(() => MedicalExaminationsApi.export(), []);
-  const handleImport = useCallback(
-    (file: File) => MedicalExaminationsApi.import(file),
-    []
-  );
+  const handleImport = useImportMedicalExaminations();
 
   const selectValue = useMemo(() => {
     if (filter === "all") return "";

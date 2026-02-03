@@ -6,11 +6,12 @@ import { useTranslation } from "react-i18next";
 import { PermissionGate } from "../../../lib/permissions";
 import { ToolsApi } from "../api/tools.api";
 import { ImportExportActions } from "../../../components/ui/import-export/ImportExportActions";
+import { useImportTools } from "../hooks/useImportTools";
 
 const ToolsListPage = () => {
   const { t } = useTranslation();
   const handleExport = useCallback(() => ToolsApi.export(), []);
-  const handleImport = useCallback((file: File) => ToolsApi.import(file), []);
+  const handleImport = useImportTools();
 
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>

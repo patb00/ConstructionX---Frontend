@@ -7,14 +7,12 @@ import { useTranslation } from "react-i18next";
 import CertificationTypesTable from "./CertificationTypesTable";
 import { CertificationTypesApi } from "../api/certification-types.api";
 import { ImportExportActions } from "../../../components/ui/import-export/ImportExportActions";
+import { useImportCertificationTypes } from "../hooks/useImportCertificationTypes";
 
 const CertificationTypesListPage = () => {
   const { t } = useTranslation();
   const handleExport = useCallback(() => CertificationTypesApi.export(), []);
-  const handleImport = useCallback(
-    (file: File) => CertificationTypesApi.import(file),
-    []
-  );
+  const handleImport = useImportCertificationTypes();
 
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>

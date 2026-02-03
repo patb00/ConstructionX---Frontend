@@ -11,6 +11,7 @@ import FilterSelect, {
 } from "../../../components/ui/select/FilterSelect";
 import { CertificationsApi } from "../api/certifications.api";
 import { ImportExportActions } from "../../../components/ui/import-export/ImportExportActions";
+import { useImportCertifications } from "../hooks/useImportCertifications";
 
 type FilterValue = "all" | "byEmployee" | number;
 
@@ -29,10 +30,7 @@ const CertificationsListPage = () => {
   }, [filter]);
 
   const handleExport = useCallback(() => CertificationsApi.export(), []);
-  const handleImport = useCallback(
-    (file: File) => CertificationsApi.import(file),
-    []
-  );
+  const handleImport = useImportCertifications();
 
   const selectValue = useMemo(() => {
     if (filter === "all") return "";
