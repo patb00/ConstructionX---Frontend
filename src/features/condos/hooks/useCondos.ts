@@ -65,6 +65,17 @@ export const useCondos = (paginationOverride?: {
           };
         }
 
+        if (key === "employees") {
+          colDef.valueGetter = (_, row) => {
+            if (Array.isArray(row.employees)) {
+              return row.employees
+                .map((e: any) => `${e.firstName} ${e.lastName}`)
+                .join(", ");
+            }
+            return "";
+          };
+        }
+
         return colDef;
       });
 
