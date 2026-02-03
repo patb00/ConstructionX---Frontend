@@ -3,7 +3,7 @@ import type {
   NewExaminationTypeRequest,
   UpdateExaminationTypeRequest,
 } from "..";
-import { authFetch } from "../../../lib/authFetch";
+import { authFetch, authFetchBlob } from "../../../lib/authFetch";
 import type { ApiEnvelope } from "../../administration/tenants";
 
 const base = "/api/ExaminationTypes";
@@ -41,5 +41,18 @@ export const ExaminationTypesApi = {
       `${base}/get-all`
     );
     return res.data;
+  },
+
+  export: async () => {
+    return authFetchBlob(`${base}/export`, { method: "GET" });
+  },
+
+  import: async (file: File) => {
+    const formData = new FormData();
+    formData.append("UploadFile", file);
+    return authFetchBlob(`${base}/import`, {
+      method: "POST",
+      body: formData,
+    });
   },
 };

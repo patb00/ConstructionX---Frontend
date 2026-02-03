@@ -1,7 +1,7 @@
 import { Button, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { PermissionGate } from "../../../lib/permissions";
 import CertificationTable from "./CertificationTable";
@@ -9,6 +9,8 @@ import { useCertificationTypes } from "../../certification_types/hooks/useCertif
 import FilterSelect, {
   type SelectOption,
 } from "../../../components/ui/select/FilterSelect";
+import { CertificationsApi } from "../api/certifications.api";
+import { ImportExportActions } from "../../../components/ui/import-export/ImportExportActions";
 
 type FilterValue = "all" | "byEmployee" | number;
 
@@ -25,6 +27,12 @@ const CertificationsListPage = () => {
     if (filter === "all" || filter === "byEmployee") return null;
     return filter;
   }, [filter]);
+
+  const handleExport = useCallback(() => CertificationsApi.export(), []);
+  const handleImport = useCallback(
+    (file: File) => CertificationsApi.import(file),
+    []
+  );
 
   const selectValue = useMemo(() => {
     if (filter === "all") return "";
@@ -72,18 +80,26 @@ const CertificationsListPage = () => {
           {t("certifications.list.title")}
         </Typography>
 
-        <PermissionGate
-          guard={{ permission: "Permission.Certifications.Create" }}
-        >
-          <Button
-            size="small"
-            component={RouterLink}
-            to="create"
-            variant="contained"
+        <Stack direction="row" spacing={1} alignItems="center">
+          <ImportExportActions
+            onExport={handleExport}
+            onImport={handleImport}
+            exportFileName="certifications.xlsx"
+            importResultFileName="certifications-import-result.xlsx"
+          />
+          <PermissionGate
+            guard={{ permission: "Permission.Certifications.Create" }}
           >
-            {t("certifications.create.title")}
-          </Button>
-        </PermissionGate>
+            <Button
+              size="small"
+              component={RouterLink}
+              to="create"
+              variant="contained"
+            >
+              {t("certifications.create.title")}
+            </Button>
+          </PermissionGate>
+        </Stack>
       </Stack>
 
       <Stack direction="row" alignItems="center">

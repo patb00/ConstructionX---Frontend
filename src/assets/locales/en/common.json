@@ -328,6 +328,22 @@
       "choose": "Choose file",
       "noFile": "No file chosen"
     },
+    "import": "Import",
+    "export": "Export",
+    "importDialog": {
+      "title": "Import data",
+      "description": "Upload a file to import records into the system.",
+      "selectFile": "Select a file",
+      "supportedFormats": "Supported formats: .xlsx, .csv",
+      "noFile": "Please choose a file to import.",
+      "importing": "Importing...",
+      "success": "Import completed successfully.",
+      "error": "Failed to import data."
+    },
+    "exportDialog": {
+      "success": "Export downloaded successfully.",
+      "error": "Failed to export data."
+    },
     "datagrid": {
       "noRowsLabel": "No rows",
       "noResultsOverlayLabel": "No results found.",
