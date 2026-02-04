@@ -111,7 +111,10 @@ export async function authFetchBlob(
   if (tenant) headers.set("tenant", tenant);
   if (jwt) headers.set("Authorization", `Bearer ${jwt}`);
 
-  let res = await fetch(url, { ...options, headers });
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+  const finalUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;
+
+  let res = await fetch(finalUrl, { ...options, headers });
 
   if (res.status === 401 && refreshToken && jwt) {
     if (!refreshInFlight) {
