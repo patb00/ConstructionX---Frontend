@@ -228,45 +228,75 @@ export function ImportExportActions({
             ) : (
               <Box
                 sx={{
-                  border: "1px solid",
-                  borderColor: "divider",
-                  //borderRadius: 2,
-                  p: 2.5,
+                  border: "1.5px dashed",
+                  borderColor: "success.main",
+                  py: 6,
+                  px: 4,
                   display: "flex",
+                  flexDirection: "column",
                   alignItems: "center",
-                  backgroundColor: "white",
+                  textAlign: "center",
+                  backgroundColor: alpha(theme.palette.success.main, 0.04),
+                  transition: "all 0.2s ease",
+                  position: "relative",
                 }}
               >
                 <Box
                   sx={{
-                    width: 40,
-                    height: 40,
-                    //borderRadius: 1,
-                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                    width: 56,
+                    height: 56,
+                    borderRadius: "50%",
+                    backgroundColor: alpha(theme.palette.success.main, 0.1),
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    mr: 2,
+                    mb: 2,
                   }}
                 >
-                  <DescriptionIcon sx={{ color: "primary.main" }} />
+                  <DescriptionIcon sx={{ color: "success.main", fontSize: 32 }} />
                 </Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="body2" fontWeight={600} sx={{ mb: 0.2 }}>
-                    {selectedFile.name}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {(selectedFile.size / 1024).toFixed(1)} KB
-                  </Typography>
-                </Box>
-                <IconButton
+                
+                <Typography
+                  variant="body1"
+                  fontWeight={600}
+                  sx={{
+                    mb: 0.5,
+                    color: "success.dark",
+                    maxWidth: "100%",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {selectedFile.name}
+                </Typography>
+                
+                <Typography
+                  variant="body2"
+                  sx={{ color: alpha(theme.palette.success.dark, 0.7), mb: 2 }}
+                >
+                  {(selectedFile.size / 1024).toFixed(1)} KB
+                </Typography>
+
+                <Button
                   size="small"
+                  variant="outlined"
+                  color="error"
+                  startIcon={<DeleteOutlineIcon />}
                   onClick={() => setSelectedFile(null)}
                   disabled={isImporting}
-                  sx={{ color: "text.secondary" }}
+                  sx={{
+                    textTransform: "none",
+                    color: "error.main",
+                    borderColor: alpha(theme.palette.error.main, 0.3),
+                    "&:hover": {
+                      borderColor: "error.main",
+                      backgroundColor: alpha(theme.palette.error.main, 0.04),
+                    },
+                  }}
                 >
-                  <DeleteOutlineIcon fontSize="small" />
-                </IconButton>
+                  {t("common.remove", "Remove")}
+                </Button>
               </Box>
             )}
 
@@ -319,7 +349,7 @@ export function ImportExportActions({
                 }}
               >
                 {isImporting
-                  ? t("common.importing", "Importing...")
+                  ? t("common.importDialog.importing", "Importing...")
                   : t("common.import", "Import")}
               </Button>
             </Stack>

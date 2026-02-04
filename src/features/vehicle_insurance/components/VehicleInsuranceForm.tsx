@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { NewVehicleInsuranceRequest } from "..";
 import {
@@ -12,6 +12,10 @@ type Props = {
   onSubmit: (values: NewVehicleInsuranceRequest) => void | Promise<void>;
   busy?: boolean;
   policyTypeOptions?: { label: string; value: number }[];
+
+  docFile?: File | null;
+  onDocFileChange?: (file: File | null) => void;
+  onDownload?: () => void;
 };
 
 export default function VehicleInsuranceForm({
@@ -19,9 +23,11 @@ export default function VehicleInsuranceForm({
   onSubmit,
   busy,
   policyTypeOptions = [],
+  docFile,
+  onDocFileChange,
+  onDownload,
 }: Props) {
   const { t } = useTranslation();
-  const [docFile, setDocFile] = useState<File | null>(null);
 
   const { options: vehicleOptions, isLoading: vehiclesLoading } =
     useVehicleOptions();
@@ -79,10 +85,11 @@ export default function VehicleInsuranceForm({
         label: t("vehicleInsurances.form.field.documentPath"),
         type: "file",
         fileConfig: {
-          file: docFile,
-          onChange: setDocFile,
+          file: docFile ?? null,
+          onChange: onDocFileChange,
           accept: ".pdf,.png,.jpg,.jpeg",
           existingFileName: defaultValues?.documentPath ?? null,
+          onDownload: onDownload,
         },
         transformOut: (fileOrName) => {
           if (fileOrName instanceof File) return fileOrName.name;
@@ -90,7 +97,15 @@ export default function VehicleInsuranceForm({
         },
       },
     ],
-    [t, vehicleOptions, policyTypeOptions, docFile, defaultValues?.documentPath]
+    [
+      t,
+      vehicleOptions,
+      policyTypeOptions,
+      docFile,
+      defaultValues?.documentPath,
+      onDocFileChange,
+      onDownload,
+    ]
   );
 
   const isBusy = busy || vehiclesLoading;

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { NewVehicleRegistrationRequest } from "..";
 import {
@@ -11,15 +11,21 @@ type Props = {
   defaultValues?: Partial<NewVehicleRegistrationRequest>;
   onSubmit: (values: NewVehicleRegistrationRequest) => void | Promise<void>;
   busy?: boolean;
+
+  docFile?: File | null;
+  onDocFileChange?: (file: File | null) => void;
+  onDownload?: () => void;
 };
 
 export default function VehicleRegistrationForm({
   defaultValues,
   onSubmit,
   busy,
+  docFile,
+  onDocFileChange,
+  onDownload,
 }: Props) {
   const { t } = useTranslation();
-  const [docFile, setDocFile] = useState<File | null>(null);
 
   const { options: vehicleOptions, isLoading: vehiclesLoading } =
     useVehicleOptions();
@@ -73,10 +79,11 @@ export default function VehicleRegistrationForm({
         label: t("vehicleRegistrations.form.field.documentPath"),
         type: "file",
         fileConfig: {
-          file: docFile,
-          onChange: setDocFile,
+          file: docFile ?? null,
+          onChange: onDocFileChange,
           accept: ".pdf,.png,.jpg,.jpeg",
           existingFileName: defaultValues?.documentPath ?? null,
+          onDownload: onDownload,
         },
         transformOut: (fileOrName) => {
           if (fileOrName instanceof File) return fileOrName.name;
@@ -88,7 +95,14 @@ export default function VehicleRegistrationForm({
         label: t("vehicleRegistrations.form.field.note"),
       },
     ],
-    [t, vehicleOptions, docFile, defaultValues?.documentPath]
+    [
+      t,
+      vehicleOptions,
+      docFile,
+      defaultValues?.documentPath,
+      onDocFileChange,
+      onDownload,
+    ]
   );
 
   const isBusy = busy || vehiclesLoading;

@@ -2,12 +2,16 @@ import { Button, Paper, Stack, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 import type { NewVehicleInsuranceRequest } from "..";
 import { useVehicleInsurance } from "../hooks/useVehicleInsurance";
 import { useUpdateVehicleInsurance } from "../hooks/useUpdateVehicleInsurance";
+import { useUploadVehicleInsuranceDocument } from "../hooks/useUploadVehicleInsuranceDocument";
+import { useDownloadVehicleInsuranceDocument } from "../hooks/useDownloadVehicleInsuranceDocument";
 import VehicleInsuranceForm from "./VehicleInsuranceForm";
 import { vehicleInsuranceToDefaultValues } from "../utils/vehicleInsuranceForm";
+import { downloadBlob } from "../../../utils/downloadBlob";
 
 export default function VehicleInsuranceEditPage() {
   const { t } = useTranslation();
@@ -26,24 +30,47 @@ export default function VehicleInsuranceEditPage() {
     error,
   } = useVehicleInsurance(insuranceId);
 
-  const { mutate: updateInsurance, isPending: updating } =
+  const { mutateAsync: updateInsurance, isPending: updating } =
     useUpdateVehicleInsurance();
+  const { mutateAsync: uploadDocument, isPending: uploading } =
+    useUploadVehicleInsuranceDocument();
+  const { mutateAsync: downloadDocument } =
+    useDownloadVehicleInsuranceDocument();
+
+  const [docFile, setDocFile] = useState<File | null>(null);
 
   if (error) return <div>{t("vehicleInsurances.edit.loadError")}</div>;
 
   const defaultValues: NewVehicleInsuranceRequest | undefined =
     vehicleInsuranceToDefaultValues(insurance) as any;
 
-  const handleSubmit = (values: NewVehicleInsuranceRequest) => {
+  const handleSubmit = async (values: NewVehicleInsuranceRequest) => {
     const idForUpdate =
       typeof (insurance as any)?.id === "number"
         ? (insurance as any).id
         : insuranceId;
 
-    updateInsurance({ id: idForUpdate, ...values } as any);
+    await updateInsurance({ id: idForUpdate, ...values } as any);
+
+    if (docFile) {
+      await uploadDocument({
+        insuranceId: idForUpdate,
+        file: docFile,
+      });
+    }
+
+    navigate("/app/vehicle-insurances");
   };
 
-  const busy = loadingInsurance || updating;
+  const handleDownload = async () => {
+    const blob = await downloadDocument(insuranceId);
+    if (blob) {
+      const fileName = insurance?.documentPath?.split("/").pop() || "document.pdf";
+      downloadBlob(blob, fileName);
+    }
+  };
+
+  const busy = loadingInsurance || updating || uploading;
 
   return (
     <Stack spacing={2}>
@@ -71,6 +98,9 @@ export default function VehicleInsuranceEditPage() {
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           busy={busy}
+          docFile={docFile}
+          onDocFileChange={setDocFile}
+          onDownload={handleDownload}
         />
       </Paper>
     </Stack>

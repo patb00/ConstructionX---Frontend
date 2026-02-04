@@ -2,12 +2,16 @@ import { Button, Paper, Stack, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 import type { NewVehicleRegistrationRequest } from "..";
 import { useVehicleRegistration } from "../hooks/useVehicleRegistration";
 import { useUpdateVehicleRegistration } from "../hooks/useUpdateVehicleRegistration";
+import { useUploadVehicleRegistrationDocument } from "../hooks/useUploadVehicleRegistrationDocument";
+import { useDownloadVehicleRegistrationDocument } from "../hooks/useDownloadVehicleRegistrationDocument";
 import { vehicleRegistrationToDefaultValues } from "../utils/vehcileRegistrationForm";
 import VehicleRegistrationForm from "./VehicleRegistrationForm";
+import { downloadBlob } from "../../../utils/downloadBlob";
 
 export default function VehicleRegistrationEditPage() {
   const { t } = useTranslation();
@@ -26,24 +30,47 @@ export default function VehicleRegistrationEditPage() {
     error,
   } = useVehicleRegistration(registrationId);
 
-  const { mutate: updateRegistration, isPending: updating } =
+  const { mutateAsync: updateRegistration, isPending: updating } =
     useUpdateVehicleRegistration();
+  const { mutateAsync: uploadDocument, isPending: uploading } =
+    useUploadVehicleRegistrationDocument();
+  const { mutateAsync: downloadDocument } =
+    useDownloadVehicleRegistrationDocument();
+
+  const [docFile, setDocFile] = useState<File | null>(null);
 
   if (error) return <div>{t("vehicleRegistrations.edit.loadError")}</div>;
 
   const defaultValues: NewVehicleRegistrationRequest | undefined =
     vehicleRegistrationToDefaultValues(registration);
 
-  const handleSubmit = (values: NewVehicleRegistrationRequest) => {
+  const handleSubmit = async (values: NewVehicleRegistrationRequest) => {
     const idForUpdate =
       typeof (registration as any)?.id === "number"
         ? (registration as any).id
         : registrationId;
 
-    updateRegistration({ id: idForUpdate, ...values } as any);
+    await updateRegistration({ id: idForUpdate, ...values } as any);
+
+    if (docFile) {
+      await uploadDocument({
+        registrationId: idForUpdate,
+        file: docFile,
+      });
+    }
+
+    navigate("/app/vehicle-registrations");
   };
 
-  const busy = loadingRegistration || updating;
+  const handleDownload = async () => {
+    const blob = await downloadDocument(registrationId);
+    if (blob) {
+      const fileName = registration?.documentPath?.split("/").pop() || "document.pdf";
+      downloadBlob(blob, fileName);
+    }
+  };
+
+  const busy = loadingRegistration || updating || uploading;
 
   return (
     <Stack spacing={2}>
@@ -71,6 +98,9 @@ export default function VehicleRegistrationEditPage() {
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           busy={busy}
+          docFile={docFile}
+          onDocFileChange={setDocFile}
+          onDownload={handleDownload}
         />
       </Paper>
     </Stack>

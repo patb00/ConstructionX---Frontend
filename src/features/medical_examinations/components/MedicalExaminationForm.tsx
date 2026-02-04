@@ -32,6 +32,7 @@ type Props<M extends MedicalExaminationMode> = {
   onFileChange?: (file: File | null) => void;
   fileAccept?: string;
   existingCertificatePath?: string | null;
+  onDownload?: () => void;
 };
 
 export default function MedicalExaminationForm<
@@ -45,6 +46,7 @@ export default function MedicalExaminationForm<
   onFileChange,
   fileAccept = ".pdf,image/*",
   existingCertificatePath,
+  onDownload,
 }: Props<M>) {
   const { t } = useTranslation();
 
@@ -111,6 +113,7 @@ export default function MedicalExaminationForm<
         onChange: onFileChange,
         accept: fileAccept,
         existingFileName: existingCertificatePath ?? null,
+        onDownload: onDownload,
       },
     } as any,
   ];

@@ -307,6 +307,7 @@
     "yes": "Yes",
     "no": "No",
     "cancel": "Cancel",
+    "remove": "Remove",
     "close": "Close",
     "submit": "Submit",
     "saving": "Saving...",
@@ -326,7 +327,8 @@
     "selectAll": "Select All",
     "fileInput": {
       "choose": "Choose file",
-      "noFile": "No file chosen"
+      "noFile": "No file chosen",
+      "download": "Download file"
     },
     "import": "Import",
     "export": "Export",
