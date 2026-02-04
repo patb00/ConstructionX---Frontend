@@ -3,7 +3,9 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+import { useState } from "react";
 import { useAddCertification } from "../hooks/useAddCertification";
+import { useUploadCertificationCertificate } from "../hooks/useUploadCertificationCertificate";
 import CertificationForm from "./CertificationForm";
 import type { NewCertificationRequest } from "..";
 
@@ -13,11 +15,26 @@ export default function CertificationCreatePage() {
 
   const { mutateAsync: createCertification, isPending: creating } =
     useAddCertification();
+  const { mutateAsync: uploadCertificate, isPending: uploading } =
+    useUploadCertificationCertificate();
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleSubmit = async (values: NewCertificationRequest) => {
-    await createCertification(values);
+    const result = await createCertification(values);
+    const newId = (result as any)?.data?.id || (result as any)?.data;
+
+    if (newId && selectedFile) {
+      await uploadCertificate({
+        certificationId: Number(newId),
+        file: selectedFile,
+      });
+    }
+
     navigate("/app/certifications");
   };
+
+  const busy = creating || uploading;
 
   return (
     <Stack spacing={2}>
@@ -39,8 +56,10 @@ export default function CertificationCreatePage() {
         <CertificationForm
           mode="create"
           onSubmit={handleSubmit}
-          busy={creating}
+          busy={busy}
           showEmployeeField
+          selectedFile={selectedFile}
+          onFileChange={setSelectedFile}
         />
       </Paper>
     </Stack>

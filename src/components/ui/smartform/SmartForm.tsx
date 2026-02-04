@@ -7,8 +7,10 @@ import {
   Button,
   MenuItem,
   Typography,
+  IconButton,
   CircularProgress,
 } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 
 import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
 import { useEffect, useMemo, useState } from "react";
@@ -64,6 +66,7 @@ export type FieldConfig<TValues extends Record<string, any>> = {
     onChange?: (file: File | null) => void;
     accept?: string;
     existingFileName?: string | null;
+    onDownload?: () => void;
   };
 };
 
@@ -253,13 +256,26 @@ export function SmartForm<TValues extends Record<string, any>>({
               }}
             />
 
-            <Typography
-              variant="body2"
-              color={hasFile ? "text.primary" : "text.secondary"}
-              sx={{ fontStyle: hasFile ? "normal" : "italic" }}
-            >
-              {fileName}
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, flex: 1, minWidth: 0 }}>
+              <Typography
+                variant="body2"
+                color={hasFile ? "text.primary" : "text.secondary"}
+                sx={{ fontStyle: hasFile ? "normal" : "italic", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+              >
+                {fileName}
+              </Typography>
+
+              {fileCfg?.existingFileName && fileCfg?.onDownload && (
+                <IconButton
+                  size="small"
+                  onClick={fileCfg.onDownload}
+                  title={t("common.fileInput.download")}
+                  sx={{ color: "primary.main", flexShrink: 0 }}
+                >
+                  <DownloadIcon fontSize="small" />
+                </IconButton>
+              )}
+            </Box>
           </Box>
         </Box>
       );

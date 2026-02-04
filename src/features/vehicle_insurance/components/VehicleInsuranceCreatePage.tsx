@@ -3,15 +3,36 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+import { useState } from "react";
 import VehicleInsuranceForm from "./VehicleInsuranceForm";
 import { useAddVehicleInsurance } from "../hooks/useAddVehicleInsurance";
+import { useUploadVehicleInsuranceDocument } from "../hooks/useUploadVehicleInsuranceDocument";
 
 export default function VehicleInsuranceCreatePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { mutateAsync, isPending: creating } = useAddVehicleInsurance();
+  const { mutateAsync: createInsurance, isPending: creating } =
+    useAddVehicleInsurance();
+  const { mutateAsync: uploadDocument, isPending: uploading } =
+    useUploadVehicleInsuranceDocument();
 
-  const busy = creating;
+  const [docFile, setDocFile] = useState<File | null>(null);
+
+  const handleSubmit = async (values: any) => {
+    const result = await createInsurance(values);
+    const newId = (result as any)?.data?.id || (result as any)?.data;
+
+    if (newId && docFile) {
+      await uploadDocument({
+        insuranceId: Number(newId),
+        file: docFile,
+      });
+    }
+
+    navigate("/app/vehicle-insurances");
+  };
+
+  const busy = creating || uploading;
 
   return (
     <Stack spacing={2}>
@@ -35,7 +56,12 @@ export default function VehicleInsuranceCreatePage() {
         elevation={0}
         sx={{ border: (th) => `1px solid ${th.palette.divider}`, p: 2 }}
       >
-        <VehicleInsuranceForm onSubmit={mutateAsync as any} busy={busy} />
+        <VehicleInsuranceForm
+          onSubmit={handleSubmit}
+          busy={busy}
+          docFile={docFile}
+          onDocFileChange={setDocFile}
+        />
       </Paper>
     </Stack>
   );

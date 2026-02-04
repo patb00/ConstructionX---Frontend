@@ -308,6 +308,7 @@
     "yes": "Da",
     "no": "Ne",
     "cancel": "Odustani",
+    "remove": "Ukloni",
     "close": "Zatvori",
     "submit": "Spremi",
     "saving": "Spremanje...",
@@ -326,7 +327,8 @@
     "selectAll": "Odaberi sve",
     "fileInput": {
       "choose": "Odaberi datoteku",
-      "noFile": "Nije odabrana nijedna datoteka"
+      "noFile": "Nije odabrana nijedna datoteka",
+      "download": "Preuzmi datoteku"
     },
     "import": "Uvoz",
     "export": "Izvoz",

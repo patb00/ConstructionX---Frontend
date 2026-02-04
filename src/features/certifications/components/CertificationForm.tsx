@@ -22,6 +22,11 @@ type Props<M extends CertificationMode> = {
   onSubmit: (values: CertificationFormValues<M>) => void | Promise<void>;
   busy?: boolean;
   showEmployeeField?: boolean;
+
+  selectedFile?: File | null;
+  onFileChange?: (file: File | null) => void;
+  fileAccept?: string;
+  onDownload?: () => void;
 };
 
 export default function CertificationForm<M extends CertificationMode>({
@@ -29,6 +34,10 @@ export default function CertificationForm<M extends CertificationMode>({
   onSubmit,
   busy,
   showEmployeeField = true,
+  selectedFile,
+  onFileChange,
+  fileAccept = ".pdf,image/*",
+  onDownload,
 }: Props<M>) {
   const { t } = useTranslation();
 
@@ -89,11 +98,6 @@ export default function CertificationForm<M extends CertificationMode>({
       options: statusOptions,
     },
     {
-      name: "certificatePath",
-      label: t("certifications.form.field.certificatePath"),
-      type: "text",
-    },
-    {
       name: "reminderSentDate",
       label: t("certifications.form.field.reminderSentDate"),
       type: "date",
@@ -103,6 +107,18 @@ export default function CertificationForm<M extends CertificationMode>({
       label: t("certifications.form.field.note"),
       type: "text",
     },
+    {
+      name: "certificatePath",
+      label: t("certifications.form.field.certificatePath"),
+      type: "file",
+      fileConfig: {
+        file: selectedFile ?? null,
+        onChange: onFileChange,
+        accept: fileAccept,
+        existingFileName: (defaultValues as any)?.certificatePath ?? null,
+        onDownload: onDownload,
+      },
+    } as any,
   ];
 
   const isBusy = busy || employeesLoading || typesLoading;
@@ -113,8 +129,9 @@ export default function CertificationForm<M extends CertificationMode>({
       rows={[
         ["employeeId", "certificationTypeId"],
         ["certificationDate", "nextCertificationDate"],
-        ["status", "certificatePath"],
-        ["reminderSentDate", "note"],
+        ["status", "reminderSentDate"],
+        ["note"],
+        ["certificatePath"],
       ]}
       defaultValues={defaultValues}
       busy={isBusy}
