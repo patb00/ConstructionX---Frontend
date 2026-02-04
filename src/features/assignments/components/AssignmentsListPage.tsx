@@ -8,14 +8,15 @@ import {
   MenuItem,
   type SelectChangeEvent,
   CircularProgress,
-  ButtonBase,
+  IconButton,
+  TextField,
 } from "@mui/material";
-
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import BadgeIcon from "@mui/icons-material/Badge";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
-import ViewModuleIcon from "@mui/icons-material/ViewModule";
-import TimelineIcon from "@mui/icons-material/Timeline";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import { useAssignedVehicles } from "../../administration/employees/hooks/useAssignedVehicles";
 import { useAssignedConstructionSites } from "../../administration/employees/hooks/useAssignedConstructionSites";
@@ -27,229 +28,218 @@ import type {
   AssignedVehicle,
 } from "../../administration/employees";
 
-import { useAuthStore } from "../../auth/store/useAuthStore";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
+import { useCurrentEmployeeContext } from "../../auth/hooks/useCurrentEmployeeContext";
 import { useTranslation } from "react-i18next";
-import { AssignmentsBoardView } from "./AssignmentsBoardView";
-
-import { useMemo, useState } from "react";
-import StatCard from "../../construction_site/components/StatCard";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   TimelineView,
   type Lane,
   type TimelineItem,
-} from "../../../components/ui/TimelineView";
+} from "../../../components/ui/views/TimelineView";
 
-type ViewMode = "board" | "timeline";
+import {
+  formatIsoDate,
+  startOfWeekMonday,
+  toTimeSpanStrict,
+} from "../utils/date";
+import StatCardDetail from "../../../components/ui/dashboard/StatCardDetail";
+
+import {
+  addDays,
+  makeWeekRangeFormatter,
+  formatWeekRange,
+  formatLocalIsoDate,
+} from "../../../utils/dateFormatters";
+import { getIntlLocale } from "../../../utils/u18nLocale";
+import {
+  getEmployeeInitials,
+  getEmployeeLabel,
+} from "../../../utils/employeeUtils";
+import { useConstructionSiteEmployeeWorkLogs } from "../../construction_site/hooks/useConstructionSiteEmployeeWorkLogs";
+import { useUpsertConstructionSiteEmployeeWorkLogs } from "../../construction_site/hooks/useUpsertConstructionSiteEmployeeWorkLogs";
+import type {
+  ConstructionSiteEmployeeWorkLogDay,
+  UpsertConstructionSiteEmployeeWorkLogsRequest,
+} from "../../construction_site";
+import { AssignTaskDialog } from "../../../components/ui/assign-dialog/AssignTaskDialog";
+
+type WorkLogDraft = {
+  constructionSiteId: number;
+  employeeId: number;
+  workDate: string;
+  startTime: string;
+  endTime: string;
+};
 
 const AssignmentsListPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { employeeRows = [] } = useEmployees();
 
   const { acsRows, isLoading: isLoadingSites } = useAssignedConstructionSites();
   const { vehicleRows, isLoading: isLoadingVehicles } = useAssignedVehicles();
   const { toolRows, isLoading: isLoadingTools } = useAssignedTools();
 
-  const { userId, role } = useAuthStore();
-
-  const myUserId = useMemo(() => {
-    const n =
-      typeof userId === "string"
-        ? parseInt(userId, 10)
-        : typeof userId === "number"
-        ? userId
-        : NaN;
-    return Number.isFinite(n) ? n : null;
-  }, [userId]);
+  const { isAdmin, employeeId } = useCurrentEmployeeContext();
+  const myEmployeeId = employeeId;
 
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | "">("");
-  const [viewMode, setViewMode] = useState<ViewMode>("board");
+  const [weekStart, setWeekStart] = useState<Date>(() =>
+    startOfWeekMonday(new Date()),
+  );
 
-  const effectiveEmployeeId =
-    role === "Admin"
-      ? typeof selectedEmployeeId === "number"
-        ? selectedEmployeeId
-        : null
-      : myUserId;
+  const [workLogOpen, setWorkLogOpen] = useState(false);
+  const [workLogDraft, setWorkLogDraft] = useState<WorkLogDraft | null>(null);
 
-  const dedupeByKey = <T, K extends string | number>(
-    rows: T[],
-    getKey: (row: T) => K
-  ): T[] => {
-    const map = new Map<K, T>();
-    for (const r of rows) {
-      const key = getKey(r);
-      if (!map.has(key)) {
-        map.set(key, r);
-      }
-    }
-    return Array.from(map.values());
-  };
+  const upsertWorkLogs = useUpsertConstructionSiteEmployeeWorkLogs();
 
-  const constructionRowsForBoard = useMemo<AssignedConstructionSite[]>(() => {
-    const rows =
-      effectiveEmployeeId == null
-        ? acsRows
-        : acsRows.filter((r) => r.employeeId === effectiveEmployeeId);
+  const { data: employeeSiteLogs } = useConstructionSiteEmployeeWorkLogs(
+    workLogDraft?.constructionSiteId,
+    workLogDraft?.employeeId,
+  );
 
-    if (effectiveEmployeeId == null) {
-      return dedupeByKey(rows, (r) => r.constructionSiteId);
-    }
+  useEffect(() => {
+    if (!workLogDraft) return;
+    if (!employeeSiteLogs) return;
 
-    return rows;
-  }, [acsRows, effectiveEmployeeId]);
+    const existing = employeeSiteLogs.find(
+      (x) => x.workDate === workLogDraft.workDate,
+    );
+    if (!existing) return;
 
-  const vehicleRowsForBoard = useMemo<AssignedVehicle[]>(() => {
-    const rows =
-      effectiveEmployeeId == null
-        ? vehicleRows
-        : vehicleRows.filter(
-            (r) => r.responsibleEmployeeId === effectiveEmployeeId
-          );
+    setWorkLogDraft((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        startTime: prev.startTime || existing.startTime || "",
+        endTime: prev.endTime || existing.endTime || "",
+      };
+    });
+  }, [employeeSiteLogs, workLogDraft]);
 
-    if (effectiveEmployeeId == null) {
-      return dedupeByKey(rows, (r) => r.vehicleId);
-    }
-
-    return rows;
-  }, [vehicleRows, effectiveEmployeeId]);
-
-  const toolRowsForBoard = useMemo<AssignedTool[]>(() => {
-    const rows =
-      effectiveEmployeeId == null
-        ? toolRows
-        : toolRows.filter(
-            (r) => r.responsibleEmployeeId === effectiveEmployeeId
-          );
-
-    if (effectiveEmployeeId == null) {
-      return dedupeByKey(rows, (r) => r.toolId);
-    }
-
-    return rows;
-  }, [toolRows, effectiveEmployeeId]);
-
-  const getEmployeeLabel = (e: any) =>
-    [e?.firstName, e?.lastName].filter(Boolean).join(" ") || `#${e?.id}`;
-
-  const getEmployeeInitials = (e: any) => {
-    const first = e?.firstName?.[0] ?? "";
-    const last = e?.lastName?.[0] ?? "";
-    const initials = `${first}${last}`.trim();
-    return initials || (e?.id != null ? String(e.id).slice(-2) : "?");
-  };
+  const effectiveEmployeeId: number | null = isAdmin
+    ? typeof selectedEmployeeId === "number"
+      ? selectedEmployeeId
+      : null
+    : myEmployeeId;
 
   const handleSelectChange = (e: SelectChangeEvent<number | "">) => {
     const v = e.target.value;
     if (v === "" || v === undefined || v === null) {
       setSelectedEmployeeId("");
-    } else {
-      const num = typeof v === "number" ? v : Number(v);
-      setSelectedEmployeeId(Number.isFinite(num) ? num : "");
+      return;
     }
+    const num = typeof v === "number" ? v : Number(v);
+    setSelectedEmployeeId(Number.isFinite(num) ? num : "");
   };
 
   const selectedEmployee = useMemo(
     () =>
       typeof selectedEmployeeId === "number"
-        ? employeeRows.find((e) => e.id === selectedEmployeeId) ?? null
+        ? (employeeRows.find((e) => e.id === selectedEmployeeId) ?? null)
         : null,
-    [selectedEmployeeId, employeeRows]
+    [selectedEmployeeId, employeeRows],
   );
-
-  const formatIso = (iso?: string | null) => {
-    if (!iso) return "—";
-    const d = new Date(iso);
-    return Number.isNaN(d.getTime())
-      ? iso
-      : d.toLocaleDateString(undefined, {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        });
-  };
 
   const employeeAssignmentsCount = selectedEmployee
     ? {
         construction: acsRows.filter(
-          (r) => r.employeeId === selectedEmployee.id
+          (r) => r.employeeId === selectedEmployee.id,
         ).length,
         vehicles: vehicleRows.filter(
-          (r) => r.responsibleEmployeeId === selectedEmployee.id
+          (r) => r.responsibleEmployeeId === selectedEmployee.id,
         ).length,
         tools: toolRows.filter(
-          (r) => r.responsibleEmployeeId === selectedEmployee.id
+          (r) => r.responsibleEmployeeId === selectedEmployee.id,
         ).length,
       }
     : { construction: 0, vehicles: 0, tools: 0 };
 
-  const cardBoxSx = {
-    flexBasis: {
-      xs: "100%",
-      sm: "calc(50% - 8px)",
-      md: "calc(33.333% - 12px)",
-    },
-    flexGrow: 1,
-  } as const;
+  const canShowAll = isAdmin && effectiveEmployeeId == null;
+  const shouldShowNone = !isAdmin && effectiveEmployeeId == null;
 
-  const constructionAssignments = useMemo<AssignedConstructionSite[]>(
-    () =>
-      effectiveEmployeeId == null
-        ? acsRows
-        : acsRows.filter((r) => r.employeeId === effectiveEmployeeId),
-    [acsRows, effectiveEmployeeId]
-  );
+  const constructionAssignments = useMemo<AssignedConstructionSite[]>(() => {
+    if (shouldShowNone) return [];
+    if (canShowAll) return acsRows;
+    return acsRows.filter((r) => r.employeeId === effectiveEmployeeId);
+  }, [acsRows, canShowAll, shouldShowNone, effectiveEmployeeId]);
 
-  const vehicleAssignments = useMemo<AssignedVehicle[]>(
-    () =>
-      effectiveEmployeeId == null
-        ? vehicleRows
-        : vehicleRows.filter(
-            (r) => r.responsibleEmployeeId === effectiveEmployeeId
-          ),
-    [vehicleRows, effectiveEmployeeId]
-  );
+  const vehicleAssignments = useMemo<AssignedVehicle[]>(() => {
+    if (shouldShowNone) return [];
+    if (canShowAll) return vehicleRows;
+    return vehicleRows.filter(
+      (r) => r.responsibleEmployeeId === effectiveEmployeeId,
+    );
+  }, [vehicleRows, canShowAll, shouldShowNone, effectiveEmployeeId]);
 
-  const toolAssignments = useMemo<AssignedTool[]>(
-    () =>
-      effectiveEmployeeId == null
-        ? toolRows
-        : toolRows.filter(
-            (r) => r.responsibleEmployeeId === effectiveEmployeeId
-          ),
-    [toolRows, effectiveEmployeeId]
-  );
+  const toolAssignments = useMemo<AssignedTool[]>(() => {
+    if (shouldShowNone) return [];
+    if (canShowAll) return toolRows;
+    return toolRows.filter(
+      (r) => r.responsibleEmployeeId === effectiveEmployeeId,
+    );
+  }, [toolRows, canShowAll, shouldShowNone, effectiveEmployeeId]);
 
   const isLoadingTimeline =
     isLoadingSites || isLoadingVehicles || isLoadingTools;
 
-  const { lanes, items, startDate, endDate } = useMemo(() => {
-    const todayIso = new Date().toISOString().slice(0, 10);
+  const startDate = useMemo(() => formatLocalIsoDate(weekStart), [weekStart]);
+  const endDate = useMemo(
+    () => formatLocalIsoDate(addDays(weekStart, 6)),
+    [weekStart],
+  );
 
-    const lanes: Lane[] = [
-      {
-        id: "construction",
-        title: t("assignments.timeline.laneConstruction"),
-      },
-      {
-        id: "vehicles",
-        title: t("assignments.timeline.laneVehicles"),
-      },
-      {
-        id: "tools",
-        title: t("assignments.timeline.laneTools"),
-      },
-    ];
+  const locale = useMemo(
+    () => getIntlLocale(i18n),
+    [i18n.language, i18n.resolvedLanguage],
+  );
+
+  const weekRangeFmt = useMemo(() => makeWeekRangeFormatter(locale), [locale]);
+
+  const weekLabel = useMemo(
+    () => formatWeekRange(weekStart, weekRangeFmt),
+    [weekStart, weekRangeFmt],
+  );
+
+  const { lanes, items } = useMemo(() => {
+    const todayIso = formatLocalIsoDate(new Date());
+
+    const employeesInScope =
+      effectiveEmployeeId == null
+        ? employeeRows
+        : employeeRows.filter((e) => e.id === effectiveEmployeeId);
+
+    const lanes: Lane[] = employeesInScope.map((e) => ({
+      id: String(e.id),
+      title: getEmployeeLabel(e),
+      initials: getEmployeeInitials(e),
+    }));
+
+    const UNASSIGNED_ID = "unassigned";
+    const hasUnassigned =
+      constructionAssignments.some((r) => r.employeeId == null) ||
+      vehicleAssignments.some((r) => r.responsibleEmployeeId == null) ||
+      toolAssignments.some((r) => r.responsibleEmployeeId == null);
+
+    if (hasUnassigned && effectiveEmployeeId == null) {
+      lanes.unshift({
+        id: UNASSIGNED_ID,
+        title: t("assignments.timeline.unassigned", "Unassigned"),
+        initials: "?",
+      });
+    }
 
     const items: TimelineItem[] = [];
 
-    const addItem = (item: TimelineItem) => items.push(item);
+    const laneForEmployee = (id?: number | null) => {
+      if (id == null) return UNASSIGNED_ID;
+      return String(id);
+    };
 
-    const findEmployee = (id?: number | null) =>
-      id == null ? null : employeeRows.find((e) => e.id === id) ?? null;
+    const findEmp = (id?: number | null) =>
+      id == null ? null : (employeeRows.find((e) => e.id === id) ?? null);
 
-    // Construction sites
     constructionAssignments.forEach((row) => {
       const start =
         row.dateFrom || row.startDate || row.plannedEndDate || todayIso;
@@ -260,417 +250,466 @@ const AssignmentsListPage = () => {
         row.dateFrom ||
         start;
 
-      const employee = findEmployee(row.employeeId);
-      const assigneeName = employee ? getEmployeeLabel(employee) : undefined;
-      const assigneeInitials = employee
-        ? getEmployeeInitials(employee)
-        : undefined;
+      const emp = findEmp(row.employeeId);
 
-      addItem({
+      const csTitle =
+        row.name || row.location || t("assignments.timeline.constructionItem");
+
+      const csSubtitle = [
+        row.location && row.name ? row.location : null,
+        row.siteManagerName ? `Mgr: ${row.siteManagerName}` : null,
+      ]
+        .filter(Boolean)
+        .join(" · ");
+
+      items.push({
         id: `cs-${row.constructionSiteId}-${
           row.employeeId ?? "x"
         }-${start}-${end}`,
-        laneId: "construction",
-        title:
-          row.name ||
-          row.location ||
-          t("assignments.timeline.constructionItem"),
+        laneId: laneForEmployee(row.employeeId),
+        title: csTitle,
+        subtitle: csSubtitle || undefined,
         startDate: start,
         endDate: end,
         color: "#F1B103",
-        assigneeName,
-        assigneeInitials,
+        assigneeName: emp ? getEmployeeLabel(emp) : undefined,
+        assigneeInitials: emp ? getEmployeeInitials(emp) : undefined,
+        meta: {
+          type: "construction",
+          laneLabel: t("assignments.timeline.laneConstruction"),
+
+          constructionSiteId: row.constructionSiteId,
+          employeeId: row.employeeId ?? undefined,
+        },
       });
     });
 
-    // Vehicles
     vehicleAssignments.forEach((row) => {
       const start = row.dateFrom || todayIso;
       const end = row.dateTo || start;
 
-      const employee = findEmployee(row.responsibleEmployeeId);
-      const assigneeName = employee ? getEmployeeLabel(employee) : undefined;
-      const assigneeInitials = employee
-        ? getEmployeeInitials(employee)
-        : undefined;
+      const emp = findEmp(row.responsibleEmployeeId);
 
-      const label =
-        row.registrationNumber ||
-        [row.constructionSiteName, row.constructionSiteLocation]
-          .filter(Boolean)
-          .join(" · ") ||
-        t("assignments.timeline.vehicleItem");
+      const vehicleTitle =
+        row.registrationNumber || t("assignments.timeline.vehicleItem");
 
-      addItem({
+      const vehicleSubtitle = [
+        [row.brand, row.model, row.vehicleType].filter(Boolean).join(" "),
+        row.constructionSiteName || row.constructionSiteLocation,
+      ]
+        .filter(Boolean)
+        .join(" · ");
+
+      items.push({
         id: `veh-${row.vehicleId}-${
           row.responsibleEmployeeId ?? "x"
         }-${start}-${end}`,
-        laneId: "vehicles",
-        title: label,
+        laneId: laneForEmployee(row.responsibleEmployeeId),
+        title: vehicleTitle,
+        subtitle: vehicleSubtitle || undefined,
         startDate: start,
         endDate: end,
         color: "#04befe",
-        assigneeName,
-        assigneeInitials,
+        assigneeName: emp ? getEmployeeLabel(emp) : undefined,
+        assigneeInitials: emp ? getEmployeeInitials(emp) : undefined,
+        meta: {
+          type: "vehicle",
+          laneLabel: t("assignments.timeline.laneVehicles"),
+        },
       });
     });
 
-    // Tools
     toolAssignments.forEach((row) => {
       const start = row.dateFrom || todayIso;
       const end = row.dateTo || start;
 
-      const employee = findEmployee(row.responsibleEmployeeId);
-      const assigneeName = employee ? getEmployeeLabel(employee) : undefined;
-      const assigneeInitials = employee
-        ? getEmployeeInitials(employee)
-        : undefined;
+      const emp = findEmp(row.responsibleEmployeeId);
 
-      const label =
+      const toolTitle =
         row.name || row.inventoryNumber || t("assignments.timeline.toolItem");
 
-      addItem({
+      const toolSubtitle =
+        row.inventoryNumber && row.name ? `#${row.inventoryNumber}` : undefined;
+
+      items.push({
         id: `tool-${row.toolId}-${
           row.responsibleEmployeeId ?? "x"
         }-${start}-${end}`,
-        laneId: "tools",
-        title: label,
+        laneId: laneForEmployee(row.responsibleEmployeeId),
+        title: toolTitle,
+        subtitle: toolSubtitle,
         startDate: start,
         endDate: end,
         color: "#21D191",
-        assigneeName,
-        assigneeInitials,
+        assigneeName: emp ? getEmployeeLabel(emp) : undefined,
+        assigneeInitials: emp ? getEmployeeInitials(emp) : undefined,
+        meta: {
+          type: "tool",
+          laneLabel: t("assignments.timeline.laneTools"),
+        },
       });
     });
 
-    // compute overall date range
-    let minDate: Date | null = null;
-    let maxDate: Date | null = null;
+    const filteredItems =
+      effectiveEmployeeId == null
+        ? items
+        : items.filter((it) => it.laneId === String(effectiveEmployeeId));
 
-    items.forEach((it) => {
-      const s = new Date(it.startDate);
-      const e = new Date(it.endDate);
-      if (!Number.isNaN(s.getTime())) {
-        if (!minDate || s < minDate) minDate = s;
-      }
-      if (!Number.isNaN(e.getTime())) {
-        if (!maxDate || e > maxDate) maxDate = e;
-      }
-    });
-
-    if (!minDate || !maxDate) {
-      const today = new Date();
-      minDate = today;
-      maxDate = today;
-    }
-
-    const startIso = minDate.toISOString().slice(0, 10);
-    const endIso = maxDate.toISOString().slice(0, 10);
-
-    return { lanes, items, startDate: startIso, endDate: endIso };
+    return { lanes, items: filteredItems };
   }, [
+    employeeRows,
+    effectiveEmployeeId,
     constructionAssignments,
     vehicleAssignments,
     toolAssignments,
-    employeeRows,
     t,
   ]);
 
+  const handleSaveWorkLog = async () => {
+    if (!workLogDraft) return;
+
+    const startTime = toTimeSpanStrict(workLogDraft.startTime);
+    const endTime = toTimeSpanStrict(workLogDraft.endTime);
+
+    const payload: UpsertConstructionSiteEmployeeWorkLogsRequest = {
+      constructionSiteId: workLogDraft.constructionSiteId,
+      employeeId: workLogDraft.employeeId,
+      workLogs: [
+        {
+          workDate: workLogDraft.workDate,
+          startTime,
+          endTime,
+        },
+      ],
+    };
+
+    await upsertWorkLogs.mutateAsync(payload);
+    setWorkLogOpen(false);
+    setWorkLogDraft(null);
+  };
+
+  const closeWorkLog = () => {
+    if (upsertWorkLogs.isPending) return;
+    setWorkLogOpen(false);
+    setWorkLogDraft(null);
+  };
+
+  //console.log("lanes", lanes, "items", items);
+  console.log("employeeSiteLogs", employeeSiteLogs);
   return (
-    <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 2,
-        }}
-      >
-        <Typography variant="h5" fontWeight={600}>
-          {t("assignments.title")}
-        </Typography>
-
-        <Box
-          sx={(theme) => ({
-            display: "inline-flex",
-            alignItems: "center",
-            padding: "2px",
-            borderRadius: 1,
-            backgroundColor: "#F7F7F8",
-            border: `1px solid ${theme.palette.divider}`,
-            gap: 0.5,
-          })}
-        >
-          <ButtonBase
-            onClick={() => setViewMode("board")}
-            sx={(theme) => {
-              const active = viewMode === "board";
-              return {
-                borderRadius: 1,
-                padding: "4px 10px",
-                display: "flex",
-                alignItems: "center",
-                gap: 0.75,
-                transition: "all 0.16s ease-out",
-                minWidth: 0,
-                ...(active
-                  ? {
-                      backgroundColor: theme.palette.background.paper,
-                      boxShadow:
-                        "0 1px 2px rgba(15,23,42,0.15), 0 0 0 1px rgba(15,23,42,0.06)",
-                    }
-                  : {
-                      opacity: 0.75,
-                      "&:hover": { opacity: 1, backgroundColor: "transparent" },
-                    }),
-              };
-            }}
-          >
-            <ViewModuleIcon
-              fontSize="small"
-              sx={{
-                fontSize: 18,
-                color: viewMode === "board" ? "primary.main" : "text.secondary",
-              }}
-            />
-            <Typography
-              variant="caption"
-              sx={{
-                fontWeight: viewMode === "board" ? 600 : 500,
-                color: viewMode === "board" ? "text.primary" : "text.secondary",
-                textTransform: "none",
-              }}
-            >
-              {t("assignments.view.board")}
-            </Typography>
-          </ButtonBase>
-
-          <ButtonBase
-            onClick={() => setViewMode("timeline")}
-            sx={(theme) => {
-              const active = viewMode === "timeline";
-              return {
-                borderRadius: 1,
-                padding: "4px 10px",
-                display: "flex",
-                alignItems: "center",
-                gap: 0.75,
-                transition: "all 0.16s ease-out",
-                minWidth: 0,
-                ...(active
-                  ? {
-                      backgroundColor: theme.palette.background.paper,
-                      boxShadow:
-                        "0 1px 2px rgba(15,23,42,0.15), 0 0 0 1px rgba(15,23,42,0.06)",
-                    }
-                  : {
-                      opacity: 0.75,
-                      "&:hover": { opacity: 1, backgroundColor: "transparent" },
-                    }),
-              };
-            }}
-          >
-            <TimelineIcon
-              fontSize="small"
-              sx={{
-                fontSize: 18,
-                color:
-                  viewMode === "timeline" ? "primary.main" : "text.secondary",
-              }}
-            />
-            <Typography
-              variant="caption"
-              sx={{
-                fontWeight: viewMode === "timeline" ? 600 : 500,
-                color:
-                  viewMode === "timeline" ? "text.primary" : "text.secondary",
-                textTransform: "none",
-              }}
-            >
-              {t("assignments.view.timeline")}
-            </Typography>
-          </ButtonBase>
-        </Box>
-      </Box>
-
-      {role === "Admin" && (
-        <>
-          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-            <FormControl size="small" sx={{ minWidth: 280 }} variant="outlined">
-              <InputLabel id="employee-select-label" shrink>
-                {t("assignments.filterByEmployee")}
-              </InputLabel>
-              <Select<number | "">
-                labelId="employee-select-label"
-                id="employee-select"
-                label={t("assignments.filterByEmployee")}
-                value={selectedEmployeeId}
-                onChange={handleSelectChange}
-                displayEmpty
-                renderValue={(val) => {
-                  if (val === "")
-                    return <em>{t("assignments.allEmployees")}</em>;
-                  const id = typeof val === "number" ? val : Number(val);
-                  const emp = employeeRows.find((x) => x.id === id);
-                  return emp ? getEmployeeLabel(emp) : `#${id}`;
-                }}
-              >
-                <MenuItem value="">
-                  <em>{t("assignments.allEmployees")}</em>
-                </MenuItem>
-                {employeeRows.map((e) => (
-                  <MenuItem key={e.id} value={e.id}>
-                    {getEmployeeLabel(e)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-
-          {selectedEmployee && (
-            <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-              <Box
-                sx={{
-                  ...cardBoxSx,
-                  "@keyframes slideDownFadeIn": {
-                    "0%": {
-                      opacity: 0,
-                      transform: "translateY(-12px)",
-                    },
-                    "100%": {
-                      opacity: 1,
-                      transform: "translateY(0)",
-                    },
-                  },
-                  animation: "slideDownFadeIn 0.25s ease-out",
-                  animationFillMode: "backwards",
-                  animationDelay: "0ms",
-                }}
-              >
-                <StatCard
-                  icon={<BadgeIcon />}
-                  label={t("assignments.employee.info")}
-                  value={getEmployeeLabel(selectedEmployee)}
-                  caption={
-                    selectedEmployee.oib
-                      ? `OIB: ${selectedEmployee.oib}`
-                      : t("assignments.employee.noOib")
-                  }
-                />
-              </Box>
-
-              <Box
-                sx={{
-                  ...cardBoxSx,
-                  "@keyframes slideDownFadeIn2": {
-                    "0%": {
-                      opacity: 0,
-                      transform: "translateY(-12px)",
-                    },
-                    "100%": {
-                      opacity: 1,
-                      transform: "translateY(0)",
-                    },
-                  },
-                  animation: "slideDownFadeIn2 0.30s ease-out",
-                  animationFillMode: "backwards",
-                  animationDelay: "80ms",
-                }}
-              >
-                <StatCard
-                  icon={<CalendarTodayIcon />}
-                  label={t("assignments.employee.dates")}
-                  value={
-                    selectedEmployee.dateOfBirth
-                      ? `${t("assignments.employee.birthDate")} ${formatIso(
-                          selectedEmployee.dateOfBirth
-                        )}`
-                      : t("assignments.employee.birthDateUnknown")
-                  }
-                  caption={
-                    selectedEmployee.employmentDate
-                      ? `${t("assignments.employee.employedFrom")} ${formatIso(
-                          selectedEmployee.employmentDate
-                        )}`
-                      : t("assignments.employee.notEmployed")
-                  }
-                />
-              </Box>
-
-              <Box
-                sx={{
-                  ...cardBoxSx,
-                  "@keyframes slideDownFadeIn3": {
-                    "0%": {
-                      opacity: 0,
-                      transform: "translateY(-12px)",
-                    },
-                    "100%": {
-                      opacity: 1,
-                      transform: "translateY(0)",
-                    },
-                  },
-                  animation: "slideDownFadeIn3 0.35s ease-out",
-                  animationFillMode: "backwards",
-                  animationDelay: "140ms",
-                }}
-              >
-                <StatCard
-                  icon={<AssignmentTurnedInIcon />}
-                  label={t("assignments.employee.assignments")}
-                  value={`${employeeAssignmentsCount.construction} · ${employeeAssignmentsCount.vehicles} · ${employeeAssignmentsCount.tools}`}
-                  caption={t("assignments.employee.assignmentsCaption")}
-                />
-              </Box>
-            </Box>
-          )}
-        </>
-      )}
-
-      {viewMode === "board" ? (
-        <AssignmentsBoardView
-          construction={{
-            rows: constructionRowsForBoard,
-            loading: isLoadingSites,
-          }}
-          vehicles={{
-            rows: vehicleRowsForBoard,
-            loading: isLoadingVehicles,
-          }}
-          tools={{
-            rows: toolRowsForBoard,
-            loading: isLoadingTools,
-          }}
-        />
-      ) : isLoadingTimeline ? (
+    <>
+      <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
         <Box
           sx={{
-            width: "100%",
-            mt: 1,
             display: "flex",
-            justifyContent: "center",
-            py: 4,
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 2,
           }}
         >
-          <CircularProgress />
-        </Box>
-      ) : items.length === 0 ? (
-        <Box sx={{ width: "100%", mt: 1 }}>
-          <Typography variant="body2" color="text.secondary">
-            {t("assignments.timeline.empty")}
+          <Typography variant="h5" fontWeight={600}>
+            {t("assignments.title")}
           </Typography>
+
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <IconButton
+              size="small"
+              onClick={() => setWeekStart((d) => addDays(d, -7))}
+              aria-label={t("assignments.timeline.prevWeek", "Previous week")}
+            >
+              <ChevronLeftIcon />
+            </IconButton>
+
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              {weekLabel}
+            </Typography>
+
+            <IconButton
+              size="small"
+              onClick={() => setWeekStart((d) => addDays(d, 7))}
+              aria-label={t("assignments.timeline.nextWeek", "Next week")}
+            >
+              <ChevronRightIcon />
+            </IconButton>
+          </Box>
         </Box>
-      ) : (
-        <Box sx={{ width: "100%", mt: 1 }}>
-          <TimelineView
-            lanes={lanes}
-            items={items}
-            startDate={startDate}
-            endDate={endDate}
+
+        {isAdmin && (
+          <>
+            <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+              <FormControl
+                size="small"
+                sx={{ minWidth: 280 }}
+                variant="outlined"
+              >
+                <InputLabel id="employee-select-label" shrink>
+                  {t("assignments.filterByEmployee")}
+                </InputLabel>
+
+                <Select<number | "">
+                  labelId="employee-select-label"
+                  id="employee-select"
+                  label={t("assignments.filterByEmployee")}
+                  value={selectedEmployeeId}
+                  onChange={handleSelectChange}
+                  displayEmpty
+                  renderValue={(val) => {
+                    if (val === "")
+                      return <em>{t("assignments.allEmployees")}</em>;
+                    const id = typeof val === "number" ? val : Number(val);
+                    const emp = employeeRows.find((x) => x.id === id);
+                    return emp ? getEmployeeLabel(emp) : `#${id}`;
+                  }}
+                >
+                  <MenuItem value="">
+                    <em>{t("assignments.allEmployees")}</em>
+                  </MenuItem>
+
+                  {employeeRows.map((e) => (
+                    <MenuItem key={e.id} value={e.id}>
+                      {getEmployeeLabel(e)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+            {selectedEmployee && (
+              <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                <Box
+                  sx={{
+                    flexBasis: {
+                      xs: "100%",
+                      sm: "calc(50% - 8px)",
+                      md: "calc(33.333% - 12px)",
+                    },
+                    flexGrow: 1,
+                  }}
+                >
+                  <StatCardDetail
+                    icon={<BadgeIcon />}
+                    label={t("assignments.employee.info")}
+                    value={getEmployeeLabel(selectedEmployee)}
+                    caption={
+                      selectedEmployee.oib
+                        ? `OIB: ${selectedEmployee.oib}`
+                        : t("assignments.employee.noOib")
+                    }
+                  />
+                </Box>
+
+                <Box
+                  sx={{
+                    flexBasis: {
+                      xs: "100%",
+                      sm: "calc(50% - 8px)",
+                      md: "calc(33.333% - 12px)",
+                    },
+                    flexGrow: 1,
+                  }}
+                >
+                  <StatCardDetail
+                    icon={<CalendarTodayIcon />}
+                    label={t("assignments.employee.dates")}
+                    value={
+                      selectedEmployee.dateOfBirth
+                        ? `${t(
+                            "assignments.employee.birthDate",
+                          )} ${formatIsoDate(selectedEmployee.dateOfBirth)}`
+                        : t("assignments.employee.birthDateUnknown")
+                    }
+                    caption={
+                      selectedEmployee.employmentDate
+                        ? `${t(
+                            "assignments.employee.employedFrom",
+                          )} ${formatIsoDate(selectedEmployee.employmentDate)}`
+                        : t("assignments.employee.notEmployed")
+                    }
+                  />
+                </Box>
+
+                <Box
+                  sx={{
+                    flexBasis: {
+                      xs: "100%",
+                      sm: "calc(50% - 8px)",
+                      md: "calc(33.333% - 12px)",
+                    },
+                    flexGrow: 1,
+                  }}
+                >
+                  <StatCardDetail
+                    icon={<AssignmentTurnedInIcon />}
+                    label={t("assignments.employee.assignments")}
+                    value={`${employeeAssignmentsCount.construction} · ${employeeAssignmentsCount.vehicles} · ${employeeAssignmentsCount.tools}`}
+                    caption={t("assignments.employee.assignmentsCaption")}
+                  />
+                </Box>
+              </Box>
+            )}
+          </>
+        )}
+
+        {isLoadingTimeline ? (
+          <Box
+            sx={{
+              width: "100%",
+              mt: 1,
+              display: "flex",
+              justifyContent: "center",
+              py: 4,
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : items.length === 0 ? (
+          <Box sx={{ width: "100%", mt: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              {t("assignments.timeline.empty")}
+            </Typography>
+          </Box>
+        ) : (
+          <Box sx={{ width: "100%", mt: 1 }}>
+            <TimelineView
+              lanes={lanes}
+              items={items}
+              startDate={startDate}
+              endDate={endDate}
+              onItemClick={({ item, dayIso }) => {
+                if (item.meta?.type !== "construction") return;
+
+                const constructionSiteId = item.meta?.constructionSiteId;
+                const employeeIdFromLane =
+                  item.laneId === "unassigned" ? null : Number(item.laneId);
+                const employeeIdResolved =
+                  item.meta?.employeeId ?? employeeIdFromLane;
+
+                if (!constructionSiteId || !employeeIdResolved) return;
+
+                const existing: ConstructionSiteEmployeeWorkLogDay | undefined =
+                  employeeSiteLogs?.find((x) => x.workDate === dayIso);
+
+                setWorkLogDraft({
+                  constructionSiteId,
+                  employeeId: employeeIdResolved,
+                  workDate: dayIso,
+                  startTime: existing?.startTime ?? "",
+                  endTime: existing?.endTime ?? "",
+                });
+                setWorkLogOpen(true);
+              }}
+            />
+          </Box>
+        )}
+      </Stack>
+
+      <AssignTaskDialog
+        open={workLogOpen}
+        onClose={closeWorkLog}
+        title={t("workLogs.dialog.title", "Log hours")}
+        subtitle={t("workLogs.dialog.subtitle", "Add start and end time")}
+        headerIcon={<AccessTimeIcon sx={{ fontSize: 18 }} />}
+        referenceText={
+          workLogDraft
+            ? `${t("workLogs.dialog.employee", "Employee")} #${
+                workLogDraft.employeeId
+              }`
+            : undefined
+        }
+        previewTitle={t("workLogs.dialog.detailsTitle", "Details")}
+        previewSubtitle={
+          workLogDraft
+            ? `${t("workLogs.dialog.site", "Construction site")} #${
+                workLogDraft.constructionSiteId
+              }`
+            : ""
+        }
+        dueLabel={workLogDraft?.workDate ?? undefined}
+        dueTone="info"
+        previewFields={
+          workLogDraft
+            ? [
+                {
+                  label: t("workLogs.dialog.preview.employeeId", "Employee"),
+                  value: `#${workLogDraft.employeeId}`,
+                  minWidth: 160,
+                },
+                {
+                  label: t("workLogs.dialog.preview.siteId", "Site"),
+                  value: `#${workLogDraft.constructionSiteId}`,
+                  minWidth: 160,
+                },
+              ]
+            : []
+        }
+        submitText={t("common.save", "Save")}
+        cancelText={t("common.cancel", "Cancel")}
+        onSubmit={handleSaveWorkLog}
+        submitting={upsertWorkLogs.isPending}
+        submitDisabled={!workLogDraft || upsertWorkLogs.isPending}
+        formDisabled={upsertWorkLogs.isPending}
+      >
+        <Stack spacing={1.75}>
+          <TextField
+            label={t("workLogs.dialog.date", "Date")}
+            type="date"
+            value={workLogDraft?.workDate ?? ""}
+            onChange={(e) => {
+              const v = e.target.value;
+              setWorkLogDraft((p) => (p ? { ...p, workDate: v } : p));
+            }}
+            size="small"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
           />
-        </Box>
-      )}
-    </Stack>
+
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 1.5,
+            }}
+          >
+            <TextField
+              label={t("workLogs.dialog.startTime", "Start")}
+              type="time"
+              value={(workLogDraft?.startTime ?? "").slice(0, 5)}
+              onChange={(e) =>
+                setWorkLogDraft((p) =>
+                  p ? { ...p, startTime: e.target.value } : p,
+                )
+              }
+              size="small"
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              inputProps={{ step: 60 }}
+            />
+
+            <TextField
+              label={t("workLogs.dialog.endTime", "End")}
+              type="time"
+              value={(workLogDraft?.endTime ?? "").slice(0, 5)}
+              onChange={(e) =>
+                setWorkLogDraft((p) =>
+                  p ? { ...p, endTime: e.target.value } : p,
+                )
+              }
+              size="small"
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              inputProps={{ step: 60 }}
+            />
+          </Box>
+
+          <Typography variant="caption" sx={{ color: "#6B7280" }}>
+            {t(
+              "workLogs.dialog.hint",
+              "Times are saved in 24-hour format with minute precision.",
+            )}
+          </Typography>
+        </Stack>
+      </AssignTaskDialog>
+    </>
   );
 };
 

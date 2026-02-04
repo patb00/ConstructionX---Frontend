@@ -1,32 +1,34 @@
 import { useTranslation } from "react-i18next";
-import type { NewToolRequest } from "..";
 import {
   SmartForm,
   type FieldConfig,
 } from "../../../components/ui/smartform/SmartForm";
-
-type Option = { label: string; value: any };
+import type { NewToolRequest } from "..";
+import { useEmployeeOptions } from "../../constants/options/useEmployeeOptions";
+import { useToolCategoryOptions } from "../../constants/options/useToolCategoryOptions";
+import { useToolStatusOptions } from "../../constants/options/useToolStatusOptions";
+import { useToolConditionOptions } from "../../constants/options/useToolConditionOptions";
 
 type Props = {
   defaultValues?: Partial<NewToolRequest>;
   onSubmit: (values: NewToolRequest) => void | Promise<void>;
   busy?: boolean;
-  categoryOptions: Option[];
-  employeeOptions: Option[];
-  statusOptions: Option[];
-  conditionOptions: Option[];
 };
 
-export default function ToolForm({
-  defaultValues,
-  onSubmit,
-  busy,
-  categoryOptions,
-  employeeOptions,
-  statusOptions,
-  conditionOptions,
-}: Props) {
+export default function ToolForm({ defaultValues, onSubmit, busy }: Props) {
   const { t } = useTranslation();
+
+  const { options: categoryOptions, isLoading: categoriesLoading } =
+    useToolCategoryOptions();
+
+  const { options: employeeOptions, isLoading: employeesLoading } =
+    useEmployeeOptions();
+
+  const { options: statusOptions, isLoading: statusesLoading } =
+    useToolStatusOptions();
+
+  const { options: conditionOptions, isLoading: conditionsLoading } =
+    useToolConditionOptions();
 
   const fields: FieldConfig<NewToolRequest>[] = [
     { name: "name", label: t("tools.form.field.name"), required: true },
@@ -46,7 +48,6 @@ export default function ToolForm({
       type: "number",
       required: true,
     },
-
     {
       name: "status",
       label: t("tools.form.field.status"),
@@ -70,11 +71,17 @@ export default function ToolForm({
       name: "responsibleEmployeeId",
       label: t("tools.form.field.responsibleEmployeeId"),
       type: "select",
-      required: false,
       options: employeeOptions,
     },
     { name: "description", label: t("tools.form.field.description") },
   ];
+
+  const isBusy =
+    busy ||
+    categoriesLoading ||
+    employeesLoading ||
+    statusesLoading ||
+    conditionsLoading;
 
   return (
     <SmartForm<NewToolRequest>
@@ -87,22 +94,8 @@ export default function ToolForm({
         ["status", "condition"],
         ["responsibleEmployeeId", "description"],
       ]}
-      defaultValues={{
-        name: "",
-        inventoryNumber: null as any,
-        serialNumber: null as any,
-        manufacturer: null as any,
-        model: null as any,
-        purchaseDate: "",
-        purchasePrice: 0,
-        status: null as any,
-        condition: null as any,
-        description: null as any,
-        toolCategoryId: categoryOptions?.[0]?.value ?? 0,
-        responsibleEmployeeId: null as any,
-        ...defaultValues,
-      }}
-      busy={busy}
+      defaultValues={defaultValues}
+      busy={isBusy}
       submitLabel={t("tools.form.submit")}
       onSubmit={onSubmit}
     />

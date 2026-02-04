@@ -1,9 +1,11 @@
 import { useMemo, useState, useCallback } from "react";
 import { Box } from "@mui/material";
 import { type GridColDef } from "@mui/x-data-grid";
+import { type GridRowParams } from "@mui/x-data-grid-pro";
 
 import type { JobPosition } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
+import { GridDetailPanel } from "../../../../components/ui/datagrid/GridDetailPanel";
 import { useJobPositions } from "../hooks/useJobPositions";
 import { useDeleteJobPosition } from "../hooks/useDeleteJobPosition";
 import { useNavigate } from "react-router-dom";
@@ -133,17 +135,37 @@ export default function JobPositionsTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<JobPosition>) => {
+      return (
+        <GridDetailPanel<JobPosition>
+          row={params.row}
+          columns={jobPositionsColumns as GridColDef<JobPosition>[]}
+        />
+      );
+    },
+    [jobPositionsColumns]
+  );
+
+  const getDetailPanelHeight = useCallback(
+    (_params: GridRowParams<JobPosition>) => 220,
+    []
+  );
+
   if (error) return <div>{t("jobPositions.list.error")}</div>;
 
   return (
     <>
       <ReusableDataGrid<JobPosition>
+        storageKey="job_positions"
         rows={jobPositionsRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}
         pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
-        listViewColumns={["id", "name", "actions"]}
+        getDetailPanelContent={renderDetailPanel}
+        getDetailPanelHeight={getDetailPanelHeight}
+        detailPanelMode="mobile-only"
       />
 
       <PermissionGate guard={{ permission: "Permission.JobPositions.Delete" }}>

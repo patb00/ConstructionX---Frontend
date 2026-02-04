@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   GridToolbarContainer,
   GridToolbarQuickFilter,
@@ -9,6 +8,7 @@ import {
   type GridCsvExportOptions,
   type GridPrintExportOptions,
 } from "@mui/x-data-grid";
+import { memo } from "react";
 
 export type DataGridToolbarProps = {
   color?: string;
@@ -51,4 +51,4 @@ function DataGridToolbarBase({
   );
 }
 
-export const DataGridToolbar = React.memo(DataGridToolbarBase);
+export const DataGridToolbar = memo(DataGridToolbarBase);

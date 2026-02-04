@@ -9,10 +9,14 @@ import { useAuthStore } from "../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { useForgotPassword } from "../../administration/users/hooks/useForgotPassword";
+import { LoginLanguageSwitcher } from "../../../components/ui/languague-switch/LoginLanguagueSwticher";
+import { useTranslation } from "react-i18next";
 
 type AuthMode = "sign-in" | "forgot-password";
 
 export default function LoginRoute() {
+  const { t } = useTranslation();
+
   const [mode, setMode] = useState<AuthMode>("sign-in");
   const isForgot = mode === "forgot-password";
 
@@ -35,7 +39,9 @@ export default function LoginRoute() {
     const password = String(form.get("password") ?? "").trim();
 
     if (!formTenant || !username || !password) {
-      enqueueSnackbar("Molimo ispunite sve podatke.", { variant: "warning" });
+      enqueueSnackbar(t("auth.login.validation.fillAll"), {
+        variant: "warning",
+      });
       return;
     }
 
@@ -44,14 +50,14 @@ export default function LoginRoute() {
       if (tenant !== formTenant) setTenantState(formTenant);
 
       await doLogin({ username, password });
-      enqueueSnackbar("Prijava uspješna!", { variant: "success" });
+      enqueueSnackbar(t("auth.login.success"), { variant: "success" });
       navigate("/app/dashboard");
     } catch (err: any) {
       const msg =
         err?.message ||
         err?.Messages?.[0] ||
         err?.Message ||
-        "Neuspjela prijava.";
+        t("auth.login.error");
       enqueueSnackbar(String(msg), { variant: "error" });
     }
   };
@@ -65,7 +71,9 @@ export default function LoginRoute() {
     const email = String(form.get("email") ?? "").trim();
 
     if (!formTenant || !email) {
-      enqueueSnackbar("Molimo unesite tenant i email.", { variant: "warning" });
+      enqueueSnackbar(t("auth.forgot.validation.tenantAndEmail"), {
+        variant: "warning",
+      });
       return;
     }
 
@@ -79,11 +87,31 @@ export default function LoginRoute() {
       });
 
       setMode("sign-in");
-    } catch {}
+      enqueueSnackbar(t("auth.forgot.success"), { variant: "success" });
+    } catch {
+      enqueueSnackbar(t("auth.forgot.error"), { variant: "error" });
+    }
   };
 
   return (
-    <Box className={`container ${isForgot ? "sign-up-mode" : ""}`}>
+    <Box
+      className={`container ${isForgot ? "sign-up-mode" : ""}`}
+      sx={{ position: "relative" }}
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: 16,
+          right: 24,
+          zIndex: 20,
+          opacity: 0.85,
+          "&:hover": { opacity: 1 },
+          display: { xs: "none", sm: "none", md: "block" },
+        }}
+      >
+        <LoginLanguageSwitcher />
+      </Box>
+
       <Box className="forms-container">
         <Box className="signin-signup">
           <SignInForm

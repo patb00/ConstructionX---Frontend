@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Box,
   Stack,
@@ -8,23 +7,18 @@ import {
   Button,
   MenuItem,
   Typography,
+  IconButton,
+  CircularProgress,
 } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 
 import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
-
-function toDateOnly(v?: string | Date | null) {
-  if (!v) return "";
-  if (v instanceof Date && !isNaN(v.getTime())) {
-    const y = v.getFullYear();
-    const m = String(v.getMonth() + 1).padStart(2, "0");
-    const d = String(v.getDate()).padStart(2, "0");
-    return `${y}-${m}-${d}`;
-  }
-  const s = String(v);
-  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-  const datePart = s.split("T")[0];
-  return /^\d{4}-\d{2}-\d{2}$/.test(datePart) ? datePart : "";
-}
+import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { buildInitial, toDateOnly } from "../../../utils/smartForm";
+import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
+import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
+import type { DateRange } from "@mui/x-date-pickers-pro/models";
 
 export type FieldType =
   | "text"
@@ -33,9 +27,11 @@ export type FieldType =
   | "number"
   | "datetime-local"
   | "date"
+  | "date-range"
   | "checkbox"
   | "textarea"
-  | "select";
+  | "select"
+  | "file";
 
 export type FieldConfig<TValues extends Record<string, any>> = {
   name: keyof TValues & string;
@@ -64,6 +60,14 @@ export type FieldConfig<TValues extends Record<string, any>> = {
       "checked" | "onChange"
     >;
   };
+
+  fileConfig?: {
+    file?: File | null;
+    onChange?: (file: File | null) => void;
+    accept?: string;
+    existingFileName?: string | null;
+    onDownload?: () => void;
+  };
 };
 
 export type SmartFormProps<TValues extends Record<string, any>> = {
@@ -74,6 +78,7 @@ export type SmartFormProps<TValues extends Record<string, any>> = {
   busy?: boolean;
   submitLabel?: string;
   formProps?: Omit<React.ComponentProps<typeof Box>, "component" | "onSubmit">;
+  renderFooterActions?: (values: TValues) => React.ReactNode;
 };
 
 export function SmartForm<TValues extends Record<string, any>>({
@@ -84,54 +89,63 @@ export function SmartForm<TValues extends Record<string, any>>({
   busy,
   submitLabel = "Spremi",
   formProps,
+  renderFooterActions,
 }: SmartFormProps<TValues>) {
-  const initial = React.useMemo(() => {
-    const base: Record<string, any> = {};
+  const [values, setValues] = useState<TValues>(() =>
+    buildInitial(fields, defaultValues),
+  );
+  const { t } = useTranslation();
+  const [hasInteracted, setHasInteracted] = useState(false);
 
-    for (const f of fields) {
-      const incoming =
-        (defaultValues as any)?.[f.name] ??
-        f.defaultValue ??
-        (f.type === "checkbox" ? false : "");
-
-      if (f.transformIn) {
-        base[f.name] = f.transformIn(incoming, defaultValues ?? {});
-      } else if (f.type === "datetime-local") {
-        base[f.name] = incoming;
-      } else if (f.type === "date") {
-        base[f.name] = toDateOnly(incoming);
-      } else if (f.type === "checkbox") {
-        base[f.name] = Boolean(incoming);
-      } else {
-        base[f.name] = incoming ?? "";
-      }
+  useEffect(() => {
+    const hasDefaults =
+      defaultValues && Object.keys(defaultValues as object).length > 0;
+    if (!hasDefaults) return;
+    if (hasInteracted) {
+      return;
     }
 
-    return base as TValues;
-  }, [fields, defaultValues]);
-
-  const [values, setValues] = React.useState<TValues>(initial);
-
-  const defaultsKey = React.useMemo(
-    () => JSON.stringify(defaultValues ?? {}),
-    [defaultValues]
-  );
+    setValues(buildInitial(fields, defaultValues));
+  }, [defaultValues, fields, hasInteracted]);
 
   const update =
     (name: keyof TValues & string) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const isCheckbox = e.target.type === "checkbox";
       const next: any = isCheckbox ? (e.target as any).checked : e.target.value;
+      setHasInteracted(true);
       setValues((v) => ({ ...v, [name]: next }));
     };
 
-  // ---------------------------------------------------------------------------
-  // FIELD RENDERING
-  // ---------------------------------------------------------------------------
+  const isRequiredFilled = useMemo(() => {
+    return fields.every((f) => {
+      if (!f.required) return true;
+      if (f.type === "file") return true;
+
+      const value = (values as any)[f.name];
+
+      if (f.type === "checkbox") {
+        return value === true;
+      }
+
+      if (f.type === "number") {
+        return value !== null && value !== "";
+      }
+
+      if (f.type === "date-range") {
+        const v = (values as any)[f.name] as DateRange<Date> | null | undefined;
+        const start = v?.[0];
+        const end = v?.[1];
+        return !!start && !!end;
+      }
+
+      return value !== null && value !== undefined && value !== "";
+    });
+  }, [fields, values]);
+
   const renderField = (f: FieldConfig<TValues>) => {
     const type = f.type ?? "text";
 
-    // CHECKBOX
     if (type === "checkbox") {
       const { checkboxProps, ...restProps } = (f.props ?? {}) as any;
 
@@ -179,17 +193,102 @@ export function SmartForm<TValues extends Record<string, any>>({
       ...fieldSx,
     };
 
-    // -------------------------------------------------------------------------
-    // DATE PICKER (type: "date")
-    // -------------------------------------------------------------------------
+    if (type === "file") {
+      const fileCfg = f.fileConfig;
+      const hasFile = !!fileCfg?.file || !!fileCfg?.existingFileName;
+      const fileName =
+        fileCfg?.file?.name ||
+        fileCfg?.existingFileName ||
+        t("common.fileInput.noFile");
+
+      const inputId = `${f.name}-file-input`;
+
+      return (
+        <Box key={f.name} sx={{ flex: 1, minWidth: 0 }}>
+          <Typography
+            variant="caption"
+            sx={{ fontWeight: 500, color: "text.secondary" }}
+          >
+            {f.label}
+          </Typography>
+
+          <Box
+            sx={{
+              mt: 0.5,
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+            }}
+          >
+            <Box
+              component="label"
+              htmlFor={inputId}
+              sx={{
+                display: "inline-block",
+                px: 1.5,
+                py: 0.5,
+                borderRadius: 0.5,
+                border: "1px solid rgba(0,0,0,0.23)",
+                backgroundColor: "background.paper",
+                fontSize: "0.8125rem",
+                cursor: "pointer",
+                lineHeight: 1.5,
+                userSelect: "none",
+              }}
+            >
+              {t("common.fileInput.choose")}
+            </Box>
+
+            <input
+              id={inputId}
+              type="file"
+              accept={fileCfg?.accept}
+              onChange={(e) => {
+                const file = e.target.files?.[0] ?? null;
+                fileCfg?.onChange?.(file);
+              }}
+              style={{
+                position: "absolute",
+                opacity: 0,
+                width: 0,
+                height: 0,
+                pointerEvents: "none",
+              }}
+            />
+
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, flex: 1, minWidth: 0 }}>
+              <Typography
+                variant="body2"
+                color={hasFile ? "text.primary" : "text.secondary"}
+                sx={{ fontStyle: hasFile ? "normal" : "italic", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+              >
+                {fileName}
+              </Typography>
+
+              {fileCfg?.existingFileName && fileCfg?.onDownload && (
+                <IconButton
+                  size="small"
+                  onClick={fileCfg.onDownload}
+                  title={t("common.fileInput.download")}
+                  sx={{ color: "primary.main", flexShrink: 0 }}
+                >
+                  <DownloadIcon fontSize="small" />
+                </IconButton>
+              )}
+            </Box>
+          </Box>
+        </Box>
+      );
+    }
+
     if (type === "date") {
       const raw = (values as any)[f.name];
       const dateValue =
         raw && typeof raw === "string"
           ? new Date(raw)
           : raw instanceof Date
-          ? raw
-          : null;
+            ? raw
+            : null;
 
       return (
         <Box key={f.name} sx={{ flex: 1, minWidth: 0 }}>
@@ -208,6 +307,7 @@ export function SmartForm<TValues extends Record<string, any>>({
           <DatePicker
             value={isNaN(dateValue as any) ? null : dateValue}
             onChange={(newValue) => {
+              setHasInteracted(true);
               setValues((v) => ({
                 ...v,
                 [f.name]: toDateOnly(newValue ?? null),
@@ -229,17 +329,14 @@ export function SmartForm<TValues extends Record<string, any>>({
       );
     }
 
-    // -------------------------------------------------------------------------
-    // DATETIME PICKER (type: "datetime-local")
-    // -------------------------------------------------------------------------
     if (type === "datetime-local") {
       const raw = (values as any)[f.name];
       const dateValue =
         typeof raw === "string"
           ? new Date(raw)
           : raw instanceof Date
-          ? raw
-          : null;
+            ? raw
+            : null;
 
       return (
         <Box key={f.name} sx={{ flex: 1, minWidth: 0 }}>
@@ -258,6 +355,7 @@ export function SmartForm<TValues extends Record<string, any>>({
           <DateTimePicker
             value={isNaN(dateValue as any) ? null : dateValue}
             onChange={(newValue) => {
+              setHasInteracted(true);
               setValues((v) => ({
                 ...v,
                 [f.name]: newValue ? newValue.toISOString() : null,
@@ -279,7 +377,47 @@ export function SmartForm<TValues extends Record<string, any>>({
       );
     }
 
-    // SELECT
+    if (type === "date-range") {
+      const raw = (values as any)[f.name] as DateRange<Date> | null | undefined;
+      const range: DateRange<Date> = Array.isArray(raw) ? raw : [null, null];
+
+      return (
+        <Box key={f.name} sx={{ flex: 1, minWidth: 0 }}>
+          <Typography
+            variant="caption"
+            sx={{ fontWeight: 500, color: "text.secondary" }}
+          >
+            {f.label}
+            {f.required && (
+              <Box component="span" sx={{ color: "error.main", ml: 0.25 }}>
+                *
+              </Box>
+            )}
+          </Typography>
+
+          <DateRangePicker
+            value={range}
+            onChange={(newValue) => {
+              setHasInteracted(true);
+              setValues((v) => ({ ...v, [f.name]: newValue }));
+            }}
+            calendars={2}
+            slots={{ field: SingleInputDateRangeField }}
+            slotProps={{
+              textField: {
+                size: "small",
+                fullWidth: true,
+                required: f.required,
+                sx: commonSx,
+                label: undefined,
+                ...textFieldProps,
+              },
+            }}
+          />
+        </Box>
+      );
+    }
+
     if (type === "select") {
       return (
         <Box key={f.name} sx={{ flex: 1, minWidth: 0 }}>
@@ -314,7 +452,6 @@ export function SmartForm<TValues extends Record<string, any>>({
       );
     }
 
-    // DEFAULT INPUT (text, email, password, number, textarea)
     return (
       <Box key={f.name} sx={{ flex: 1, minWidth: 0 }}>
         <Typography
@@ -346,13 +483,13 @@ export function SmartForm<TValues extends Record<string, any>>({
     );
   };
 
-  const fieldsByName = React.useMemo(() => {
+  const fieldsByName = useMemo(() => {
     const map = new Map<string, FieldConfig<TValues>>();
     fields.forEach((f) => map.set(f.name, f));
     return map;
   }, [fields]);
 
-  const layoutRows: FieldConfig<TValues>[][] = React.useMemo(() => {
+  const layoutRows: FieldConfig<TValues>[][] = useMemo(() => {
     if (!rows || rows.length === 0) return fields.map((f) => [f]);
 
     return rows
@@ -366,6 +503,8 @@ export function SmartForm<TValues extends Record<string, any>>({
     const out: Record<string, any> = {};
 
     for (const f of fields) {
+      if (f.type === "file") continue;
+
       const raw = (values as any)[f.name];
 
       if (f.transformOut) {
@@ -374,6 +513,8 @@ export function SmartForm<TValues extends Record<string, any>>({
         out[f.name] = raw ? raw : null;
       } else if (f.type === "date") {
         out[f.name] = raw ? toDateOnly(raw) : null;
+      } else if (f.type === "date-range") {
+        out[f.name] = raw ?? [null, null];
       } else {
         out[f.name] = raw;
       }
@@ -381,10 +522,6 @@ export function SmartForm<TValues extends Record<string, any>>({
 
     onSubmit(out as TValues);
   };
-
-  React.useEffect(() => {
-    setValues(initial);
-  }, [defaultsKey, initial]);
 
   return (
     <Box
@@ -400,14 +537,27 @@ export function SmartForm<TValues extends Record<string, any>>({
           </Stack>
         ))}
 
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mt: 1,
+            gap: 2,
+          }}
+        >
+          <Box>{renderFooterActions ? renderFooterActions(values) : null}</Box>
+
           <Button
             type="submit"
             variant="contained"
-            disabled={busy}
+            disabled={busy || !isRequiredFilled}
             size="small"
           >
-            {busy ? "Spremanje" : submitLabel}
+            {busy && (
+              <CircularProgress size={16} sx={{ mr: 1, color: "inherit" }} />
+            )}
+            {submitLabel}
           </Button>
         </Box>
       </Stack>

@@ -7,5 +7,5 @@ export function normalizeName(s: string) {
     .trim();
 }
 export function fullName(first?: string, last?: string) {
-  return normalizeName(`${first ?? ""} ${last ?? ""}`);
+  return [first, last].filter(Boolean).join(" ");
 }

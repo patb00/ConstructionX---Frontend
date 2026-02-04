@@ -1,24 +1,24 @@
 import { Button, Paper, Stack, Typography } from "@mui/material";
-import ConstructionSiteForm from "./ConstructionSiteForm";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
-import { useAddConstructionSite } from "../hooks/useAddConstructionSite";
-import { useEmployees } from "../../administration/employees/hooks/useEmployees";
 import { useTranslation } from "react-i18next";
+
+import ConstructionSiteForm from "./ConstructionSiteForm";
+import { useAddConstructionSite } from "../hooks/useAddConstructionSite";
+
+import type { ConstructionSiteFormValues } from "..";
+import { useConstructionSiteStatusOptions } from "../../constants/enum/useConstructionSiteStatusOptions";
 
 export default function ConstructionSiteCreatePage() {
   const { t } = useTranslation();
-  const { mutateAsync, isPending } = useAddConstructionSite();
   const navigate = useNavigate();
-  const { employeeRows } = useEmployees();
+  const statusOptions = useConstructionSiteStatusOptions();
+  const { mutateAsync: createSite, isPending } = useAddConstructionSite();
 
-  const managerOptions = [
-    { value: null, label: t("constructionSites.form.manager.none") },
-    ...(employeeRows ?? []).map((e: any) => ({
-      value: e.id,
-      label: `${e.firstName ?? ""} ${e.lastName ?? ""}`.trim(),
-    })),
-  ];
+  const handleSubmit = async (values: ConstructionSiteFormValues) => {
+    await createSite(values as any);
+    navigate("/app/constructionSites");
+  };
 
   return (
     <Stack spacing={2}>
@@ -26,6 +26,7 @@ export default function ConstructionSiteCreatePage() {
         <Typography variant="h5" fontWeight={600}>
           {t("constructionSites.create.title")}
         </Typography>
+
         <Button
           size="small"
           variant="outlined"
@@ -36,20 +37,21 @@ export default function ConstructionSiteCreatePage() {
           {t("constructionSites.create.back")}
         </Button>
       </Stack>
+
       <Paper
         elevation={0}
         sx={{
           border: (t) => `1px solid ${t.palette.divider}`,
-          height: "100%",
-          width: "100%",
           p: 2,
         }}
       >
         <ConstructionSiteForm
-          onSubmit={mutateAsync}
+          onSubmit={handleSubmit}
           busy={isPending}
-          managerOptions={managerOptions}
+          showStatus
+          statusOptions={statusOptions}
         />
+        ;
       </Paper>
     </Stack>
   );

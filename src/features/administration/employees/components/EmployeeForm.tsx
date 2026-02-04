@@ -3,8 +3,10 @@ import {
   type FieldConfig,
 } from "../../../../components/ui/smartform/SmartForm";
 import type { EmployeeFormValues } from "..";
-import { useJobPositionOptions } from "../hooks/useJobPositionOptions";
+import { useJobPositionOptions } from "../../../constants/options/useJobPositionOptions";
 import { useTranslation } from "react-i18next";
+import { useClothingSizeOptions } from "../../../constants/options/useClothingSizeOptions";
+import { useGloveSizeOptions } from "../../../constants/options/useGlovesOptions";
 
 type Props = {
   defaultValues?: Partial<EmployeeFormValues>;
@@ -14,8 +16,10 @@ type Props = {
 
 export default function EmployeeForm({ defaultValues, onSubmit, busy }: Props) {
   const { t } = useTranslation();
-  const { options: jobPositionOptions } = useJobPositionOptions();
-
+  const { options: jobPositionOptions, isLoading: loadingJobs } =
+    useJobPositionOptions();
+  const clothingOptions = useClothingSizeOptions();
+  const gloveOptions = useGloveSizeOptions();
   const fields: FieldConfig<EmployeeFormValues>[] = [
     {
       name: "firstName",
@@ -25,6 +29,19 @@ export default function EmployeeForm({ defaultValues, onSubmit, busy }: Props) {
     {
       name: "lastName",
       label: t("employees.form.field.lastName"),
+      required: true,
+    },
+    {
+      name: "email",
+      label: t("employees.form.field.email"),
+      required: true,
+      props: {
+        inputProps: { type: "email", inputMode: "email" },
+      },
+    },
+    {
+      name: "phoneNumber",
+      label: t("employees.form.field.phoneNumber"),
       required: true,
     },
     {
@@ -62,33 +79,24 @@ export default function EmployeeForm({ defaultValues, onSubmit, busy }: Props) {
       name: "clothingSize",
       label: t("employees.form.field.clothingSize"),
       type: "select",
-      options: [
-        { label: "XS", value: "XS" },
-        { label: "S", value: "S" },
-        { label: "M", value: "M" },
-        { label: "L", value: "L" },
-        { label: "XL", value: "XL" },
-        { label: "XXL", value: "XXL" },
-      ],
+      options: clothingOptions,
     },
     {
       name: "gloveSize",
       label: t("employees.form.field.gloveSize"),
       type: "select",
-      options: [
-        { label: "6", value: "6" },
-        { label: "7", value: "7" },
-        { label: "8", value: "8" },
-        { label: "9", value: "9" },
-        { label: "10", value: "10" },
-        { label: "11", value: "11" },
-      ],
+      options: gloveOptions,
     },
     {
       name: "shoeSize",
       label: t("employees.form.field.shoeSize"),
       type: "number",
       props: { inputProps: { min: 20, max: 55 } },
+    },
+    {
+      name: "description",
+      label: t("employees.form.field.description"),
+      props: { minRows: 3 },
     },
     {
       name: "jobPositionId",
@@ -106,33 +114,16 @@ export default function EmployeeForm({ defaultValues, onSubmit, busy }: Props) {
       fields={fields}
       rows={[
         ["firstName", "lastName"],
+        ["email", "phoneNumber"],
         ["oib"],
         ["dateOfBirth", "employmentDate", "terminationDate"],
         ["hasMachineryLicense"],
         ["clothingSize", "gloveSize", "shoeSize"],
+        ["description"],
         ["jobPositionId"],
       ]}
-      defaultValues={{
-        firstName: "",
-        lastName: "",
-        oib: "",
-        dateOfBirth: defaultValues?.dateOfBirth,
-        employmentDate: defaultValues?.employmentDate,
-        terminationDate: defaultValues?.terminationDate,
-        hasMachineryLicense: defaultValues?.hasMachineryLicense ?? false,
-        clothingSize: defaultValues?.clothingSize ?? "",
-        gloveSize: defaultValues?.gloveSize ?? "",
-        shoeSize:
-          typeof defaultValues?.shoeSize === "number"
-            ? defaultValues.shoeSize
-            : ("" as unknown as number),
-        jobPositionId:
-          typeof defaultValues?.jobPositionId === "number"
-            ? defaultValues.jobPositionId
-            : "",
-        ...defaultValues,
-      }}
-      busy={busy}
+      defaultValues={defaultValues}
+      busy={busy || loadingJobs}
       submitLabel={t("employees.form.submit")}
       onSubmit={onSubmit}
     />

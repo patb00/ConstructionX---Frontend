@@ -1,6 +1,6 @@
-import * as React from "react";
 import { Box, Chip } from "@mui/material";
 import { type GridColDef } from "@mui/x-data-grid";
+import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
 
 import { useActivateTenant } from "../hooks/useActivateTenant";
@@ -8,9 +8,11 @@ import { useDeactivateTenant } from "../hooks/useDeactivateTenant";
 import { useTenants } from "../hooks/useTenants";
 import type { Tenant } from "..";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
+import { GridDetailPanel } from "../../../../components/ui/datagrid/GridDetailPanel";
 import { useCan } from "../../../../lib/permissions";
 import { useTranslation } from "react-i18next";
 import { RowActions } from "../../../../components/ui/datagrid/RowActions";
+import { useCallback, useMemo } from "react";
 
 export default function TenantsTable() {
   const { t } = useTranslation();
@@ -20,7 +22,7 @@ export default function TenantsTable() {
   const navigate = useNavigate();
   const can = useCan();
 
-  const columnsWithActions = React.useMemo<GridColDef<Tenant>[]>(() => {
+  const columnsWithActions = useMemo<GridColDef<Tenant>[]>(() => {
     const base = tenantsColumns.map((c) => {
       if (c.field === "validUpToDate") {
         return {
@@ -32,8 +34,11 @@ export default function TenantsTable() {
           type: "dateTime",
           valueGetter: (_v, row) =>
             row.validUpToDate ? new Date(row.validUpToDate) : null,
-          sortComparator: (a, b) =>
-            new Date(a as any).getTime() - new Date(b as any).getTime(),
+          sortComparator: (a, b) => {
+            const da = a ? new Date(a as any).getTime() : 0;
+            const db = b ? new Date(b as any).getTime() : 0;
+            return da - db;
+          },
           renderCell: (params) => {
             const tRow = params.row;
             const val = tRow.validUpToDate
@@ -174,15 +179,36 @@ export default function TenantsTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<Tenant>) => {
+      return (
+        <GridDetailPanel<Tenant>
+          row={params.row}
+          columns={tenantsColumns as GridColDef<Tenant>[]}
+        />
+      );
+    },
+    [tenantsColumns]
+  );
+
+  const getDetailPanelHeight = useCallback(
+    (_params: GridRowParams<Tenant>) => 220,
+    []
+  );
+
   if (error) return <div>{t("tenants.list.error")}</div>;
 
   return (
     <ReusableDataGrid<Tenant>
+      storageKey="tenants"
       rows={tenantsRows}
       columns={columnsWithActions}
       getRowId={(r) => r.identifier}
       pinnedRightField={hasActions ? "actions" : undefined}
       loading={!!isLoading}
+      getDetailPanelContent={renderDetailPanel}
+      getDetailPanelHeight={getDetailPanelHeight}
+      detailPanelMode="mobile-only"
     />
   );
 }

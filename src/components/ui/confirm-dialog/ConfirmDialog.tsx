@@ -33,13 +33,11 @@ export default function ConfirmDialog({
   onClose,
   onConfirm,
 }: ConfirmDialogProps) {
-  // This is only used by MUI when the user clicks backdrop or presses ESC
   const handleDialogClose = () => {
     if (loading || disableBackdropClose) return;
     onClose();
   };
 
-  // For buttons / close icon we usually only block when loading
   const handleExplicitClose = () => {
     if (loading) return;
     onClose();
@@ -64,7 +62,6 @@ export default function ConfirmDialog({
         },
       }}
     >
-      {/* Header */}
       <Box
         sx={{
           display: "flex",
@@ -108,7 +105,6 @@ export default function ConfirmDialog({
         </IconButton>
       </Box>
 
-      {/* Body */}
       {description && (
         <DialogContent sx={{ p: 0, mb: 2 }}>
           <Typography
@@ -121,14 +117,12 @@ export default function ConfirmDialog({
         </DialogContent>
       )}
 
-      {/* Actions */}
       <DialogActions
         sx={{
           p: 0,
           mt: 1,
           display: "flex",
           justifyContent: "flex-end",
-          gap: 1.5,
         }}
       >
         <Button

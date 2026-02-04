@@ -6,6 +6,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import type { FormEvent } from "react";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   className?: string;
@@ -24,21 +25,21 @@ export function SignInForm({
   tenantValue = "",
   onTenantChange,
 }: Props) {
+  const { t } = useTranslation();
   const hasError = Boolean(serverError);
 
   return (
     <Box component="form" className={className} onSubmit={onSubmit}>
       <Typography variant="h4" sx={{ mb: 1 }}>
-        Prijava
+        {t("auth.login.title")}
       </Typography>
 
       <TextField
         size="small"
         fullWidth
         margin="normal"
-        label="Oib"
+        label={t("auth.fields.tenant")}
         name="tenant"
-        autoComplete="organization"
         required
         disabled={isPending}
         value={tenantValue}
@@ -49,9 +50,8 @@ export function SignInForm({
         size="small"
         fullWidth
         margin="normal"
-        label="Username"
+        label={t("auth.fields.username")}
         name="username"
-        autoComplete="username"
         required
         disabled={isPending}
         error={hasError}
@@ -61,10 +61,9 @@ export function SignInForm({
         size="small"
         fullWidth
         margin="normal"
-        label="Password"
+        label={t("auth.fields.password")}
         name="password"
         type="password"
-        autoComplete="current-password"
         required
         disabled={isPending}
         error={hasError}
@@ -79,7 +78,11 @@ export function SignInForm({
         sx={{ mt: 2, height: 36 }}
         disabled={isPending}
       >
-        {isPending ? <CircularProgress size={20} color="inherit" /> : "Prijava"}
+        {isPending ? (
+          <CircularProgress size={20} color="inherit" />
+        ) : (
+          t("auth.login.submit")
+        )}
       </Button>
     </Box>
   );

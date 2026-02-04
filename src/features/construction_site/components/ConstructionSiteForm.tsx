@@ -1,28 +1,35 @@
-import type { NewConstructionSiteRequest } from "..";
+import type { ConstructionSiteFormValues } from "..";
 import {
   SmartForm,
   type FieldConfig,
 } from "../../../components/ui/smartform/SmartForm";
 import { useTranslation } from "react-i18next";
 
+import { useConstructionSiteManagerOptions } from "../../constants/options/useConstructionSiteManagerOptions";
+
 type Option = { label: string; value: any };
 
 type Props = {
-  defaultValues?: Partial<NewConstructionSiteRequest>;
-  onSubmit: (values: NewConstructionSiteRequest) => void | Promise<void>;
+  defaultValues?: Partial<ConstructionSiteFormValues>;
+  onSubmit: (values: ConstructionSiteFormValues) => void | Promise<void>;
   busy?: boolean;
-  managerOptions: Option[];
+  showStatus?: boolean;
+  statusOptions?: Option[];
 };
 
 export default function ConstructionSiteForm({
   defaultValues,
   onSubmit,
   busy,
-  managerOptions,
+  showStatus = false,
+  statusOptions,
 }: Props) {
   const { t } = useTranslation();
 
-  const fields: FieldConfig<NewConstructionSiteRequest>[] = [
+  const { options: managerOptions, isLoading: managersLoading } =
+    useConstructionSiteManagerOptions();
+
+  const fields: FieldConfig<ConstructionSiteFormValues>[] = [
     {
       name: "name",
       label: t("constructionSites.form.field.name"),
@@ -45,11 +52,23 @@ export default function ConstructionSiteForm({
       type: "date",
       required: true,
     },
+
+    ...(showStatus
+      ? ([
+          {
+            name: "status",
+            label: t("constructionSites.form.field.status"),
+            type: "select",
+            required: true,
+            options: statusOptions,
+          },
+        ] as FieldConfig<ConstructionSiteFormValues>[])
+      : []),
+
     {
       name: "siteManagerId",
       label: t("constructionSites.form.field.siteManagerId"),
       type: "select",
-      required: false,
       options: managerOptions,
     },
     {
@@ -58,24 +77,28 @@ export default function ConstructionSiteForm({
     },
   ];
 
-  return (
-    <SmartForm<NewConstructionSiteRequest>
-      fields={fields}
-      rows={[
+  const rows = showStatus
+    ? ([
         ["name", "location"],
         ["startDate", "plannedEndDate"],
-        ["siteManagerId", "description"],
-      ]}
-      defaultValues={{
-        name: "",
-        location: "",
-        startDate: "",
-        plannedEndDate: "",
-        siteManagerId: null,
-        description: null,
-        ...defaultValues,
-      }}
-      busy={busy}
+        ["status", "siteManagerId"],
+        ["description"],
+      ] as any)
+    : ([
+        ["name", "location"],
+        ["startDate", "plannedEndDate"],
+        ["siteManagerId"],
+        ["description"],
+      ] as any);
+
+  const isBusy = busy || managersLoading;
+
+  return (
+    <SmartForm<ConstructionSiteFormValues>
+      fields={fields}
+      rows={rows}
+      defaultValues={defaultValues}
+      busy={isBusy}
       submitLabel={t("constructionSites.form.submit")}
       onSubmit={onSubmit}
     />

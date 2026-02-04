@@ -81,7 +81,6 @@ export const UsersApi = {
     return res.data;
   },
 
-  // ✅ Change password (existing)
   changePassword: async (payload: ChangePasswordRequest) => {
     return authFetch<ApiEnvelope<string>>(`${base}/change-password`, {
       method: "POST",
@@ -89,7 +88,6 @@ export const UsersApi = {
     });
   },
 
-  // ✅ Forgot password (new)
   forgotPassword: async (tenant: string, payload: ForgotPasswordRequest) => {
     return authFetch<ApiEnvelope<string>>(`${base}/forgot-password`, {
       method: "POST",
@@ -100,7 +98,6 @@ export const UsersApi = {
     });
   },
 
-  // ✅ Reset password (new)
   resetPassword: async (tenant: string, payload: ResetPasswordRequest) => {
     return authFetch<ApiEnvelope<string>>(`${base}/reset-password`, {
       method: "POST",
@@ -109,5 +106,12 @@ export const UsersApi = {
       },
       body: JSON.stringify(payload),
     });
+  },
+
+  getMyPermissions: async (): Promise<UserPermissionsResponse> => {
+    const res = await authFetch<ApiEnvelope<UserPermissionsResponse>>(
+      `${base}/me/permissions`
+    );
+    return res.data;
   },
 };

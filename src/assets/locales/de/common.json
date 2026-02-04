@@ -1,8 +1,17 @@
 {
   "sidebar": {
     "management": "Verwaltung",
-    "system": "System"
+    "system": "System",
+    "constructionGroup": "Baustellen",
+    "toolsGroup": "Werkzeuge",
+    "codebookGroup": "Stammdaten",
+    "identityGroup": "Identität",
+    "vehiclesGroup": "Fahrzeuge",
+    "medicalGroup": "Medizin",
+    "certificationsGroup": "Zertifizierungen",
+    "condosGroup": "Wohnungen"
   },
+
   "nav": {
     "dashboard": "Übersicht",
     "constructionSites": "Baustellen",
@@ -13,29 +22,137 @@
     "employees": "Mitarbeiter",
     "jobPositions": "Arbeitsstellen",
     "tools": "Werkzeuge",
+    "toolRepairs": "Werkzeugreparaturen",
+    "materials": "Materialien",
     "toolCategories": "Werkzeugkategorien",
     "vehicles": "Fahrzeuge",
-    "assignments": "Zuweisungen"
+    "vehicleRepairs": "Fahrzeugreparaturen",
+    "assignments": "Zuweisungen",
+    "reports": "Berichte",
+    "examinationTypes": "Prüfarten",
+    "medicalExaminations": "Medizinische Untersuchungen",
+    "certifications": "Zertifizierungen",
+    "certificationTypes": "Zertifizierungstypen",
+    "condos": "Wohnungen",
+    "notifications": "Benachrichtigungen",
+    "vehicleRegistrations": "Fahrzeugzulassungen",
+    "vehicleInsurances": "Fahrzeugversicherungen",
+    "vehicleBusinessTrips": "Dienstfahrten",
+    "tasks": "Arbeitsaufgaben",
+    "workHours": "Zeiterfassung",
+    "map": "Standortübersicht"
+  },
+  "workHours": {
+    "title": "Arbeitsstunden",
+    "record": "Aufzeichnen",
+    "date": "Datum",
+    "startTime": "Startzeit",
+    "endTime": "Endzeit",
+    "employee": {
+      "employee": "Mitarbeiter",
+      "total": "Gesamt",
+      "emptyWeek": "Keine Arbeitszeiten für diese Woche.",
+      "error": "Fehler",
+      "info": "Mitarbeiter",
+      "noOib": "Keine OIB",
+      "dates": "Daten",
+      "birthDate": "Geboren",
+      "birthDateUnknown": "Geburtsdatum unbekannt",
+      "employedFrom": "Beschäftigt seit",
+      "notEmployed": "Nicht angestellt"
+    }
+  },
+  "map": {
+    "page": {
+      "missingOrsKey": "ORS-Schlüssel fehlt. Fügen Sie <1>VITE_OPENROUTESERVICE_API_KEY</1> zu <3>.env</3> hinzu und starten Sie neu.",
+      "toggle": {
+        "on": "An",
+        "off": "Aus"
+      },
+      "scope": {
+        "all": "Alle",
+        "vehicle": "Fahrzeug",
+        "employee": "Mitarbeiter"
+      },
+      "trips": {
+        "title": "Fahrten",
+        "subtitle": "Umfang + Sichtbarkeit",
+        "scopeLabel": "Umfang:",
+        "visibleLabel": "Sichtbar:",
+        "scopeInput": "Umfang",
+        "vehicleInput": "Fahrzeug",
+        "vehiclePlaceholder": "Fahrzeug auswählen…",
+        "employeeInput": "Mitarbeiter",
+        "employeePlaceholder": "Mitarbeiter auswählen…",
+        "vehicleNote": "Fahrzeug: {{vehicle}}",
+        "employeeNote": "Mitarbeiter: {{employee}}",
+        "allNote": "Fahrten aus allen Quellen anzeigen",
+        "showLabel": "Fahrten anzeigen",
+        "showDescription": "Routen und Marker"
+      },
+      "condos": {
+        "title": "Wohnungen",
+        "subtitle": "Sichtbarkeit",
+        "visibleLabel": "Sichtbar:",
+        "geocodedLabel": "Geokodiert:",
+        "bottomNote": "Adressen werden geokodiert und im Browser zwischengespeichert",
+        "showLabel": "Wohnungen anzeigen",
+        "showDescription": "Wohnungsmarker"
+      },
+      "sites": {
+        "title": "Baustellen",
+        "subtitle": "Sichtbarkeit",
+        "visibleLabel": "Sichtbar:",
+        "geocodedLabel": "Geokodiert:",
+        "bottomNote": "Standorte werden geokodiert und im Browser zwischengespeichert",
+        "showLabel": "Baustellen anzeigen",
+        "showDescription": "Baustellenmarker"
+      }
+    },
+    "markerDetails": {
+      "title": {
+        "condo": "Wohnung #{{id}}",
+        "trip": "Fahrt #{{id}}"
+      },
+      "fallback": {
+        "noAddress": "Keine Adresse",
+        "noLocation": "Kein Standort",
+        "noStart": "Kein Startort",
+        "noEnd": "Kein Zielort"
+      },
+      "condo": {
+        "capacity": "Kapazität",
+        "occupied": "Belegt",
+        "responsible": "Verantwortlich"
+      },
+      "site": {
+        "status": "Status",
+        "manager": "Leiter",
+        "start": "Start",
+        "plannedEnd": "Geplantes Ende",
+        "description": "Beschreibung"
+      },
+      "trip": {
+        "start": "Start",
+        "end": "Ziel"
+      }
+    }
   },
   "constructionSites": {
     "list": {
       "title": "Baustellen",
+      "filterBySite": "Nach Baustelle filtern",
       "error": "Fehler beim Laden der Baustellen."
     },
     "detail": {
       "title": "Baustellenübersicht",
       "employees": "Mitarbeiter",
-      "addEmployee": "Mitarbeiter hinzufügen",
       "addFirstEmployee": "Ersten Mitarbeiter hinzufügen",
       "noEmployees": "Keine Mitarbeiter zugewiesen.",
-
       "tools": "Werkzeuge",
-      "addTool": "Werkzeug hinzufügen",
       "addFirstTool": "Erstes Werkzeug hinzufügen",
       "noTools": "Keine Werkzeuge zugewiesen.",
-
       "vehicles": "Fahrzeuge",
-      "addVehicle": "Fahrzeug hinzufügen",
       "addFirstVehicle": "Erstes Fahrzeug hinzufügen",
       "noVehicles": "Keine Fahrzeuge zugewiesen.",
       "vehicle": {
@@ -46,22 +163,27 @@
         "modelShort": "Modell",
         "inventoryShort": "Inventarnummer",
         "serialShort": "Seriennummer"
-      }
+      },
+      "condos": "Unterkünfte",
+      "noCondos": "Keine Unterkünfte zugewiesen.",
+      "addFirstCondo": "Erste Unterkunft hinzufügen"
     },
     "detailPanel": {
+      "noCondosAssigned": "Keine Unterkünfte zugewiesen.",
+      "condoFallback": "Unterkunft",
+      "responsible": "Verantwortlich: {{name}}",
+      "capacity": "Kapazität: {{count}}",
+      "occupied": "Belegt: {{occupied}} / {{capacity}}",
+      "perMonthShort": "Mon",
+      "perDayShort": "Tag",
       "loading": "Details werden geladen…",
       "loadError": "Baustellendetails konnten nicht geladen werden.",
       "fallbackName": "Baustelle",
-
       "noEmployeesAssigned": "Keine Mitarbeiter zugewiesen.",
-      "noPosition": "Position nicht festgelegt",
-
       "noVehiclesAssigned": "Keine Fahrzeuge zugewiesen.",
       "vehicleFallback": "Fahrzeug",
-
       "noToolsAssigned": "Keine Werkzeuge zugewiesen.",
       "toolFallback": "Werkzeug",
-
       "invPrefix": "Inv.-Nr.:"
     },
     "fields": {
@@ -70,7 +192,8 @@
       "manager": "Bauleiter",
       "id": "ID",
       "location": "Standort",
-      "name": "Name"
+      "name": "Name",
+      "status": "Status"
     },
     "create": {
       "title": "Baustelle erstellen",
@@ -85,21 +208,18 @@
     "assign": {
       "vehiclesTitle": "Fahrzeuge zuweisen",
       "toolsTitle": "Werkzeuge zuweisen",
-
       "noVehicles": "Keine Fahrzeuge verfügbar.",
       "noTools": "Keine Werkzeuge verfügbar.",
-
       "pickVehicleHint": "Wählen Sie Fahrzeug(e) links aus.",
       "pickToolHint": "Wählen Sie Werkzeug(e) links aus.",
       "title": "Mitarbeiter zuweisen",
-      "loading": "Wird geladen…",
       "loadError": "Mitarbeiter konnten nicht geladen werden.",
       "empty": "Keine Mitarbeiter verfügbar.",
       "left": {
         "employeesCount": "Mitarbeiter ({{count}})",
         "selectedCount": "Ausgewählt: {{count}}",
         "vehiclesCount": "Fahrzeuge: {{count}}",
-        "toolsCount": "Werkzeuge: {{count}}"
+        "condosCount": "Unterkünfte ({{count}})"
       },
       "global": {
         "startLabel": "Beginn (global)",
@@ -108,15 +228,6 @@
       "chip": {
         "custom": "Bereich: Benutzerdefiniert",
         "global": "Bereich: Global"
-      },
-      "grid": {
-        "employee": "Mitarbeiter",
-        "start": "Beginn",
-        "end": "Ende",
-        "reset": "Zurücksetzen",
-        "vehicle": "Fahrzeug",
-        "tool": "Werkzeug",
-        "responsible": "Verantwortlich"
       },
       "pickHint": "Wählen Sie Mitarbeiter links aus.",
       "tooltip": {
@@ -129,6 +240,15 @@
         "cancel": "Abbrechen",
         "save": "Speichern",
         "saving": "Wird gespeichert..."
+      },
+      "condosTitle": "Unterkünfte zuweisen",
+      "noCondos": "Keine Unterkünfte verfügbar.",
+      "pickCondoHint": "Wählen Sie Unterkünfte auf der linken Seite aus.",
+      "window": {
+        "add": "Zeitraum hinzufügen",
+        "label": "Zeitraum {{index}}",
+        "remove": "Zeitraum entfernen",
+        "count": "{{count}} Zeitraum{{count, plural, one {} other {e}}}"
       }
     },
     "form": {
@@ -137,80 +257,129 @@
         "location": "Ort",
         "startDate": "Beginn",
         "plannedEndDate": "Geplantes Ende",
+        "status": "Status",
         "siteManagerId": "Bauleiter",
         "description": "Beschreibung"
       },
       "manager": {
-        "none": "— Kein Leiter —"
+        "label": "Bauleiter"
+      },
+      "status": {
+        "label": "Status",
+        "all": "Alle"
+      },
+      "period": {
+        "all": "Alle Zeiträume"
       },
       "submit": "Speichern"
     },
     "actions": "Aktionen",
     "table": {
       "edit": "Bearbeiten",
-      "assignEmployees": "Mitarbeiter zuweisen",
       "delete": "Löschen",
-      "detailView": "Baustelle anzeigen"
+      "detailView": "Baustelle anzeigen",
+      "changeStatus": "Status ändern"
     },
     "delete": {
       "title": "Baustelle löschen?",
       "description": "Sind Sie sicher, dass Sie diese Baustelle löschen möchten?",
       "confirm": "Löschen",
       "cancel": "Abbrechen"
+    },
+    "status": {
+      "planned": "Geplant",
+      "inProgress": "In Bearbeitung",
+      "onHold": "Pausiert",
+      "completed": "Abgeschlossen",
+      "cancelled": "Abgebrochen",
+      "dialogTitle": "Status ändern",
+      "dialogFieldLabel": "Status",
+      "label": "Status"
     }
   },
   "common": {
+    "navigate": "Navigieren",
+    "back": "Zurück",
+    "retry": "Erneut versuchen",
+    "yes": "Ja",
+    "no": "Nein",
+    "cancel": "Abbrechen",
+    "remove": "Entfernen",
+    "close": "Schließen",
+    "submit": "Speichern",
+    "saving": "Wird gespeichert...",
+    "edit": "Bearbeiten",
+    "dash": "—",
+    "all": "Alle Status",
+    "allSites": "Alle Baustellen",
+    "allTypes": "Alle Typen",
+    "unassign": "Zuweisung entfernen",
     "notAvailable": "Nicht verfügbar",
     "loading": "Wird geladen…",
+    "assign": "Zuweisen",
+    "loadError": "Daten konnten nicht geladen werden.",
+    "filter": "Filter",
+    "done": "Erledigt",
+    "send": "Senden",
+    "selectAll": "Alle auswählen",
+    "fileInput": {
+      "choose": "Datei auswählen",
+      "noFile": "Keine Datei ausgewählt",
+      "download": "Datei herunterladen"
+    },
+    "import": "Import",
+    "export": "Export",
+    "importDialog": {
+      "title": "Daten importieren",
+      "description": "Laden Sie eine Datei hoch, um Datensätze zu importieren.",
+      "selectFile": "Datei auswählen",
+      "supportedFormats": "Unterstützte Formate: .xlsx, .csv",
+      "noFile": "Bitte wählen Sie eine Datei für den Import aus.",
+      "importing": "Import wird ausgeführt...",
+      "success": "Import erfolgreich abgeschlossen.",
+      "error": "Import fehlgeschlagen.",
+      "clickToUpload": "Datei zum Hochladen auswählen",
+      "dragNDrop": "oder ziehen Sie sie per Drag & Drop hierher",
+      "limitsSimple": "Excel oder CSV, max. 10 MB"
+    },
+    "exportDialog": {
+      "success": "Export erfolgreich heruntergeladen.",
+      "error": "Export fehlgeschlagen."
+    },
     "datagrid": {
-      "columnsButton": "Spalten",
-      "filterButton": "Filter",
-      "densitySelector": "Dichte",
-      "exportButton": "Export",
-      "csv": "CSV exportieren",
-      "print": "Drucken",
-      "quickFilterPlaceholder": "Suchen…",
       "noRowsLabel": "Keine Zeilen",
       "noResultsOverlayLabel": "Keine Ergebnisse gefunden.",
       "noColumnsOverlayLabel": "Keine Spalten",
       "noColumnsOverlayManageColumns": "Spalten verwalten",
       "emptyPivotOverlayLabel": "Fügen Sie Felder zu Zeilen, Spalten und Werten hinzu, um eine Pivot-Tabelle zu erstellen",
-
       "toolbarDensity": "Dichte",
       "toolbarDensityLabel": "Dichte",
       "toolbarDensityCompact": "Kompakt",
       "toolbarDensityStandard": "Standard",
       "toolbarDensityComfortable": "Bequem",
-
       "toolbarColumns": "Spalten",
       "toolbarColumnsLabel": "Spalten auswählen",
-
       "toolbarFilters": "Filter",
       "toolbarFiltersLabel": "Filter anzeigen",
       "toolbarFiltersTooltipHide": "Filter ausblenden",
       "toolbarFiltersTooltipShow": "Filter anzeigen",
       "toolbarFiltersTooltipActive": "{{count}} aktiver Filter{{count, plural, one {} other {}}}",
-
       "toolbarQuickFilterPlaceholder": "Suchen…",
       "toolbarQuickFilterLabel": "Suche",
       "toolbarQuickFilterDeleteIconLabel": "Löschen",
-
       "toolbarExport": "Export",
       "toolbarExportLabel": "Export",
       "toolbarExportCSV": "Als CSV herunterladen",
       "toolbarExportPrint": "Drucken",
       "toolbarExportExcel": "Als Excel herunterladen",
-
       "toolbarPivot": "Pivot",
       "toolbarCharts": "Diagramme",
       "toolbarAssistant": "KI-Assistent",
-
       "columnsManagementSearchTitle": "Suche",
       "columnsManagementNoColumns": "Keine Spalten",
       "columnsManagementShowHideAllText": "Alle ein-/ausblenden",
       "columnsManagementReset": "Zurücksetzen",
       "columnsManagementDeleteIconLabel": "Löschen",
-
       "filterPanelAddFilter": "Filter hinzufügen",
       "filterPanelRemoveAll": "Alle entfernen",
       "filterPanelDeleteIconLabel": "Löschen",
@@ -221,7 +390,6 @@
       "filterPanelColumns": "Spalten",
       "filterPanelInputLabel": "Wert",
       "filterPanelInputPlaceholder": "Filterwert",
-
       "filterOperatorContains": "enthält",
       "filterOperatorDoesNotContain": "enthält nicht",
       "filterOperatorEquals": "ist gleich",
@@ -243,7 +411,6 @@
       "filterOperatorGreaterOrEqualSymbol": ">=",
       "filterOperatorLessThanSymbol": "<",
       "filterOperatorLessOrEqualSymbol": "<=",
-
       "headerFilterOperatorContains": "Enthält",
       "headerFilterOperatorDoesNotContain": "Enthält nicht",
       "headerFilterOperatorEquals": "Gleich",
@@ -266,11 +433,9 @@
       "headerFilterOperatorLessThanSymbol": "Kleiner als",
       "headerFilterOperatorLessOrEqualSymbol": "Kleiner/gleich",
       "headerFilterClear": "Filter löschen",
-
       "filterValueAny": "beliebig",
       "filterValueTrue": "wahr",
       "filterValueFalse": "falsch",
-
       "columnMenuLabel": "Menü",
       "columnMenuAriaLabel": "{{columnName}}-Spaltenmenü",
       "columnMenuShowColumns": "Spalten anzeigen",
@@ -282,42 +447,32 @@
       "columnMenuSortDesc": "Absteigend sortieren",
       "columnMenuManagePivot": "Pivot verwalten",
       "columnMenuManageCharts": "Diagramme verwalten",
-
       "columnHeaderFiltersTooltipActive": "{{count}} aktiver Filter{{count, plural, one {} other {}}}",
       "columnHeaderFiltersLabel": "Filter anzeigen",
       "columnHeaderSortIconLabel": "Sortieren",
-
       "footerRowSelected": "{{count, number}} Zeile{{count, plural, one {} other {n}}} ausgewählt",
       "footerTotalRows": "Gesamtzeilen:",
       "footerTotalVisibleRows": "{{visibleCount, number}} von {{totalCount, number}}",
-
       "checkboxSelectionHeaderName": "Kontrollkästchen-Auswahl",
       "checkboxSelectionSelectAllRows": "Alle Zeilen auswählen",
       "checkboxSelectionUnselectAllRows": "Alle Zeilen abwählen",
       "checkboxSelectionSelectRow": "Zeile auswählen",
       "checkboxSelectionUnselectRow": "Zeile abwählen",
-
       "booleanCellTrueLabel": "ja",
       "booleanCellFalseLabel": "nein",
-
       "actionsCellMore": "mehr",
-
       "pinToLeft": "Links anheften",
       "pinToRight": "Rechts anheften",
       "unpin": "Lösen",
-
       "treeDataGroupingHeaderName": "Gruppe",
       "treeDataExpand": "Kinder anzeigen",
       "treeDataCollapse": "Kinder ausblenden",
-
       "groupingColumnHeaderName": "Gruppe",
       "groupColumn": "Gruppieren nach {{name}}",
       "unGroupColumn": "Gruppierung nach {{name}} aufheben",
-
       "detailPanelToggle": "Detailbereich umschalten",
       "expandDetailPanel": "Erweitern",
       "collapseDetailPanel": "Reduzieren",
-
       "paginationRowsPerPage": "Zeilen pro Seite:",
       "paginationDisplayedRows": "{{from}}–{{to}} von {{countLabel}}",
       "paginationDisplayedRowsEstimated": "{{from}}–{{to}} von {{estimatedLabel}}",
@@ -327,9 +482,7 @@
       "paginationLast": "Zur letzten Seite",
       "paginationNext": "Zur nächsten Seite",
       "paginationPrevious": "Zur vorherigen Seite",
-
       "rowReorderingHeaderName": "Zeilen neu anordnen",
-
       "aggregationMenuItemHeader": "Aggregation",
       "aggregationFunctionLabelNone": "keine",
       "aggregationFunctionLabelSum": "summe",
@@ -337,7 +490,6 @@
       "aggregationFunctionLabelMin": "min",
       "aggregationFunctionLabelMax": "max",
       "aggregationFunctionLabelSize": "anzahl",
-
       "pivotToggleLabel": "Pivot",
       "pivotRows": "Zeilen",
       "pivotColumns": "Spalten",
@@ -365,7 +517,6 @@
       "pivotDragToValues": "Hierher ziehen, um Werte zu erstellen",
       "pivotYearColumnHeaderName": "(Jahr)",
       "pivotQuarterColumnHeaderName": "(Quartal)",
-
       "chartsNoCharts": "Keine Diagramme verfügbar",
       "chartsChartNotSelected": "Diagrammtyp auswählen, um Optionen zu konfigurieren",
       "chartsTabChart": "Diagramm",
@@ -390,14 +541,12 @@
       "chartsMenuRemove": "Entfernen",
       "chartsDragToDimensions": "Hierher ziehen, um die Spalte als {{dimensionLabel}} zu verwenden",
       "chartsDragToValues": "Hierher ziehen, um die Spalte als {{valuesLabel}} zu verwenden",
-
       "aiAssistantPanelTitle": "KI-Assistent",
       "aiAssistantPanelClose": "KI-Assistent schließen",
       "aiAssistantPanelNewConversation": "Neue Unterhaltung",
       "aiAssistantPanelConversationHistory": "Unterhaltungsverlauf",
       "aiAssistantPanelEmptyConversation": "Keine Verlaufseinträge",
       "aiAssistantSuggestions": "Vorschläge",
-
       "promptFieldLabel": "Eingabe",
       "promptFieldPlaceholder": "Eingabe tippen…",
       "promptFieldPlaceholderWithRecording": "Eingabe tippen oder aufnehmen…",
@@ -406,11 +555,9 @@
       "promptFieldSend": "Senden",
       "promptFieldRecord": "Aufnehmen",
       "promptFieldStopRecording": "Aufnahme beenden",
-
       "promptRerun": "Erneut ausführen",
       "promptProcessing": "Wird verarbeitet…",
       "promptAppliedChanges": "Änderungen übernommen",
-
       "promptChangeGroupDescription": "Gruppieren nach {{column}}",
       "promptChangeAggregationLabel": "{{column}} ({{aggregation}})",
       "promptChangeAggregationDescription": "{{column}} aggregieren ({{aggregation}})",
@@ -428,13 +575,11 @@
       "promptChangePivotValuesDescription": "{{column}} ({{aggregation}})"
     },
     "columns": {
-      "constructionSiteVehicles": "Fahrzeuge",
       "phoneNumber": "Telefonnummer",
       "id": "Id",
       "name": "Name",
       "description": "Beschreibung",
       "actions": "Aktionen",
-
       "location": "Ort",
       "startDate": "Beginn",
       "plannedEndDate": "Geplantes Ende",
@@ -442,12 +587,12 @@
       "siteManagerName": "Bauleiter",
       "constructionSiteTools": "Baustellen-Werkzeuge",
       "constructionSiteEmployees": "Baustellenmitarbeiter",
-
+      "constructionSiteCondos": "Unterkünfte",
+      "constructionSiteVehicles": "Fahrzeuge",
       "createdDate": "Erstellt am",
       "createdBy": "Erstellt von",
       "modifiedDate": "Geändert am",
       "modifiedBy": "Geändert von",
-
       "identifier": "Kennung",
       "connectionString": "Verbindungszeichenfolge",
       "email": "E-Mail",
@@ -455,12 +600,9 @@
       "lastName": "Nachname",
       "validUntil": "Gültig bis",
       "isActive": "Aktiv",
-
       "dateOfCreation": "Gründungsdatum",
-
       "permissions": "Berechtigungen",
       "userName": "Benutzername",
-
       "oib": "OIB",
       "dateOfBirth": "Geburtsdatum",
       "employmentDate": "Beschäftigungsbeginn",
@@ -470,7 +612,6 @@
       "gloveSize": "Handschuhgröße",
       "shoeSize": "Schuhgröße",
       "jobPosition": "Stellenbezeichnung",
-
       "inventoryNumber": "Inventarnummer",
       "serialNumber": "Seriennummer",
       "manufacturer": "Hersteller",
@@ -484,17 +625,20 @@
       "responsibleEmployeeId": "Verantwortlicher Mitarbeiter (ID)",
       "responsibleEmployeeName": "Verantwortlicher Mitarbeiter",
       "responsibleEmployeeJobPosition": "Stellenbezeichnung",
-
       "registrationNumber": "Kennzeichen",
       "vin": "Fahrgestellnummer (VIN)",
+      "vehicleRegistrations": "Registrierungen",
+      "vehicleInsurances": "Versicherungen",
       "brand": "Marke",
       "yearOfManufacturing": "Baujahr",
       "vehicleType": "Fahrzeugtyp",
       "horsePower": "Leistung (PS)",
       "averageConsumption": "Durchschnittsverbrauch",
       "weight": "Gewicht",
-
       "constructionSiteId": "Baustellen-ID",
+      "leasePaymentStatus": "Mietzahlungsstatus",
+      "employees": "Mitarbeiter",
+      "constructionSites": "Baustellen",
       "constructionSiteLocation": "Baustellenstandort",
       "constructionSiteName": "Baustellenname",
       "employeeId": "Mitarbeiter-ID",
@@ -502,15 +646,78 @@
       "dateFrom": "Datum von",
       "dateTo": "Datum bis",
       "vehicleId": "Fahrzeug-ID",
-      "responsibleEmployeeFullName": "Verantwortlicher Mitarbeiter (vollständiger Name)",
-      "toolId": "Werkzeug-ID"
-    }
+      "examinationTypeName": "Untersuchungsart",
+      "monthsToNextExamination": "Monate bis zur nächsten Untersuchung",
+      "examinationTypeId": "Untersuchungstyp",
+      "examinationDate": "Untersuchungsdatum",
+      "nextExaminationDate": "Nächstes Untersuchungsdatum",
+      "result": "Ergebnis",
+      "note": "Notiz",
+      "address": "Adresse",
+      "capacity": "Kapazität",
+      "currentlyOccupied": "Derzeit belegt",
+      "leaseStartDate": "Mietbeginn",
+      "leaseEndDate": "Mietende",
+      "pricePerDay": "Preis pro Tag",
+      "pricePerMonth": "Preis pro Monat",
+      "currency": "Währung",
+      "notes": "Notizen",
+      "validFrom": "Gültig ab",
+      "validTo": "Gültig bis",
+      "totalCostAmount": "Gesamtkosten",
+      "costCurrency": "Währung",
+      "registrationStationName": "Zulassungsstelle",
+      "registrationStationLocation": "Standort der Zulassungsstelle",
+      "reportNumber": "Berichtsnummer",
+      "documentPath": "Dokument",
+      "insurer": "Versicherer",
+      "policyNumber": "Policennummer",
+      "policyType": "Policeart",
+      "costAmount": "Kostenbetrag",
+      "startLocationText": "Startort",
+      "endLocationText": "Zielort",
+      "startAt": "Startzeit",
+      "endAt": "Endzeit",
+      "startKilometers": "Kilometerstand Start",
+      "endKilometers": "Kilometerstand Ende",
+      "refueled": "Getankt",
+      "fuelLiters": "Kraftstoff (Liter)",
+      "fuelAmount": "Kraftstoffkosten",
+      "fuelCurrency": "Währung",
+      "tripStatus": "Fahrtstatus",
+      "certificationTypeName": "Zertifikatstyp",
+      "requiresRenewal": "Erfordert Erneuerung",
+      "monthsToRenewal": "Monate bis zur Erneuerung",
+      "employeeName": "Mitarbeiter",
+      "certificationTypeId": "Zertifikatstyp-ID",
+      "certificationDate": "Zertifikatsdatum",
+      "nextCertificationDate": "Nächstes Zertifikatsdatum",
+      "certificatePath": "Zertifikatsdatei",
+      "reminderSentDate": "Erinnerung gesendet",
+      "unitOfMeasure": "Maßeinheit",
+      "quantity": "Menge",
+      "unitPrice": "Stückpreis",
+      "articleCode": "Artikelcode",
+      "barcode": "Barcode",
+      "tool": "Werkzeug",
+      "serviceDate": "Servicedatum",
+      "serviceCost": "Servicekosten",
+      "purposeOfTrip": "Zweck der Fahrt",
+      "approvedByEmployeeUserId": "Genehmigt von (Benutzer-ID)",
+      "approvedDate": "Genehmigungsdatum",
+      "rejectReason": "Ablehnungsgrund",
+      "travelledKilometers": "Gefahrene Kilometer"
+    },
+    "details": "Details",
+    "employee": "Mitarbeiter",
+    "save": "Speichern"
   },
   "tenants": {
     "list": {
       "title": "Mandanten",
       "error": "Fehler beim Laden der Mandanten."
     },
+
     "create": {
       "title": "Mandanten erstellen",
       "back": "Zurück"
@@ -524,9 +731,6 @@
       "validUntil": "Gültig bis",
       "save": "Speichern"
     },
-    "details": {
-      "loadError": "Mandant konnte nicht geladen werden."
-    },
     "form": {
       "field": {
         "identifier": "Kennung",
@@ -536,7 +740,21 @@
         "validUntil": "Gültig bis",
         "firstName": "Vorname",
         "lastName": "Nachname",
-        "isActive": "Aktiv"
+        "isActive": "Aktiv",
+        "oib": "OIB",
+        "vatNumber": "Umsatzsteuernummer",
+        "registrationNumber": "Registrierungsnummer",
+        "companyCode": "Firmenkode",
+        "contactPhone": "Telefon",
+        "websiteUrl": "Webseite",
+        "addressStreet": "Straße",
+        "addressPostalCode": "Postleitzahl",
+        "addressCity": "Stadt",
+        "addressState": "Bundesland",
+        "addressCountry": "Land",
+        "defaultLanguage": "Standardsprache",
+        "logo": "Logo",
+        "notes": "Notizen"
       },
       "submit": "Speichern"
     },
@@ -566,9 +784,6 @@
       "title": "Unternehmen bearbeiten",
       "back": "Zurück",
       "invalidUrlId": "Ungültige URL (ID)",
-      "loadError": "Unternehmen konnte nicht geladen werden."
-    },
-    "details": {
       "loadError": "Unternehmen konnte nicht geladen werden."
     },
     "form": {
@@ -610,6 +825,7 @@
       "field": {
         "firstName": "Vorname",
         "lastName": "Nachname",
+        "email": "E-Mail",
         "oib": "OIB",
         "dateOfBirth": "Geburtsdatum",
         "employmentDate": "Beschäftigungsbeginn",
@@ -618,7 +834,9 @@
         "clothingSize": "Kleidergröße",
         "gloveSize": "Handschuhgröße",
         "shoeSize": "Schuhgröße",
-        "jobPositionId": "Stellenbezeichnung"
+        "jobPositionId": "Stellenbezeichnung",
+        "phoneNumber": "Telefonnummer",
+        "description": "Beschreibung"
       },
       "jobPosition": {
         "none": "— Keine Position —"
@@ -638,7 +856,10 @@
       "description": "Möchten Sie diesen Mitarbeiter wirklich löschen?",
       "confirm": "Löschen",
       "cancel": "Abbrechen"
-    }
+    },
+    "byEmployee": "Nach Mitarbeiter",
+    "employee": "Mitarbeiter",
+    "unknown": "Unbekannter Mitarbeiter"
   },
   "jobPositions": {
     "list": {
@@ -735,8 +956,7 @@
       "title": "Benutzer bearbeiten",
       "back": "Zurück",
       "invalidUrlId": "Ungültige URL (ID)",
-      "loadError": "Benutzer konnte nicht geladen werden.",
-      "userLabel": "Benutzer"
+      "loadError": "Benutzer konnte nicht geladen werden."
     },
     "form": {
       "field": {
@@ -746,6 +966,7 @@
         "phoneNumber": "Telefonnummer",
         "password": "Passwort",
         "confirmPassword": "Passwort bestätigen",
+        "role": "Rolle",
         "isActive": "Aktiv"
       },
       "submit": "Speichern"
@@ -773,7 +994,6 @@
     },
     "rolesDialog": {
       "title": "Rollen verwalten",
-      "loading": "Laden…",
       "error": "Rollen konnten nicht geladen werden.",
       "empty": "Keine Rollen verfügbar.",
       "cancel": "Abbrechen",
@@ -822,9 +1042,46 @@
         "description": "Beschreibung",
         "toolCategoryId": "Werkzeugkategorie",
         "responsibleEmployeeId": "Verantwortlicher Mitarbeiter"
-      },
-      "responsible": {
-        "none": "Nicht zugewiesen"
+      }
+    }
+  },
+  "materials": {
+    "list": {
+      "title": "Materialien",
+      "error": "Fehler beim Laden der Materialien"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "create": {
+      "title": "Material erstellen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Material bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige Material-ID in der URL",
+      "loadError": "Materialdaten konnten nicht geladen werden"
+    },
+    "delete": {
+      "title": "Material löschen",
+      "description": "Möchten Sie dieses Material wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "name": "Name",
+        "unitOfMeasure": "Maßeinheit",
+        "quantity": "Menge",
+        "unitPrice": "Stückpreis",
+        "description": "Beschreibung",
+        "articleCode": "Artikelcode",
+        "barcode": "Barcode",
+        "weight": "Gewicht"
       }
     }
   },
@@ -869,35 +1126,24 @@
     },
     "table": {
       "edit": "Bearbeiten",
-      "delete": "Löschen",
-      "details": "Details"
+      "delete": "Löschen"
     },
     "actions": "Aktionen",
     "create": {
       "title": "Fahrzeug hinzufügen",
-      "back": "Zurück",
-      "submit": "Speichern"
+      "back": "Zurück"
     },
     "edit": {
       "title": "Fahrzeug bearbeiten",
       "back": "Zurück",
       "loadError": "Fahrzeug konnte nicht geladen werden",
-      "invalidUrlId": "Ungültige Fahrzeug-ID",
-      "submit": "Änderungen speichern"
+      "invalidUrlId": "Ungültige Fahrzeug-ID"
     },
     "delete": {
       "title": "Fahrzeug löschen",
       "description": "Sind Sie sicher, dass Sie dieses Fahrzeug löschen möchten?",
       "confirm": "Bestätigen",
       "cancel": "Abbrechen"
-    },
-    "detail": {
-      "title": "Fahrzeugdetails",
-      "summary": "Fahrzeugübersicht",
-      "left": "Spezifikationen",
-      "right": "Status / Zustand",
-      "bottom": "Zusätzliche Informationen",
-      "back": "Zurück"
     },
     "form": {
       "submit": "Speichern",
@@ -964,7 +1210,8 @@
         "sites": "Baustellen",
         "employees": "Mitarbeiter",
         "tools": "Werkzeuge",
-        "vehicles": "Fahrzeuge"
+        "vehicles": "Fahrzeuge",
+        "condos": "Wohnungen"
       },
       "bar": {
         "sites": "Baustellen — Monatlich ({{year}})",
@@ -1002,22 +1249,76 @@
       "confirmNewPassword": "Neues Passwort bestätigen",
       "currentPassword": "Aktuelles Passwort",
       "submit": "Passwort speichern"
+    },
+    "changePassword": {
+      "title": "Passwort ändern",
+      "description": "Hier können Sie Ihr Passwort ändern, wenn Sie möchten.",
+      "open": "Ändern",
+      "close": "Abbrechen",
+      "submit": "Speichern",
+      "currentPassword": "Aktuelles Passwort",
+      "newPassword": "Neues Passwort",
+      "confirmNewPassword": "Neues Passwort bestätigen",
+      "error": "Passwortänderung fehlgeschlagen."
+    },
+    "fields": {
+      "tenant": "Mandant (OIB)",
+      "username": "Benutzername",
+      "password": "Passwort",
+      "email": "E-Mail"
+    },
+    "login": {
+      "title": "Anmelden",
+      "submit": "Anmelden",
+      "validation": {
+        "fillAll": "Bitte füllen Sie alle Felder aus."
+      },
+      "success": "Erfolgreich angemeldet!",
+      "error": "Anmeldung fehlgeschlagen."
+    },
+    "forgot": {
+      "title": "Passwort vergessen?",
+      "submit": "Anweisungen senden",
+      "validation": {
+        "tenantAndEmail": "Bitte Mandant und E-Mail eingeben."
+      },
+      "success": "Anweisungen zum Zurücksetzen des Passworts wurden gesendet.",
+      "error": "Senden der Passwort-Zurücksetzen-Anweisungen fehlgeschlagen."
+    },
+    "reset": {
+      "title": "Neues Passwort festlegen",
+      "invalidLink": "Der Link ist ungültig oder unvollständig. Bitte fordern Sie einen neuen Link an.",
+      "tenantReadonly": "Mandant (OIB)",
+      "newPassword": "Neues Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "submit": "Neues Passwort speichern",
+      "back": "Zurück zur Anmeldung",
+      "success": "Passwort erfolgreich geändert.",
+      "error": "Passwortänderung fehlgeschlagen.",
+      "validation": {
+        "missingParams": "Fehlende Parameter im Link (Mandant/E-Mail/Token).",
+        "enterAndConfirm": "Bitte geben Sie das neue Passwort ein und bestätigen Sie es.",
+        "noMatch": "Passwörter stimmen nicht überein.",
+        "minLength": "Das Passwort muss mindestens {{count}} Zeichen lang sein."
+      }
+    },
+    "panels": {
+      "left": {
+        "title": "Passwort vergessen?",
+        "body": "Geben Sie Ihre E-Mail-Adresse ein, um Anweisungen zu erhalten.",
+        "button": "Passwort zurücksetzen"
+      },
+      "right": {
+        "title": "Willkommen zurück!",
+        "body": "Melden Sie sich an, um fortzufahren.",
+        "button": "Anmelden"
+      }
     }
   },
   "assignments": {
     "title": "Zuweisungen",
     "filterByEmployee": "Nach Mitarbeiter filtern",
     "allEmployees": "Alle Mitarbeiter",
-
-    "construction": "Baustellen",
-    "vehicles": "Fahrzeuge",
-    "tools": "Werkzeuge",
-
-    "view": {
-      "board": "Board",
-      "timeline": "Zeitleiste"
-    },
-
     "employee": {
       "info": "Mitarbeiterinformationen",
       "noOib": "OIB ist nicht definiert",
@@ -1029,7 +1330,6 @@
       "assignments": "Zuweisungen",
       "assignmentsCaption": "Baustellen · Fahrzeuge · Werkzeuge"
     },
-
     "timeline": {
       "laneConstruction": "Baustellen",
       "laneVehicles": "Fahrzeuge",
@@ -1039,27 +1339,21 @@
       "toolItem": "Werkzeug",
       "empty": "Keine Zuweisungen zur Anzeige auf der Zeitleiste.",
       "tooltip": {
-        "assignedTo": "Zugewiesen an:",
-        "lane": "Spur:",
         "from": "Von:",
-        "to": "Bis:"
-      }
-    },
-
-    "emptyConstruction": "Keine zugewiesenen Baustellen.",
-    "noLocation": "Standort ist nicht definiert",
-    "assignmentRange": "Zugewiesen:",
-    "siteRange": "Baustellenzeitraum:",
-    "managerLabel": "Bauleiter:",
-    "emptyVehicles": "Keine zugewiesenen Fahrzeuge.",
-    "noSite": "Nicht mit einer Baustelle verknüpft",
-    "emptyTools": "Keine zugewiesenen Werkzeuge."
+        "to": "Bis:",
+        "type": "Typ"
+      },
+      "item": "Eintrag",
+      "nextWeek": "Nächste Woche",
+      "prevWeek": "Vorherige Woche",
+      "unassigned": "Nicht zugewiesen"
+    }
   },
   "appShell": {
     "a11y": {
-      "openMenu": "Menü öffnen"
+      "openMenu": "Menü öffnen",
+      "closeMenu": "Menü schließen"
     },
-    "userAvatarAlt": "Benutzer",
     "snackbar": {
       "loggedOut": "Sie wurden abgemeldet."
     },
@@ -1068,26 +1362,798 @@
       "logout": "Abmelden"
     },
     "profile": {
-      "title": "Benutzerprofil",
-      "userId": "Benutzer-ID",
       "tenant": "Mandant",
-      "userData": "Benutzerdaten",
-      "firstName": "Vorname",
-      "lastName": "Nachname",
-      "email": "E-Mail",
       "username": "Benutzername",
       "phone": "Telefon",
-      "status": "Status",
       "active": "aktiv",
-      "inactive": "inaktiv",
-      "role": "Rolle",
-      "permissions": "Berechtigungen ({{count}})",
-      "tokenStatus": "Tokenstatus",
-      "accessToken": "Access-Token",
-      "expired": "abgelaufen",
-      "refreshTokenExpires": "Refresh-Token läuft ab",
-      "notFound": "Kein Benutzer mit der angemeldeten ID in der Benutzerliste gefunden.",
-      "close": "Schließen"
+      "inactive": "inaktiv"
     }
+  },
+  "reports": {
+    "list": {
+      "title": "Berichte",
+      "subtitle": "Wähle ein Modul aus, um dessen Berichte anzuzeigen."
+    },
+    "modules": {
+      "cta": "Berichte anzeigen →"
+    },
+    "module": {
+      "notFoundTitle": "Modul nicht gefunden",
+      "back": "Zurück",
+      "description": "Wähle und starte einen Bericht für dieses Modul.",
+      "noReports": "Für dieses Modul sind noch keine Berichte definiert.",
+      "open": "Bericht öffnen",
+      "opening": "Wird geöffnet..."
+    },
+    "items": {
+      "employeeList": {
+        "label": "Mitarbeiterliste",
+        "description": "Lade die Liste aller Mitarbeiter herunter."
+      },
+      "vehicleList": {
+        "label": "Fahrzeugliste",
+        "description": "Laden Sie eine Liste aller Fahrzeuge herunter."
+      },
+      "toolList": {
+        "label": "Werkzeugliste",
+        "description": "Laden Sie eine Liste aller Werkzeuge herunter."
+      },
+      "constructionSiteList": {
+        "label": "Baustellenliste",
+        "description": "Lade eine Liste aller Baustellen herunter."
+      },
+      "constructionSiteTotalHours": {
+        "label": "Gesamtstunden nach Baustelle",
+        "description": "Laden Sie einen Bericht über die gesamten Arbeitsstunden nach Baustelle für den ausgewählten Zeitraum herunter."
+      }
+    }
+  },
+  "examinationTypes": {
+    "list": {
+      "title": "Prüfarten",
+      "error": "Fehler beim Laden der Prüfarten."
+    },
+    "create": {
+      "title": "Prüfart erstellen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Prüfart bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (ID).",
+      "loadError": "Fehler beim Laden der Prüfart."
+    },
+    "delete": {
+      "title": "Prüfart löschen?",
+      "description": "Sind Sie sicher, dass Sie diese Prüfart löschen möchten?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "examinationTypeName": "Bezeichnung der Prüfart",
+        "monthsToNextExamination": "Monate bis zur nächsten Prüfung"
+      }
+    }
+  },
+  "medicalExaminations": {
+    "list": {
+      "title": "Medizinische Untersuchungen",
+      "error": "Fehler beim Laden der medizinischen Untersuchungen."
+    },
+    "create": {
+      "title": "Medizinische Untersuchung hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Medizinische Untersuchung bearbeiten",
+      "back": "Zurück",
+      "loadError": "Die medizinische Untersuchung konnte nicht geladen werden."
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "employeeId": "Mitarbeiter",
+        "examinationTypeId": "Untersuchungstyp",
+        "examinationDate": "Untersuchungsdatum",
+        "nextExaminationDate": "Nächstes Untersuchungsdatum",
+        "result": "Ergebnis",
+        "note": "Notiz",
+        "attachmentLabel": "Anhang"
+      }
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "detailView": "Details"
+    },
+    "delete": {
+      "title": "Untersuchung löschen?",
+      "description": "Sind Sie sicher, dass Sie diese medizinische Untersuchung löschen möchten?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "tree": {
+      "exam": "Untersuchung {{id}}"
+    }
+  },
+  "certificationTypes": {
+    "list": {
+      "title": "Zertifizierungstypen",
+      "error": "Fehler beim Laden der Zertifizierungstypen."
+    },
+    "create": {
+      "title": "Zertifizierungstyp hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Zertifizierungstyp bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (ID)",
+      "loadError": "Der Zertifizierungstyp konnte nicht geladen werden."
+    },
+    "delete": {
+      "title": "Zertifizierungstyp löschen?",
+      "description": "Sind Sie sicher, dass Sie diesen Zertifizierungstyp löschen möchten?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "certificationTypeName": "Bezeichnung des Zertifizierungstyps",
+        "requiresRenewal": "Erneuerung erforderlich",
+        "monthsToRenewal": "Monate bis zur Erneuerung"
+      }
+    }
+  },
+  "certifications": {
+    "status": {
+      "passed": "Bestanden",
+      "failed": "Nicht bestanden"
+    },
+    "list": {
+      "title": "Zertifizierungen",
+      "error": "Fehler beim Laden der Zertifizierungen."
+    },
+    "create": {
+      "title": "Zertifizierung hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Zertifizierung bearbeiten",
+      "back": "Zurück",
+      "loadError": "Die Zertifizierung konnte nicht geladen werden."
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "employeeId": "Mitarbeiter",
+        "certificationTypeId": "Zertifizierungstyp",
+        "certificationDate": "Zertifizierungsdatum",
+        "nextCertificationDate": "Nächstes Zertifizierungsdatum",
+        "status": "Status",
+        "certificatePath": "Zertifikatspfad",
+        "reminderSentDate": "Erinnerungsdatum",
+        "note": "Notiz"
+      }
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "detailView": "Details"
+    },
+    "delete": {
+      "title": "Zertifizierung löschen?",
+      "description": "Sind Sie sicher, dass Sie diese Zertifizierung löschen möchten?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "tree": {
+      "certification": "Zertifizierung {{id}}"
+    }
+  },
+  "condos": {
+    "list": {
+      "title": "Wohnungen",
+      "error": "Fehler beim Laden der Wohnungen."
+    },
+    "detail": {
+      "title": "Wohnungsdetails",
+      "occupancy": "Belegung",
+      "leaseStart": "Mietbeginn",
+      "leaseEnd": "Mietende",
+      "responsiblePerson": "Verantwortliche Person",
+      "financials": "Finanzen",
+      "pricePerDay": "Preis pro Tag",
+      "pricePerMonth": "Preis pro Monat",
+      "assignedEmployees": "Zugewiesene Mitarbeiter",
+      "noEmployees": "Keine Mitarbeiter zugewiesen.",
+      "constructionSites": "Baustellen",
+      "noSites": "Keine verknüpften Baustellen."
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "create": {
+      "title": "Wohnung hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Wohnung bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (ID)",
+      "loadError": "Wohnung konnte nicht geladen werden."
+    },
+    "delete": {
+      "title": "Wohnung löschen?",
+      "description": "Möchten Sie diese Wohnung wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "address": "Adresse",
+        "capacity": "Kapazität",
+        "currentlyOccupied": "Derzeit belegt",
+        "leaseStartDate": "Mietbeginn",
+        "leaseEndDate": "Mietende",
+        "responsibleEmployeeId": "Verantwortliche Person",
+        "pricePerDay": "Preis pro Tag",
+        "pricePerMonth": "Preis pro Monat",
+        "currency": "Währung",
+        "notes": "Notizen"
+      }
+    },
+    "assignEmployees": {
+      "title": "Mitarbeiter der Unterkunft zuweisen",
+      "empty": "Keine Mitarbeiter verfügbar.",
+      "pickHint": "Wählen Sie Mitarbeiter auf der linken Seite aus.",
+      "allCount": "Mitarbeiter ({{count}})",
+      "selectedCount": "Ausgewählt: {{count}}"
+    }
+  },
+  "notifications": {
+    "title": "Benachrichtigungen",
+    "create": {
+      "title": "Benachrichtigung senden",
+      "preview": "Details",
+      "titleLabel": "Titel",
+      "recipients": "Empfänger",
+      "messageLabel": "Nachricht",
+      "url": "Aktions-URL",
+      "entityType": "Entitätstyp",
+      "entityId": "Entitäts-ID",
+      "selectUsers": "Benutzer auswählen",
+      "button": "Benachrichtigung senden"
+    },
+    "tabs": {
+      "all": "Alle",
+      "unread": "Ungelesen",
+      "construction": "Baustellen",
+      "vehicles": "Fahrzeuge",
+      "tools": "Werkzeuge",
+      "hr": "Personal",
+      "system": "System"
+    },
+    "empty": {
+      "unread": "Keine ungelesenen Benachrichtigungen",
+      "earlier": "Keine älteren Benachrichtigungen",
+      "noneAll": "Keine Benachrichtigungen.",
+      "noneUnread": "Keine ungelesenen Benachrichtigungen."
+    },
+    "sections": {
+      "earlier": "Älter"
+    },
+    "actions": {
+      "showAll": "Alle anzeigen",
+      "loadEarlier": "Ältere Benachrichtigungen laden",
+      "markAllRead": "Alle als gelesen markieren"
+    },
+    "page": {
+      "subtitle": "Übersicht aller Benachrichtigungen und ungelesenen Nachrichten.",
+      "loading": "Lädt..."
+    },
+    "toast": {
+      "open": "Öffnen"
+    },
+    "type": {
+      "unknown": "Unbekannt",
+      "constructionSiteStatusChanged": "Status der Baustelle geändert",
+      "constructionSiteAssigned": "Baustelle zugewiesen",
+      "constructionSiteUnassigned": "Baustellenzuweisung aufgehoben",
+      "constructionSiteDeadlineChanged": "Frist der Baustelle geändert",
+      "vehicleAssigned": "Fahrzeug zugewiesen",
+      "vehicleServiceDue": "Fahrzeugservice fällig",
+      "vehicleRegistrationTaskAssigned": "Aufgabe zur Fahrzeugzulassung zugewiesen",
+      "vehicleBusinessTripApprovalRequested": "Genehmigung für Dienstfahrt angefordert",
+      "vehicleBusinessTripApproved": "Dienstfahrt genehmigt",
+      "vehicleBusinessTripRejected": "Dienstfahrt abgelehnt",
+      "vehicleBusinessTripCancelled": "Dienstfahrt storniert",
+      "toolAssigned": "Werkzeug zugewiesen",
+      "toolMaintenanceDue": "Werkzeugwartung fällig",
+      "medicalExaminationExpiresSoon": "Medizinische Untersuchung läuft bald ab",
+      "medicalExaminationExpired": "Medizinische Untersuchung abgelaufen",
+      "systemAnnouncement": "Systemmeldung"
+    },
+    "a11y": {
+      "openMenu": "Benachrichtigungen öffnen"
+    }
+  },
+  "vehicleRepairs": {
+    "list": {
+      "title": "Fahrzeugreparaturen",
+      "error": "Fehler beim Laden der Reparaturen."
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "detailView": "Detailansicht"
+    },
+    "create": {
+      "title": "Fahrzeugreparatur hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Fahrzeugreparatur bearbeiten",
+      "back": "Zurück",
+      "loadError": "Fahrzeugreparatur konnte nicht geladen werden.",
+      "invalidUrlId": "Ungültige Reparatur-ID"
+    },
+    "delete": {
+      "title": "Fahrzeugreparatur löschen",
+      "description": "Möchten Sie diese Fahrzeugreparatur wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "vehicleId": "Fahrzeug",
+        "repairDate": "Reparaturdatum",
+        "cost": "Kosten",
+        "condition": "Zustand",
+        "description": "Beschreibung"
+      }
+    }
+  },
+  "vehicleRegistrations": {
+    "list": {
+      "title": "Fahrzeugzulassungen",
+      "error": "Fehler beim Laden der Fahrzeugzulassungen"
+    },
+    "actions": "Aktionen",
+    "create": {
+      "title": "Fahrzeugzulassung hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Fahrzeugzulassung bearbeiten",
+      "back": "Zurück",
+      "loadError": "Fahrzeugzulassung konnte nicht geladen werden",
+      "invalidUrlId": "Ungültige Zulassungs-ID"
+    },
+    "detail": {
+      "title": "Fahrzeugzulassung – Details",
+      "subtitle": "Details zur Fahrzeugzulassung anzeigen.",
+      "invalidId": "Ungültige ID.",
+      "loadError": "Fahrzeugzulassung konnte nicht geladen werden.",
+      "notFound": "Zulassung nicht gefunden.",
+      "section": {
+        "basic": "Grunddaten",
+        "details": "Details",
+        "costDetails": "Kostendetails"
+      },
+      "costDescription": "Registrierungskosten für Fahrzeug {{vehicleId}}",
+      "noDocument": "Kein Dokument"
+    },
+    "delete": {
+      "title": "Fahrzeugzulassung löschen",
+      "description": "Möchten Sie diese Zulassung wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "vehicleId": "Fahrzeug",
+        "validFrom": "Gültig ab",
+        "validTo": "Gültig bis",
+        "totalCostAmount": "Gesamtkosten",
+        "costCurrency": "Währung",
+        "registrationStationName": "Zulassungsstelle",
+        "registrationStationLocation": "Standort der Zulassungsstelle",
+        "reportNumber": "Berichtsnummer",
+        "documentPath": "Dokument",
+        "note": "Notiz"
+      }
+    },
+    "columns": {
+      "id": "ID"
+    }
+  },
+  "myTasks": {
+    "title": "Arbeitsaufgaben",
+    "tabs": {
+      "vehicleRegistration": "Registrierungsaufgaben"
+    }
+  },
+  "vehicleRegistrationTasks": {
+    "list": {
+      "empty": "Keine Aufgaben vorhanden.",
+      "sections": {
+        "assigned": "Zugewiesen",
+        "dueSoon": "Bald fällig",
+        "inProgress": "In Bearbeitung",
+        "completed": "Abgeschlossen",
+        "cancelled": "Abgebrochen"
+      }
+    },
+    "columns": {
+      "actions": "Aktionen",
+      "taskName": "Anfragename",
+      "description": "Beschreibung",
+      "deadline": "Frist",
+      "type": "Typ"
+    },
+    "actions": {
+      "completeTask": "Aufgabe abschließen"
+    },
+    "resolveDialog": {
+      "title": "Bestätigung",
+      "question": "Haben Sie eine neue Registrierung erstellt?",
+      "helper": "Falls nicht, klicken Sie auf \"Registrierung erstellen\". Nach der Erstellung kehren Sie hierher zurück und klicken auf \"Speichern\", um die Aufgabe als erledigt zu markieren.",
+      "save": "Speichern",
+      "create": "Registrierung erstellen",
+      "cancel": "Abbrechen",
+      "snackbarNoNewerRegistration": "Es existiert keine neuere Registrierung für dieses Fahrzeug. Bitte erstellen Sie eine neue Registrierung, bevor Sie den Status ändern.",
+      "snackbarBadDate": "Ungültiges Ablaufdatum der Aufgabe."
+    }
+  },
+  "vehicleInsurances": {
+    "list": {
+      "title": "Fahrzeugversicherungen",
+      "error": "Fehler beim Laden der Fahrzeugversicherungen"
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "create": {
+      "title": "Fahrzeugversicherung hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Fahrzeugversicherung bearbeiten",
+      "back": "Zurück",
+      "loadError": "Fahrzeugversicherung konnte nicht geladen werden",
+      "invalidUrlId": "Ungültige Versicherungs-ID"
+    },
+    "delete": {
+      "title": "Fahrzeugversicherung löschen",
+      "description": "Möchten Sie diese Versicherung wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "vehicleId": "Fahrzeug",
+        "insurer": "Versicherer",
+        "policyNumber": "Policennummer",
+        "policyType": "Policeart",
+        "costAmount": "Kostenbetrag",
+        "costCurrency": "Währung",
+        "validFrom": "Gültig ab",
+        "validTo": "Gültig bis",
+        "documentPath": "Dokument"
+      }
+    }
+  },
+  "history": {
+    "tool": {
+      "title": "Werkzeughistorie",
+      "assignments": "Zuweisungen",
+      "emptyAssignments": "Keine Zuweisungen.",
+      "repairs": "Reparaturen",
+      "emptyRepairs": "Keine Reparatureinträge.",
+      "repairFallback": "Werkzeugreparatur"
+    },
+    "condo": {
+      "title": "Wohnungs­historie",
+      "employees": "Mitarbeiter",
+      "emptyEmployees": "Keine Mitarbeiter zugewiesen.",
+      "constructionSites": "Baustellen",
+      "emptyConstructionSites": "Keine Baustellen verknüpft."
+    },
+    "vehicle": {
+      "title": "Fahrzeughistorie",
+      "assignments": "Zuweisungen",
+      "emptyAssignments": "Keine Zuweisungen.",
+      "registrations": "Registrierungen",
+      "emptyRegistrations": "Keine Registrierungen.",
+      "registrationFallback": "Registrierungsstelle",
+      "trips": "Dienstreisen",
+      "emptyTrips": "Keine Dienstreisen.",
+      "tripFallback": "Reise",
+      "refueled": "Getankt",
+      "insurance": "Versicherung",
+      "emptyInsurance": "Keine Versicherungen.",
+      "insuranceFallback": "Versicherung",
+      "repairs": "Reparaturen",
+      "emptyRepairs": "Keine Reparaturen.",
+      "repairFallback": "Reparatur"
+    },
+    "common": {
+      "condoId": "Wohnungs-ID",
+      "ongoing": "laufend",
+      "loadMore": "Mehr laden",
+      "vehicleId": "Fahrzeug-ID",
+      "loading": "Lädt…",
+      "loadError": "Fehler beim Laden.",
+      "toolId": "Werkzeug-ID"
+    }
+  },
+  "vehicleBusinessTrips": {
+    "list": {
+      "title": "Dienstfahrten",
+      "error": "Fehler beim Laden der Dienstfahrten."
+    },
+    "create": {
+      "title": "Dienstfahrt hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Dienstfahrt bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige URL (ID)",
+      "loadError": "Dienstfahrt konnte nicht geladen werden."
+    },
+    "detail": {
+      "title": "Dienstfahrt – Details",
+      "subtitle": "Details zur Dienstfahrt des Fahrzeugs anzeigen.",
+      "back": "Zurück",
+      "invalidId": "Ungültige ID.",
+      "loadError": "Dienstfahrt konnte nicht geladen werden.",
+      "notFound": "Dienstfahrt nicht gefunden.",
+      "section": {
+        "basic": "Grunddaten",
+        "routeAndTime": "Route & Zeit",
+        "kilometersAndFuel": "Kilometer & Kraftstoff"
+      }
+    },
+    "actions": "Aktionen",
+    "table": {
+      "edit": "Bearbeiten",
+      "approve": "Genehmigen",
+      "reject": "Ablehnen",
+      "cancel": "Abbrechen",
+      "complete": "Abschließen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "vehicleId": "Fahrzeug",
+        "employeeId": "Mitarbeiter",
+        "startLocationText": "Startort",
+        "endLocationText": "Zielort",
+        "purposeOfTrip": "Zweck der Fahrt",
+        "startAt": "Startzeit",
+        "endAt": "Endzeit",
+        "startKilometers": "Kilometerstand (Start)",
+        "endKilometers": "Kilometerstand (Ende)",
+        "refueled": "Getankt",
+        "fuelLiters": "Getankte Liter",
+        "fuelAmount": "Kraftstoffkosten",
+        "fuelCurrency": "Währung",
+        "note": "Notiz"
+      }
+    },
+    "dialogs": {
+      "common": {
+        "start": "Start",
+        "end": "Ende",
+        "cancel": "Abbrechen",
+        "noTripSelected": "Keine Fahrt ausgewählt",
+        "tripDetailsTitle": "Fahrtdetails",
+        "referenceTrip": "Fahrt #{{id}}"
+      },
+      "approve": {
+        "title": "Dienstfahrt genehmigen",
+        "subtitle": "Genehmiger {{id}}",
+        "previewSubtitle": "Überprüfen Sie die Daten und weisen Sie anschließend ein Fahrzeug zu.",
+        "submit": "Genehmigen",
+        "vehicleAssignment": "Fahrzeugzuweisung",
+        "vehicleLabel": "Fahrzeug",
+        "selectVehicle": "Fahrzeug auswählen…",
+        "checkAvailability": "Verfügbarkeit prüfen",
+        "checking": "Prüfe…",
+        "tip": "Tipp: Nutzen Sie „Verfügbarkeit prüfen“, um Konflikte zu vermeiden.",
+        "chip": {
+          "checking": "Verfügbarkeit wird geprüft…",
+          "available": "Fahrzeug verfügbar",
+          "notAvailable": "Fahrzeug nicht verfügbar",
+          "notChecked": "Verfügbarkeit nicht geprüft"
+        },
+        "tooltip": {
+          "submitting": "Wird gesendet…",
+          "loadingVehicles": "Fahrzeuge werden geladen…",
+          "noApprover": "Genehmiger nicht verfügbar",
+          "selectVehicle": "Fahrzeug auswählen",
+          "checkingAvailability": "Verfügbarkeit wird geprüft…",
+          "clickCheckFirst": "Zuerst „Verfügbarkeit prüfen“ klicken",
+          "vehicleNotAvailable": "Fahrzeug ist nicht verfügbar",
+          "selectVehicleAndDates": "Fahrzeug auswählen und Datumsangaben prüfen"
+        }
+      },
+      "cancel": {
+        "title": "Dienstfahrt stornieren",
+        "subtitle": "Stornierer {{id}}",
+        "previewSubtitle": "Diese Fahrt wird storniert und aus dem Genehmigungsprozess entfernt.",
+        "submit": "Fahrt stornieren",
+        "close": "Schließen",
+        "helper": "Sie können optional einen Grund angeben. Diese Aktion kann nicht rückgängig gemacht werden.",
+        "placeholder": "Optionaler Grund (z. B. nicht mehr erforderlich)",
+        "cannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
+        "tooltip": {
+          "submitting": "Wird gesendet…",
+          "noCanceller": "Stornierer nicht verfügbar"
+        }
+      },
+      "reject": {
+        "title": "Dienstfahrt ablehnen",
+        "subtitle": "Abgelehnt von {{id}}",
+        "previewSubtitle": "Überprüfen Sie die Daten und geben Sie einen Ablehnungsgrund an.",
+        "helper": "Bitte geben Sie einen kurzen Grund an. Dieser wird mit der Fahrt gespeichert.",
+        "placeholder": "z. B. Terminkonflikt / Fehlende Angaben / Richtlinien…",
+        "minChars": "Bitte mindestens 3 Zeichen eingeben.",
+        "note": "Hinweis: Die Ablehnung informiert den Antragsteller und stoppt den Genehmigungsprozess."
+      },
+      "complete": {
+        "title": "Dienstreise abschließen",
+        "subtitle": "Kilometer und optionale Kraftstoffangaben eintragen",
+        "previewSubtitle": "Daten prüfen und die Reise mit den endgültigen Angaben abschließen.",
+        "submit": "Abschließen",
+        "tooltip": {
+          "submitting": "Wird gesendet…",
+          "invalidKilometers": "Gültige Start-/Endkilometer eingeben (Ende ≥ Start)",
+          "invalidFuelDetails": "Wenn getankt wurde, Betrag, Währung und Liter angeben"
+        },
+        "fields": {
+          "startKilometers": "Startkilometer",
+          "endKilometers": "Endkilometer",
+          "refueled": "Getankt",
+          "fuelAmount": "Kraftstoffbetrag",
+          "fuelCurrency": "Währung",
+          "fuelLiters": "Kraftstoffliter",
+          "note": "Notiz"
+        },
+        "placeholders": {
+          "startKilometers": "z. B. 12450",
+          "endKilometers": "z. B. 12610",
+          "fuelAmount": "z. B. 45,20",
+          "fuelLiters": "z. B. 28,4",
+          "note": "Optionale Notiz…"
+        },
+        "validation": {
+          "invalidNumber": "Ungültige Zahl",
+          "endBeforeStart": "Ende muss ≥ Start sein"
+        }
+      }
+    },
+    "fields": {
+      "id": "ID"
+    },
+    "status": {
+      "label": "Status",
+      "pending": "Ausstehend",
+      "approved": "Genehmigt",
+      "rejected": "Abgelehnt",
+      "completed": "Abgeschlossen",
+      "inProgress": "In Bearbeitung",
+      "cancelled": "Abgebrochen"
+    }
+  },
+  "vehicleRegistrationEmployees": {
+    "assign": {
+      "due": "Fällig bis: {{date}}",
+      "title": "Aufgabe zuweisen",
+      "subtitle": "Fahrzeugregistrierung einem Mitarbeiter zuweisen",
+      "previewTitle": "Fahrzeugregistrierungsaufgabe",
+      "previewSubtitle": "Basierend auf dem ausgewählten Eintrag",
+      "assignmentTitle": "Zuweisung",
+      "employee": "Mitarbeiter",
+      "note": "Notiz (optional)",
+      "notePlaceholder": "Fügen Sie Details für den Mitarbeiter hinzu (was zu tun ist, wo, Fristen...)",
+      "helper": "Dies erstellt eine Aufgabe und weist sie dem ausgewählten Mitarbeiter zu.",
+      "alreadyAssignedTitle": "Aufgabe bereits zugewiesen",
+      "alreadyAssignedHelper": "Diese Fahrzeugregistrierung ist bereits einem Mitarbeiter zugewiesen. ",
+      "alreadyAssignedSubmit": "Bereits zugewiesen",
+      "fields": {
+        "vehicle": "Fahrzeug",
+        "registration": "Registrierung"
+      }
+    },
+    "rowActions": {
+      "assign": "Aufgabe zuweisen"
+    }
+  },
+  "toolRepairs": {
+    "list": {
+      "title": "Werkzeugreparaturen",
+      "error": "Fehler beim Laden der Werkzeugreparaturen"
+    },
+    "create": {
+      "title": "Werkzeugreparatur hinzufügen",
+      "back": "Zurück"
+    },
+    "edit": {
+      "title": "Werkzeugreparatur bearbeiten",
+      "back": "Zurück",
+      "invalidUrlId": "Ungültige Reparatur-ID",
+      "loadError": "Fehler beim Laden der Werkzeugreparatur"
+    },
+    "actions": "Aktionen",
+    "delete": {
+      "title": "Werkzeugreparatur löschen",
+      "description": "Möchten Sie diese Werkzeugreparatur wirklich löschen?",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "table": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "form": {
+      "submit": "Speichern",
+      "field": {
+        "toolId": "Werkzeug",
+        "repairDate": "Reparaturdatum",
+        "cost": "Reparaturkosten",
+        "condition": "Zustand",
+        "description": "Beschreibung"
+      }
+    }
+  },
+  "workLogs": {
+    "dialog": {
+      "title": "Arbeitsprotokoll",
+      "subtitle": "Start- und Endzeit eingeben",
+      "detailsTitle": "Details",
+      "employee": "Mitarbeiter",
+      "site": "Baustelle",
+      "date": "Datum",
+      "startTime": "Start",
+      "endTime": "Ende",
+      "hint": "Zeiten werden im 24-Stunden-Format mit Minutenpräzision gespeichert.",
+      "preview": {
+        "employeeId": "Mitarbeiter",
+        "siteId": "Baustelle"
+      }
+    }
+  },
+  "currency": {
+    "eur": "EUR",
+    "usd": "USD",
+    "gbp": "GBP",
+    "hrk": "HRK"
   }
 }

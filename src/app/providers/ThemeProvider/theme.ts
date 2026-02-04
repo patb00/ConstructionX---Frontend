@@ -22,11 +22,18 @@ export const theme = createTheme({
     MuiButton: {
       defaultProps: {
         disableElevation: true,
+        size: "small",
       },
       styleOverrides: {
-        root: {
-          color: "#ffffff",
-        },
+        root: ({ ownerState, theme }) => ({
+          ...(ownerState.variant !== "contained" && {
+            color: theme.palette.primary.main,
+          }),
+
+          ...(ownerState.variant === "contained" && {
+            color: theme.palette.common.white,
+          }),
+        }),
       },
     },
 
@@ -43,6 +50,21 @@ export const theme = createTheme({
               color: "#ffffff",
             }),
         }),
+      },
+    },
+
+    MuiInputBase: {
+      styleOverrides: {
+        input: {
+          textTransform: "none",
+        },
+      },
+    },
+    MuiAutocomplete: {
+      styleOverrides: {
+        option: {
+          textTransform: "none",
+        },
       },
     },
 

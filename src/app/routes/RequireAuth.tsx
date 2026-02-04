@@ -1,9 +1,9 @@
-// app/router/RequireAuth.tsx
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
+import { Box, CircularProgress } from "@mui/material";
 import { useAuthStore } from "../../features/auth/store/useAuthStore";
-import { getCookie } from "../../lib/cookie";
 import { isExpired } from "../../lib/jwt";
+import { getCookie } from "../../lib/cookie";
 import { refreshTokens } from "../../lib/authFetch";
 
 const ACCESS_COOKIE = "auth_jwt";
@@ -24,15 +24,13 @@ export function RequireAuth({
     let cancelled = false;
 
     async function go() {
-      if (!hasHydrated) return; // wait for cookie load
+      if (!hasHydrated) return;
 
-      // Already authenticated with a valid token
       if (jwt && !isExpired(jwt)) {
         setChecking(false);
         return;
       }
 
-      // Try cookie JWT
       const cookieJwt = getCookie(ACCESS_COOKIE);
       if (cookieJwt && !isExpired(cookieJwt)) {
         setTokens(
@@ -44,7 +42,6 @@ export function RequireAuth({
         return;
       }
 
-      // Silent refresh if we have a refresh token
       const cookieRt = getCookie(REFRESH_COOKIE);
       if (cookieRt) {
         const newJwt = await refreshTokens(cookieJwt ?? "", cookieRt);
@@ -67,7 +64,18 @@ export function RequireAuth({
   }, [jwt, hasHydrated, setTokens]);
 
   if (!hasHydrated || checking) {
-    return <div style={{ padding: 24 }}>Checking session…</div>;
+    return (
+      <Box
+        sx={{
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (!isAuthenticated) {

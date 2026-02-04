@@ -1,6 +1,6 @@
-// src/components/ForgotPasswordForm.tsx
 import { Box, Button, TextField, Typography } from "@mui/material";
 import type { FormEvent } from "react";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   className?: string;
@@ -15,17 +15,19 @@ export function ForgotPasswordForm({
   tenantValue,
   onTenantChange,
 }: Props) {
+  const { t } = useTranslation();
+
   return (
     <Box component="form" className={className} onSubmit={onSubmit}>
       <Typography variant="h4" sx={{ mb: 1 }}>
-        Zaboravljena lozinka?
+        {t("auth.forgot.title")}
       </Typography>
 
       <TextField
         size="small"
         fullWidth
         margin="normal"
-        label="Tenant"
+        label={t("auth.fields.tenant")}
         name="tenant"
         required
         value={tenantValue ?? ""}
@@ -36,7 +38,7 @@ export function ForgotPasswordForm({
         size="small"
         fullWidth
         margin="normal"
-        label="Email"
+        label={t("auth.fields.email")}
         name="email"
         type="email"
         required
@@ -49,7 +51,7 @@ export function ForgotPasswordForm({
         fullWidth
         sx={{ mt: 2 }}
       >
-        Pošalji upute
+        {t("auth.forgot.submit")}
       </Button>
     </Box>
   );

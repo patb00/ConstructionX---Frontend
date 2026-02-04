@@ -1,4 +1,4 @@
-import { authFetch } from "../../../../lib/authFetch";
+import { authFetch, authFetchBlob } from "../../../../lib/authFetch";
 import type {
   AssignedConstructionSite,
   AssignedTool,
@@ -7,6 +7,7 @@ import type {
   Employee,
   NewEmployeeRequest,
   UpdateEmployeeRequest,
+  PagedResult,
 } from "..";
 import type { ApiEnvelope } from "../../tenants";
 
@@ -45,8 +46,10 @@ export const EmployeesApi = {
     return res.data;
   },
 
-  getAll: async (): Promise<Employee[]> => {
-    const res = await authFetch<ApiEnvelope<Employee[]>>(`${base}/get-all`);
+  getAll: async (page: number, pageSize: number) => {
+    const res = await authFetch<ApiEnvelope<PagedResult<Employee>>>(
+      `${base}/get-all?Page=${page}&PageSize=${pageSize}`
+    );
     return res.data;
   },
 
@@ -80,5 +83,18 @@ export const EmployeesApi = {
       `${base}/assigned-tools`
     );
     return res.data;
+  },
+
+  export: async () => {
+    return authFetchBlob(`${base}/export`, { method: "GET" });
+  },
+
+  import: async (file: File) => {
+    const formData = new FormData();
+    formData.append("UploadFile", file);
+    return authFetchBlob(`${base}/import`, {
+      method: "POST",
+      body: formData,
+    });
   },
 };

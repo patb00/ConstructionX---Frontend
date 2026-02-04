@@ -31,11 +31,7 @@ export default function ToolCategoryForm({
     <SmartForm<NewToolCategoryRequest>
       fields={fields}
       rows={[["name", "description"]]}
-      defaultValues={{
-        name: "",
-        description: null,
-        ...defaultValues,
-      }}
+      defaultValues={defaultValues}
       busy={busy}
       submitLabel={t("toolCategories.form.submit")}
       onSubmit={onSubmit}

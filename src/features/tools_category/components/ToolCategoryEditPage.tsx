@@ -31,9 +31,7 @@ export default function ToolCategoryEditPage() {
   const handleSubmit = (values: NewToolCategoryRequest) => {
     const idForUpdate =
       typeof category?.id === "number" ? category.id : categoryId;
-    updateCategory({ id: idForUpdate, ...values } as any, {
-      onSuccess: () => navigate("/app/tool-categories"),
-    });
+    updateCategory({ id: idForUpdate, ...values } as any);
   };
 
   if (error) return <div>{t("toolCategories.edit.loadError")}</div>;

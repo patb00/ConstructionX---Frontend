@@ -1,22 +1,27 @@
-import { Paper, Stack, Typography, Button, TextField } from "@mui/material";
+import { Paper, Stack, Typography, Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
-import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useState } from "react";
+
+import {
+  SmartForm,
+  type FieldConfig,
+} from "../../../../components/ui/smartform/SmartForm";
+import TenantForm, { type TenantFormValues } from "./TenantForm";
+
 import { useTenant } from "../hooks/useTenant";
 import { useUpdateSubscription } from "../hooks/useUpdateSubscription";
-import { useTranslation } from "react-i18next";
+import { useUpdateTenant } from "../hooks/useUpdateTenant";
+import { useUploadTenantLogo } from "../hooks/useUploadTenantLogo";
 
-const pad = (n: number) => String(n).padStart(2, "0");
-function isoToLocalInput(iso?: string | null): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
-    d.getHours()
-  )}:${pad(d.getMinutes())}`;
-}
-function localInputToIso(local: string): string {
-  return new Date(local).toISOString();
-}
+import {
+  type TenantSubscriptionFormValues,
+  tenantToSubscriptionDefaults,
+  tenantToEditDefaults,
+  localInputToIso,
+  buildUpdateTenantPayload,
+} from "../utils/tenantForm";
 
 export default function TenantEditPage() {
   const { t } = useTranslation();
@@ -25,27 +30,55 @@ export default function TenantEditPage() {
 
   const navigate = useNavigate();
   const { data: tenant, isLoading, error } = useTenant(tenantId);
-  const { mutateAsync: updateSubscription, isPending } =
+
+  const { mutateAsync: updateSubscription, isPending: updatingSub } =
     useUpdateSubscription();
+  const { mutateAsync: updateTenant, isPending: updatingTenant } =
+    useUpdateTenant();
+  const { mutateAsync: uploadLogo, isPending: uploadingLogo } =
+    useUploadTenantLogo();
 
-  const initialValue = useMemo(
-    () => isoToLocalInput(tenant?.validUpToDate ?? null),
-    [tenant?.validUpToDate]
-  );
-  const [newExpirationLocal, setNewExpirationLocal] = useState<string>("");
+  const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
 
-  const effectiveLocal = newExpirationLocal || initialValue;
+  if (error) return <div>{t("tenants.edit.loadError")}</div>;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!effectiveLocal) return;
+  const fields: FieldConfig<TenantSubscriptionFormValues>[] = [
+    {
+      name: "validUpToDate",
+      label: t("tenants.edit.validUntil"),
+      type: "datetime-local",
+      required: true,
+    },
+  ];
+
+  const defaultValues = tenantToSubscriptionDefaults(tenant);
+  const editDefaultValues = tenantToEditDefaults(tenant);
+
+  const handleEditSubmit = async (values: TenantFormValues<"edit">) => {
+    const { tenantId: id, payload } = buildUpdateTenantPayload(
+      tenantId,
+      values
+    );
+
+    await updateTenant({ tenantId: id, payload });
+
+    if (selectedLogoFile) {
+      await uploadLogo({ tenantId: id, file: selectedLogoFile });
+      setSelectedLogoFile(null);
+    }
+  };
+
+  const handleSubmit = async (values: TenantSubscriptionFormValues) => {
+    if (!values.validUpToDate) return;
+
     await updateSubscription({
       tenantId,
-      newExpirationDate: localInputToIso(effectiveLocal),
+      newExpirationDate: localInputToIso(values.validUpToDate),
     });
   };
 
-  if (error) return <div>{t("tenants.edit.loadError")}</div>;
+  const busySub = isLoading || updatingSub;
+  const busyEdit = isLoading || updatingTenant || uploadingLogo;
 
   return (
     <Stack spacing={2}>
@@ -77,33 +110,43 @@ export default function TenantEditPage() {
           width: "100%",
         }}
       >
-        <form onSubmit={handleSubmit}>
-          <Stack spacing={2}>
-            <Typography variant="subtitle1">
-              {t("tenants.edit.tenantLabel")}: <strong>{tenant?.name}</strong> (
-              {tenantId})
-            </Typography>
+        <Stack spacing={2}>
+          <Typography variant="subtitle1">
+            {t("tenants.edit.tenantLabel")}: <strong>{tenant?.name}</strong> (
+            {tenantId})
+          </Typography>
 
-            <TextField
-              label={t("tenants.edit.validUntil")}
-              type="datetime-local"
-              value={effectiveLocal}
-              onChange={(e) => setNewExpirationLocal(e.target.value)}
-              disabled={isLoading || isPending}
-              inputProps={{ "aria-label": t("tenants.edit.validUntil") }}
-              sx={{ maxWidth: 320 }}
-            />
+          <SmartForm<TenantSubscriptionFormValues>
+            fields={fields}
+            rows={[["validUpToDate"]]}
+            defaultValues={defaultValues}
+            busy={busySub}
+            submitLabel={t("tenants.edit.save")}
+            onSubmit={handleSubmit}
+          />
+        </Stack>
+      </Paper>
 
-            <Button
-              size="small"
-              type="submit"
-              variant="contained"
-              disabled={!effectiveLocal || isPending || isLoading}
-            >
-              {t("tenants.edit.save")}
-            </Button>
-          </Stack>
-        </form>
+      <Paper
+        elevation={0}
+        sx={{
+          border: (t) => `1px solid ${t.palette.divider}`,
+          p: 2,
+          width: "100%",
+        }}
+      >
+        <Stack spacing={2}>
+          <TenantForm
+            mode="edit"
+            defaultValues={editDefaultValues}
+            onSubmit={handleEditSubmit}
+            busy={busyEdit}
+            selectedLogoFile={selectedLogoFile}
+            onLogoFileChange={setSelectedLogoFile}
+            logoFileAccept="image/*"
+            existingLogoFileName={tenant?.logoFileName ?? null}
+          />
+        </Stack>
       </Paper>
     </Stack>
   );

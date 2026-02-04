@@ -1,11 +1,17 @@
-import { Button, Stack, Typography, Paper } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
+import { useCallback } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import JobPositionsTable from "./JobPositionsTable";
 import { PermissionGate } from "../../../../lib/permissions";
 import { useTranslation } from "react-i18next";
+import { JobPositionsApi } from "../api/job-positions.api";
+import { ImportExportActions } from "../../../../components/ui/import-export/ImportExportActions";
+import { useImportJobPositions } from "../hooks/useImportJobPositions";
 
 const JobPositionsListPage = () => {
   const { t } = useTranslation();
+  const handleExport = useCallback(() => JobPositionsApi.export(), []);
+  const handleImport = useImportJobPositions();
 
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
@@ -14,23 +20,29 @@ const JobPositionsListPage = () => {
           {t("jobPositions.list.title")}
         </Typography>
 
-        <PermissionGate
-          guard={{ permission: "Permission.JobPositions.Create" }}
-        >
-          <Button
-            size="small"
-            component={RouterLink}
-            to="create"
-            variant="contained"
+        <Stack direction="row" spacing={1} alignItems="center">
+          <ImportExportActions
+            onExport={handleExport}
+            onImport={handleImport}
+            exportFileName="job-positions.xlsx"
+            importResultFileName="job-positions-import-result.xlsx"
+          />
+          <PermissionGate
+            guard={{ permission: "Permission.JobPositions.Create" }}
           >
-            {t("jobPositions.create.title")}
-          </Button>
-        </PermissionGate>
+            <Button
+              size="small"
+              component={RouterLink}
+              to="create"
+              variant="contained"
+            >
+              {t("jobPositions.create.title")}
+            </Button>
+          </PermissionGate>
+        </Stack>
       </Stack>
 
-      <Paper elevation={0} sx={{ flexGrow: 1, mt: 1, p: 0 }}>
-        <JobPositionsTable />
-      </Paper>
+      <JobPositionsTable />
     </Stack>
   );
 };

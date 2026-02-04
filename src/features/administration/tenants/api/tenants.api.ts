@@ -1,5 +1,10 @@
 import { authFetch } from "../../../../lib/authFetch";
-import type { ApiEnvelope, NewTenantRequest, Tenant } from "..";
+import type {
+  ApiEnvelope,
+  NewTenantRequest,
+  Tenant,
+  UpdateTenantRequest,
+} from "..";
 
 export type TenantId = string;
 
@@ -14,6 +19,13 @@ export const TenantsApi = {
   add: async (payload: NewTenantRequest) => {
     return authFetch<ApiEnvelope<Tenant>>(`${base}/add`, {
       method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  update: async (tenantId: TenantId, payload: UpdateTenantRequest) => {
+    return authFetch<ApiEnvelope<Tenant>>(`${base}/${tenantId}`, {
+      method: "PUT",
       body: JSON.stringify(payload),
     });
   },
@@ -45,5 +57,16 @@ export const TenantsApi = {
   getAll: async () => {
     const res = await authFetch<ApiEnvelope<Tenant[]>>(`${base}/get-all`);
     return res.data;
+  },
+
+  uploadLogo: async (tenantId: TenantId, file: File) => {
+    const formData = new FormData();
+
+    formData.append("File", file);
+
+    return authFetch<ApiEnvelope<Tenant>>(`${base}/${tenantId}/logo`, {
+      method: "POST",
+      body: formData,
+    });
   },
 };

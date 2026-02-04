@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback } from "react";
-import { type GridColDef } from "@mui/x-data-grid";
+import { type GridColDef, type GridRowId } from "@mui/x-data-grid";
+import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -10,16 +11,31 @@ import type { Vehicle } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
+import { VehicleHistoryDetails } from "./VehicleHistoryDetails";
+import { Box } from "@mui/material";
 
 export default function VehiclesTable() {
   const { t } = useTranslation();
-  const { vehiclesRows, vehiclesColumns, error, isLoading } = useVehicles();
+  const {
+    vehiclesRows,
+    vehiclesColumns,
+    total,
+    paginationModel,
+    setPaginationModel,
+    error,
+    isLoading,
+  } = useVehicles();
+
   const deleteVehicle = useDeleteVehicle();
   const navigate = useNavigate();
   const can = useCan();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingRow, setPendingRow] = useState<Vehicle | null>(null);
+
+  const [expandedIds, setExpandedIds] = useState<Set<GridRowId>>(
+    () => new Set()
+  );
 
   const requestDelete = useCallback((row: Vehicle) => {
     setPendingRow(row);
@@ -35,6 +51,7 @@ export default function VehiclesTable() {
   const handleConfirm = useCallback(() => {
     if (!pendingRow) return;
     const id = (pendingRow as any).id;
+
     deleteVehicle.mutate(id, {
       onSuccess: () => {
         setConfirmOpen(false);
@@ -92,9 +109,22 @@ export default function VehiclesTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
+  const renderDetailPanel = useCallback((params: GridRowParams<Vehicle>) => {
+    const vehicleId = Number((params.row as any).id);
+    return (
+      <Box sx={{ outline: "1px solid red" }}>
+        <VehicleHistoryDetails vehicleId={vehicleId} />
+      </Box>
+    );
+  }, []);
+
+  const getDetailPanelHeight = useCallback(() => "auto" as const, []);
+
   if (error) {
     return <div>{t("vehicles.list.error")}</div>;
   }
+
+  console.log("vehiclesRows", vehiclesRows)
 
   return (
     <>
@@ -104,6 +134,18 @@ export default function VehiclesTable() {
         getRowId={(r) => String((r as any).id)}
         pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
+        getDetailPanelContent={renderDetailPanel}
+        getDetailPanelHeight={getDetailPanelHeight}
+        detailPanelMode="desktop-only"
+        paginationMode="server"
+        rowCount={total}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        detailPanelExpandedRowIds={expandedIds}
+        onDetailPanelExpandedRowIdsChange={(ids) => {
+          const arr = Array.from(ids as Set<GridRowId>);
+          setExpandedIds(new Set(arr.slice(-1)));
+        }}
       />
 
       <PermissionGate guard={{ permission: "Permission.Vehicles.Delete" }}>

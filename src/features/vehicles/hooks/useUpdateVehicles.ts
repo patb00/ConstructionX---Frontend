@@ -13,7 +13,7 @@ export function useUpdateVehicle() {
   return useMutation({
     mutationFn: (payload: UpdateVehicleRequest) => VehiclesApi.update(payload),
     onSuccess: (data: any) => {
-      qc.invalidateQueries({ queryKey: vehiclesKeys.list() });
+      qc.invalidateQueries({ queryKey: vehiclesKeys.lists() });
       enqueueSnackbar(data?.messages?.[0] || data?.messages || "Updated", {
         variant: "success",
       });

@@ -1,9 +1,10 @@
 import { useMemo, useState, useCallback } from "react";
 import { Box, Chip } from "@mui/material";
 import { type GridColDef } from "@mui/x-data-grid";
-
+import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
 import ReusableDataGrid from "../../../../components/ui/datagrid/ReusableDataGrid";
+import { GridDetailPanel } from "../../../../components/ui/datagrid/GridDetailPanel";
 import type { User } from "..";
 import { useUsers } from "../hooks/useUsers";
 import { useDeleteUser } from "../hooks/useDeleteUser";
@@ -81,30 +82,38 @@ export default function UsersTable() {
           headerName: c.headerName ?? t("users.table.status"),
           align: "center",
           headerAlign: "center",
-          renderCell: (params) => (
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Chip
-                size="small"
-                label={
-                  params.row.isActive
-                    ? t("users.table.statusActive")
-                    : t("users.table.statusInactive")
-                }
-                color={params.row.isActive ? "success" : "default"}
-                variant={params.row.isActive ? "filled" : "outlined"}
-              />
-            </Box>
-          ),
+          renderCell: (params) => {
+            const isActive = params.row.isActive;
+
+            return (
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Chip
+                  size="small"
+                  label={
+                    isActive
+                      ? t("users.table.statusActive")
+                      : t("users.table.statusInactive")
+                  }
+                  color={isActive ? "success" : "error"}
+                  variant="filled"
+                  sx={{
+                    color: !isActive ? "white" : undefined,
+                  }}
+                />
+              </Box>
+            );
+          },
         } as GridColDef<User>;
       }
+
       return c;
     });
 
@@ -183,17 +192,38 @@ export default function UsersTable() {
     t,
   ]);
 
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<User>) => {
+      return (
+        <GridDetailPanel<User>
+          row={params.row}
+          columns={usersColumns as GridColDef<User>[]}
+        />
+      );
+    },
+    [usersColumns]
+  );
+
+  const getDetailPanelHeight = useCallback(
+    (_params: GridRowParams<User>) => 220,
+    []
+  );
+
   if (error) return <div>{t("users.list.error")}</div>;
 
   return (
     <>
       <ReusableDataGrid<User>
+        storageKey="users"
         rows={usersRows}
         columns={columnsWithActions}
         getRowId={(r) => r.id}
         pageSize={10}
         pinnedRightField="actions"
         loading={!!isLoading}
+        getDetailPanelContent={renderDetailPanel}
+        getDetailPanelHeight={getDetailPanelHeight}
+        detailPanelMode="mobile-only"
       />
 
       <PermissionGate guard={{ permission: "Permission.Users.Delete" }}>

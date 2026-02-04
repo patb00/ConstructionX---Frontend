@@ -5,6 +5,7 @@ export interface ConstructionSiteEmployee {
   jobPositionName?: string | null;
   dateFrom?: string | null;
   dateTo?: string | null;
+  assignmentWindows?: AssignEmployeeWindow[] | null;
 }
 
 export interface ConstructionSiteTool {
@@ -21,6 +22,7 @@ export interface ConstructionSiteTool {
   responsibleEmployeeName?: string | null;
   dateFrom?: string | null;
   dateTo?: string | null;
+  assignmentWindows?: AssignToolWindow[] | null;
   description?: string | null;
   category?: string | null;
 }
@@ -45,7 +47,25 @@ export interface ConstructionSiteVehicle {
   responsibleEmployeeName?: string | null;
   dateFrom?: string | null;
   dateTo?: string | null;
+  assignmentWindows?: AssignVehicleWindow[] | null;
   description?: string | null;
+}
+
+export interface ConstructionSiteCondo {
+  id: number;
+  address?: string | null;
+  capacity?: number | null;
+  currentlyOccupied?: number | null;
+  leaseStartDate?: string | null;
+  leaseEndDate?: string | null;
+  pricePerDay?: number | null;
+  pricePerMonth?: number | null;
+  currency?: string | null;
+  notes?: string | null;
+  responsibleEmployeeId?: number | null;
+  responsibleEmployeeName?: string | null;
+  dateFrom?: string | null;
+  dateTo?: string | null;
 }
 
 export interface ConstructionSite {
@@ -58,10 +78,11 @@ export interface ConstructionSite {
   siteManagerId: number | null;
   createdDate: string;
   siteManagerName: string;
-
+  status: number;
   constructionSiteEmployees: ConstructionSiteEmployee[];
   constructionSiteTools: ConstructionSiteTool[];
   constructionSiteVehicles: ConstructionSiteVehicle[];
+  constructionSiteCondos: ConstructionSiteCondo[];
 }
 
 export interface NewConstructionSiteRequest {
@@ -70,6 +91,7 @@ export interface NewConstructionSiteRequest {
   startDate: string;
   plannedEndDate: string;
   description?: string | null;
+  status: number;
   siteManagerId: number | null;
 }
 
@@ -83,10 +105,14 @@ export interface UpdateConstructionSiteRequest {
   siteManagerId: number | null;
 }
 
-export interface AssignEmployeeItem {
-  employeeId: number;
+export interface AssignEmployeeWindow {
   dateFrom: string;
   dateTo: string;
+}
+
+export interface AssignEmployeeItem {
+  employeeId: number;
+  assignmentWindows: AssignEmployeeWindow[];
 }
 
 export interface AssignEmployeesRequest {
@@ -94,11 +120,15 @@ export interface AssignEmployeesRequest {
   employees: AssignEmployeeItem[];
 }
 
-export interface AssignToolItem {
-  toolId: number;
+export interface AssignToolWindow {
   dateFrom: string;
   dateTo: string;
   responsibleEmployeeId: number;
+}
+
+export interface AssignToolItem {
+  toolId: number;
+  assignmentWindows: AssignToolWindow[];
 }
 
 export interface AssignToolsRequest {
@@ -106,14 +136,99 @@ export interface AssignToolsRequest {
   tools: AssignToolItem[];
 }
 
-export interface AssignVehicleItem {
-  vehicleId: number;
+export interface AssignVehicleWindow {
   dateFrom: string;
   dateTo: string;
   responsibleEmployeeId: number;
 }
 
+export interface AssignVehicleItem {
+  vehicleId: number;
+  assignmentWindows: AssignVehicleWindow[];
+}
+
 export interface AssignVehiclesRequest {
   constructionSiteId: number;
   vehicles: AssignVehicleItem[];
+}
+
+export type { PagedResult } from "../../shared/types/api";
+
+export interface GetConstructionSitesQuery {
+  startDate?: string;
+  plannedEndDate?: string;
+  status?: number;
+  location?: string;
+  siteManagerId?: number;
+  employeeId?: number;
+  toolId?: number;
+  vehicleId?: number;
+  sortBy?: string;
+  sortDirection?: "asc" | "desc";
+  page?: number;
+  pageSize?: number;
+}
+
+export interface ChangeConstructionSiteStatusRequest {
+  id: number;
+  status: number;
+}
+
+export interface ConstructionSiteFormValues {
+  name: string;
+  location: string;
+  startDate: string;
+  plannedEndDate: string;
+  description?: string | null;
+  siteManagerId: number | null;
+  status?: number;
+}
+
+export interface AssignCondoItem {
+  condoId: number;
+  dateFrom: string;
+  dateTo: string;
+  responsibleEmployeeId: number;
+}
+
+export interface AssignCondosRequest {
+  constructionSiteId: number;
+  condos: AssignCondoItem[];
+}
+
+export interface ConstructionSiteEmployeeWorkLogDay {
+  workDate: string;
+  startTime: string;
+  endTime: string;
+}
+
+export interface UpsertConstructionSiteEmployeeWorkLogsRequest {
+  constructionSiteId: number;
+  employeeId: number;
+  workLogs: ConstructionSiteEmployeeWorkLogDay[];
+}
+
+export interface GetConstructionSiteEmployeeWorkLogsQuery {
+  constructionSiteId: number;
+  employeeId: number;
+}
+
+export interface ConstructionSiteEmployeeWorkLog {
+  constructionSiteId: number;
+  employeeId: number;
+  workDate: string;
+  startTime: string;
+  endTime: string;
+
+  employeeName?: string | null;
+  constructionSiteName?: string | null;
+}
+
+export interface GetConstructionSiteEmployeeWorkLogsAllQuery {
+  dateFrom?: string;
+  dateTo?: string;
+  constructionSiteId?: number;
+  employeeId?: number;
+  page?: number;
+  pageSize?: number;
 }

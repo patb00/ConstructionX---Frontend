@@ -5,11 +5,15 @@ export interface Employee {
   oib: string;
   dateOfBirth: string;
   employmentDate: string;
+  phoneNumber: string;
   terminationDate?: string | null;
   hasMachineryLicense: boolean;
   clothingSize: string;
   gloveSize: string;
+  description: string;
   shoeSize: number;
+  email: string;
+  applicationUserId: string;
 }
 
 export type AssignJobPositionRequest = {
@@ -73,3 +77,5 @@ export interface AssignedTool {
   responsibleEmployeeId: number;
   responsibleEmployeeFullName: string;
 }
+
+export type { PagedResult } from "../../../shared/types/api";

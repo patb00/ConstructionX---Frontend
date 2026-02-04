@@ -13,11 +13,12 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import * as React from "react";
+
 import { useUserRoles } from "../hooks/useUserRoles";
 import { useUpdateRoles } from "../hooks/useUpdateRoles";
 import type { UserRoleAssignment, UserRolesResponse } from "..";
 import { useTranslation } from "react-i18next";
+import { useEffect, useMemo, useState } from "react";
 
 type Props = { userId: string; open: boolean; onClose: () => void };
 
@@ -26,15 +27,15 @@ export default function UserRolesDialog({ userId, open, onClose }: Props) {
   const { data, isLoading, isError } = useUserRoles(userId);
   const updateRoles = useUpdateRoles();
 
-  const rolesList: UserRoleAssignment[] = React.useMemo(() => {
+  const rolesList: UserRoleAssignment[] = useMemo(() => {
     if (!data) return [];
     if (Array.isArray(data)) return data as UserRoleAssignment[];
     return (data as UserRolesResponse).userRoles ?? [];
   }, [data]);
 
-  const [selected, setSelected] = React.useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSelected(rolesList.filter((r) => r.isAssigned).map((r) => r.roleId));
   }, [rolesList, userId]);
 

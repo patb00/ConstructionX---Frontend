@@ -20,17 +20,19 @@ export default function JobPositionForm({
 
   const fields: FieldConfig<NewJobPositionRequest>[] = [
     { name: "name", label: t("jobPositions.form.field.name"), required: true },
-    { name: "description", label: t("jobPositions.form.field.description") },
+    {
+      name: "description",
+      label: t("jobPositions.form.field.description"),
+      type: "textarea",
+      props: { minRows: 5 },
+    },
   ];
 
   return (
     <SmartForm<NewJobPositionRequest>
       fields={fields}
-      rows={[["name", "description"]]}
-      defaultValues={{
-        name: "",
-        ...defaultValues,
-      }}
+      rows={[["name"], ["description"]]}
+      defaultValues={defaultValues}
       busy={busy}
       submitLabel={t("jobPositions.form.submit")}
       onSubmit={onSubmit}

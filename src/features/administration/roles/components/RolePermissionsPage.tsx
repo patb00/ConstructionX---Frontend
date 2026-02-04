@@ -1,8 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useRolesFull } from "../hooks/useRolesFull";
 import {
-  Tabs,
-  Tab,
   Box,
   Checkbox,
   Typography,
@@ -15,16 +13,8 @@ import { useUpdateRolePermissions } from "../hooks/useUpdateRolePermission";
 import { usePermissions } from "../hooks/usePermissions";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useTranslation } from "react-i18next";
-
-function groupPermissions(perms: string[] = []) {
-  const groups: Record<string, string[]> = {};
-  perms.forEach((p) => {
-    const [, group] = p.split(".");
-    if (!groups[group]) groups[group] = [];
-    groups[group].push(p);
-  });
-  return groups;
-}
+import { groupPermissions } from "../utils/permissions";
+import { LineTabs } from "../../../../components/ui/tabs/LineTabs";
 
 export default function RolePermissionsPage() {
   const { t } = useTranslation();
@@ -48,7 +38,7 @@ export default function RolePermissionsPage() {
 
   const groups = useMemo(
     () => groupPermissions(allPermissions),
-    [allPermissions]
+    [allPermissions],
   );
   const categories = useMemo(() => Object.keys(groups).sort(), [groups]);
 
@@ -57,7 +47,7 @@ export default function RolePermissionsPage() {
 
   const togglePermission = (perm: string) => {
     setSelected((prev) =>
-      prev.includes(perm) ? prev.filter((p) => p !== perm) : [...prev, perm]
+      prev.includes(perm) ? prev.filter((p) => p !== perm) : [...prev, perm],
     );
   };
 
@@ -83,7 +73,7 @@ export default function RolePermissionsPage() {
         justifyContent="space-between"
         sx={{ mb: 2 }}
       >
-        <Typography variant="h5">
+        <Typography variant="h5" fontWeight={600}>
           {t("roles.permissions.title", { name: role.name })}
         </Typography>
         <Button
@@ -97,23 +87,17 @@ export default function RolePermissionsPage() {
         </Button>
       </Stack>
 
-      <Tabs
+      <LineTabs
         value={tab}
         onChange={(_, v) => setTab(v)}
-        variant="scrollable"
-        scrollButtons="auto"
-        allowScrollButtonsMobile
-      >
-        {categories.map((cat) => (
-          <Tab
-            key={cat}
-            label={t("roles.permissions.tabLabel", {
-              category: cat,
-              count: groups[cat].length,
-            })}
-          />
-        ))}
-      </Tabs>
+        items={categories.map((cat, index) => ({
+          value: index,
+          label: t("roles.permissions.tabLabel", {
+            category: cat,
+            count: groups[cat].length,
+          }),
+        }))}
+      />
 
       <Card sx={{ p: 2 }}>
         {activePermissions.map((perm) => (

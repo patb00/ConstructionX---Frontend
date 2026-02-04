@@ -1,11 +1,35 @@
-import { Button, Stack, Typography, Paper } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import ConstructionSitesTable from "./ConstructionSitesTable";
 import { PermissionGate } from "../../../lib/permissions";
 import { useTranslation } from "react-i18next";
 
+import { useConstructionSiteStatusOptions } from "../../constants/enum/useConstructionSiteStatusOptions";
+import { useCallback, useMemo, useState } from "react";
+import FilterSelect, {
+  type SelectOption,
+} from "../../../components/ui/select/FilterSelect";
+import { ConstructionSiteApi } from "../api/construction-site.api";
+import { ImportExportActions } from "../../../components/ui/import-export/ImportExportActions";
+import { useImportConstructionSites } from "../hooks/useImportConstructionSites";
+
 const ConstructionSitesListPage = () => {
   const { t } = useTranslation();
+  const statusOptions = useConstructionSiteStatusOptions();
+
+  const [statusValue, setStatusValue] = useState<string>("");
+  const handleExport = useCallback(() => ConstructionSiteApi.export(), []);
+  const handleImport = useImportConstructionSites();
+
+  const selectOptions: SelectOption[] = useMemo(
+    () =>
+      (statusOptions ?? []).map((o) => ({
+        value: String(o.value),
+        label: o.label,
+        dotValue: o.value,
+      })),
+    [statusOptions]
+  );
 
   return (
     <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
@@ -14,23 +38,39 @@ const ConstructionSitesListPage = () => {
           {t("constructionSites.list.title")}
         </Typography>
 
-        <PermissionGate
-          guard={{ permission: "Permission.ConstructionSites.Create" }}
-        >
-          <Button
-            size="small"
-            component={RouterLink}
-            to="create"
-            variant="contained"
+        <Stack direction="row" spacing={1} alignItems="center">
+          <ImportExportActions
+            onExport={handleExport}
+            onImport={handleImport}
+            exportFileName="construction-sites.xlsx"
+            importResultFileName="construction-sites-import-result.xlsx"
+          />
+          <PermissionGate
+            guard={{ permission: "Permission.ConstructionSites.Create" }}
           >
-            {t("constructionSites.create.title")}
-          </Button>
-        </PermissionGate>
+            <Button
+              size="small"
+              component={RouterLink}
+              to="create"
+              variant="contained"
+            >
+              {t("constructionSites.create.title")}
+            </Button>
+          </PermissionGate>
+        </Stack>
       </Stack>
 
-      <Paper elevation={0} sx={{ flexGrow: 1, mt: 1, p: 0 }}>
-        <ConstructionSitesTable />
-      </Paper>
+      <Stack direction="row" alignItems="center">
+        <FilterSelect
+          label={t("constructionSites.status.label")}
+          placeholder={t("common.all")}
+          options={selectOptions}
+          value={statusValue}
+          onChange={setStatusValue}
+        />
+      </Stack>
+
+      <ConstructionSitesTable statusValue={statusValue} />
     </Stack>
   );
 };

@@ -38,3 +38,15 @@ export interface NewVehicleRequest {
 export interface UpdateVehicleRequest extends NewVehicleRequest {
   id: number;
 }
+
+export type { PagedResult } from "../../shared/types/api";
+
+export interface VehicleHistoryItem {
+  constructionSiteId: number;
+  constructionSiteName: string;
+  constructionSiteLocation: string;
+  dateFrom: string;
+  dateTo: string | null;
+  responsibleEmployeeId: number;
+  responsibleEmployeeName: string;
+}

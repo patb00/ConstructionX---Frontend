@@ -19,10 +19,11 @@ import { useMemo, useState } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useConstructionSites } from "../../construction_site/hooks/useConstructionSites";
-import { StatCard } from "../../../components/ui/StatCard";
+import { StatCard } from "../../../components/ui/stats/StatCard";
 import { useTranslation } from "react-i18next";
+import { monthIndexFromISO } from "../utils/date";
 
-type Filter = "sites" | "employees" | "tools" | "vehicles";
+type Filter = "sites" | "employees" | "tools" | "vehicles" | "condos";
 
 const roman = [
   "I",
@@ -39,25 +40,67 @@ const roman = [
   "XII",
 ];
 
-function monthIndexFromISO(iso?: string | null) {
-  if (!iso) return null;
-  const d = new Date(iso);
-  return Number.isFinite(d.getTime()) ? d.getMonth() : null;
+function getEmployeeEmploymentISO(e: any): string | null {
+  const dz =
+    e?.datumZaposljenja ??
+    e?.datum_zaposljenja ??
+    e?.employmentDate ??
+    e?.dateOfEmployment;
+
+  if (typeof dz === "string" && dz.trim()) return dz;
+
+  const aw0 = Array.isArray(e?.assignmentWindows)
+    ? e.assignmentWindows[0]
+    : null;
+  const df = aw0?.dateFrom;
+  if (typeof df === "string" && df.trim()) return df;
+
+  return null;
 }
 
-function toLocal(iso?: string | null) {
-  if (!iso) return "—";
+function toEUDate(value: any, withTime = false): string {
+  if (!value) return "—";
+  const d = new Date(value);
+  if (!Number.isFinite(d.getTime())) return "—";
+
+  const opts: Intl.DateTimeFormatOptions = withTime
+    ? {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }
+    : { day: "2-digit", month: "2-digit", year: "numeric" };
+
+  // hr-HR gives EU format (dd.mm.yyyy)
+  return new Intl.DateTimeFormat("hr-HR", opts).format(d);
+}
+
+function getYearFromISO(iso?: string | null): number | null {
+  if (!iso) return null;
   const d = new Date(iso);
-  return Number.isFinite(d.getTime()) ? d.toLocaleString() : "—";
+  return Number.isFinite(d.getTime()) ? d.getFullYear() : null;
+}
+
+function getCondoStartISO(c: any): string | null {
+  const iso = c?.dateFrom ?? c?.leaseStartDate ?? null;
+  return typeof iso === "string" && iso.trim() ? iso : null;
 }
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down("sm"));
-  const year = 2025;
+  const year = 2026;
 
-  const { constructionSitesRows } = useConstructionSites();
+  const { constructionSitesRows } = useConstructionSites({
+    statusOptions: [],
+    employeeOptions: [],
+    toolOptions: [],
+    vehicleOptions: [],
+  });
+
   const sites = Array.isArray(constructionSitesRows)
     ? constructionSitesRows
     : [];
@@ -65,7 +108,9 @@ export default function AdminDashboard() {
   const totals = useMemo(() => {
     let employees = 0,
       tools = 0,
-      vehicles = 0;
+      vehicles = 0,
+      condos = 0;
+
     for (const s of sites) {
       employees += Array.isArray(s.constructionSiteEmployees)
         ? s.constructionSiteEmployees.length
@@ -76,53 +121,70 @@ export default function AdminDashboard() {
       vehicles += Array.isArray(s.constructionSiteVehicles)
         ? s.constructionSiteVehicles.length
         : 0;
+      condos += Array.isArray(s.constructionSiteCondos)
+        ? s.constructionSiteCondos.length
+        : 0;
     }
-    return { sites: sites.length, employees, tools, vehicles };
+    return { sites: sites.length, employees, tools, vehicles, condos };
   }, [sites]);
 
   const [filter, setFilter] = useState<Filter>("sites");
 
-  const { barData, barSeries, growthY } = useMemo(() => {
-    const months = Array.from({ length: 12 }, (_, i) => ({
+  const { barData, barSeries, growthY, lineMonths } = useMemo(() => {
+    const baseMonths = Array.from({ length: 12 }, (_, i) => ({
       month: roman[i],
       value: 0,
     }));
 
-    const inc = (arr: typeof months, idx: number | null) => {
+    const inc = (arr: typeof baseMonths, idx: number | null) => {
       if (idx === null || idx < 0 || idx > 11) return;
       arr[idx].value += 1;
     };
 
-    const sitesPerMonth = months.map((m) => ({ ...m }));
-    const employeesPerMonth = months.map((m) => ({ ...m }));
-    const toolsPerMonth = months.map((m) => ({ ...m }));
-    const vehiclesPerMonth = months.map((m) => ({ ...m }));
+    const sitesPerMonth = baseMonths.map((m) => ({ ...m }));
+    const employeesPerMonth = baseMonths.map((m) => ({ ...m }));
+    const toolsPerMonth = baseMonths.map((m) => ({ ...m }));
+    const vehiclesPerMonth = baseMonths.map((m) => ({ ...m }));
+    const condosPerMonth = baseMonths.map((m) => ({ ...m }));
 
     for (const s of sites) {
-      const d = s?.createdDate;
-      const js = d ? new Date(d) : null;
-      if (js && js.getFullYear() === year) inc(sitesPerMonth, js.getMonth());
+      // sites by startDate
+      const siteStartISO: string | null = s?.startDate ?? null;
+      const js = siteStartISO ? new Date(siteStartISO) : null;
+      if (js && Number.isFinite(js.getTime()) && js.getFullYear() === year) {
+        inc(sitesPerMonth, js.getMonth());
+      }
 
+      // employees by datum zaposljenja (fallback to assignmentWindows[0].dateFrom)
       (s?.constructionSiteEmployees ?? []).forEach((e: any) => {
-        const idx = monthIndexFromISO(e?.dateFrom);
-        const y = e?.dateFrom ? new Date(e.dateFrom).getFullYear() : null;
+        const empISO = getEmployeeEmploymentISO(e);
+        const idx = monthIndexFromISO(empISO);
+        const y = getYearFromISO(empISO);
         if (idx !== null && y === year) inc(employeesPerMonth, idx);
       });
 
-      (s?.constructionSiteTools ?? []).forEach((tTool: any) => {
-        const idx = monthIndexFromISO(tTool?.purchaseDate);
-        const y = tTool?.purchaseDate
-          ? new Date(tTool.purchaseDate).getFullYear()
-          : null;
+      // tools by purchaseDate
+      (s?.constructionSiteTools ?? []).forEach((tool: any) => {
+        const iso = tool?.purchaseDate ?? null;
+        const idx = monthIndexFromISO(iso);
+        const y = getYearFromISO(iso);
         if (idx !== null && y === year) inc(toolsPerMonth, idx);
       });
 
+      // vehicles by purchaseDate
       (s?.constructionSiteVehicles ?? []).forEach((v: any) => {
-        const idx = monthIndexFromISO(v?.purchaseDate);
-        const y = v?.purchaseDate
-          ? new Date(v.purchaseDate).getFullYear()
-          : null;
+        const iso = v?.purchaseDate ?? null;
+        const idx = monthIndexFromISO(iso);
+        const y = getYearFromISO(iso);
         if (idx !== null && y === year) inc(vehiclesPerMonth, idx);
+      });
+
+      // condos by condo.dateFrom (fallback to leaseStartDate)
+      (s?.constructionSiteCondos ?? []).forEach((c: any) => {
+        const iso = getCondoStartISO(c);
+        const idx = monthIndexFromISO(iso);
+        const y = getYearFromISO(iso);
+        if (idx !== null && y === year) inc(condosPerMonth, idx);
       });
     }
 
@@ -131,14 +193,25 @@ export default function AdminDashboard() {
         dataKey: "value",
         label: t("dashboard.admin.bar.yAxis"),
         color: theme.palette.primary.main,
+
+        barLabel: (item: any) => (item.value ? String(item.value) : ""),
       },
     ];
 
-    const now = new Date();
-    const lastMonthIndex = now.getFullYear() === year ? now.getMonth() : 11;
+    // line chart: cumulative sites (same behavior as before)
+    let lastIdx = 11;
+    for (let i = 11; i >= 0; i--) {
+      if (sitesPerMonth[i].value > 0) {
+        lastIdx = i;
+        break;
+      }
+    }
+
+    const lineMonths = roman.slice(0, lastIdx + 1);
+
     const cumulative: number[] = [];
     let running = 0;
-    for (let i = 0; i <= lastMonthIndex; i++) {
+    for (let i = 0; i <= lastIdx; i++) {
       running += sitesPerMonth[i].value;
       cumulative.push(running);
     }
@@ -149,31 +222,48 @@ export default function AdminDashboard() {
         employees: employeesPerMonth,
         tools: toolsPerMonth,
         vehicles: vehiclesPerMonth,
+        condos: condosPerMonth,
       },
       barSeries: series,
       growthY: cumulative,
+      lineMonths,
     };
-  }, [sites, theme.palette.primary.main, t]);
+  }, [sites, theme.palette.primary.main, t, year]);
 
   const currentBarData =
     filter === "sites"
       ? barData.sites
       : filter === "employees"
-      ? barData.employees
-      : filter === "tools"
-      ? barData.tools
-      : barData.vehicles;
+        ? barData.employees
+        : filter === "tools"
+          ? barData.tools
+          : filter === "vehicles"
+            ? barData.vehicles
+            : barData.condos;
 
-  const recentSites = useMemo(() => sites.slice(-5).reverse(), [sites]);
+  const recentSites = useMemo(() => {
+    const withAnyResources = [...sites].filter(
+      (s: any) =>
+        (s?.constructionSiteEmployees?.length ?? 0) > 0 ||
+        (s?.constructionSiteTools?.length ?? 0) > 0 ||
+        (s?.constructionSiteVehicles?.length ?? 0) > 0,
+    );
+
+    return withAnyResources
+      .sort((a: any, b: any) => (b?.id ?? 0) - (a?.id ?? 0))
+      .slice(0, 5);
+  }, [sites]);
 
   const barTitle =
     filter === "sites"
       ? t("dashboard.admin.bar.sites", { year })
       : filter === "employees"
-      ? t("dashboard.admin.bar.employees", { year })
-      : filter === "tools"
-      ? t("dashboard.admin.bar.tools", { year })
-      : t("dashboard.admin.bar.vehicles", { year });
+        ? t("dashboard.admin.bar.employees", { year })
+        : filter === "tools"
+          ? t("dashboard.admin.bar.tools", { year })
+          : filter === "vehicles"
+            ? t("dashboard.admin.bar.vehicles", { year })
+            : t("dashboard.admin.bar.condos", { year });
 
   return (
     <Stack sx={{ width: "100%", minWidth: 0 }}>
@@ -181,13 +271,24 @@ export default function AdminDashboard() {
         {t("dashboard.admin.title")}
       </Typography>
 
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 1 }}>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "1fr 1fr",
+            md: "repeat(5, 1fr)",
+          },
+          gap: 2,
+          mb: 1,
+        }}
+      >
         <StatCard
           sx={{
             flexBasis: {
               xs: "100%",
               sm: "calc(50% - 8px)",
-              md: "calc(25% - 12px)",
+              md: "calc(20% - 12px)",
             },
             flexGrow: 1,
           }}
@@ -201,7 +302,7 @@ export default function AdminDashboard() {
             flexBasis: {
               xs: "100%",
               sm: "calc(50% - 8px)",
-              md: "calc(25% - 12px)",
+              md: "calc(20% - 12px)",
             },
             flexGrow: 1,
           }}
@@ -215,7 +316,7 @@ export default function AdminDashboard() {
             flexBasis: {
               xs: "100%",
               sm: "calc(50% - 8px)",
-              md: "calc(25% - 12px)",
+              md: "calc(20% - 12px)",
             },
             flexGrow: 1,
           }}
@@ -229,7 +330,7 @@ export default function AdminDashboard() {
             flexBasis: {
               xs: "100%",
               sm: "calc(50% - 8px)",
-              md: "calc(25% - 12px)",
+              md: "calc(20% - 12px)",
             },
             flexGrow: 1,
           }}
@@ -237,6 +338,22 @@ export default function AdminDashboard() {
           value={totals.vehicles}
           onClick={() => setFilter("vehicles")}
           selected={filter === "vehicles"}
+        />
+
+        {/* ✅ NEW: condos card */}
+        <StatCard
+          sx={{
+            flexBasis: {
+              xs: "100%",
+              sm: "calc(50% - 8px)",
+              md: "calc(20% - 12px)",
+            },
+            flexGrow: 1,
+          }}
+          label={t("dashboard.admin.stats.condos")}
+          value={totals.condos}
+          onClick={() => setFilter("condos")}
+          selected={filter === "condos"}
         />
       </Box>
 
@@ -276,7 +393,13 @@ export default function AdminDashboard() {
                 ? { left: 40, right: 10, top: 10, bottom: 50 }
                 : { left: 60, right: 20, top: 20, bottom: 40 }
             }
-            sx={{ width: "100%" }}
+            sx={{
+              width: "100%",
+              "& .MuiChartsBarLabel-root": {
+                fontSize: 12,
+                fontWeight: 600,
+              },
+            }}
           />
         </Card>
 
@@ -297,15 +420,11 @@ export default function AdminDashboard() {
           />
           <Divider sx={{ mb: 1 }} />
           <LineChart
-            xAxis={[
+            xAxis={[{ scaleType: "point", data: lineMonths }]}
+            yAxis={[
               {
-                scaleType: "point",
-                data: useMemo(() => {
-                  const now = new Date();
-                  const lastIdx =
-                    now.getFullYear() === year ? now.getMonth() : 11;
-                  return [...roman.slice(0, lastIdx + 1)];
-                }, []),
+                label: "",
+                tickLabelStyle: { display: "none" },
               },
             ]}
             series={[
@@ -355,30 +474,35 @@ export default function AdminDashboard() {
                 <TableCell>
                   {t("dashboard.admin.recent.table.location")}
                 </TableCell>
-                <TableCell>
+
+                {/* ✅ centered headers */}
+                <TableCell align="center">
                   {t("dashboard.admin.recent.table.created")}
                 </TableCell>
-                <TableCell>{t("dashboard.admin.recent.table.range")}</TableCell>
-                <TableCell align="right">
+                <TableCell align="center">
+                  {t("dashboard.admin.recent.table.range")}
+                </TableCell>
+                <TableCell align="center">
                   {t("dashboard.admin.recent.table.resources")}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   {t("dashboard.admin.recent.table.status")}
                 </TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
               {recentSites.map((s: any) => {
                 const emp = (s?.constructionSiteEmployees ?? []).length;
                 const tools = (s?.constructionSiteTools ?? []).length;
                 const veh = (s?.constructionSiteVehicles ?? []).length;
 
-                // Simple status: if plannedEndDate < today → Past, else Active
                 const today = new Date();
                 const plannedEnd = s?.plannedEndDate
                   ? new Date(s.plannedEndDate)
                   : null;
                 const isActive = !(plannedEnd && plannedEnd < today);
+
                 const chip = isActive
                   ? {
                       label: t("dashboard.admin.statusChip.active"),
@@ -395,14 +519,19 @@ export default function AdminDashboard() {
                       {s.name ?? "—"}
                     </TableCell>
                     <TableCell>{s.location ?? "—"}</TableCell>
-                    <TableCell>{toLocal(s.createdDate)}</TableCell>
-                    <TableCell>
-                      {toLocal(s.startDate)} → {toLocal(s.plannedEndDate)}
+
+                    {/* ✅ EU date + centered cells */}
+                    <TableCell align="center">
+                      {toEUDate(s.createdDate, true)}
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell align="center">
+                      {toEUDate(s.startDate)} → {toEUDate(s.plannedEndDate)}
+                    </TableCell>
+                    <TableCell align="center">
                       {emp} / {tools} / {veh}
                     </TableCell>
-                    <TableCell>
+
+                    <TableCell align="center">
                       <Chip
                         size="small"
                         label={chip.label}

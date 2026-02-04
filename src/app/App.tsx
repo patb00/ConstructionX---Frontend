@@ -3,6 +3,7 @@ import { router } from "./routes/router";
 import { useAuthStore } from "../features/auth/store/useAuthStore";
 import { useEffect } from "react";
 import "./providers/LocalizationProvider/i18n";
+import { Box, CircularProgress } from "@mui/material";
 
 export function App() {
   const loadFromCookies = useAuthStore((s) => s.loadFromCookies);
@@ -13,7 +14,18 @@ export function App() {
   }, [loadFromCookies]);
 
   if (!hasHydrated) {
-    return <div style={{ padding: 24 }}>Loading…</div>;
+    return (
+      <Box
+        sx={{
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return <RouterProvider router={router} />;

@@ -14,7 +14,7 @@ export function useAddVehicle() {
   return useMutation({
     mutationFn: (payload: NewVehicleRequest) => VehiclesApi.add(payload),
     onSuccess: (data: any) => {
-      qc.invalidateQueries({ queryKey: vehiclesKeys.list() });
+      qc.invalidateQueries({ queryKey: vehiclesKeys.lists() });
       enqueueSnackbar(data?.messages?.[0] || data?.messages || "Saved", {
         variant: "success",
       });

@@ -14,7 +14,23 @@ import { constructionSitesRoutes } from "../../features/construction_site/routes
 import { toolsRoutes } from "../../features/tools/routes";
 import { toolCategoriesRoutes } from "../../features/tools_category/routes";
 import { vehiclesRoutes } from "../../features/vehicles/routes";
+import { materialsRoutes } from "../../features/materials/routes";
 import { assignmentsRoutes } from "../../features/assignments/routes";
+import { reportsRoutes } from "../../features/reports/routes";
+import { medicalExaminationsRoutes } from "../../features/medical_examinations/routes";
+import { examinationTypesRoutes } from "../../features/examination_types/routes";
+import { certificationsRoutes } from "../../features/certifications/routes";
+import { certificationTypesRoutes } from "../../features/certification_types/routes";
+import { condosRoutes } from "../../features/condos/routes";
+import { notificationsRoutes } from "../../features/notifications/routes";
+import { vehicleRegistrationsRoutes } from "../../features/vehicle_registrations/routes";
+import { vehicleInsurancesRoutes } from "../../features/vehicle_insurance/routes";
+import { vehicleBusinessTripsRoutes } from "../../features/vehicle_business_trips/routes";
+import { tasksRoutes } from "../../features/tasks/routes";
+import { vehicleRepairsRoutes } from "../../features/vehicles_repairs/routes";
+import { toolRepairsRoutes } from "../../features/tools_repairs/routes";
+import { mapRoutes } from "../../features/map/routes";
+import { workHoursRoutes } from "../../features/work_hours/routes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <LoginRoute /> },
@@ -28,27 +44,39 @@ export const router = createBrowserRouter([
     ),
     children: [
       { path: "dashboard", element: <DashboardRoute /> },
+
       tenantsRoutes,
-      { path: "administration/companies" },
       companiesRoutes,
-      { path: "administration/roles" },
       rolesRoutes,
-      { path: "administration/users" },
       usersRoles,
-      { path: "administration/employees" },
       employeesRoutes,
-      { path: "administration/jobPositions" },
       jobPostionRoutes,
-      { path: "tools" },
+
       toolsRoutes,
-      { path: "tool-categories" },
       toolCategoriesRoutes,
-      { path: "constructionSites" },
+      materialsRoutes,
       constructionSitesRoutes,
-      { path: "vehicles" },
       vehiclesRoutes,
-      { path: "assignments" },
+      vehicleRepairsRoutes,
+      vehicleRegistrationsRoutes,
+      vehicleInsurancesRoutes,
+      vehicleBusinessTripsRoutes,
+      toolRepairsRoutes,
+      condosRoutes,
       assignmentsRoutes,
+      tasksRoutes,
+
+      mapRoutes,
+
+      workHoursRoutes,
+
+      reportsRoutes,
+      medicalExaminationsRoutes,
+      examinationTypesRoutes,
+      certificationsRoutes,
+      certificationTypesRoutes,
+
+      notificationsRoutes,
     ],
   },
 ]);

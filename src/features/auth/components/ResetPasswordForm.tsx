@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import type { FormEvent } from "react";
 import { Link as RouterLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   className?: string;
@@ -35,18 +36,18 @@ export function ResetPasswordForm({
   onConfirmChange,
   serverError,
 }: Props) {
+  const { t } = useTranslation();
   const hasError = Boolean(serverError);
 
   return (
     <Box component="form" className={className} onSubmit={onSubmit}>
       <Typography variant="h4" sx={{ mb: 1 }}>
-        Postavi novu lozinku
+        {t("auth.reset.title")}
       </Typography>
 
       {!hasRequiredParams && (
         <Typography variant="body2" color="error" sx={{ mb: 1 }}>
-          Poveznica je nevažeća ili nepotpuna. Zatražite novu poveznicu za reset
-          lozinke.
+          {t("auth.reset.invalidLink")}
         </Typography>
       )}
 
@@ -54,7 +55,7 @@ export function ResetPasswordForm({
         size="small"
         fullWidth
         margin="normal"
-        label="Oib (tenant)"
+        label={t("auth.reset.tenantReadonly")}
         value={tenant}
         InputProps={{ readOnly: true }}
       />
@@ -63,7 +64,7 @@ export function ResetPasswordForm({
         size="small"
         fullWidth
         margin="normal"
-        label="Email"
+        label={t("auth.fields.email")}
         value={email}
         InputProps={{ readOnly: true }}
       />
@@ -72,7 +73,7 @@ export function ResetPasswordForm({
         size="small"
         fullWidth
         margin="normal"
-        label="Nova lozinka"
+        label={t("auth.reset.newPassword")}
         type="password"
         name="password"
         autoComplete="new-password"
@@ -88,7 +89,7 @@ export function ResetPasswordForm({
         size="small"
         fullWidth
         margin="normal"
-        label="Potvrda lozinke"
+        label={t("auth.reset.confirmPassword")}
         type="password"
         name="confirm"
         autoComplete="new-password"
@@ -110,9 +111,10 @@ export function ResetPasswordForm({
         {isPending ? (
           <CircularProgress size={20} color="inherit" />
         ) : (
-          "Spremi novu lozinku"
+          t("auth.reset.submit")
         )}
       </Button>
+
       <Button
         fullWidth
         component={RouterLink}
@@ -121,7 +123,7 @@ export function ResetPasswordForm({
         size="small"
         sx={{ mt: 2, height: 36, color: "primary.main" }}
       >
-        Povratak na prijavu
+        {t("auth.reset.back")}
       </Button>
     </Box>
   );

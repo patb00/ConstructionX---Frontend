@@ -1,5 +1,11 @@
-import type { Vehicle, NewVehicleRequest, UpdateVehicleRequest } from "..";
-import { authFetch } from "../../../lib/authFetch";
+import type {
+  Vehicle,
+  NewVehicleRequest,
+  UpdateVehicleRequest,
+  PagedResult,
+  VehicleHistoryItem,
+} from "..";
+import { authFetch, authFetchBlob } from "../../../lib/authFetch";
 import type { ApiEnvelope } from "../../administration/tenants";
 
 const base = "/api/Vehicles";
@@ -30,8 +36,29 @@ export const VehiclesApi = {
     return res.data;
   },
 
-  getAll: async (): Promise<Vehicle[]> => {
-    const res = await authFetch<ApiEnvelope<Vehicle[]>>(`${base}/get-all`);
+  getAll: async (page: number, pageSize: number) => {
+    const res = await authFetch<ApiEnvelope<PagedResult<Vehicle>>>(
+      `${base}/get-all?Page=${page}&PageSize=${pageSize}`
+    );
     return res.data;
+  },
+  history: async (vehicleId: number, page: number, pageSize: number) => {
+    const res = await authFetch<ApiEnvelope<PagedResult<VehicleHistoryItem>>>(
+      `${base}/history/${vehicleId}?Page=${page}&PageSize=${pageSize}`
+    );
+    return res.data;
+  },
+
+  export: async () => {
+    return authFetchBlob(`${base}/export`, { method: "GET" });
+  },
+
+  import: async (file: File) => {
+    const formData = new FormData();
+    formData.append("UploadFile", file);
+    return authFetchBlob(`${base}/import`, {
+      method: "POST",
+      body: formData,
+    });
   },
 };

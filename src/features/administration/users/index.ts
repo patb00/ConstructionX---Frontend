@@ -18,6 +18,7 @@ export type RegisterUserRequest = {
   confirmPassword: string;
   phoneNumber: string;
   isActive: boolean;
+  roleId: string;
 };
 
 export type UpdateUserRequest = {
@@ -39,7 +40,6 @@ export type ChangePasswordRequest = {
   confirmNewPassword: string;
 };
 
-// ✅ New request types
 export type ForgotPasswordRequest = {
   email: string;
 };

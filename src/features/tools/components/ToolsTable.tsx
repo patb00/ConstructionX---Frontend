@@ -1,26 +1,40 @@
 import { useMemo, useState, useCallback } from "react";
-import { Box } from "@mui/material";
-import { type GridColDef } from "@mui/x-data-grid";
-
+import { type GridColDef, type GridRowId } from "@mui/x-data-grid";
+import { type GridRowParams } from "@mui/x-data-grid-pro";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+
 import { useDeleteTool } from "../hooks/useDeleteTool";
 import { useTools } from "../hooks/useTools";
-import { useNavigate } from "react-router-dom";
 import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { Tool } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
+import { ToolHistoryDetails } from "./ToolsHistoryDetails";
 
 export default function ToolsTable() {
   const { t } = useTranslation();
-  const { toolsRows, toolsColumns, error, isLoading } = useTools();
+  const {
+    toolsRows,
+    toolsColumns,
+    total,
+    paginationModel,
+    setPaginationModel,
+    error,
+    isLoading,
+  } = useTools();
+
   const deleteTool = useDeleteTool();
   const navigate = useNavigate();
   const can = useCan();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingRow, setPendingRow] = useState<Tool | null>(null);
+
+  const [expandedIds, setExpandedIds] = useState<Set<GridRowId>>(
+    () => new Set()
+  );
 
   const requestDelete = useCallback((row: Tool) => {
     setPendingRow(row);
@@ -36,6 +50,7 @@ export default function ToolsTable() {
   const handleConfirm = useCallback(() => {
     if (!pendingRow) return;
     const id = (pendingRow as any).id;
+
     deleteTool.mutate(id, {
       onSuccess: () => {
         setConfirmOpen(false);
@@ -45,35 +60,7 @@ export default function ToolsTable() {
   }, [deleteTool, pendingRow]);
 
   const columnsWithActions = useMemo<GridColDef<Tool>[]>(() => {
-    const base = toolsColumns.map((c) => {
-      if (
-        c.field === "name" ||
-        c.field === "inventoryNumber" ||
-        c.field === "serialNumber" ||
-        c.field === "manufacturer" ||
-        c.field === "model" ||
-        c.field === "status" ||
-        c.field === "condition" ||
-        c.field === "description"
-      ) {
-        return {
-          ...c,
-          renderCell: (params) => (
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <span>{(params.value as string) ?? ""}</span>
-            </Box>
-          ),
-        } as GridColDef<Tool>;
-      }
-      return c;
-    });
+    const base = [...toolsColumns];
 
     const canEdit = can({ permission: "Permission.Tools.Update" });
     const canDelete = can({ permission: "Permission.Tools.Delete" });
@@ -115,16 +102,36 @@ export default function ToolsTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
+  const renderDetailPanel = useCallback((params: GridRowParams<Tool>) => {
+    const toolId = Number((params.row as any).id);
+    return <ToolHistoryDetails toolId={toolId} />;
+  }, []);
+
+  const getDetailPanelHeight = useCallback(() => "auto" as const, []);
+
   if (error) return <div>{t("tools.list.error")}</div>;
 
   return (
     <>
       <ReusableDataGrid<Tool>
+        storageKey="tools"
         rows={toolsRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}
         pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
+        getDetailPanelContent={renderDetailPanel}
+        getDetailPanelHeight={getDetailPanelHeight}
+        detailPanelMode="desktop-only"
+        paginationMode="server"
+        rowCount={total}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        detailPanelExpandedRowIds={expandedIds}
+        onDetailPanelExpandedRowIdsChange={(ids) => {
+          const arr = Array.from(ids as Set<GridRowId>);
+          setExpandedIds(new Set(arr.slice(-1)));
+        }}
       />
 
       <PermissionGate guard={{ permission: "Permission.Tools.Delete" }}>

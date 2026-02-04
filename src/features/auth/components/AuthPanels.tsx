@@ -1,6 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import logSvg from "../assets/log.svg";
 import registerSvg from "../assets/register.svg";
+import { useTranslation } from "react-i18next";
 
 type AuthMode = "sign-in" | "forgot-password";
 
@@ -11,21 +12,21 @@ type Props = {
 };
 
 export function AuthPanels({ onSignIn, onForgotPassword }: Props) {
+  const { t } = useTranslation();
+
   return (
     <>
       <Box className="panel left-panel">
         <Box className="content">
-          <Typography component="h3">Zaboravljena lozinka?</Typography>
-          <Typography component="p">
-            Unesite e-poštu i poslat ćemo upute za obnovu.
-          </Typography>
+          <Typography component="h3">{t("auth.panels.left.title")}</Typography>
+          <Typography component="p">{t("auth.panels.left.body")}</Typography>
           <Button
             size="small"
             variant="outlined"
-            sx={{ borderColor: "white", mt: 1 }}
+            sx={{ borderColor: "white", mt: 1, color: " white" }}
             onClick={onForgotPassword}
           >
-            Obnovi lozinku
+            {t("auth.panels.left.button")}
           </Button>
         </Box>
         <Box component="img" src={logSvg} className="image" alt="" />
@@ -33,17 +34,15 @@ export function AuthPanels({ onSignIn, onForgotPassword }: Props) {
 
       <Box className="panel right-panel">
         <Box className="content">
-          <Typography component="h3">Natrag na prijavu</Typography>
-          <Typography component="p">
-            Vratite se na prijavu i pristupite računu.
-          </Typography>
+          <Typography component="h3">{t("auth.panels.right.title")}</Typography>
+          <Typography component="p">{t("auth.panels.right.body")}</Typography>
           <Button
             size="small"
             variant="outlined"
-            sx={{ borderColor: "white", mt: 1 }}
+            sx={{ borderColor: "white", mt: 1, color: " white" }}
             onClick={onSignIn}
           >
-            Prijava
+            {t("auth.panels.right.button")}
           </Button>
         </Box>
         <Box component="img" src={registerSvg} className="image" alt="" />

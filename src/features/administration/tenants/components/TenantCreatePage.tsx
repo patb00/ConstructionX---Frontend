@@ -1,14 +1,42 @@
 import { Paper, Stack, Typography, Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
-import { useAddTenant } from "../hooks/useAddTenant";
-import TenantForm from "./TenantForm";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+
+import TenantForm from "./TenantForm";
+import { useAddTenant } from "../hooks/useAddTenant";
+import { useUploadTenantLogo } from "../hooks/useUploadTenantLogo";
+import type { TenantFormValues } from "./TenantForm";
+import { extractTenantIdFromCreateResult } from "../utils/tenantForm";
 
 export default function TenantCreatePage() {
   const { t } = useTranslation();
-  const { mutateAsync, isPending } = useAddTenant();
   const navigate = useNavigate();
+
+  const { mutateAsync: addTenant, isPending: creating } = useAddTenant();
+  const { mutateAsync: uploadLogo, isPending: uploading } =
+    useUploadTenantLogo();
+
+  const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
+
+  const handleSubmit = async (values: TenantFormValues<"create">) => {
+    const result = await addTenant(values as any);
+
+    const tenantId = extractTenantIdFromCreateResult(result);
+    if (!tenantId) {
+      navigate("/app/administration/tenants");
+      return;
+    }
+
+    if (selectedLogoFile) {
+      await uploadLogo({ tenantId, file: selectedLogoFile });
+    }
+
+    navigate("/app/administration/tenants");
+  };
+
+  const busy = creating || uploading;
 
   return (
     <Stack spacing={2}>
@@ -40,7 +68,14 @@ export default function TenantCreatePage() {
           width: "100%",
         }}
       >
-        <TenantForm onSubmit={mutateAsync} busy={isPending} />
+        <TenantForm
+          mode="create"
+          onSubmit={handleSubmit}
+          busy={busy}
+          selectedLogoFile={selectedLogoFile}
+          onLogoFileChange={setSelectedLogoFile}
+          logoFileAccept="image/*"
+        />
       </Paper>
     </Stack>
   );
