@@ -7,7 +7,9 @@ import {
   Button,
   Card,
   Divider,
-  Drawer,
+  Dialog,
+  DialogTitle,
+  DialogContent,
   IconButton,
   Chip,
 } from "@mui/material";
@@ -438,66 +440,169 @@ const ModuleReportsPage = () => {
           </Box>
         )}
 
-        <Drawer
-          anchor="right"
+        <Dialog
           open={filtersOpen}
           onClose={() => setFiltersOpen(false)}
-          PaperProps={{ sx: { width: 380 } }}
+          fullWidth
+          maxWidth="xs"
+          PaperProps={{
+            sx: {
+              position: "relative",
+              p: 2.5,
+              pt: 2.25,
+              pb: 2.5,
+              backgroundColor: "#ffffff",
+            },
+          }}
         >
+          {/* Header */}
           <Box
             sx={{
-              px: 2,
-              pt: 2,
               display: "flex",
-              alignItems: "center",
+              alignItems: "flex-start",
               justifyContent: "space-between",
+              mb: 2.5,
             }}
           >
-            <Typography variant="subtitle1" fontWeight={700}>
-              {t("common.filter", "Filters")}
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.25 }}>
+              <Box
+                sx={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 1,
+                  display: "grid",
+                  placeItems: "center",
+                  backgroundColor: "rgba(241, 177, 3, 0.1)",
+                  color: "#F1B103",
+                  border: "1px solid rgba(241, 177, 3, 0.18)",
+                }}
+              >
+                <FilterListIcon sx={{ fontSize: 18 }} />
+              </Box>
 
-            <IconButton onClick={() => setFiltersOpen(false)} size="small">
-              <CloseIcon />
+              <Box>
+                <DialogTitle
+                  sx={{
+                    m: 0,
+                    p: 0,
+                    fontSize: 16,
+                    fontWeight: 600,
+                    color: "#111827",
+                  }}
+                >
+                  {t("common.filter", "Filters")}
+                </DialogTitle>
+                <Typography sx={{ fontSize: 12.5, color: "#6B7280", mt: 0.25 }}>
+                  {t("reports.module.filterSubtitle")}
+                </Typography>
+              </Box>
+            </Box>
+
+            <IconButton
+              onClick={() => setFiltersOpen(false)}
+              sx={{
+                width: 32,
+                height: 32,
+                borderRadius: "999px",
+                p: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                "&:hover": { backgroundColor: "#EFF6FF" },
+              }}
+            >
+              <CloseIcon sx={{ fontSize: 16, color: "#111827" }} />
             </IconButton>
           </Box>
 
-          <Divider sx={{ my: 1.5 }} />
+          <DialogContent sx={{ p: 0 }}>
+            <Box
+              sx={{
+                border: "1px solid #E5E7EB",
+                borderRadius: 1,
+                backgroundColor: "#ffffff",
+                p: 2,
+              }}
+            >
+              <SmartForm<ConstructionReportFilters>
+                id="construction-report-filter-form"
+                fields={filterFields}
+                rows={
+                  activeConstructionReportId === "construction-site-list"
+                    ? [["period"], ["siteManagerId"], ["status"]]
+                    : [["period"]]
+                }
+                defaultValues={filterDefaults}
+                onSubmit={(vals) => {
+                  const nextRange = vals.period ?? [null, null];
 
-          <SmartForm<ConstructionReportFilters>
-            fields={filterFields}
-            rows={
-              activeConstructionReportId === "construction-site-list"
-                ? [["period"], ["siteManagerId"], ["status"]]
-                : [["period"]]
-            }
-            defaultValues={filterDefaults}
-            submitLabel={t("common.done", "Done")}
-            onSubmit={(vals) => {
-              const nextRange = vals.period ?? [null, null];
+                  if (
+                    activeConstructionReportId === "construction-site-total-hours"
+                  ) {
+                    setTotalHoursRange(nextRange);
+                  } else {
+                    setSiteListRange(nextRange);
+                  }
 
-              if (
-                activeConstructionReportId === "construction-site-total-hours"
-              ) {
-                setTotalHoursRange(nextRange);
-              } else {
-                setSiteListRange(nextRange);
-              }
+                  if (activeConstructionReportId === "construction-site-list") {
+                    setSiteManagerId(
+                      vals.siteManagerId === "" ? null : Number(vals.siteManagerId),
+                    );
+                    setStatus(vals.status === "" ? null : Number(vals.status));
+                  }
 
-              if (activeConstructionReportId === "construction-site-list") {
-                setSiteManagerId(
-                  vals.siteManagerId === "" ? null : Number(vals.siteManagerId),
-                );
-                setStatus(vals.status === "" ? null : Number(vals.status));
-              }
+                  setFiltersOpen(false);
+                }}
+                formProps={{
+                  p: 0,
+                }}
+                hideSubmit
+              />
+            </Box>
+          </DialogContent>
 
-              setFiltersOpen(false);
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 1.25,
+              mt: 2.5,
             }}
-            formProps={{
-              p: 2,
-            }}
-          />
-        </Drawer>
+          >
+            <Button
+              onClick={() => setFiltersOpen(false)}
+              size="small"
+              variant="outlined"
+              sx={{
+                textTransform: "none",
+                fontWeight: 500,
+                px: 2.5,
+                borderColor: "#E5E7EB",
+                color: "#111827",
+                backgroundColor: "#ffffff",
+                "&:hover": { backgroundColor: "#F9FAFB", borderColor: "#D1D5DB" },
+              }}
+            >
+              {t("common.cancel")}
+            </Button>
+
+            <Button
+              type="submit"
+              form="construction-report-filter-form"
+              variant="contained"
+              size="small"
+              sx={{
+                textTransform: "none",
+                fontWeight: 600,
+                px: 3,
+                boxShadow: "none",
+                "&:hover": { boxShadow: "none" },
+              }}
+            >
+              {t("common.submit")}
+            </Button>
+          </Box>
+        </Dialog>
       </Stack>
     </LocalizationProvider>
   );

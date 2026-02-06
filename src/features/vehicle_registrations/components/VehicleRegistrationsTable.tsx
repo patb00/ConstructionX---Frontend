@@ -114,6 +114,9 @@ export default function VehicleRegistrationsTable() {
 
   const closeAssignDialog = useCallback(() => {
     setAssignOpen(false);
+  }, []);
+
+  const handleAssignExited = useCallback(() => {
     setSelectedRegistrationId(null);
     setSelectedVehicleId(null);
   }, []);
@@ -252,6 +255,7 @@ export default function VehicleRegistrationsTable() {
         employeesError={employeesError}
         formLoading={formLoading}
         existingAssignment={existingAssignment}
+        onExited={handleAssignExited}
         submitting={addMutation.isPending || updateMutation.isPending}
         onSubmit={(values, mode) => {
           if (!selectedRegistration) return;

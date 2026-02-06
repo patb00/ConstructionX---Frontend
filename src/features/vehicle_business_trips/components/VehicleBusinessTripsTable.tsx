@@ -108,11 +108,12 @@ export default function VehicleBusinessTripsTable({ statusValue }: Props) {
     setCompleteOpen(true);
   };
 
-  const closeAll = () => {
-    setApproveOpen(false);
-    setRejectOpen(false);
-    setCancelOpen(false);
-    setCompleteOpen(false);
+  const closeApprove = () => setApproveOpen(false);
+  const closeReject = () => setRejectOpen(false);
+  const closeCancel = () => setCancelOpen(false);
+  const closeComplete = () => setCompleteOpen(false);
+
+  const handleExited = () => {
     setSelectedTrip(null);
   };
 
@@ -230,28 +231,32 @@ export default function VehicleBusinessTripsTable({ statusValue }: Props) {
         <ApproveBusinessTripDialog
           open={approveOpen}
           trip={selectedTrip}
-          onClose={closeAll}
+          onClose={closeApprove}
+          onExited={handleExited}
           approverEmployeeUserId={employeeId ?? null}
         />
 
         <RejectBusinessTripDialog
           open={rejectOpen}
           trip={selectedTrip}
-          onClose={closeAll}
+          onClose={closeReject}
+          onExited={handleExited}
           rejectorEmployeeUserId={employeeId ?? null}
         />
 
         <CancelBusinessTripDialog
           open={cancelOpen}
           trip={selectedTrip}
-          onClose={closeAll}
+          onClose={closeCancel}
+          onExited={handleExited}
           cancellerEmployeeUserId={employeeId ?? null}
         />
 
         <CompleteBusinessTripDialog
           open={completeOpen}
           trip={selectedTrip}
-          onClose={closeAll}
+          onClose={closeComplete}
+          onExited={handleExited}
         />
       </>
     </PermissionGate>

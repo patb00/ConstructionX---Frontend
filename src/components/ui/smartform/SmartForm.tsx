@@ -79,6 +79,8 @@ export type SmartFormProps<TValues extends Record<string, any>> = {
   submitLabel?: string;
   formProps?: Omit<React.ComponentProps<typeof Box>, "component" | "onSubmit">;
   renderFooterActions?: (values: TValues) => React.ReactNode;
+  id?: string;
+  hideSubmit?: boolean;
 };
 
 export function SmartForm<TValues extends Record<string, any>>({
@@ -90,6 +92,8 @@ export function SmartForm<TValues extends Record<string, any>>({
   submitLabel = "Spremi",
   formProps,
   renderFooterActions,
+  id,
+  hideSubmit,
 }: SmartFormProps<TValues>) {
   const [values, setValues] = useState<TValues>(() =>
     buildInitial(fields, defaultValues),
@@ -525,6 +529,7 @@ export function SmartForm<TValues extends Record<string, any>>({
 
   return (
     <Box
+      id={id}
       component="form"
       onSubmit={handleSubmit}
       p={2}
@@ -537,29 +542,33 @@ export function SmartForm<TValues extends Record<string, any>>({
           </Stack>
         ))}
 
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mt: 1,
-            gap: 2,
-          }}
-        >
-          <Box>{renderFooterActions ? renderFooterActions(values) : null}</Box>
-
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={busy || !isRequiredFilled}
-            size="small"
+        {(renderFooterActions || !hideSubmit) && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mt: 1,
+              gap: 2,
+            }}
           >
-            {busy && (
-              <CircularProgress size={16} sx={{ mr: 1, color: "inherit" }} />
+            <Box>{renderFooterActions ? renderFooterActions(values) : null}</Box>
+
+            {!hideSubmit && (
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={busy || !isRequiredFilled}
+                size="small"
+              >
+                {busy && (
+                  <CircularProgress size={16} sx={{ mr: 1, color: "inherit" }} />
+                )}
+                {submitLabel}
+              </Button>
             )}
-            {submitLabel}
-          </Button>
-        </Box>
+          </Box>
+        )}
       </Stack>
     </Box>
   );

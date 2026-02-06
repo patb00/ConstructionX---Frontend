@@ -606,6 +606,18 @@
       "dateOfCreation": "Datum osnivanja",
       "permissions": "Dozvole",
       "userName": "Korisničko ime",
+      "applicationUserId": "ID korisnika aplikacije",
+      "vatNumber": "PDV broj",
+      "companyCode": "Šifra tvrtke",
+      "contactPhone": "Kontakt telefon",
+      "websiteUrl": "Web stranica",
+      "addressStreet": "Ulica i broj",
+      "addressPostalCode": "Poštanski broj",
+      "addressCity": "Grad",
+      "addressState": "Županija",
+      "addressCountry": "Država",
+      "defaultLanguage": "Zadani jezik",
+      "logoFileName": "Datoteka logotipa",
       "oib": "OIB",
       "dateOfBirth": "Datum rođenja",
       "employmentDate": "Datum zaposlenja",
@@ -1391,7 +1403,8 @@
       "description": "Odaberi i pokreni izvještaj za ovaj modul.",
       "noReports": "Za ovaj modul još nema definiranih izvještaja.",
       "open": "Otvori izvještaj",
-      "opening": "Otvaranje..."
+      "opening": "Otvaranje...",
+      "filterSubtitle": "Postavite parametre izvještaja"
     },
     "items": {
       "employeeList": {

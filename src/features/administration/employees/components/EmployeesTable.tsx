@@ -116,6 +116,7 @@ export default function EmployeesTable() {
 
   if (error) return <div>{t("employees.list.error")}</div>;
 
+
   return (
     <>
       <ReusableDataGrid<Employee>
