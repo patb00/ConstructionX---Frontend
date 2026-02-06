@@ -385,13 +385,11 @@ const AssignmentsListPage = () => {
 
     await upsertWorkLogs.mutateAsync(payload);
     setWorkLogOpen(false);
-    setWorkLogDraft(null);
   };
 
   const closeWorkLog = () => {
     if (upsertWorkLogs.isPending) return;
     setWorkLogOpen(false);
-    setWorkLogDraft(null);
   };
 
   //console.log("lanes", lanes, "items", items);
@@ -606,6 +604,7 @@ const AssignmentsListPage = () => {
       <AssignTaskDialog
         open={workLogOpen}
         onClose={closeWorkLog}
+        onExited={() => setWorkLogDraft(null)}
         title={t("workLogs.dialog.title", "Log hours")}
         subtitle={t("workLogs.dialog.subtitle", "Add start and end time")}
         headerIcon={<AccessTimeIcon sx={{ fontSize: 18 }} />}

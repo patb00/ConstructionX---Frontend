@@ -381,12 +381,10 @@ const WorkHoursListPage = () => {
           errorMessage={error?.message}
         />
         
-        {createDialogOpen && (
-          <WorkHoursCreateDialog
-            open={createDialogOpen}
-            onClose={() => setCreateDialogOpen(false)}
-          />
-        )}
+        <WorkHoursCreateDialog
+          open={createDialogOpen}
+          onClose={() => setCreateDialogOpen(false)}
+        />
       </Stack>
     </LocalizationProvider>
   );

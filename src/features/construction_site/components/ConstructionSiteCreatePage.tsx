@@ -51,7 +51,6 @@ export default function ConstructionSiteCreatePage() {
           showStatus
           statusOptions={statusOptions}
         />
-        ;
       </Paper>
     </Stack>
   );

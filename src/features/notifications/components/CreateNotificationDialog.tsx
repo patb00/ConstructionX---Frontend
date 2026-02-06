@@ -62,12 +62,6 @@ export default function CreateNotificationDialog({ open, onClose }: Props) {
       {
         onSuccess: () => {
           onClose();
-          setTitle("");
-          setMessage("");
-          setActionUrl("");
-          setEntityType("");
-          setEntityId("");
-          setSelectedUserIds([]);
         },
       },
     );
@@ -79,6 +73,14 @@ export default function CreateNotificationDialog({ open, onClose }: Props) {
     <AssignTaskDialog
       open={open}
       onClose={onClose}
+      onExited={() => {
+        setTitle("");
+        setMessage("");
+        setActionUrl("");
+        setEntityType("");
+        setEntityId("");
+        setSelectedUserIds([]);
+      }}
       title={t("notifications.create.title", "Send Notification")}
       headerIcon={<NotificationsActiveOutlinedIcon sx={{ fontSize: 18 }} />}
       submitText={t("common.send", "Send")}

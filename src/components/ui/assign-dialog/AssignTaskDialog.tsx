@@ -60,6 +60,7 @@ type Props = {
   submitting?: boolean;
   submitDisabled?: boolean;
 
+  onExited?: () => void;
   submitVariant?: "primary" | "danger";
 };
 
@@ -91,6 +92,7 @@ export function AssignTaskDialog({
 
   formLoading = false,
   formDisabled,
+  onExited,
 }: Props) {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -156,6 +158,7 @@ export function AssignTaskDialog({
     <Dialog
       open={open}
       onClose={handleDialogClose}
+      TransitionProps={{ onExited }}
       fullWidth
       maxWidth="sm"
       keepMounted

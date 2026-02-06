@@ -56,6 +56,20 @@ export default function WorkHoursCreateDialog({
     return d;
   });
 
+  const resetForm = () => {
+    setConstructionSiteId("");
+    if (isAdmin) {
+      setSelectedEmployeeId("");
+    }
+    setWorkDate(defaultDate ?? new Date());
+    const start = new Date();
+    start.setHours(8, 0, 0, 0);
+    setStartTime(start);
+    const end = new Date();
+    end.setHours(16, 0, 0, 0);
+    setEndTime(end);
+  };
+
   useEffect(() => {
     if (open) {
       if (employeeId && !selectedEmployeeId) {
@@ -65,7 +79,7 @@ export default function WorkHoursCreateDialog({
         setWorkDate(defaultDate);
       }
     }
-  }, [open]);
+  }, [open, employeeId, selectedEmployeeId, defaultDate]);
 
   const handleSubmit = async () => {
     if (
@@ -108,6 +122,7 @@ export default function WorkHoursCreateDialog({
     <AssignTaskDialog
       open={open}
       onClose={onClose}
+      onExited={resetForm}
       title={t("workHours.record")}
       subtitle={t("workHours.employee.createSubtitle")}
       submitText={t("common.save")}
