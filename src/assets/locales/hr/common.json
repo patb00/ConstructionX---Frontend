@@ -2042,12 +2042,14 @@
         "previewSubtitle": "Putovanje će biti otkazano i uklonjeno iz tijeka odobravanja.",
         "submit": "Otkaži putovanje",
         "close": "Zatvori",
-        "helper": "Možete dodati razlog (neobavezno). Ovu radnju nije moguće poništiti.",
-        "placeholder": "Neobavezni razlog (npr. više nije potrebno)",
+        "helper": "Molimo unesite kratak razlog. Ovu radnju nije moguće poništiti.",
+        "placeholder": "npr. Više nije potrebno / Promjena rasporeda...",
+        "minChars": "Najmanje 3 znaka su potrebna",
         "cannotBeUndone": "Ovu radnju nije moguće poništiti.",
         "tooltip": {
           "submitting": "Slanje…",
-          "noCanceller": "Otkažitelj nije dostupan"
+          "noCanceller": "Otkažitelj nije dostupan",
+          "reasonRequired": "Razlog je obavezan (min 3 znaka)"
         }
       },
       "reject": {

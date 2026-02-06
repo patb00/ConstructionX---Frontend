@@ -2027,12 +2027,14 @@
         "previewSubtitle": "Diese Fahrt wird storniert und aus dem Genehmigungsprozess entfernt.",
         "submit": "Fahrt stornieren",
         "close": "Schließen",
-        "helper": "Sie können optional einen Grund angeben. Diese Aktion kann nicht rückgängig gemacht werden.",
-        "placeholder": "Optionaler Grund (z. B. nicht mehr erforderlich)",
+        "helper": "Bitte geben Sie einen kurzen Grund an. Diese Aktion kann nicht rückgängig gemacht werden.",
+        "placeholder": "z. B. Nicht mehr benötigt / Terminänderung...",
+        "minChars": "Mindestens 3 Zeichen erforderlich",
         "cannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
         "tooltip": {
           "submitting": "Wird gesendet…",
-          "noCanceller": "Stornierer nicht verfügbar"
+          "noCanceller": "Stornierer nicht verfügbar",
+          "reasonRequired": "Grund ist erforderlich (mind. 3 Zeichen)"
         }
       },
       "reject": {

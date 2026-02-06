@@ -128,9 +128,9 @@ export default function CompleteBusinessTripDialog({
         startKilometers: startKm,
         endKilometers: endKm,
         refueled: form.refueled,
-        fuelAmount: form.refueled ? fuelAmount ?? 0 : 0,
-        fuelCurrency: form.refueled ? form.fuelCurrency : "",
-        fuelLiters: form.refueled ? fuelLiters ?? 0 : 0,
+        fuelAmount: form.refueled ? fuelAmount : null,
+        fuelCurrency: form.refueled ? form.fuelCurrency : null,
+        fuelLiters: form.refueled ? fuelLiters : null,
         note: form.note.trim(),
       },
       { onSuccess: onClose }

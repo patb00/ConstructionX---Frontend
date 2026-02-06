@@ -2042,12 +2042,14 @@
         "previewSubtitle": "This trip will be cancelled and removed from the approval flow.",
         "submit": "Cancel trip",
         "close": "Close",
-        "helper": "You can add a reason (optional). This action cannot be undone.",
-        "placeholder": "Optional reason (e.g. no longer needed)",
+        "helper": "Please provide a short reason. This action cannot be undone.",
+        "placeholder": "e.g. No longer needed / Schedule change...",
+        "minChars": "Minimum 3 characters required",
         "cannotBeUndone": "This action cannot be undone.",
         "tooltip": {
           "submitting": "Submitting…",
-          "noCanceller": "Canceller not available"
+          "noCanceller": "Canceller not available",
+          "reasonRequired": "Reason is required (min 3 chars)"
         }
       },
       "reject": {

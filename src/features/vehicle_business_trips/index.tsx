@@ -63,10 +63,10 @@ export interface CompleteVehicleBusinessTripRequest {
   startKilometers: number;
   endKilometers: number;
   refueled: boolean;
-  fuelAmount: number;
-  fuelCurrency: string;
-  fuelLiters: number;
-  note: string;
+  fuelAmount: number | null;
+  fuelCurrency: string | null;
+  fuelLiters: number | null;
+  note: string | null;
 }
 
 export type { PagedResult } from "../../shared/types/api";

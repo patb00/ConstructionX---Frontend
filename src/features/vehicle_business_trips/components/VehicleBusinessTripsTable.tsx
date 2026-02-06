@@ -33,14 +33,11 @@ const TripStatus = {
   Cancelled: 5,
 } as const;
 
-const isTerminal = (s: number) =>
-  s === TripStatus.Rejected ||
-  s === TripStatus.Completed ||
-  s === TripStatus.Cancelled;
+const canComplete = (status: number) =>
+  status === TripStatus.Approved || status === TripStatus.InProgress;
 
-const canComplete = (s: number) => s === TripStatus.Approved;
-
-const canCancel = (s: number) => s !== TripStatus.Approved && !isTerminal(s);
+const canCancel = (status: number) =>
+  status === TripStatus.Pending || status === TripStatus.Approved;
 
 export default function VehicleBusinessTripsTable({ statusValue }: Props) {
   const { t } = useTranslation();
@@ -142,32 +139,24 @@ export default function VehicleBusinessTripsTable({ statusValue }: Props) {
         const customActions = [
           ...(isAdmin
             ? [
-                ...(status === TripStatus.Pending
-                  ? [
-                      {
-                        key: "approve",
-                        label:
-                          t("vehicleBusinessTrips.table.approve") ?? "Approve",
-                        icon: <ThumbUpAltOutlinedIcon sx={{ fontSize: 16 }} />,
-                        onClick: () => openApprove(row),
-                        variant: "success" as const,
-                      },
-                      {
-                        key: "reject",
-                        label:
-                          t("vehicleBusinessTrips.table.reject") ?? "Reject",
-                        icon: (
-                          <ThumbDownAltOutlinedIcon sx={{ fontSize: 16 }} />
-                        ),
-                        onClick: () => openReject(row),
-                        variant: "danger" as const,
-                      },
-                    ]
-                  : []),
+                {
+                  key: "approve",
+                  label: t("vehicleBusinessTrips.table.approve") ?? "Approve",
+                  icon: <ThumbUpAltOutlinedIcon sx={{ fontSize: 16 }} />,
+                  onClick: () => openApprove(row),
+                  variant: "success" as const,
+                },
+                {
+                  key: "reject",
+                  label: t("vehicleBusinessTrips.table.reject") ?? "Reject",
+                  icon: <ThumbDownAltOutlinedIcon sx={{ fontSize: 16 }} />,
+                  onClick: () => openReject(row),
+                  variant: "danger" as const,
+                },
               ]
             : []),
 
-          ...(canCancel(status)
+          ...(isAdmin || canCancel(status)
             ? [
                 {
                   key: "cancel",
@@ -179,7 +168,7 @@ export default function VehicleBusinessTripsTable({ statusValue }: Props) {
               ]
             : []),
 
-          ...(canComplete(status)
+          ...(isAdmin || canComplete(status)
             ? [
                 {
                   key: "complete",
@@ -194,7 +183,11 @@ export default function VehicleBusinessTripsTable({ statusValue }: Props) {
 
         return (
           <RowActions
-            onEdit={() => navigate(`${id}/edit`)}
+            onEdit={
+              isAdmin || status === TripStatus.Pending
+                ? () => navigate(`${id}/edit`)
+                : undefined
+            }
             labels={{ edit: t("vehicleBusinessTrips.table.edit") }}
             customActions={customActions}
           />

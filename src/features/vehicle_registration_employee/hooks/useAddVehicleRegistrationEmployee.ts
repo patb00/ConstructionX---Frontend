@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 
 import type { AddVehicleRegistrationEmployeeRequest } from "..";
 import { VehicleRegistrationEmployeesApi } from "../api/vehicle-registration-employee.api";
 import { vehicleRegistrationEmployeesKeys } from "../api/vehicle-registration-employee.keys";
 
 export function useAddVehicleRegistrationEmployee() {
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const qc = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -20,7 +20,7 @@ export function useAddVehicleRegistrationEmployee() {
       enqueueSnackbar(data?.messages?.[0] || data?.messages, {
         variant: "success",
       });
-      navigate("/app/vehicle-registration-employees");
+      //navigate("/app/vehicle-registration-employees");
     },
 
     onError: (err: any) => enqueueSnackbar(err.message, { variant: "error" }),

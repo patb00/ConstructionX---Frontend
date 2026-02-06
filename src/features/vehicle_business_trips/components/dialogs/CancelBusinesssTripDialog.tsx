@@ -40,7 +40,11 @@ export default function CancelBusinessTripDialog({
 
   const trimmedReason = reason.trim();
 
-  const cancelDisabled = submitting || !tripId || !cancellerEmployeeUserId;
+  const cancelDisabled =
+    submitting ||
+    !tripId ||
+    !cancellerEmployeeUserId ||
+    trimmedReason.length < 3;
 
   const cancelTooltip = (() => {
     if (submitting)
@@ -48,6 +52,8 @@ export default function CancelBusinessTripDialog({
     if (!tripId) return t("vehicleBusinessTrips.dialogs.common.noTripSelected");
     if (!cancellerEmployeeUserId)
       return t("vehicleBusinessTrips.dialogs.cancel.tooltip.noCanceller");
+    if (trimmedReason.length < 3)
+      return t("vehicleBusinessTrips.dialogs.cancel.tooltip.reasonRequired");
     return "";
   })();
 
@@ -125,6 +131,11 @@ export default function CancelBusinessTripDialog({
           disabled={submitting}
           placeholder={t("vehicleBusinessTrips.dialogs.cancel.placeholder")}
           size="small"
+          helperText={
+            trimmedReason.length > 0 && trimmedReason.length < 3
+              ? t("vehicleBusinessTrips.dialogs.cancel.minChars")
+              : " "
+          }
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: 1,
