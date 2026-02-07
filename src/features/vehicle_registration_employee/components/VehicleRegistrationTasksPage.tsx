@@ -20,12 +20,9 @@ import {
   LabelOutlined,
 } from "@mui/icons-material";
 import CheckCircleOutlineOutlined from "@mui/icons-material/CheckCircleOutlineOutlined";
-import { useVehicleRegistrations } from "../../vehicle_registrations/hooks/useVehicleRegistrations";
-import type {
-  UpdateVehicleRegistrationEmployeeRequest,
-  VehicleRegistrationEmployee,
-} from "..";
-import { useNavigate } from "react-router-dom";
+
+import type { VehicleRegistrationEmployee } from "..";
+import React from "react";
 import ResolveVehicleRegistrationTaskDialog from "../components/ResolveVehicleRegistrationTaskDialog";
 
 import { useAuthStore } from "../../auth/store/useAuthStore";
@@ -42,7 +39,6 @@ import ListView, {
   listViewChipSx,
   listViewColDividerSx,
 } from "../../../components/ui/views/ListView";
-import { useSnackbar } from "notistack";
 import HeaderLabel from "../../../components/ui/HeaderLabel";
 import { isFinalStatus, tagForStatus } from "../utils/taskStatus";
 
@@ -58,22 +54,12 @@ type TaskView = {
   isCompleted: boolean;
 };
 
-type VehicleRegistrationRow = {
-  id: number;
-  vehicleId: number;
-  validFrom?: string | null;
-  validTo?: string | null;
-};
-
 const VehicleRegistrationTasksPage = () => {
   const { t } = useTranslation();
   const { userId, role } = useAuthStore();
   const { employeeRows = [], isLoading: employeesLoading } = useEmployees();
   const { vehiclesRows = [] } = useVehicles();
-  const { vehicleRegistrationsRows } = useVehicleRegistrations();
-  const navigate = useNavigate();
   const [tab, setTab] = useState(0);
-  const { enqueueSnackbar } = useSnackbar();
 
   const handleTabChange = useCallback(
     (_: React.SyntheticEvent, value: number) => setTab(value),
@@ -115,15 +101,10 @@ const VehicleRegistrationTasksPage = () => {
     []
   );
 
-  const handleCreateRegistration = useCallback(() => {
-    navigate("/app/vehicle-registrations/create");
-    setResolveDialogOpen(false);
-  }, [navigate]);
-
   const handleCloseResolveDialog = useCallback(() => {
-    if (updateStatus.isPending) return;
     setResolveDialogOpen(false);
-  }, [updateStatus.isPending]);
+    setActiveTask(null);
+  }, []);
 
   const vehicleById = useMemo(() => {
     const m = new Map<number, any>();
@@ -137,94 +118,6 @@ const VehicleRegistrationTasksPage = () => {
     if (Number.isNaN(d.getTime())) return String(value);
     return d.toLocaleDateString();
   }, []);
-
-  const toDateOnlyTime = useCallback((value?: string | null) => {
-    if (!value) return Number.NaN;
-
-    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
-    if (m) {
-      const y = Number(m[1]);
-      const mo = Number(m[2]) - 1;
-      const d = Number(m[3]);
-      return Date.UTC(y, mo, d);
-    }
-
-    const dt = new Date(value);
-    const t = dt.getTime();
-    return Number.isNaN(t) ? Number.NaN : t;
-  }, []);
-
-  const hasNewerRegistrationForVehicle = useCallback(
-    (
-      vehicleId: number,
-      expiresOn?: string | null,
-      currentRegId?: number | null
-    ) => {
-      const expiresAt = toDateOnlyTime(expiresOn);
-      if (Number.isNaN(expiresAt)) return false;
-
-      const regs = (vehicleRegistrationsRows ?? []) as VehicleRegistrationRow[];
-
-      return regs
-        .filter((r) => r.vehicleId === vehicleId)
-        .filter((r) => Boolean(r.validTo))
-        .filter((r) => (currentRegId ? r.id !== currentRegId : true))
-        .some((r) => {
-          const vt = toDateOnlyTime(r.validTo);
-          return !Number.isNaN(vt) && vt > expiresAt;
-        });
-    },
-    [toDateOnlyTime, vehicleRegistrationsRows]
-  );
-
-  const handleResolveTask = useCallback(async () => {
-    if (!activeTask) return;
-
-    const expiresAt = toDateOnlyTime(activeTask.expiresOn);
-    if (Number.isNaN(expiresAt)) {
-      enqueueSnackbar(
-        t("vehicleRegistrationTasks.resolveDialog.snackbarBadDate"),
-        { variant: "error" }
-      );
-      return;
-    }
-
-    const hasNewer = hasNewerRegistrationForVehicle(
-      activeTask.vehicleId,
-      activeTask.expiresOn,
-      activeTask.vehicleRegistrationId
-    );
-
-    if (!hasNewer) {
-      enqueueSnackbar(
-        t("vehicleRegistrationTasks.resolveDialog.snackbarNoNewerRegistration"),
-        { variant: "warning" }
-      );
-      return;
-    }
-
-    const payload: UpdateVehicleRegistrationEmployeeRequest = {
-      id: activeTask.id,
-      vehicleId: activeTask.vehicleId,
-      employeeId: activeTask.employeeId,
-      expiresOn: activeTask.expiresOn,
-      vehicleRegistrationId: activeTask.vehicleRegistrationId,
-      status: 3,
-      note: activeTask.note ?? null,
-      completedAt: activeTask.completedAt ?? null,
-    };
-
-    await updateStatus.mutateAsync(payload);
-
-    setResolveDialogOpen(false);
-  }, [
-    activeTask,
-    enqueueSnackbar,
-    hasNewerRegistrationForVehicle,
-    t,
-    toDateOnlyTime,
-    updateStatus,
-  ]);
 
   const taskViews = useMemo<TaskView[]>(() => {
     return tasks.map((task) => {
@@ -560,19 +453,9 @@ const VehicleRegistrationTasksPage = () => {
 
       <ResolveVehicleRegistrationTaskDialog
         open={resolveDialogOpen}
-        title={t("vehicleRegistrationTasks.resolveDialog.title")}
-        question={t("vehicleRegistrationTasks.resolveDialog.question")}
-        helperText={t("vehicleRegistrationTasks.resolveDialog.helper")}
-        loading={updateStatus.isPending}
         onClose={handleCloseResolveDialog}
-        onSave={handleResolveTask}
-        onCreateRegistration={handleCreateRegistration}
-        saveText={t("vehicleRegistrationTasks.resolveDialog.save")}
-        createRegistrationText={t(
-          "vehicleRegistrationTasks.resolveDialog.create"
-        )}
-        cancelText={t("vehicleRegistrationTasks.resolveDialog.cancel")}
-        disableBackdropClose
+        onSuccess={handleCloseResolveDialog}
+        task={activeTask}
       />
     </Stack>
   );

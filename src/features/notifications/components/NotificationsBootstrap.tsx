@@ -11,12 +11,15 @@ import type { NotificationDto } from "../../../lib/signalR/types";
 import { notificationsKeys } from "../api/notifications.keys";
 import { NotificationToast } from "../../../components/ui/notification-toast/NotificationToast";
 import { NotificationsApi } from "../api/notifications.api";
+import { getNavigationPath } from "../utils/notificationNavigation";
+import { useNavigate } from "react-router-dom";
 
 const UNREAD_TAKE = 10;
 
 export function NotificationsBootstrap() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const baseUrl = import.meta.env.VITE_API_BASE_URL as string;
   const conn = useMemo(() => getNotificationsHubConnection(baseUrl), [baseUrl]);
@@ -52,7 +55,10 @@ export function NotificationsBootstrap() {
                 void NotificationsApi.read(notification.id);
               }
 
-              if (notification.actionUrl) {
+              const path = getNavigationPath(notification);
+              if (path) {
+                navigate(path);
+              } else if (notification.actionUrl) {
                 const normalized = notification.actionUrl.replace(
                   /^\/?construction-sites\/(\d+)/,
                   "/app/constructionSites/$1"

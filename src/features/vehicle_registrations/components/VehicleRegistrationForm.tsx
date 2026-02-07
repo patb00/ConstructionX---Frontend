@@ -6,6 +6,7 @@ import {
   type FieldConfig,
 } from "../../../components/ui/smartform/SmartForm";
 import { useVehicleOptions } from "../../constants/options/useVehicleOptions";
+import { useCurrencyOptions } from "../../constants/enum/useCurrencyOptions";
 
 type Props = {
   defaultValues?: Partial<NewVehicleRegistrationRequest>;
@@ -29,6 +30,8 @@ export default function VehicleRegistrationForm({
 
   const { options: vehicleOptions, isLoading: vehiclesLoading } =
     useVehicleOptions();
+
+  const currencyOptions = useCurrencyOptions();
 
   const fields: FieldConfig<NewVehicleRegistrationRequest>[] = useMemo(
     () => [
@@ -61,6 +64,8 @@ export default function VehicleRegistrationForm({
       {
         name: "costCurrency",
         label: t("vehicleRegistrations.form.field.costCurrency"),
+        type: "select",
+        options: currencyOptions,
       },
       {
         name: "registrationStationName",
@@ -98,6 +103,7 @@ export default function VehicleRegistrationForm({
     [
       t,
       vehicleOptions,
+      currencyOptions,
       docFile,
       defaultValues?.documentPath,
       onDocFileChange,
