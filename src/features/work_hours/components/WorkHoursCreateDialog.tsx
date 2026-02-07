@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FormControl,
@@ -28,7 +28,7 @@ export default function WorkHoursCreateDialog({
   onClose,
   defaultDate,
 }: Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { mutateAsync: upsert, isPending } =
     useUpsertConstructionSiteEmployeeWorkLogs();
   const { isAdmin, employeeId } = useCurrentEmployeeContext();
@@ -118,6 +118,13 @@ export default function WorkHoursCreateDialog({
     !startTime ||
     !endTime;
 
+      const isTwelveHourClock = useMemo(
+    () => i18n.language?.startsWith('en'),
+    [i18n.language],
+  );
+
+
+
   return (
     <AssignTaskDialog
       open={open}
@@ -187,18 +194,22 @@ export default function WorkHoursCreateDialog({
 
         <Stack direction="row" spacing={2}>
           <TimePicker
-            label={t("workHours.startTime")}
+            label={t('workHours.startTime')}
             value={startTime}
             onChange={(newValue) => setStartTime(newValue)}
-            ampm={false}
-            slotProps={{ textField: { size: "small", fullWidth: true } }}
+            ampm={isTwelveHourClock}            // 12 h only for English
+            ampmInClock={isTwelveHourClock}     // hide AM/PM toggle on 24 h locales:contentReference[oaicite:5]{index=5}
+            format={isTwelveHourClock ? 'hh:mm a' : 'HH:mm'}
+            slotProps={{ textField: { size: 'small', fullWidth: true } }}
           />
           <TimePicker
-            label={t("workHours.endTime")}
+            label={t('workHours.endTime')}
             value={endTime}
             onChange={(newValue) => setEndTime(newValue)}
-            ampm={false}
-            slotProps={{ textField: { size: "small", fullWidth: true } }}
+            ampm={isTwelveHourClock}
+            ampmInClock={isTwelveHourClock}
+            format={isTwelveHourClock ? 'hh:mm a' : 'HH:mm'}
+            slotProps={{ textField: { size: 'small', fullWidth: true } }}
           />
         </Stack>
       </Stack>

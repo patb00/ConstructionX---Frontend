@@ -14,6 +14,7 @@ import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 
+import { useTranslation } from "react-i18next";
 import { pillSx } from "./HistoryPanelShell";
 
 type Props = {
@@ -24,6 +25,7 @@ type Props = {
   defaultExpanded?: boolean;
 
   isLoading?: boolean;
+  loadingText?: string;
   isError?: boolean;
   errorText?: string;
   emptyText?: string;
@@ -37,12 +39,14 @@ export function HistoryAccordionSection({
   count,
   defaultExpanded = false,
   isLoading,
+  loadingText,
   isError,
   errorText = "Failed to load.",
   emptyText = "No items.",
   children,
 }: Props) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(defaultExpanded);
 
   const isEmpty = !isLoading && !isError && count === 0;
@@ -126,7 +130,7 @@ export function HistoryAccordionSection({
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <CircularProgress size={18} />
             <Typography variant="body2" color="text.secondary">
-              Loading…
+              {loadingText ?? t("common.loading")}
             </Typography>
           </Box>
         ) : isError ? (

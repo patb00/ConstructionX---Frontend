@@ -157,6 +157,7 @@ const WorkHoursListPage = () => {
     },
   };
 
+
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
