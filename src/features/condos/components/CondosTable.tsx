@@ -69,7 +69,7 @@ export default function CondosTable() {
     const actionsCol: GridColDef<Condo> = {
       field: "actions",
       headerName: t("condos.actions"),
-      width: 120,
+      width: 180,
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
@@ -84,9 +84,11 @@ export default function CondosTable() {
           <RowActions
             disabled={busy}
             color="#F1B103"
+            onView={can({ permission: "Permission.Condos.Read" }) ? () => navigate(`${id}/details`) : undefined}
             onEdit={canEdit ? () => navigate(`${id}/edit`) : undefined}
             onDelete={canDelete ? () => requestDelete(row) : undefined}
             labels={{
+              view: t("condos.table.detailView"),
               edit: t("condos.table.edit"),
               delete: t("condos.table.delete"),
             }}

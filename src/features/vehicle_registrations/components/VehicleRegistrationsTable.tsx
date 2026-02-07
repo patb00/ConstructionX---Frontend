@@ -148,8 +148,12 @@ export default function VehicleRegistrationsTable() {
           <RowActions
             color="#F1B103"
             disabled={busy}
+            onView={can({ permission: "Permission.Vehicles.Read" }) ? () => navigate(`${id}/details`) : undefined}
             onEdit={canEdit ? () => navigate(`${id}/edit`) : undefined}
             onDelete={canDelete ? () => requestDelete(params.row) : undefined}
+            labels={{
+              view: t("vehicleRegistrations.table.detailView"),
+            }}
             customActions={
               canAssign
                 ? [

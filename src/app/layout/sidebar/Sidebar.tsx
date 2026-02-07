@@ -55,6 +55,11 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
 
   const SYSTEM_CONDOS = SYSTEM.filter((i) => i.category === "CONDOS");
 
+  const userPermissionCount = permissions.filter((p) =>
+    p.startsWith("Permission.Users."),
+  ).length;
+  const canSeeIdentityGroup = userPermissionCount > 1;
+
   const ManagementContent = (
     <SidebarSection
       sectionLabelKey="sidebar.management"
@@ -107,11 +112,15 @@ export default function Sidebar({ mobileOpen, onClose }: Props) {
           icon: <FaListUl />,
           items: SYSTEM_CODEBOOK,
         },
-        {
-          title: t("sidebar.identityGroup"),
-          icon: <FaUserShield />,
-          items: SYSTEM_IDENTITY,
-        },
+        ...(canSeeIdentityGroup
+          ? [
+              {
+                title: t("sidebar.identityGroup"),
+                icon: <FaUserShield />,
+                items: SYSTEM_IDENTITY,
+              },
+            ]
+          : []),
       ]}
       listItems={[]}
       pathname={pathname}

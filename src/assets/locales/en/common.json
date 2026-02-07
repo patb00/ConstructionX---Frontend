@@ -1611,7 +1611,8 @@
     "actions": "Actions",
     "table": {
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "detailView": "Details"
     },
     "create": {
       "title": "Add Condo",
@@ -1763,6 +1764,9 @@
       "error": "Error loading vehicle registrations"
     },
     "actions": "Actions",
+    "table": {
+      "detailView": "Details"
+    },
     "create": {
       "title": "Add Vehicle Registration",
       "back": "Back"
@@ -1848,6 +1852,10 @@
       "cancel": "Cancel",
       "snackbarNoNewerRegistration": "There is no newer registration for this vehicle. Please create a new registration before changing the status.",
       "snackbarBadDate": "Invalid task expiration date."
+    },
+    "filter": {
+      "employee": "Filter by employee",
+      "allEmployees": "All employees"
     }
   },
   "vehicleInsurances": {
