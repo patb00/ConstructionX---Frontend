@@ -12,10 +12,10 @@ interface TransformedData {
   total: number;
 }
 
-export const useVehicleRegistrationEmployees = () => {
+export const useVehicleRegistrationEmployees = (options?: { enabled?: boolean }) => {
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 25,
+    pageSize: 100,
   });
 
   const { data, error, isLoading, isError } = useQuery<
@@ -23,6 +23,7 @@ export const useVehicleRegistrationEmployees = () => {
     Error,
     TransformedData
   >({
+    enabled: options?.enabled ?? true,
     queryKey: vehicleRegistrationEmployeesKeys.list({
       page: paginationModel.page,
       pageSize: paginationModel.pageSize,

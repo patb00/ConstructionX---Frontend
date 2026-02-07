@@ -4,6 +4,8 @@ import {
   Checkbox,
   Chip,
   CircularProgress,
+  TextField,
+  Autocomplete,
   Stack,
   Typography,
 } from "@mui/material";
@@ -33,6 +35,7 @@ import ListView, {
 import HeaderLabel from "../../../components/ui/HeaderLabel";
 import type { VehicleRegistrationEmployee } from "../../vehicle_registration_employee";
 import { useVehicleRegistrationEmployeesByEmployee } from "../../vehicle_registration_employee/hooks/useVehicleRegistrationEmployeesByEmployee";
+import { useVehicleRegistrationEmployees } from "../../vehicle_registration_employee/hooks/useVehicleRegistrationEmployees";
 import { useUpdateVehicleRegistrationEmployee } from "../../vehicle_registration_employee/hooks/useUpdateVehicleRegistrationEmployee";
 import { useVehicles } from "../../vehicles/hooks/useVehicles";
 import ResolveVehicleRegistrationTaskDialog from "../../vehicle_registration_employee/components/ResolveVehicleRegistrationTaskDialog";
@@ -67,12 +70,37 @@ export default function VehicleRegistrationTasksTab() {
   const shouldShowNone =
     !employeesLoading && role !== "Admin" && myEmployeeId == null;
 
-  const queryEmployeeId = Number.isFinite(myEmployeeId ?? NaN)
+  const [selectedAdminEmployeeId, setSelectedAdminEmployeeId] = useState<
+    number | null
+  >(null);
+
+  const isAdmin = role === "Admin";
+  const queryEmployeeId = isAdmin
+    ? selectedAdminEmployeeId
+    : Number.isFinite(myEmployeeId ?? NaN)
     ? Number(myEmployeeId)
     : 0;
 
-  const { data: tasks = [], isLoading } =
-    useVehicleRegistrationEmployeesByEmployee(queryEmployeeId);
+  // Use paged getAll if Admin and no employee selected
+  const {
+    vehicleRegistrationEmployeesRows: allTasks = [],
+    isLoading: isAllLoading,
+  } = useVehicleRegistrationEmployees({
+    enabled: isAdmin && queryEmployeeId === null,
+  });
+
+  // Use byEmployee if filtering or if regular user
+  const { data: filteredTasks = [], isLoading: isFilteredLoading } =
+    useVehicleRegistrationEmployeesByEmployee(queryEmployeeId ?? 0, {
+      enabled: queryEmployeeId !== null && queryEmployeeId > 0,
+    });
+
+  const tasks = useMemo(() => {
+    if (isAdmin && queryEmployeeId === null) return allTasks;
+    return filteredTasks;
+  }, [isAdmin, queryEmployeeId, allTasks, filteredTasks]);
+
+  const isLoading = isAllLoading || isFilteredLoading;
 
   const updateStatus = useUpdateVehicleRegistrationEmployee();
 
@@ -388,8 +416,48 @@ export default function VehicleRegistrationTasksTab() {
     ];
   }, [handleOpenResolveDialog, t, updateStatus.isPending]);
 
+  const filterOptions = useMemo(() => {
+    const allOption = {
+      id: null,
+      firstName: t("vehicleRegistrationTasks.filter.allEmployees"),
+      lastName: "",
+    };
+    return [allOption, ...employeeRows];
+  }, [employeeRows, t]);
+
   return (
     <Stack spacing={2} sx={{ width: "100%" }}>
+      {isAdmin && (
+        <Box sx={{ maxWidth: 400 }}>
+          <Autocomplete
+            options={filterOptions}
+            getOptionLabel={(option: any) => {
+              if (option.id === null) return option.firstName;
+              return (
+                `${option.firstName ?? ""} ${option.lastName ?? ""}`.trim() ||
+                option.email ||
+                `ID: ${option.id}`
+              );
+            }}
+            value={
+              filterOptions.find((e: any) => e.id === selectedAdminEmployeeId) ??
+              filterOptions[0]
+            }
+            onChange={(_, newValue) =>
+              setSelectedAdminEmployeeId(newValue?.id ?? null)
+            }
+            onBlur={() => {}}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label={t("vehicleRegistrationTasks.filter.employee")}
+                variant="outlined"
+                size="small"
+              />
+            )}
+          />
+        </Box>
+      )}
       {shouldShowNone ? (
         <Typography variant="body2" color="text.secondary">
           {t("vehicleRegistrationTasks.list.empty")}

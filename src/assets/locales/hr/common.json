@@ -1611,7 +1611,8 @@
     "actions": "Akcije",
     "table": {
       "edit": "Uredi",
-      "delete": "Izbriši"
+      "delete": "Izbriši",
+      "detailView": "Detalji"
     },
     "create": {
       "title": "Dodaj stan",
@@ -1763,6 +1764,9 @@
       "error": "Greška kod učitavanja registracija vozila"
     },
     "actions": "Akcije",
+    "table": {
+      "detailView": "Detalji"
+    },
     "create": {
       "title": "Dodaj registraciju vozila",
       "back": "Natrag"
@@ -1848,6 +1852,10 @@
       "cancel": "Odustani",
       "snackbarNoNewerRegistration": "Ne postoji novija registracija za ovo vozilo. Kreirajte novu registraciju prije promjene statusa.",
       "snackbarBadDate": "Neispravan datum roka na zadatku."
+    },
+    "filter": {
+      "employee": "Filtriraj po zaposleniku",
+      "allEmployees": "Svi zaposlenici"
     }
   },
   "vehicleInsurances": {
@@ -1979,7 +1987,8 @@
       "approve": "Odobri",
       "reject": "Odbij",
       "cancel": "Otkaži",
-      "complete": "Završi"
+      "complete": "Završi",
+      "detailView": "Detalji"
     },
     "form": {
       "submit": "Spremi",

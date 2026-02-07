@@ -184,12 +184,16 @@ export default function VehicleBusinessTripsTable({ statusValue }: Props) {
 
         return (
           <RowActions
+            onView={can({ permission: "Permission.Vehicles.Read" }) ? () => navigate(`${id}/details`) : undefined}
             onEdit={
               isAdmin || status === TripStatus.Pending
                 ? () => navigate(`${id}/edit`)
                 : undefined
             }
-            labels={{ edit: t("vehicleBusinessTrips.table.edit") }}
+            labels={{
+              view: t("vehicleBusinessTrips.table.detailView"),
+              edit: t("vehicleBusinessTrips.table.edit"),
+            }}
             customActions={customActions}
           />
         );

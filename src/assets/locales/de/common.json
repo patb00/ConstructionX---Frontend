@@ -1606,7 +1606,8 @@
     "actions": "Aktionen",
     "table": {
       "edit": "Bearbeiten",
-      "delete": "Löschen"
+      "delete": "Löschen",
+      "detailView": "Details"
     },
     "create": {
       "title": "Wohnung hinzufügen",
@@ -1758,6 +1759,9 @@
       "error": "Fehler beim Laden der Fahrzeugzulassungen"
     },
     "actions": "Aktionen",
+    "table": {
+      "detailView": "Details"
+    },
     "create": {
       "title": "Fahrzeugzulassung hinzufügen",
       "back": "Zurück"
@@ -1843,6 +1847,10 @@
       "cancel": "Abbrechen",
       "snackbarNoNewerRegistration": "Es existiert keine neuere Registrierung für dieses Fahrzeug. Bitte erstellen Sie eine neue Registrierung, bevor Sie den Status ändern.",
       "snackbarBadDate": "Ungültiges Ablaufdatum der Aufgabe."
+    },
+    "filter": {
+      "employee": "Nach Mitarbeiter filtern",
+      "allEmployees": "Alle Mitarbeiter"
     }
   },
   "vehicleInsurances": {
@@ -1964,7 +1972,8 @@
       "approve": "Genehmigen",
       "reject": "Ablehnen",
       "cancel": "Abbrechen",
-      "complete": "Abschließen"
+      "complete": "Abschließen",
+      "detailView": "Details"
     },
     "form": {
       "submit": "Speichern",

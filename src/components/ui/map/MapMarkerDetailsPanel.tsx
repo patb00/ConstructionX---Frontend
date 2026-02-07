@@ -17,6 +17,7 @@ import type { SelectedMarker } from "../../../features/map";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
+import { useConstructionSiteStatusOptions } from "../../../features/constants/enum/useConstructionSiteStatusOptions";
 
 type MapMarkerDetailsPanelProps = {
   selectedMarker: SelectedMarker | null;
@@ -29,6 +30,7 @@ export default function MapMarkerDetailsPanel({
 }: MapMarkerDetailsPanelProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const statusOptions = useConstructionSiteStatusOptions();
 
   if (!selectedMarker) return null;
 
@@ -201,9 +203,23 @@ export default function MapMarkerDetailsPanel({
 
         {selectedMarker.kind === "site" && (
           <Stack spacing={1.5}>
-            <DetailRow 
-                label={t("map.markerDetails.site.status")} 
-                value={<Chip label={String(selectedMarker.site.status)} size="small" color="default" />}
+            <DetailRow
+              label={t("map.markerDetails.site.status")}
+              value={(() => {
+                const label =
+                  statusOptions.find(
+                    (opt) =>
+                      Number(opt.value) === Number(selectedMarker.site.status)
+                  )?.label ?? String(selectedMarker.site.status);
+                return (
+                  <Chip
+                    label={label}
+                    size="small"
+                    color="primary"
+                    sx={{ color: "white" }}
+                  />
+                );
+              })()}
             />
             {selectedMarker.site.siteManagerName && (
                <DetailRow 
@@ -236,23 +252,70 @@ export default function MapMarkerDetailsPanel({
           </Stack>
         )}
 
-        {(selectedMarker.kind === "trip-start" || selectedMarker.kind === "trip-end") && (
+        {(selectedMarker.kind === "trip-start" ||
+          selectedMarker.kind === "trip-end") && (
           <Stack spacing={2}>
+            {selectedMarker.trip.employeeName && (
+              <DetailRow
+                label={t("vehicleBusinessTrips.form.field.employeeId")}
+                value={selectedMarker.trip.employeeName}
+              />
+            )}
+            {(selectedMarker.trip.vehicleRegistrationNumber ||
+              selectedMarker.trip.vehicleBrand ||
+              selectedMarker.trip.vehicleModel) && (
+              <DetailRow
+                label={t("vehicleBusinessTrips.form.field.vehicleId")}
+                value={
+                  <Box sx={{ textAlign: "right" }}>
+                    <Typography variant="body2" fontWeight={700}>
+                      {selectedMarker.trip.vehicleRegistrationNumber ?? "—"}
+                    </Typography>
+                    {(selectedMarker.trip.vehicleBrand ||
+                      selectedMarker.trip.vehicleModel) && (
+                      <Typography variant="caption" color="text.secondary">
+                        {selectedMarker.trip.vehicleBrand}{" "}
+                        {selectedMarker.trip.vehicleModel}
+                      </Typography>
+                    )}
+                  </Box>
+                }
+              />
+            )}
+            <Divider />
             <Box>
-                <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, mb: 0.5, display: 'block', textTransform: 'uppercase' }}>
-                    {t("map.markerDetails.trip.start")}
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {selectedMarker.trip.startLocationText ?? t("common.dash")}
-                </Typography>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{
+                  fontWeight: 700,
+                  mb: 0.5,
+                  display: "block",
+                  textTransform: "uppercase",
+                }}
+              >
+                {t("map.markerDetails.trip.start")}
+              </Typography>
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                {selectedMarker.trip.startLocationText ?? t("common.dash")}
+              </Typography>
             </Box>
             <Box>
-                <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, mb: 0.5, display: 'block', textTransform: 'uppercase' }}>
-                    {t("map.markerDetails.trip.end")}
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {selectedMarker.trip.endLocationText ?? t("common.dash")}
-                </Typography>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{
+                  fontWeight: 700,
+                  mb: 0.5,
+                  display: "block",
+                  textTransform: "uppercase",
+                }}
+              >
+                {t("map.markerDetails.trip.end")}
+              </Typography>
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                {selectedMarker.trip.endLocationText ?? t("common.dash")}
+              </Typography>
             </Box>
           </Stack>
         )}

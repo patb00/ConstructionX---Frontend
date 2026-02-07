@@ -7,6 +7,10 @@ export type TripRow = {
   endLocationText: string | null;
   vehicleId?: number | null;
   employeeId?: number | null;
+  employeeName?: string | null;
+  vehicleRegistrationNumber?: string | null;
+  vehicleBrand?: string | null;
+  vehicleModel?: string | null;
 };
 
 export type CondoRow = {
