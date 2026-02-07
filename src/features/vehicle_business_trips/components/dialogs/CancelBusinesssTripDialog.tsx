@@ -11,6 +11,7 @@ type Props = {
   onClose: () => void;
   trip: VehicleBusinessTrip | null;
   cancellerEmployeeUserId: number | null;
+  onExited?: () => void;
 };
 
 export default function CancelBusinessTripDialog({
@@ -18,6 +19,7 @@ export default function CancelBusinessTripDialog({
   onClose,
   trip,
   cancellerEmployeeUserId,
+  onExited,
 }: Props) {
   const { t } = useTranslation();
   const cancelMutation = useCancelVehicleBusinessTrip();
@@ -31,13 +33,18 @@ export default function CancelBusinessTripDialog({
   const [reason, setReason] = useState("");
 
   useEffect(() => {
-    if (!open) return;
-    setReason("");
+    if (open) {
+      setReason("");
+    }
   }, [open, trip?.id]);
 
   const trimmedReason = reason.trim();
 
-  const cancelDisabled = submitting || !tripId || !cancellerEmployeeUserId;
+  const cancelDisabled =
+    submitting ||
+    !tripId ||
+    !cancellerEmployeeUserId ||
+    trimmedReason.length < 3;
 
   const cancelTooltip = (() => {
     if (submitting)
@@ -45,6 +52,8 @@ export default function CancelBusinessTripDialog({
     if (!tripId) return t("vehicleBusinessTrips.dialogs.common.noTripSelected");
     if (!cancellerEmployeeUserId)
       return t("vehicleBusinessTrips.dialogs.cancel.tooltip.noCanceller");
+    if (trimmedReason.length < 3)
+      return t("vehicleBusinessTrips.dialogs.cancel.tooltip.reasonRequired");
     return "";
   })();
 
@@ -65,6 +74,10 @@ export default function CancelBusinessTripDialog({
     <AssignTaskDialog
       open={open}
       onClose={onClose}
+      onExited={() => {
+        setReason("");
+        onExited?.();
+      }}
       title={t("vehicleBusinessTrips.dialogs.cancel.title")}
       subtitle={
         cancellerEmployeeUserId
@@ -118,6 +131,11 @@ export default function CancelBusinessTripDialog({
           disabled={submitting}
           placeholder={t("vehicleBusinessTrips.dialogs.cancel.placeholder")}
           size="small"
+          helperText={
+            trimmedReason.length > 0 && trimmedReason.length < 3
+              ? t("vehicleBusinessTrips.dialogs.cancel.minChars")
+              : " "
+          }
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: 1,

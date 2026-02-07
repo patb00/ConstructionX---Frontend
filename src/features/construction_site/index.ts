@@ -232,3 +232,6 @@ export interface GetConstructionSiteEmployeeWorkLogsAllQuery {
   page?: number;
   pageSize?: number;
 }
+export interface UpsertConstructionSiteEmployeeWorkLogsBulkRequest {
+  entries: UpsertConstructionSiteEmployeeWorkLogsRequest[];
+}

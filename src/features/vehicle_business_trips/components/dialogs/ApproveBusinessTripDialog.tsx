@@ -28,6 +28,7 @@ type Props = {
   onClose: () => void;
   trip: VehicleBusinessTrip | null;
   approverEmployeeUserId: number | null;
+  onExited?: () => void;
 };
 
 export default function ApproveBusinessTripDialog({
@@ -35,6 +36,7 @@ export default function ApproveBusinessTripDialog({
   onClose,
   trip,
   approverEmployeeUserId,
+  onExited,
 }: Props) {
   const { t } = useTranslation();
   const { options, isLoading: vehiclesLoading } = useVehicleOptions();
@@ -44,9 +46,10 @@ export default function ApproveBusinessTripDialog({
   const [vehicleIdForCheck, setVehicleIdForCheck] = useState<number>(0);
 
   useEffect(() => {
-    if (!open) return;
-    setVehicleId("");
-    setVehicleIdForCheck(0);
+    if (open) {
+      setVehicleId("");
+      setVehicleIdForCheck(0);
+    }
   }, [open, trip?.id]);
 
   const startAt = (trip as any)?.startAt ?? (trip as any)?.fromDate ?? "";
@@ -157,6 +160,11 @@ export default function ApproveBusinessTripDialog({
     <AssignTaskDialog
       open={open}
       onClose={onClose}
+      onExited={() => {
+        setVehicleId("");
+        setVehicleIdForCheck(0);
+        onExited?.();
+      }}
       title={t("vehicleBusinessTrips.dialogs.approve.title")}
       subtitle={
         approverEmployeeUserId

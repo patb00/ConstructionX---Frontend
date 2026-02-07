@@ -308,6 +308,7 @@
     "yes": "Da",
     "no": "Ne",
     "cancel": "Odustani",
+    "ok": "U redu",
     "remove": "Ukloni",
     "close": "Zatvori",
     "submit": "Spremi",
@@ -606,6 +607,18 @@
       "dateOfCreation": "Datum osnivanja",
       "permissions": "Dozvole",
       "userName": "Korisničko ime",
+      "applicationUserId": "ID korisnika aplikacije",
+      "vatNumber": "PDV broj",
+      "companyCode": "Šifra tvrtke",
+      "contactPhone": "Kontakt telefon",
+      "websiteUrl": "Web stranica",
+      "addressStreet": "Ulica i broj",
+      "addressPostalCode": "Poštanski broj",
+      "addressCity": "Grad",
+      "addressState": "Županija",
+      "addressCountry": "Država",
+      "defaultLanguage": "Zadani jezik",
+      "logoFileName": "Datoteka logotipa",
       "oib": "OIB",
       "dateOfBirth": "Datum rođenja",
       "employmentDate": "Datum zaposlenja",
@@ -1391,7 +1404,8 @@
       "description": "Odaberi i pokreni izvještaj za ovaj modul.",
       "noReports": "Za ovaj modul još nema definiranih izvještaja.",
       "open": "Otvori izvještaj",
-      "opening": "Otvaranje..."
+      "opening": "Otvaranje...",
+      "filterSubtitle": "Postavite parametre izvještaja"
     },
     "items": {
       "employeeList": {
@@ -2029,12 +2043,14 @@
         "previewSubtitle": "Putovanje će biti otkazano i uklonjeno iz tijeka odobravanja.",
         "submit": "Otkaži putovanje",
         "close": "Zatvori",
-        "helper": "Možete dodati razlog (neobavezno). Ovu radnju nije moguće poništiti.",
-        "placeholder": "Neobavezni razlog (npr. više nije potrebno)",
+        "helper": "Molimo unesite kratak razlog. Ovu radnju nije moguće poništiti.",
+        "placeholder": "npr. Više nije potrebno / Promjena rasporeda...",
+        "minChars": "Najmanje 3 znaka su potrebna",
         "cannotBeUndone": "Ovu radnju nije moguće poništiti.",
         "tooltip": {
           "submitting": "Slanje…",
-          "noCanceller": "Otkažitelj nije dostupan"
+          "noCanceller": "Otkažitelj nije dostupan",
+          "reasonRequired": "Razlog je obavezan (min 3 znaka)"
         }
       },
       "reject": {

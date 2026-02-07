@@ -54,7 +54,31 @@ export default function useColumnHeaderMappings(): MapItem[] {
     { original: "FirstName", translated: t("common.columns.firstName") },
     { original: "LastName", translated: t("common.columns.lastName") },
     { original: "ValidUpToDate", translated: t("common.columns.validUntil") },
+    { original: "validUpToDate", translated: t("common.columns.validUntil") },
     { original: "IsActive", translated: t("common.columns.isActive") },
+    { original: "isActive", translated: t("common.columns.isActive") },
+    { original: "VatNumber", translated: t("common.columns.vatNumber") },
+    { original: "vatNumber", translated: t("common.columns.vatNumber") },
+    { original: "CompanyCode", translated: t("common.columns.companyCode") },
+    { original: "companyCode", translated: t("common.columns.companyCode") },
+    { original: "ContactPhone", translated: t("common.columns.contactPhone") },
+    { original: "contactPhone", translated: t("common.columns.contactPhone") },
+    { original: "WebsiteUrl", translated: t("common.columns.websiteUrl") },
+    { original: "websiteUrl", translated: t("common.columns.websiteUrl") },
+    { original: "AddressStreet", translated: t("common.columns.addressStreet") },
+    { original: "addressStreet", translated: t("common.columns.addressStreet") },
+    { original: "AddressPostalCode", translated: t("common.columns.addressPostalCode") },
+    { original: "addressPostalCode", translated: t("common.columns.addressPostalCode") },
+    { original: "AddressCity", translated: t("common.columns.addressCity") },
+    { original: "addressCity", translated: t("common.columns.addressCity") },
+    { original: "AddressState", translated: t("common.columns.addressState") },
+    { original: "addressState", translated: t("common.columns.addressState") },
+    { original: "AddressCountry", translated: t("common.columns.addressCountry") },
+    { original: "addressCountry", translated: t("common.columns.addressCountry") },
+    { original: "DefaultLanguage", translated: t("common.columns.defaultLanguage") },
+    { original: "defaultLanguage", translated: t("common.columns.defaultLanguage") },
+    { original: "LogoFileName", translated: t("common.columns.logoFileName") },
+    { original: "logoFileName", translated: t("common.columns.logoFileName") },
 
     // COMPANIES
     {
@@ -70,6 +94,7 @@ export default function useColumnHeaderMappings(): MapItem[] {
 
     // EMPLOYEES
     { original: "Oib", translated: t("common.columns.oib") },
+    { original: "oib", translated: t("common.columns.oib") },
     { original: "DateOfBirth", translated: t("common.columns.dateOfBirth") },
     {
       original: "EmploymentDate",
@@ -88,6 +113,8 @@ export default function useColumnHeaderMappings(): MapItem[] {
     { original: "GloveSize", translated: t("common.columns.gloveSize") },
     { original: "ShoeSize", translated: t("common.columns.shoeSize") },
     { original: "JobPosition", translated: t("common.columns.jobPosition") },
+    { original: "ApplicationUserId", translated: t("common.columns.applicationUserId") },
+    { original: "applicationUserId", translated: t("common.columns.applicationUserId") },
 
     // TOOL COLUMNS
     {
@@ -128,6 +155,10 @@ export default function useColumnHeaderMappings(): MapItem[] {
     // VEHICLE COLUMNS (NEW)
     {
       original: "RegistrationNumber",
+      translated: t("common.columns.registrationNumber"),
+    },
+    {
+      original: "registrationNumber",
       translated: t("common.columns.registrationNumber"),
     },
     { original: "Vin", translated: t("common.columns.vin") },
@@ -270,6 +301,7 @@ export default function useColumnHeaderMappings(): MapItem[] {
     },
     { original: "Currency", translated: t("common.columns.currency") },
     { original: "Notes", translated: t("common.columns.notes") },
+    { original: "notes", translated: t("common.columns.notes") },
 
     // VEHICLE REGISTRATIONS
     { original: "ValidFrom", translated: t("common.columns.validFrom") },

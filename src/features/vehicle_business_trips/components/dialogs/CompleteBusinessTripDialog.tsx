@@ -23,6 +23,7 @@ type Props = {
   open: boolean;
   onClose: () => void;
   trip: VehicleBusinessTrip | null;
+  onExited?: () => void;
 };
 
 type FormState = {
@@ -39,6 +40,7 @@ export default function CompleteBusinessTripDialog({
   open,
   onClose,
   trip,
+  onExited,
 }: Props) {
   const { t } = useTranslation();
   const completeMutation = useCompleteVehicleBusinessTrip();
@@ -59,16 +61,17 @@ export default function CompleteBusinessTripDialog({
   });
 
   useEffect(() => {
-    if (!open) return;
-    setForm({
-      startKilometers: "",
-      endKilometers: "",
-      refueled: false,
-      fuelAmount: "",
-      fuelCurrency: "EUR",
-      fuelLiters: "",
-      note: "",
-    });
+    if (open) {
+      setForm({
+        startKilometers: "",
+        endKilometers: "",
+        refueled: false,
+        fuelAmount: "",
+        fuelCurrency: "EUR",
+        fuelLiters: "",
+        note: "",
+      });
+    }
   }, [open, trip?.id]);
 
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) =>
@@ -125,9 +128,9 @@ export default function CompleteBusinessTripDialog({
         startKilometers: startKm,
         endKilometers: endKm,
         refueled: form.refueled,
-        fuelAmount: form.refueled ? fuelAmount ?? 0 : 0,
-        fuelCurrency: form.refueled ? form.fuelCurrency : "",
-        fuelLiters: form.refueled ? fuelLiters ?? 0 : 0,
+        fuelAmount: form.refueled ? fuelAmount : null,
+        fuelCurrency: form.refueled ? form.fuelCurrency : null,
+        fuelLiters: form.refueled ? fuelLiters : null,
         note: form.note.trim(),
       },
       { onSuccess: onClose }
@@ -138,6 +141,18 @@ export default function CompleteBusinessTripDialog({
     <AssignTaskDialog
       open={open}
       onClose={onClose}
+      onExited={() => {
+        setForm({
+          startKilometers: "",
+          endKilometers: "",
+          refueled: false,
+          fuelAmount: "",
+          fuelCurrency: "EUR",
+          fuelLiters: "",
+          note: "",
+        });
+        onExited?.();
+      }}
       title={t("vehicleBusinessTrips.dialogs.complete.title")}
       subtitle={t("vehicleBusinessTrips.dialogs.complete.subtitle")}
       headerIcon={<TaskAltOutlinedIcon sx={{ fontSize: 18 }} />}

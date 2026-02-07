@@ -44,6 +44,7 @@ export function AssignVehicleRegistrationEmployeeDialog(props: {
     values: { employeeId: number; note: string },
     mode: "create" | "update"
   ) => void;
+  onExited?: () => void;
 }) {
   const {
     open,
@@ -63,6 +64,7 @@ export function AssignVehicleRegistrationEmployeeDialog(props: {
 
     submitting,
     onSubmit,
+    onExited,
   } = props;
 
   const { t } = useTranslation();
@@ -81,9 +83,10 @@ export function AssignVehicleRegistrationEmployeeDialog(props: {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    if (!open) return;
-    setIsEditing(false);
-    setValues({ employeeId: "", note: "" });
+    if (open) {
+      setIsEditing(false);
+      setValues({ employeeId: "", note: "" });
+    }
   }, [open]);
 
   useEffect(() => {
@@ -113,6 +116,11 @@ export function AssignVehicleRegistrationEmployeeDialog(props: {
     <AssignTaskDialog
       open={open}
       onClose={onClose}
+      onExited={() => {
+        setIsEditing(false);
+        setValues({ employeeId: "", note: "" });
+        onExited?.();
+      }}
       formLoading={formLoading}
       formDisabled={formDisabled}
       title={

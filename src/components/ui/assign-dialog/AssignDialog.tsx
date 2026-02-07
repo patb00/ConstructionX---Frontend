@@ -162,15 +162,13 @@ export function ReusableAssignDialog<
   );
   const [touched, setTouched] = useState(false);
 
-  useEffect(() => {
-    if (!open) {
-      setSelected([]);
-      setGlobalFrom(todayStr());
-      setGlobalTo(todayStr());
-      setRanges({});
-      setTouched(false);
-    }
-  }, [open]);
+  const handleExited = () => {
+    setSelected([]);
+    setGlobalFrom(todayStr());
+    setGlobalTo(todayStr());
+    setRanges({});
+    setTouched(false);
+  };
 
   useEffect(() => {
     if (!open || touched) return;
@@ -369,14 +367,15 @@ export function ReusableAssignDialog<
   return (
     <Dialog
       open={open}
+      TransitionProps={{ onExited: handleExited }}
       onClose={() => {
         if (busy) return;
         onClose();
       }}
+      PaperProps={{ sx: { position: "relative", p: 2, pt: 1.5, pb: 2 } }}
+      maxWidth="lg"
       fullWidth
-      maxWidth="xl"
-      PaperProps={{ sx: { position: "relative", p: 2.5, pt: 2.25, pb: 2.5 } }}
-    >
+>
       <Box
         sx={{
           display: "flex",
@@ -437,7 +436,8 @@ export function ReusableAssignDialog<
                 borderRight: (t) => ({ md: `1px solid ${t.palette.divider}` }),
                 p: 2,
                 overflowY: "auto",
-                maxHeight: 560,
+                overflowX: "hidden",
+                maxHeight: 400,
               }}
             >
               <Stack
@@ -511,14 +511,22 @@ export function ReusableAssignDialog<
               </Stack>
             </Box>
 
-            <Box sx={{ p: 2 }}>
+            <Box
+              sx={{
+                p: 2,
+                display: "flex",
+                flexDirection: "column",
+                maxHeight: 400,
+                overflowX: "hidden",
+              }}
+            >
               <Stack
                 direction={{ xs: "column", sm: "row" }}
                 spacing={2}
                 alignItems={{ xs: "stretch", sm: "center" }}
                 sx={{
-                  p: 2,
-                  mb: 2,
+                  p: 1.5,
+                  mb: 1.5,
                   border: (t) => `1px dashed ${t.palette.divider}`,
                   borderRadius: 1,
                 }}
@@ -548,8 +556,8 @@ export function ReusableAssignDialog<
                 <Typography color="text.secondary">{L.pickHint}</Typography>
               ) : (
                 <Stack
-                  spacing={1.5}
-                  sx={{ maxHeight: 420 /* overflowY: "auto" */ }}
+                  spacing={1}
+                  sx={{ flex: 1, overflowY: "auto", overflowX: "hidden", pr: 0.5 }}
                 >
                   {selectedItems.map(({ id, item }) => {
                     const range = getOrCreateRange(id);
@@ -738,7 +746,7 @@ export function ReusableAssignDialog<
                             size="small"
                             variant="text"
                             startIcon={<AddRoundedIcon fontSize="small" />}
-                            onClick={() => addWindow(selected[0])}
+                            onClick={() => addWindow(id)}
                             disableRipple
                             sx={{
                               textTransform: "none",

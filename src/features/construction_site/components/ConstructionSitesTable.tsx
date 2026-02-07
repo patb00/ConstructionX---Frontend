@@ -238,6 +238,7 @@ export default function ConstructionSitesTable({ statusValue }: Props) {
   if (error) return <div>{t("constructionSites.list.error")}</div>;
 
   console.log("constructionSitesRows", constructionSitesRows);
+  console.log("constructionSitesColumns", constructionSitesColumns)
 
   return (
     <>

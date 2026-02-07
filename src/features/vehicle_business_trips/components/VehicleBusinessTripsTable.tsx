@@ -1,10 +1,11 @@
-import { useMemo, useState, useEffect } from "react";
-import type { GridColDef } from "@mui/x-data-grid";
+import { useMemo, useState, useEffect, useCallback } from "react";
+import { type GridColDef, type GridRowParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { VehicleBusinessTrip } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
+import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
 import { useCurrentEmployeeContext } from "../../auth/hooks/useCurrentEmployeeContext";
 import { useVehicleBusinessTrips } from "../hooks/useVehicleBusinessTrips";
@@ -33,14 +34,11 @@ const TripStatus = {
   Cancelled: 5,
 } as const;
 
-const isTerminal = (s: number) =>
-  s === TripStatus.Rejected ||
-  s === TripStatus.Completed ||
-  s === TripStatus.Cancelled;
+const canComplete = (status: number) =>
+  status === TripStatus.Approved || status === TripStatus.InProgress;
 
-const canComplete = (s: number) => s === TripStatus.Approved;
-
-const canCancel = (s: number) => s !== TripStatus.Approved && !isTerminal(s);
+const canCancel = (status: number) =>
+  status === TripStatus.Pending || status === TripStatus.Approved;
 
 export default function VehicleBusinessTripsTable({ statusValue }: Props) {
   const { t } = useTranslation();
@@ -108,11 +106,12 @@ export default function VehicleBusinessTripsTable({ statusValue }: Props) {
     setCompleteOpen(true);
   };
 
-  const closeAll = () => {
-    setApproveOpen(false);
-    setRejectOpen(false);
-    setCancelOpen(false);
-    setCompleteOpen(false);
+  const closeApprove = () => setApproveOpen(false);
+  const closeReject = () => setRejectOpen(false);
+  const closeCancel = () => setCancelOpen(false);
+  const closeComplete = () => setCompleteOpen(false);
+
+  const handleExited = () => {
     setSelectedTrip(null);
   };
 
@@ -141,32 +140,24 @@ export default function VehicleBusinessTripsTable({ statusValue }: Props) {
         const customActions = [
           ...(isAdmin
             ? [
-                ...(status === TripStatus.Pending
-                  ? [
-                      {
-                        key: "approve",
-                        label:
-                          t("vehicleBusinessTrips.table.approve") ?? "Approve",
-                        icon: <ThumbUpAltOutlinedIcon sx={{ fontSize: 16 }} />,
-                        onClick: () => openApprove(row),
-                        variant: "success" as const,
-                      },
-                      {
-                        key: "reject",
-                        label:
-                          t("vehicleBusinessTrips.table.reject") ?? "Reject",
-                        icon: (
-                          <ThumbDownAltOutlinedIcon sx={{ fontSize: 16 }} />
-                        ),
-                        onClick: () => openReject(row),
-                        variant: "danger" as const,
-                      },
-                    ]
-                  : []),
+                {
+                  key: "approve",
+                  label: t("vehicleBusinessTrips.table.approve") ?? "Approve",
+                  icon: <ThumbUpAltOutlinedIcon sx={{ fontSize: 16 }} />,
+                  onClick: () => openApprove(row),
+                  variant: "success" as const,
+                },
+                {
+                  key: "reject",
+                  label: t("vehicleBusinessTrips.table.reject") ?? "Reject",
+                  icon: <ThumbDownAltOutlinedIcon sx={{ fontSize: 16 }} />,
+                  onClick: () => openReject(row),
+                  variant: "danger" as const,
+                },
               ]
             : []),
 
-          ...(canCancel(status)
+          ...(isAdmin || canCancel(status)
             ? [
                 {
                   key: "cancel",
@@ -178,7 +169,7 @@ export default function VehicleBusinessTripsTable({ statusValue }: Props) {
               ]
             : []),
 
-          ...(canComplete(status)
+          ...(isAdmin || canComplete(status)
             ? [
                 {
                   key: "complete",
@@ -193,7 +184,11 @@ export default function VehicleBusinessTripsTable({ statusValue }: Props) {
 
         return (
           <RowActions
-            onEdit={() => navigate(`${id}/edit`)}
+            onEdit={
+              isAdmin || status === TripStatus.Pending
+                ? () => navigate(`${id}/edit`)
+                : undefined
+            }
             labels={{ edit: t("vehicleBusinessTrips.table.edit") }}
             customActions={customActions}
           />
@@ -206,17 +201,38 @@ export default function VehicleBusinessTripsTable({ statusValue }: Props) {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<VehicleBusinessTrip>) => (
+      <GridDetailPanel<VehicleBusinessTrip>
+        row={params.row}
+        columns={
+          vehicleBusinessTripsColumns as GridColDef<VehicleBusinessTrip>[]
+        }
+      />
+    ),
+    [vehicleBusinessTripsColumns],
+  );
+
+  const getDetailPanelHeight = useCallback(
+    (_params: GridRowParams<VehicleBusinessTrip>) => 220,
+    [],
+  );
+
   if (error) return <div>{t("vehicleBusinessTrips.list.error")}</div>;
 
   return (
     <PermissionGate guard={{ permission: "Permission.Vehicles.Update" }}>
       <>
         <ReusableDataGrid<VehicleBusinessTrip>
+          mobilePrimaryField="purposeOfTrip"
           rows={vehicleBusinessTripsRows}
           columns={columnsWithActions}
           getRowId={(r) => r.id}
           pinnedRightField={hasActions ? "actions" : undefined}
           loading={!!isLoading}
+          getDetailPanelContent={renderDetailPanel}
+          getDetailPanelHeight={getDetailPanelHeight}
+          detailPanelMode="mobile-only"
           paginationMode={isAdmin ? "server" : "client"}
           rowCount={total}
           {...(isAdmin
@@ -230,28 +246,32 @@ export default function VehicleBusinessTripsTable({ statusValue }: Props) {
         <ApproveBusinessTripDialog
           open={approveOpen}
           trip={selectedTrip}
-          onClose={closeAll}
+          onClose={closeApprove}
+          onExited={handleExited}
           approverEmployeeUserId={employeeId ?? null}
         />
 
         <RejectBusinessTripDialog
           open={rejectOpen}
           trip={selectedTrip}
-          onClose={closeAll}
+          onClose={closeReject}
+          onExited={handleExited}
           rejectorEmployeeUserId={employeeId ?? null}
         />
 
         <CancelBusinessTripDialog
           open={cancelOpen}
           trip={selectedTrip}
-          onClose={closeAll}
+          onClose={closeCancel}
+          onExited={handleExited}
           cancellerEmployeeUserId={employeeId ?? null}
         />
 
         <CompleteBusinessTripDialog
           open={completeOpen}
           trip={selectedTrip}
-          onClose={closeAll}
+          onClose={closeComplete}
+          onExited={handleExited}
         />
       </>
     </PermissionGate>

@@ -11,6 +11,7 @@ type Props = {
   onClose: () => void;
   trip: VehicleBusinessTrip | null;
   rejectorEmployeeUserId: number | null;
+  onExited?: () => void;
 };
 
 export default function RejectBusinessTripDialog({
@@ -18,6 +19,7 @@ export default function RejectBusinessTripDialog({
   onClose,
   trip,
   rejectorEmployeeUserId,
+  onExited,
 }: Props) {
   const { t } = useTranslation();
   const rejectMutation = useRejectVehicleBusinessTrip();
@@ -31,8 +33,9 @@ export default function RejectBusinessTripDialog({
   const [reason, setReason] = useState("");
 
   useEffect(() => {
-    if (!open) return;
-    setReason("");
+    if (open) {
+      setReason("");
+    }
   }, [open, trip?.id]);
 
   const trimmedReason = reason.trim();
@@ -60,6 +63,10 @@ export default function RejectBusinessTripDialog({
     <AssignTaskDialog
       open={open}
       onClose={onClose}
+      onExited={() => {
+        setReason("");
+        onExited?.();
+      }}
       title={t("vehicleBusinessTrips.dialogs.reject.title")}
       subtitle={
         rejectorEmployeeUserId

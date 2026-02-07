@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FormControl,
@@ -7,11 +7,15 @@ import {
   Select,
   Stack,
   Skeleton,
+  Checkbox,
+  ListItemText,
+  Box,
+  Chip,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AssignTaskDialog } from "../../../components/ui/assign-dialog/AssignTaskDialog";
-import { useUpsertConstructionSiteEmployeeWorkLogs } from "../../construction_site/hooks/useUpsertConstructionSiteEmployeeWorkLogs";
+import { useUpsertConstructionSiteEmployeeWorkLogsBulk } from "../../construction_site/hooks/useUpsertConstructionSiteEmployeeWorkLogsBulk";
 import { useCurrentEmployeeContext } from "../../auth/hooks/useCurrentEmployeeContext";
 import { useConstructionSiteOptions } from "../../constants/options/useConstructionSiteOptions";
 import { useEmployeeOptions } from "../../constants/options/useEmployeeOptions";
@@ -28,9 +32,9 @@ export default function WorkHoursCreateDialog({
   onClose,
   defaultDate,
 }: Props) {
-  const { t } = useTranslation();
-  const { mutateAsync: upsert, isPending } =
-    useUpsertConstructionSiteEmployeeWorkLogs();
+  const { t, i18n } = useTranslation();
+  const { mutateAsync: upsertBulk, isPending } =
+    useUpsertConstructionSiteEmployeeWorkLogsBulk();
   const { isAdmin, employeeId } = useCurrentEmployeeContext();
 
   const { options: siteOptions, isLoading: sitesLoading } =
@@ -39,7 +43,7 @@ export default function WorkHoursCreateDialog({
     useEmployeeOptions();
 
   const [constructionSiteId, setConstructionSiteId] = useState<number | "">("");
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | "">("");
+  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<number[]>([]);
 
   const [workDate, setWorkDate] = useState<Date | null>(
     defaultDate ?? new Date(),
@@ -56,21 +60,35 @@ export default function WorkHoursCreateDialog({
     return d;
   });
 
+  const resetForm = () => {
+    setConstructionSiteId("");
+    if (isAdmin) {
+      setSelectedEmployeeIds([]);
+    }
+    setWorkDate(defaultDate ?? new Date());
+    const start = new Date();
+    start.setHours(8, 0, 0, 0);
+    setStartTime(start);
+    const end = new Date();
+    end.setHours(16, 0, 0, 0);
+    setEndTime(end);
+  };
+
   useEffect(() => {
     if (open) {
-      if (employeeId && !selectedEmployeeId) {
-        setSelectedEmployeeId(employeeId);
+      if (employeeId && selectedEmployeeIds.length === 0 && !isAdmin) {
+        setSelectedEmployeeIds([employeeId]);
       }
       if (defaultDate) {
         setWorkDate(defaultDate);
       }
     }
-  }, [open]);
+  }, [open, employeeId, selectedEmployeeIds.length, defaultDate, isAdmin]);
 
   const handleSubmit = async () => {
     if (
       constructionSiteId === "" ||
-      selectedEmployeeId === "" ||
+      selectedEmployeeIds.length === 0 ||
       !workDate ||
       !startTime ||
       !endTime
@@ -79,16 +97,18 @@ export default function WorkHoursCreateDialog({
     }
 
     try {
-      await upsert({
-        constructionSiteId: Number(constructionSiteId),
-        employeeId: Number(selectedEmployeeId),
-        workLogs: [
-          {
-            workDate: format(workDate, "yyyy-MM-dd"),
-            startTime: format(startTime, "HH:mm:ss"),
-            endTime: format(endTime, "HH:mm:ss"),
-          },
-        ],
+      await upsertBulk({
+        entries: selectedEmployeeIds.map((empId) => ({
+          constructionSiteId: Number(constructionSiteId),
+          employeeId: empId,
+          workLogs: [
+            {
+              workDate: format(workDate, "yyyy-MM-dd"),
+              startTime: format(startTime, "HH:mm:ss"),
+              endTime: format(endTime, "HH:mm:ss"),
+            },
+          ],
+        })),
       });
       onClose();
     } catch (e) {
@@ -99,15 +119,21 @@ export default function WorkHoursCreateDialog({
   const formLoading = sitesLoading || employeesLoading;
   const submitDisabled =
     constructionSiteId === "" ||
-    selectedEmployeeId === "" ||
+    selectedEmployeeIds.length === 0 ||
     !workDate ||
     !startTime ||
     !endTime;
+
+  const isTwelveHourClock = useMemo(
+    () => i18n.language?.startsWith("en"),
+    [i18n.language],
+  );
 
   return (
     <AssignTaskDialog
       open={open}
       onClose={onClose}
+      onExited={resetForm}
       title={t("workHours.record")}
       subtitle={t("workHours.employee.createSubtitle")}
       submitText={t("common.save")}
@@ -149,14 +175,32 @@ export default function WorkHoursCreateDialog({
             </InputLabel>
             <Select
               labelId="wh-employee-label"
-              value={selectedEmployeeId}
+              value={selectedEmployeeIds}
               label={t("assignments.filterByEmployee")}
-              onChange={(e) => setSelectedEmployeeId(Number(e.target.value))}
+              multiple
+              onChange={(e) => {
+                const val = e.target.value;
+                if (typeof val === "string") {
+                  // handle clean or weird case
+                  setSelectedEmployeeIds([]);
+                } else {
+                  setSelectedEmployeeIds(val as number[]);
+                }
+              }}
+              renderValue={(selected) => (
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                  {selected.map((value) => {
+                    const opt = employeeOptions.find((o) => o.value === value);
+                    return <Chip key={value} label={opt?.label ?? value} size="small" />;
+                  })}
+                </Box>
+              )}
               disabled={!isAdmin}
             >
               {employeeOptions.map((opt) => (
                 <MenuItem key={opt.value} value={opt.value}>
-                  {opt.label}
+                  <Checkbox checked={selectedEmployeeIds.indexOf(opt.value) > -1} />
+                  <ListItemText primary={opt.label} />
                 </MenuItem>
               ))}
             </Select>
@@ -175,14 +219,18 @@ export default function WorkHoursCreateDialog({
             label={t("workHours.startTime")}
             value={startTime}
             onChange={(newValue) => setStartTime(newValue)}
-            ampm={false}
+            ampm={isTwelveHourClock}
+            ampmInClock={isTwelveHourClock}
+            format={isTwelveHourClock ? "hh:mm a" : "HH:mm"}
             slotProps={{ textField: { size: "small", fullWidth: true } }}
           />
           <TimePicker
             label={t("workHours.endTime")}
             value={endTime}
             onChange={(newValue) => setEndTime(newValue)}
-            ampm={false}
+            ampm={isTwelveHourClock}
+            ampmInClock={isTwelveHourClock}
+            format={isTwelveHourClock ? "hh:mm a" : "HH:mm"}
             slotProps={{ textField: { size: "small", fullWidth: true } }}
           />
         </Stack>

@@ -54,7 +54,7 @@ function mapFiltersToQuery(
       case "siteManagerId":
         query.siteManagerId = Number(item.value);
         break;
-      case "employeeId":
+       case "employeeId":
         query.employeeId = Number(item.value);
         break;
       case "toolId":
@@ -62,7 +62,7 @@ function mapFiltersToQuery(
         break;
       case "vehicleId":
         query.vehicleId = Number(item.value);
-        break;
+        break;  
       case "startDate":
         query.startDate = toApiDate(item.value);
         break;
@@ -158,7 +158,7 @@ export const useConstructionSites = (args: {
           valueOptions: employeeOptions,
           width: 200,
         },
-        employeeId: {
+         employeeId: {
           type: "singleSelect",
           valueOptions: employeeOptions,
           width: 200,
@@ -172,7 +172,7 @@ export const useConstructionSites = (args: {
           type: "singleSelect",
           valueOptions: vehicleOptions,
           width: 200,
-        },
+        }, 
         constructionSiteEmployees: {
           width: 140,
           filterable: false,
@@ -236,7 +236,9 @@ export const useConstructionSites = (args: {
           };
         }) as GridColDef<ConstructionSite>[];
 
-      const columnDefs = [...baseFromKeys, ...ensureFilterColumns];
+      const columnDefs = [...baseFromKeys, ...ensureFilterColumns].filter(
+        (c) => !["employeeId", "toolId", "vehicleId"].includes(c.field)
+      );
 
       const rowDefs = rows.map((r) => ({ ...r, id: (r as any).id }));
 

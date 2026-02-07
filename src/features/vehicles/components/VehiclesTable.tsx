@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from "react";
-import { type GridColDef, type GridRowId } from "@mui/x-data-grid";
-import { type GridRowParams } from "@mui/x-data-grid-pro";
+import { type GridColDef, type GridRowId, type GridRowParams } from "@mui/x-data-grid-pro";
+import { useTheme, useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -11,11 +11,13 @@ import type { Vehicle } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
+import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 import { VehicleHistoryDetails } from "./VehicleHistoryDetails";
-import { Box } from "@mui/material";
 
 export default function VehiclesTable() {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const {
     vehiclesRows,
     vehiclesColumns,
@@ -34,7 +36,7 @@ export default function VehiclesTable() {
   const [pendingRow, setPendingRow] = useState<Vehicle | null>(null);
 
   const [expandedIds, setExpandedIds] = useState<Set<GridRowId>>(
-    () => new Set()
+    () => new Set(),
   );
 
   const requestDelete = useCallback((row: Vehicle) => {
@@ -109,14 +111,22 @@ export default function VehiclesTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
-  const renderDetailPanel = useCallback((params: GridRowParams<Vehicle>) => {
-    const vehicleId = Number((params.row as any).id);
-    return (
-      <Box sx={{ outline: "1px solid red" }}>
-        <VehicleHistoryDetails vehicleId={vehicleId} />
-      </Box>
-    );
-  }, []);
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<Vehicle>) => {
+      if (isMobile) {
+        return (
+          <GridDetailPanel<Vehicle>
+            row={params.row}
+            columns={vehiclesColumns as GridColDef<Vehicle>[]}
+          />
+        );
+      }
+
+      const vehicleId = Number((params.row as any).id);
+      return <VehicleHistoryDetails vehicleId={vehicleId} />;
+    },
+    [isMobile, vehiclesColumns],
+  );
 
   const getDetailPanelHeight = useCallback(() => "auto" as const, []);
 
@@ -124,11 +134,11 @@ export default function VehiclesTable() {
     return <div>{t("vehicles.list.error")}</div>;
   }
 
-  console.log("vehiclesRows", vehiclesRows)
 
   return (
     <>
       <ReusableDataGrid<Vehicle>
+        mobilePrimaryField="name"
         rows={vehiclesRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}
@@ -136,7 +146,7 @@ export default function VehiclesTable() {
         loading={!!isLoading}
         getDetailPanelContent={renderDetailPanel}
         getDetailPanelHeight={getDetailPanelHeight}
-        detailPanelMode="desktop-only"
+        detailPanelMode="all"
         paginationMode="server"
         rowCount={total}
         paginationModel={paginationModel}

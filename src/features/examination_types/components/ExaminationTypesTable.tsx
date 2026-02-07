@@ -143,6 +143,7 @@ export default function ExaminationTypesTable() {
   return (
     <>
       <ReusableDataGrid<ExaminationType>
+        mobilePrimaryField="examinationTypeName"
         storageKey="examination_types"
         rows={examinationTypesRows}
         columns={columnsWithActions}

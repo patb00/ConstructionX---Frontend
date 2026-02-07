@@ -157,6 +157,7 @@ const WorkHoursListPage = () => {
     },
   };
 
+
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
@@ -381,12 +382,10 @@ const WorkHoursListPage = () => {
           errorMessage={error?.message}
         />
         
-        {createDialogOpen && (
-          <WorkHoursCreateDialog
-            open={createDialogOpen}
-            onClose={() => setCreateDialogOpen(false)}
-          />
-        )}
+        <WorkHoursCreateDialog
+          open={createDialogOpen}
+          onClose={() => setCreateDialogOpen(false)}
+        />
       </Stack>
     </LocalizationProvider>
   );

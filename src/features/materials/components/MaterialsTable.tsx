@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from "react";
-import { type GridColDef } from "@mui/x-data-grid";
+import { type GridColDef, type GridRowParams } from "@mui/x-data-grid-pro";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -10,6 +10,7 @@ import type { Material } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
+import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 
 export default function MaterialsTable() {
   const { t } = useTranslation();
@@ -101,6 +102,23 @@ export default function MaterialsTable() {
     t,
   ]);
 
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<Material>) => {
+      return (
+        <GridDetailPanel<Material>
+          row={params.row}
+          columns={materialsColumns as GridColDef<Material>[]}
+        />
+      );
+    },
+    [materialsColumns]
+  );
+
+  const getDetailPanelHeight = useCallback(
+    (_params: GridRowParams<Material>) => "auto" as const,
+    []
+  );
+
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   if (error) return <div>{t("materials.list.error")}</div>;
@@ -116,6 +134,10 @@ export default function MaterialsTable() {
         getRowId={(r) => String((r as any).id)}
         pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
+        getDetailPanelContent={renderDetailPanel}
+        getDetailPanelHeight={getDetailPanelHeight}
+        detailPanelMode="mobile-only"
+        mobilePrimaryField="name"
         paginationMode="server"
         rowCount={total}
         paginationModel={paginationModel}

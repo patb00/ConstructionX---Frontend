@@ -64,6 +64,8 @@ import type {
   UpsertConstructionSiteEmployeeWorkLogsRequest,
 } from "../../construction_site";
 import { AssignTaskDialog } from "../../../components/ui/assign-dialog/AssignTaskDialog";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { parse, format } from "date-fns";
 
 type WorkLogDraft = {
   constructionSiteId: number;
@@ -385,13 +387,11 @@ const AssignmentsListPage = () => {
 
     await upsertWorkLogs.mutateAsync(payload);
     setWorkLogOpen(false);
-    setWorkLogDraft(null);
   };
 
   const closeWorkLog = () => {
     if (upsertWorkLogs.isPending) return;
     setWorkLogOpen(false);
-    setWorkLogDraft(null);
   };
 
   //console.log("lanes", lanes, "items", items);
@@ -606,6 +606,7 @@ const AssignmentsListPage = () => {
       <AssignTaskDialog
         open={workLogOpen}
         onClose={closeWorkLog}
+        onExited={() => setWorkLogDraft(null)}
         title={t("workLogs.dialog.title", "Log hours")}
         subtitle={t("workLogs.dialog.subtitle", "Add start and end time")}
         headerIcon={<AccessTimeIcon sx={{ fontSize: 18 }} />}
@@ -670,34 +671,38 @@ const AssignmentsListPage = () => {
               gap: 1.5,
             }}
           >
-            <TextField
+            <TimePicker
               label={t("workLogs.dialog.startTime", "Start")}
-              type="time"
-              value={(workLogDraft?.startTime ?? "").slice(0, 5)}
-              onChange={(e) =>
+              value={
+                workLogDraft?.startTime
+                  ? parse(workLogDraft.startTime, workLogDraft.startTime.length === 5 ? "HH:mm" : "HH:mm:ss", new Date())
+                  : null
+              }
+              onChange={(newValue) =>
                 setWorkLogDraft((p) =>
-                  p ? { ...p, startTime: e.target.value } : p,
+                  p ? { ...p, startTime: newValue ? format(newValue, "HH:mm") : "" } : p,
                 )
               }
-              size="small"
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-              inputProps={{ step: 60 }}
+              format={i18n.language.startsWith("en") ? "hh:mm a" : "HH:mm"}
+              ampm={i18n.language.startsWith("en")}
+              slotProps={{ textField: { size: "small", fullWidth: true } }}
             />
 
-            <TextField
+            <TimePicker
               label={t("workLogs.dialog.endTime", "End")}
-              type="time"
-              value={(workLogDraft?.endTime ?? "").slice(0, 5)}
-              onChange={(e) =>
+              value={
+                workLogDraft?.endTime
+                  ? parse(workLogDraft.endTime, workLogDraft.endTime.length === 5 ? "HH:mm" : "HH:mm:ss", new Date())
+                  : null
+              }
+              onChange={(newValue) =>
                 setWorkLogDraft((p) =>
-                  p ? { ...p, endTime: e.target.value } : p,
+                  p ? { ...p, endTime: newValue ? format(newValue, "HH:mm") : "" } : p,
                 )
               }
-              size="small"
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-              inputProps={{ step: 60 }}
+              format={i18n.language.startsWith("en") ? "hh:mm a" : "HH:mm"}
+              ampm={i18n.language.startsWith("en")}
+              slotProps={{ textField: { size: "small", fullWidth: true } }}
             />
           </Box>
 

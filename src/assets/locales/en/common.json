@@ -307,6 +307,7 @@
     "yes": "Yes",
     "no": "No",
     "cancel": "Cancel",
+    "ok": "OK",
     "remove": "Remove",
     "close": "Close",
     "submit": "Submit",
@@ -606,6 +607,18 @@
       "dateOfCreation": "Date of creation",
       "permissions": "Permissions",
       "userName": "Username",
+      "applicationUserId": "Application User ID",
+      "vatNumber": "VAT Number",
+      "companyCode": "Company Code",
+      "contactPhone": "Contact Phone",
+      "websiteUrl": "Website",
+      "addressStreet": "Street Address",
+      "addressPostalCode": "Postal Code",
+      "addressCity": "City",
+      "addressState": "State/Province",
+      "addressCountry": "Country",
+      "defaultLanguage": "Default Language",
+      "logoFileName": "Logo File Name",
       "oib": "OIB",
       "dateOfBirth": "Date of birth",
       "employmentDate": "Employment date",
@@ -1391,7 +1404,8 @@
       "description": "Choose and run a report for this module.",
       "noReports": "There are no reports defined for this module yet.",
       "open": "Open report",
-      "opening": "Opening..."
+      "opening": "Opening...",
+      "filterSubtitle": "Configure report parameters"
     },
     "items": {
       "employeeList": {
@@ -2029,12 +2043,14 @@
         "previewSubtitle": "This trip will be cancelled and removed from the approval flow.",
         "submit": "Cancel trip",
         "close": "Close",
-        "helper": "You can add a reason (optional). This action cannot be undone.",
-        "placeholder": "Optional reason (e.g. no longer needed)",
+        "helper": "Please provide a short reason. This action cannot be undone.",
+        "placeholder": "e.g. No longer needed / Schedule change...",
+        "minChars": "Minimum 3 characters required",
         "cannotBeUndone": "This action cannot be undone.",
         "tooltip": {
           "submitting": "Submitting…",
-          "noCanceller": "Canceller not available"
+          "noCanceller": "Canceller not available",
+          "reasonRequired": "Reason is required (min 3 chars)"
         }
       },
       "reject": {

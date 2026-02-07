@@ -33,7 +33,7 @@ export const useTools = () => {
 
       const allKeys = Array.from(new Set(rows.flatMap(Object.keys)));
 
-      const columnDefs: GridColDef[] = allKeys.map((key) => {
+      const columnDefs: GridColDef<Tool>[] = allKeys.map((key) => {
         const headerName = key
           .replace(/_/g, " ")
           .replace(/\b\w/g, (l) => l.toUpperCase());

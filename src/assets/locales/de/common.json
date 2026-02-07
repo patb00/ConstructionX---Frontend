@@ -271,6 +271,10 @@
       "period": {
         "all": "Alle Zeiträume"
       },
+      "section": {
+        "general": "Allgemeine Informationen",
+        "schedule": "Zeitplan & Management"
+      },
       "submit": "Speichern"
     },
     "actions": "Aktionen",
@@ -304,6 +308,7 @@
     "yes": "Ja",
     "no": "Nein",
     "cancel": "Abbrechen",
+    "ok": "OK",
     "remove": "Entfernen",
     "close": "Schließen",
     "submit": "Speichern",
@@ -603,6 +608,18 @@
       "dateOfCreation": "Gründungsdatum",
       "permissions": "Berechtigungen",
       "userName": "Benutzername",
+      "applicationUserId": "Anwendungsbenutzer-ID",
+      "vatNumber": "USt-IdNr.",
+      "companyCode": "Firmenkod",
+      "contactPhone": "Kontakttelefon",
+      "websiteUrl": "Webseite",
+      "addressStreet": "Straße",
+      "addressPostalCode": "Postleitzahl",
+      "addressCity": "Stadt",
+      "addressState": "Bundesland",
+      "addressCountry": "Land",
+      "defaultLanguage": "Standardsprache",
+      "logoFileName": "Logo-Dateiname",
       "oib": "OIB",
       "dateOfBirth": "Geburtsdatum",
       "employmentDate": "Beschäftigungsbeginn",
@@ -1383,7 +1400,8 @@
       "description": "Wähle und starte einen Bericht für dieses Modul.",
       "noReports": "Für dieses Modul sind noch keine Berichte definiert.",
       "open": "Bericht öffnen",
-      "opening": "Wird geöffnet..."
+      "opening": "Wird geöffnet...",
+      "filterSubtitle": "Berichtsparameter konfigurieren"
     },
     "items": {
       "employeeList": {
@@ -2010,12 +2028,14 @@
         "previewSubtitle": "Diese Fahrt wird storniert und aus dem Genehmigungsprozess entfernt.",
         "submit": "Fahrt stornieren",
         "close": "Schließen",
-        "helper": "Sie können optional einen Grund angeben. Diese Aktion kann nicht rückgängig gemacht werden.",
-        "placeholder": "Optionaler Grund (z. B. nicht mehr erforderlich)",
+        "helper": "Bitte geben Sie einen kurzen Grund an. Diese Aktion kann nicht rückgängig gemacht werden.",
+        "placeholder": "z. B. Nicht mehr benötigt / Terminänderung...",
+        "minChars": "Mindestens 3 Zeichen erforderlich",
         "cannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
         "tooltip": {
           "submitting": "Wird gesendet…",
-          "noCanceller": "Stornierer nicht verfügbar"
+          "noCanceller": "Stornierer nicht verfügbar",
+          "reasonRequired": "Grund ist erforderlich (mind. 3 Zeichen)"
         }
       },
       "reject": {

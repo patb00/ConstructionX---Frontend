@@ -214,6 +214,7 @@ export default function UsersTable() {
   return (
     <>
       <ReusableDataGrid<User>
+        mobilePrimaryField="userName"
         storageKey="users"
         rows={usersRows}
         columns={columnsWithActions}
