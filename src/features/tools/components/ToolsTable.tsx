@@ -1,20 +1,23 @@
 import { useMemo, useState, useCallback } from "react";
-import { type GridColDef, type GridRowId } from "@mui/x-data-grid";
-import { type GridRowParams } from "@mui/x-data-grid-pro";
+import { type GridColDef, type GridRowId, type GridRowParams } from "@mui/x-data-grid-pro";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useTheme, useMediaQuery } from "@mui/material";
 
 import { useDeleteTool } from "../hooks/useDeleteTool";
 import { useTools } from "../hooks/useTools";
 import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { Tool } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
+import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
 import { ToolHistoryDetails } from "./ToolsHistoryDetails";
 
 export default function ToolsTable() {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const {
     toolsRows,
     toolsColumns,
@@ -66,7 +69,7 @@ export default function ToolsTable() {
     const canDelete = can({ permission: "Permission.Tools.Delete" });
 
     if (!(canEdit || canDelete)) return base;
-    if (base.some((c) => c.field === "actions")) return base;
+    if (base.some((c: GridColDef<Tool>) => c.field === "actions")) return base;
 
     const actionsCol: GridColDef<Tool> = {
       field: "actions",
@@ -100,12 +103,24 @@ export default function ToolsTable() {
     return [...base, actionsCol];
   }, [toolsColumns, can, deleteTool.isPending, navigate, requestDelete, t]);
 
-  const hasActions = columnsWithActions.some((c) => c.field === "actions");
+  const hasActions = columnsWithActions.some((c: GridColDef<Tool>) => c.field === "actions");
 
-  const renderDetailPanel = useCallback((params: GridRowParams<Tool>) => {
-    const toolId = Number((params.row as any).id);
-    return <ToolHistoryDetails toolId={toolId} />;
-  }, []);
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<Tool>) => {
+      if (isMobile) {
+        return (
+          <GridDetailPanel<Tool>
+            row={params.row}
+            columns={toolsColumns as GridColDef<Tool>[]}
+          />
+        );
+      }
+
+      const toolId = Number(params.row.id);
+      return <ToolHistoryDetails toolId={toolId} />;
+    },
+    [isMobile, toolsColumns],
+  );
 
   const getDetailPanelHeight = useCallback(() => "auto" as const, []);
 
@@ -115,6 +130,7 @@ export default function ToolsTable() {
     <>
       <ReusableDataGrid<Tool>
         storageKey="tools"
+        mobilePrimaryField="name"
         rows={toolsRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}
@@ -122,7 +138,7 @@ export default function ToolsTable() {
         loading={!!isLoading}
         getDetailPanelContent={renderDetailPanel}
         getDetailPanelHeight={getDetailPanelHeight}
-        detailPanelMode="desktop-only"
+        detailPanelMode="all"
         paginationMode="server"
         rowCount={total}
         paginationModel={paginationModel}

@@ -1,6 +1,7 @@
 import { Box, Stack, Typography } from "@mui/material";
 import type { GridColDef, GridValidRowModel } from "@mui/x-data-grid-pro";
 import { useMemo } from "react";
+import useColumnHeaderMappings from "./useColumnHeaderMappings";
 
 type GridDetailPanelProps<T extends GridValidRowModel> = {
   row: T;
@@ -26,6 +27,23 @@ export function GridDetailPanel<T extends GridValidRowModel>({
     [columns, columnFilter]
   );
 
+  const mappings = useColumnHeaderMappings();
+
+  const translatedColumns = useMemo(() => {
+    if (!mappings.length) return detailColumns;
+
+    const map = new Map<string, string>();
+    for (const { original, translated } of mappings) {
+      map.set(original, translated);
+    }
+
+    return detailColumns.map((c) => {
+      const current = (c.headerName ?? c.field) as string;
+      const translated = map.get(current);
+      return translated ? { ...c, headerName: translated } : c;
+    });
+  }, [detailColumns, mappings]);
+
   return (
     <Box
       sx={{
@@ -35,9 +53,17 @@ export function GridDetailPanel<T extends GridValidRowModel>({
       }}
     >
       <Stack spacing={1.0}>
-        {detailColumns.map((col) => {
+        {translatedColumns.map((col) => {
           const field = col.field as string;
-          const rawValue = (row as any)[field];
+          let rawValue = (row as any)[field];
+
+          if (col.valueGetter) {
+            try {
+              rawValue = (col.valueGetter as any)(rawValue, row, col as any, {} as any);
+            } catch (e) {
+              console.warn("Error calling valueGetter for field", field, e);
+            }
+          }
 
           if (
             rawValue === undefined ||
@@ -71,7 +97,24 @@ export function GridDetailPanel<T extends GridValidRowModel>({
                   wordBreak: "break-word",
                 }}
               >
-                {String(rawValue)}
+                {(() => {
+                  if (Array.isArray(rawValue)) {
+                    if (rawValue.length === 0) return "-";
+                    if (typeof rawValue[0] === "object" && rawValue[0] !== null) {
+                      return rawValue
+                        .map((item: any) => item.name || item.title || item.label || "-")
+                        .join(", ");
+                    }
+                    return rawValue.join(", ");
+                  } else if (typeof rawValue === "object" && rawValue !== null) {
+           
+                     if ("name" in rawValue) return (rawValue as any).name;
+                     if ("title" in rawValue) return (rawValue as any).title;
+                     if ("label" in rawValue) return (rawValue as any).label;
+                     return JSON.stringify(rawValue); 
+                  }
+                  return String(rawValue);
+                })()}
               </Typography>
             </Box>
           );

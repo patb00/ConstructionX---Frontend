@@ -1,6 +1,7 @@
 import { useMemo, useState, useCallback } from "react";
 import { type GridColDef, type GridRowId } from "@mui/x-data-grid";
 import { type GridRowParams } from "@mui/x-data-grid-pro";
+import { useTheme, useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -12,9 +13,12 @@ import ConfirmDialog from "../../../../components/ui/confirm-dialog/ConfirmDialo
 import { useCan, PermissionGate } from "../../../../lib/permissions";
 import { RowActions } from "../../../../components/ui/datagrid/RowActions";
 import { EmployeeHistoryDetails } from "./EmployeeHistoryDetails";
+import { GridDetailPanel } from "../../../../components/ui/datagrid/GridDetailPanel";
 
 export default function EmployeesTable() {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const {
     employeeColumns,
     employeeRows,
@@ -108,9 +112,17 @@ export default function EmployeesTable() {
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
   const renderDetailPanel = useCallback((params: GridRowParams<Employee>) => {
+    if (isMobile) {
+      return (
+        <GridDetailPanel<Employee>
+          row={params.row}
+          columns={employeeColumns as GridColDef<Employee>[]}
+        />
+      );
+    }
     const employeeId = Number(params.row.id);
     return <EmployeeHistoryDetails employeeId={employeeId} />;
-  }, []);
+  }, [isMobile, employeeColumns]);
 
   const getDetailPanelHeight = useCallback(() => "auto" as const, []);
 
@@ -128,7 +140,8 @@ export default function EmployeesTable() {
         loading={!!isLoading}
         getDetailPanelContent={renderDetailPanel}
         getDetailPanelHeight={getDetailPanelHeight}
-        detailPanelMode="desktop-only"
+        detailPanelMode="all"
+        mobilePrimaryField="oib"
         paginationMode="server"
         rowCount={total}
         paginationModel={paginationModel}

@@ -127,6 +127,7 @@ export default function VehicleRepairsTable() {
   return (
     <>
       <ReusableDataGrid<VehicleRepair>
+        mobilePrimaryField="name"
         rows={vehicleRepairsRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}

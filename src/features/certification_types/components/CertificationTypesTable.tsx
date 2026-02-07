@@ -149,6 +149,7 @@ export default function CertificationTypesTable() {
   return (
     <>
       <ReusableDataGrid<CertificationType>
+        mobilePrimaryField="certificationTypeName"
         storageKey="certification_types"
         rows={certificationTypesRows}
         columns={columnsWithActions}

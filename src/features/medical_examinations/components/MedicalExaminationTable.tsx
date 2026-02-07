@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from "react";
 import { Box, useTheme } from "@mui/material";
-import type { GridColDef } from "@mui/x-data-grid";
+import type { GridColDef, GridRowParams } from "@mui/x-data-grid-pro";
 import type { GridRowClassNameParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -12,6 +12,7 @@ import { useDeleteMedicalExamination } from "../hooks/useDeleteMedicalExaminatio
 
 import { PermissionGate, useCan } from "../../../lib/permissions";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
+import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
 import { useEmployees } from "../../administration/employees/hooks/useEmployees";
@@ -179,11 +180,29 @@ export default function MedicalExaminationsTable({
     []
   );
 
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<MedicalExamination>) => {
+      return (
+        <GridDetailPanel<MedicalExamination>
+          row={params.row}
+          columns={columns as GridColDef<MedicalExamination>[]}
+        />
+      );
+    },
+    [columns]
+  );
+
+  const getDetailPanelHeight = useCallback(
+    (_params: GridRowParams<MedicalExamination>) => "auto" as const,
+    []
+  );
+
   if (error) return <div>{t("medicalExaminations.list.error")}</div>;
 
   return (
     <>
       <ReusableDataGrid<MedicalExamination>
+        mobilePrimaryField="employeeName"
         key={groupByEmployee ? "tree" : "flat"}
         {...(groupByEmployee
           ? {
@@ -208,6 +227,9 @@ export default function MedicalExaminationsTable({
         getRowId={(r) => String((r as any).id)}
         pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
+        getDetailPanelContent={renderDetailPanel}
+        getDetailPanelHeight={getDetailPanelHeight}
+        detailPanelMode="mobile-only"
         getRowClassName={getRowClassName}
         sx={dueSoonRowSx(theme)}
         {...(isAll && !groupByEmployee

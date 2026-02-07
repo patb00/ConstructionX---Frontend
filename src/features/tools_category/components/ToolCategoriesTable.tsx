@@ -141,6 +141,7 @@ export default function ToolCategoriesTable() {
   return (
     <>
       <ReusableDataGrid<ToolCategory>
+        mobilePrimaryField="name"
         rows={toolCategoriesRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}

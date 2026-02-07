@@ -218,6 +218,7 @@ export default function VehicleRegistrationsTable() {
   return (
     <>
       <ReusableDataGrid<VehicleRegistration>
+        mobilePrimaryField="vehicleRegistrationNumber"
         rows={vehicleRegistrationsRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}

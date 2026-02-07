@@ -156,6 +156,7 @@ export default function RolesTable() {
   return (
     <>
       <ReusableDataGrid<Role>
+        mobilePrimaryField="name"
         storageKey="roles"
         rows={rolesRows}
         columns={columnsWithActions}

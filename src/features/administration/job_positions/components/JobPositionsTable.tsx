@@ -157,6 +157,7 @@ export default function JobPositionsTable() {
   return (
     <>
       <ReusableDataGrid<JobPosition>
+        mobilePrimaryField="name"
         storageKey="job_positions"
         rows={jobPositionsRows}
         columns={columnsWithActions}

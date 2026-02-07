@@ -1,6 +1,5 @@
 import { useMemo, useState, useCallback } from "react";
-import type { GridColDef } from "@mui/x-data-grid";
-//import type { GridRowParams } from "@mui/x-data-grid-pro";
+import type { GridColDef, GridRowParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -9,6 +8,7 @@ import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { VehicleInsurance } from "..";
 
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
+import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
 import { useVehicleInsurances } from "../hooks/useVehicleInsurances";
@@ -106,6 +106,23 @@ export default function VehicleInsurancesTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<VehicleInsurance>) => (
+      <GridDetailPanel<VehicleInsurance>
+        row={params.row}
+        columns={
+          vehicleInsurancesColumns as GridColDef<VehicleInsurance>[]
+        }
+      />
+    ),
+    [vehicleInsurancesColumns]
+  );
+
+  const getDetailPanelHeight = useCallback(
+    (_params: GridRowParams<VehicleInsurance>) => 220,
+    []
+  );
+
   if (error) {
     return <div>{t("vehicleInsurances.list.error")}</div>;
   }
@@ -113,11 +130,15 @@ export default function VehicleInsurancesTable() {
   return (
     <>
       <ReusableDataGrid<VehicleInsurance>
+        mobilePrimaryField="policyNumber"
         rows={vehicleInsurancesRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}
         pinnedRightField={hasActions ? "actions" : undefined}
         loading={!!isLoading}
+        getDetailPanelContent={renderDetailPanel}
+        getDetailPanelHeight={getDetailPanelHeight}
+        detailPanelMode="mobile-only"
         paginationMode="server"
         rowCount={total}
         paginationModel={paginationModel}

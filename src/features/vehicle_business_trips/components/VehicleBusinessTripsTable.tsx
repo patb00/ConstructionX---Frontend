@@ -1,10 +1,11 @@
-import { useMemo, useState, useEffect } from "react";
-import type { GridColDef } from "@mui/x-data-grid";
+import { useMemo, useState, useEffect, useCallback } from "react";
+import { type GridColDef, type GridRowParams } from "@mui/x-data-grid-pro";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { VehicleBusinessTrip } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
+import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
 import { useCurrentEmployeeContext } from "../../auth/hooks/useCurrentEmployeeContext";
 import { useVehicleBusinessTrips } from "../hooks/useVehicleBusinessTrips";
@@ -200,17 +201,38 @@ export default function VehicleBusinessTripsTable({ statusValue }: Props) {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<VehicleBusinessTrip>) => (
+      <GridDetailPanel<VehicleBusinessTrip>
+        row={params.row}
+        columns={
+          vehicleBusinessTripsColumns as GridColDef<VehicleBusinessTrip>[]
+        }
+      />
+    ),
+    [vehicleBusinessTripsColumns],
+  );
+
+  const getDetailPanelHeight = useCallback(
+    (_params: GridRowParams<VehicleBusinessTrip>) => 220,
+    [],
+  );
+
   if (error) return <div>{t("vehicleBusinessTrips.list.error")}</div>;
 
   return (
     <PermissionGate guard={{ permission: "Permission.Vehicles.Update" }}>
       <>
         <ReusableDataGrid<VehicleBusinessTrip>
+          mobilePrimaryField="purposeOfTrip"
           rows={vehicleBusinessTripsRows}
           columns={columnsWithActions}
           getRowId={(r) => r.id}
           pinnedRightField={hasActions ? "actions" : undefined}
           loading={!!isLoading}
+          getDetailPanelContent={renderDetailPanel}
+          getDetailPanelHeight={getDetailPanelHeight}
+          detailPanelMode="mobile-only"
           paginationMode={isAdmin ? "server" : "client"}
           rowCount={total}
           {...(isAdmin

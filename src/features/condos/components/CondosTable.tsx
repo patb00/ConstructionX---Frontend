@@ -1,19 +1,22 @@
 import { useMemo, useState, useCallback } from "react";
-import { type GridColDef } from "@mui/x-data-grid";
-import { type GridRowParams } from "@mui/x-data-grid-pro";
+import { type GridColDef, type GridRowParams } from "@mui/x-data-grid-pro";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useTheme, useMediaQuery } from "@mui/material";
 import { useDeleteCondo } from "../hooks/useDeleteCondo";
 import { useCondos } from "../hooks/useCondos";
 import { PermissionGate, useCan } from "../../../lib/permissions";
 import type { Condo } from "..";
 import ReusableDataGrid from "../../../components/ui/datagrid/ReusableDataGrid";
+import { GridDetailPanel } from "../../../components/ui/datagrid/GridDetailPanel";
 import ConfirmDialog from "../../../components/ui/confirm-dialog/ConfirmDialog";
 import { RowActions } from "../../../components/ui/datagrid/RowActions";
 import { CondoHistoryDetails } from "./CondoHistoryDetails";
 
 export default function CondosTable() {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const {
     condosRows,
     condosColumns,
@@ -97,10 +100,21 @@ export default function CondosTable() {
 
   const hasActions = columnsWithActions.some((c) => c.field === "actions");
 
-  const renderDetailPanel = useCallback((params: GridRowParams<Condo>) => {
-    const condoId = Number((params.row as any).id);
-    return <CondoHistoryDetails condoId={condoId} />;
-  }, []);
+  const renderDetailPanel = useCallback(
+    (params: GridRowParams<Condo>) => {
+      if (isMobile) {
+        return (
+          <GridDetailPanel<Condo>
+            row={params.row}
+            columns={condosColumns as GridColDef<Condo>[]}
+          />
+        );
+      }
+      const condoId = Number((params.row as any).id);
+      return <CondoHistoryDetails condoId={condoId} />;
+    },
+    [isMobile, condosColumns],
+  );
 
   const getDetailPanelHeight = useCallback(() => "auto" as const, []);
 
@@ -112,6 +126,7 @@ export default function CondosTable() {
     <>
       <ReusableDataGrid<Condo>
         storageKey="condos"
+        mobilePrimaryField="address"
         rows={condosRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}
@@ -119,7 +134,7 @@ export default function CondosTable() {
         loading={!!isLoading}
         getDetailPanelContent={renderDetailPanel}
         getDetailPanelHeight={getDetailPanelHeight}
-        detailPanelMode="desktop-only"
+        detailPanelMode="all"
         paginationMode="server"
         rowCount={total}
         paginationModel={paginationModel}

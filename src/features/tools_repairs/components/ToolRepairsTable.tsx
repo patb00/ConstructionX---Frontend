@@ -128,6 +128,7 @@ export default function ToolRepairsTable() {
   return (
     <>
       <ReusableDataGrid<ToolRepair>
+        mobilePrimaryField="name"
         rows={toolRepairsRows}
         columns={columnsWithActions}
         getRowId={(r) => String((r as any).id)}
