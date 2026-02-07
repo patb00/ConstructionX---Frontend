@@ -14,6 +14,7 @@ import type {
   GetConstructionSiteEmployeeWorkLogsAllQuery,
   ConstructionSiteEmployeeWorkLog,
   ConstructionSiteEmployeeWorkLogDay,
+  UpsertConstructionSiteEmployeeWorkLogsBulkRequest,
 } from "..";
 import { authFetch, authFetchBlob } from "../../../lib/authFetch";
 import type { ApiEnvelope } from "../../administration/tenants";
@@ -122,6 +123,14 @@ export const ConstructionSiteApi = {
     payload: UpsertConstructionSiteEmployeeWorkLogsRequest
   ) => {
     return authFetch<ApiEnvelope<string>>(`${base}/employee-work-logs`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+  },
+  upsertEmployeeWorkLogsBulk: async (
+    payload: UpsertConstructionSiteEmployeeWorkLogsBulkRequest
+  ) => {
+    return authFetch<ApiEnvelope<string>>(`${base}/employee-work-logs/bulk`, {
       method: "PUT",
       body: JSON.stringify(payload),
     });
